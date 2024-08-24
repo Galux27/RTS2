@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour,Selectable
 {
-    bool isSelected=false;
+    public bool isSelected=false;
     public bool GetIsSelected()
     {
         return isSelected;
@@ -18,17 +18,29 @@ public class Unit : MonoBehaviour,Selectable
 
     public void OnObjectDeselected()
     {
-        SelectableManager.Instance.AddSelectable(this);
+        this.GetComponentInChildren<SelectedOutline>().OnDeselect();
+
+        //SelectableManager.Instance.AddSelectable(this);
     }
 
     public void OnObjectSelected()
     {
-        SelectableManager.Instance.AddSelectable(this);
+        SelectedOutlineManager.Instance.OnSelectObject(this.gameObject);
+        Debug.Log("Setting unit selected");
+        //SelectableManager.Instance.AddSelectable(this);
     }
 
     public void SetIsSelected(bool v)
     {
         isSelected = v;
+        if (isSelected)
+        {
+            OnObjectSelected();
+        }
+        else
+        {
+            OnObjectDeselected();
+        }
     }
 
     private void Awake()

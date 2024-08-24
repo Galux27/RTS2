@@ -59,7 +59,21 @@ public class CursorSelect : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
+            OnSelection();
             mouseDown = false;
+        }
+
+    }
+
+
+    void OnSelection()
+    {
+        SelectableManager.Instance.ClearSelectables();
+        List<Unit> selected = UnitMoniter.Instance.GetUnitsWithinBounds(startPoint, endPoint);
+        Debug.Log("Selected unit count " + selected.Count);
+        for(int x=0;x<selected.Count; x++)
+        {
+            SelectableManager.Instance.AddSelectable(selected[x]);
         }
     }
 }
