@@ -45,6 +45,7 @@ public class CursorSelect : MonoBehaviour
             {
 
             }
+
             mouseDown = false;
         }
         if (Input.GetMouseButton(0) && mouseDown)
@@ -54,6 +55,7 @@ public class CursorSelect : MonoBehaviour
             if (hit.collider != null)
             {
                 endPoint = hit.point;
+                CursorUI.Instance.SetCorners(startPoint, endPoint);
             }
         }
 
@@ -62,6 +64,7 @@ public class CursorSelect : MonoBehaviour
             OnSelection();
             mouseDown = false;
         }
+        CursorUI.Instance.SetShouldRender(mouseDown);
 
     }
 
