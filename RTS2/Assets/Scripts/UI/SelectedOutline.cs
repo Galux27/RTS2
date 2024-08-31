@@ -14,9 +14,12 @@ public class SelectedOutline : MonoBehaviour
     public void ApplyToObject(GameObject obj)
     {
         parent = obj;
+        Bounds b = ObjectBoundsGetter.GetBoundsOfObject(obj);
+
+        this.transform.localScale = new Vector3(b.extents.x, b.size.y, 1);
+
         this.transform.parent = obj.transform;
         this.transform.localPosition = Vector3.zero;
-        this.transform.localScale = obj.GetComponent<SpriteRenderer>().bounds.size;
       
     }
 
