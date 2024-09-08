@@ -1,0 +1,32 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BehaviourBase
+{
+    protected Unit unitToMove;
+
+    public Action OnComplete;
+
+    public virtual void InitBehaviour(Unit toPerform)
+    {
+        unitToMove= toPerform; 
+    }
+
+
+    public virtual bool CanPerformBehaviour()
+    {
+        return false;
+    }
+
+    public virtual void PerformBehaviour()
+    {
+
+    }
+
+    public virtual bool IsBehaviourComplete()
+    {
+        return false;
+    }
+}

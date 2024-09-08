@@ -66,6 +66,32 @@ public class CursorSelect : MonoBehaviour
         }
         CursorUI.Instance.SetShouldRender(mouseDown);
 
+        if (SelectableManager.Instance.CurrentlySelected.Count > 0)
+        {
+            if (Input.GetMouseButtonUp(1))
+            {
+                Ray r = Camera.ScreenPointToRay(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorLayermask);
+                if (hit.collider != null)
+                {
+                    Vector3 targetPos = hit.point;
+                    targetPos.z = 0;
+
+                    for(int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                    {
+                        Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                        BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                        MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
+                        moveTo_Behaviour.InitBehaviour(toPerfrom,targetPos);
+                        br.SetBehaviour(moveTo_Behaviour);
+                    }
+                }
+
+            }
+        }
+        
+
+
     }
 
 

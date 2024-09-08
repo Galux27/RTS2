@@ -23,6 +23,11 @@ public class Unit : MonoBehaviour,Selectable
         //SelectableManager.Instance.AddSelectable(this);
     }
 
+    public float Speed()
+    {
+        return 5f;
+    }
+
     public void OnObjectSelected()
     {
         SelectedOutlineManager.Instance.OnSelectObject(this.gameObject);
@@ -41,6 +46,12 @@ public class Unit : MonoBehaviour,Selectable
         {
             OnObjectDeselected();
         }
+    }
+
+
+    public void MoveUnit(Vector3 direction)
+    {
+        this.transform.position += (direction * Speed() * Time.deltaTime);
     }
 
     private void Awake()
