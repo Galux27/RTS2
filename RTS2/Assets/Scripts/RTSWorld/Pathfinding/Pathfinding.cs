@@ -72,7 +72,7 @@ public static class Pathfinding
 
     
 
-    public static void FindPath(Vector3 startPos, Vector3 targetPos)
+    public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos)
     {
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos);
@@ -103,8 +103,8 @@ public static class Pathfinding
             //If target found, retrace path
             if (node == targetNode)
             {
-                RetracePath(seekerNode, targetNode);
-                return;
+                return RetracePath(seekerNode, targetNode);
+                
             }
 
             //adds neighbor nodes to openSet
@@ -127,6 +127,7 @@ public static class Pathfinding
                 }
             }
         }
+        return null;
     }
 
     static List<PathfindingNode> RetracePath(PathfindingNode startNode, PathfindingNode endNode)
