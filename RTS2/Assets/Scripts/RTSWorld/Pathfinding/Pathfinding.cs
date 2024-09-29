@@ -1,0 +1,157 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+
+public static class Pathfinding
+{
+    public static PathfindingNode[,] pathfindingNodes;
+    static int worldWidth, worldHeight;
+    public static void CreateNodesFromWorld(WorldTile[,] world)
+    {
+        worldWidth = world.GetLength(0);
+        worldHeight = world.GetLength(1);
+        pathfindingNodes = new PathfindingNode[worldWidth, worldHeight];
+
+        for(int x = 0; x < worldWidth; x++)
+        {
+            for(int y = 0; y < worldHeight; y++)
+            {
+                pathfindingNodes[x, y] = new PathfindingNode(x, y, world[x, y].traversable);
+            }
+        }
+
+        for (int x = 0; x < worldWidth; x++)
+        {
+            for (int y = 0; y < worldHeight; y++)
+            {
+                pathfindingNodes[x, y].InitData();
+            }
+        }
+    }
+
+    public static List<PathfindingNode> GetNeighbours(PathfindingNode node)
+    {
+        List<PathfindingNode> retVal = new List<PathfindingNode>();
+        if (node.x > 0)
+        {
+            retVal.Add(pathfindingNodes[node.x-1,node.y]);
+        }
+
+        if (node.x < pathfindingNodes.GetLength(0)-1)
+        {
+            retVal.Add(pathfindingNodes[node.x + 1, node.y]);
+        }
+        if (node.y > 0)
+        {
+            retVal.Add(pathfindingNodes[node.x , node.y - 1]);
+        }
+
+        if (node.y < pathfindingNodes.GetLength(1) - 1)
+        {
+            retVal.Add(pathfindingNodes[node.x , node.y + 1]);
+        }
+
+
+        return retVal;
+    }
+
+
+    public static PathfindingNode GetNodeFromPosition(Vector3 Position)
+    {
+        int x= Mathf.RoundToInt(Position.x);
+        x = Mathf.Max(0, x);
+        x = Mathf.Min(worldWidth-1, x);
+
+        int y = Mathf.RoundToInt(Position.y);
+        y = Mathf.Max(0, y);
+        y = Mathf.Min(worldHeight-1, y);
+
+        return pathfindingNodes[x,y];
+    }
+
+    
+
+    public static void FindPath(Vector3 startPos, Vector3 targetPos)
+    {
+        //get player and target position in grid coords
+        PathfindingNode seekerNode = GetNodeFromPosition(startPos);
+        PathfindingNode targetNode = GetNodeFromPosition(targetPos);
+
+        List<PathfindingNode> openSet = new List<PathfindingNode>();
+        HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
+        openSet.Add(seekerNode);
+
+        //calculates path for pathfinding
+        while (openSet.Count > 0)
+        {
+
+            //iterates through openSet and finds lowest FCost
+            PathfindingNode node = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].FCost <= node.FCost)
+                {
+                    if (openSet[i].hCost < node.hCost)
+                        node = openSet[i];
+                }
+            }
+
+            openSet.Remove(node);
+            closedSet.Add(node);
+
+            //If target found, retrace path
+            if (node == targetNode)
+            {
+                RetracePath(seekerNode, targetNode);
+                return;
+            }
+
+            //adds neighbor nodes to openSet
+            foreach (PathfindingNode neighbour in node.neighbours)
+            {
+                if (neighbour.obstacle || closedSet.Contains(neighbour))
+                {
+                    continue;
+                }
+
+                int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
+                if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = node;
+
+                    if (!openSet.Contains(neighbour))
+                        openSet.Add(neighbour);
+                }
+            }
+        }
+    }
+
+    static List<PathfindingNode> RetracePath(PathfindingNode startNode, PathfindingNode endNode)
+    {
+        List<PathfindingNode> path = new List<PathfindingNode>();
+        PathfindingNode currentNode = endNode;
+
+        while (currentNode != startNode)
+        {
+            path.Add(currentNode);
+            currentNode = currentNode.parent;
+        }
+        path.Reverse();
+
+        return path;
+
+    }
+
+    static int GetDistance(PathfindingNode nodeA, PathfindingNode nodeB)
+    {
+        int dstX = Mathf.Abs(nodeA.x- nodeB.x);
+        int dstY = Mathf.Abs(nodeA.y - nodeB.y);
+
+        if (dstX > dstY)
+            return 14 * dstY + 10 * (dstX - dstY);
+        return 14 * dstX + 10 * (dstY - dstX);
+    }
+}

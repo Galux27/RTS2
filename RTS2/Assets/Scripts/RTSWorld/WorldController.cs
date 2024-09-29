@@ -38,6 +38,7 @@ public class WorldController : MonoBehaviour
             }
         }
         WorldRenderer.Instance.RenderWorld(WorldTiles);
+        Pathfinding.CreateNodesFromWorld(WorldTiles);
     }
 }
 

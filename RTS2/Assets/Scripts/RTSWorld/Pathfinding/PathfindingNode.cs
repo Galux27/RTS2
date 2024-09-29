@@ -1,0 +1,44 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+
+public class PathfindingNode
+{
+    public int gCost, hCost;
+    public bool obstacle;
+
+    public int x, y;
+    public PathfindingNode parent;
+    public bool IsPassable = true;
+
+
+
+    public List<PathfindingNode> neighbours;
+    public Vector2 worldPos;
+    public PathfindingNode(int x, int y, bool passable)
+    {
+        this.x = x;
+        this.y = y;
+        IsPassable= passable;
+
+    }
+
+    public void InitData()
+    {
+        worldPos = new Vector2(x, y);
+        neighbours = Pathfinding.GetNeighbours(this);
+    }
+
+
+    public int FCost
+    {
+        get
+        {
+            return gCost + hCost;
+        }
+    }
+
+
+
+}
