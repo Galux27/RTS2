@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1663448c3e9978f4497c5201b5b169bd, type: 3}
   m_Name: World Tiles
   m_EditorClassIdentifier: 
-  tileTypes: []
+  tileTypes:
+  - tileType: 1
+    tileBase: {fileID: 11400000, guid: ae497f4a02b7d5c46a9c5b1aecd6f4c9, type: 2}
+  - tileType: 0
+    tileBase: {fileID: 11400000, guid: ed80e75a3c193844c9dc60b20f7f8fbe, type: 2}
