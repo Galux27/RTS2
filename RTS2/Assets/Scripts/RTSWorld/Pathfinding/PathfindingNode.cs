@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PathfindingNode
@@ -15,7 +14,7 @@ public class PathfindingNode
 
 
     public List<PathfindingNode> neighbours;
-    public Vector2 worldPos;
+    public Vector3 worldPos;
     public PathfindingNode(int x, int y, bool passable)
     {
         this.x = x;
@@ -26,7 +25,7 @@ public class PathfindingNode
 
     public void InitData()
     {
-        worldPos = new Vector2(x, y);
+        worldPos = new Vector3(x, y);
         neighbours = Pathfinding.GetNeighbours(this);
     }
 

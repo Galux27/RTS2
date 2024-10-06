@@ -6,6 +6,22 @@ using UnityEngine;
 public class Unit : MonoBehaviour,Selectable
 {
     public bool isSelected=false;
+
+    private void Awake()
+    {
+        UnitMoniter.Instance.AddUnit(this);
+        if (this.GetComponent<ItemHolder>() && this.GetComponent<BodyController>())
+        {
+            this.GetComponent<ItemHolder>().OnSetHolding += OnHoldItem;
+        }
+    }
+
+    void OnHoldItem(ItemInWorld holding)
+    {
+        holding.sr.sortingOrder = this.GetComponent<BodyController>().Torso.sortingOrder + 1;
+    }
+
+
     public bool GetIsSelected()
     {
         return isSelected;
@@ -19,8 +35,6 @@ public class Unit : MonoBehaviour,Selectable
     public void OnObjectDeselected()
     {
         this.GetComponentInChildren<SelectedOutline>().OnDeselect();
-
-        //SelectableManager.Instance.AddSelectable(this);
     }
 
     public float Speed()
@@ -31,8 +45,6 @@ public class Unit : MonoBehaviour,Selectable
     public void OnObjectSelected()
     {
         SelectedOutlineManager.Instance.OnSelectObject(this.gameObject);
-        Debug.Log("Setting unit selected");
-        //SelectableManager.Instance.AddSelectable(this);
     }
 
     public void SetIsSelected(bool v)
@@ -54,10 +66,7 @@ public class Unit : MonoBehaviour,Selectable
         this.transform.position += (direction * Speed() * Time.deltaTime);
     }
 
-    private void Awake()
-    {
-        UnitMoniter.Instance.AddUnit(this);
-    }
+ 
 
     private void OnDestroy()
     {

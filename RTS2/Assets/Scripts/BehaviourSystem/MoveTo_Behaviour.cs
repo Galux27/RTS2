@@ -5,12 +5,14 @@ using UnityEngine;
 public class MoveTo_Behaviour : BehaviourBase
 {
     public Vector3 TargetPosition;
-    List<PathfindingNode> pathfindingNodes;
+    PathFollower follower;
+
     public void InitBehaviour(Unit toPerform,Vector3 targetPos)
     {
         base.InitBehaviour(toPerform);
         TargetPosition = targetPos;
-        pathfindingNodes = Pathfinding.FindPath(toPerform.transform.position, targetPos);
+        follower = new PathFollower();
+        follower.GetPath(toPerform.transform.position, targetPos);
     }
 
     public override bool CanPerformBehaviour()
@@ -25,23 +27,18 @@ public class MoveTo_Behaviour : BehaviourBase
 
     Vector3 DirectionToTarget()
     {
-        return (TargetPosition - unitToMove.transform.position).normalized;
+
+        return follower.GetDirToNode(unitToMove.transform.position);
     }
 
     public override void PerformBehaviour()
     {
         if(!IsBehaviourComplete())
         {
+            follower.OnUpdate(unitToMove.transform.position);
             unitToMove.MoveUnit(DirectionToTarget());
         }
 
-        if(pathfindingNodes != null)
-        {
-            for(int x=0;x<pathfindingNodes.Count-1;x++)
-            {
-                Debug.DrawLine(pathfindingNodes[x].worldPos, pathfindingNodes[x + 1].worldPos, Color.magenta);
-
-            }
-        }
+       
     }
 }
