@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class WorldController : MonoBehaviour
 {
@@ -22,6 +23,10 @@ public class WorldController : MonoBehaviour
     public WorldTile[,] WorldTiles;
 
 
+    public WallManager WallManager;
+    public Tilemap BuildingTilemap;
+    public WallTile WallTest;
+
     private void Start()
     {
         InitWorld();
@@ -37,7 +42,12 @@ public class WorldController : MonoBehaviour
                 WorldTiles[x, y] = new WorldTile(x, y);
             }
         }
+
+        WallManager = new WallManager(WorldWidth, WorldHeight);
+        WallManager.DrawSomeRandomWalls();
+
         WorldRenderer.Instance.RenderWorld(WorldTiles);
+        WallManager.RenderWalls(BuildingTilemap, WallTest);
         Pathfinding.CreateNodesFromWorld(WorldTiles);
     }
 }

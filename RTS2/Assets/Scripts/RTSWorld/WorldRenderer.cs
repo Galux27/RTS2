@@ -23,10 +23,16 @@ public class WorldRenderer : MonoBehaviour
     public Tilemap WorldTilemap;
     public WorldTiles WorldTiles;
     WorldTilesManager WorldTilesManager;
+
+
+
+
     bool init = false;
     private void Init()
     {
         WorldTilesManager = new WorldTilesManager(WorldTiles.tileTypes);
+
+
 
         init = true;
     }
