@@ -6,8 +6,9 @@ using UnityEngine;
 public class Unit : MonoBehaviour,Selectable
 {
     public bool isSelected=false;
-
-    private void Awake()
+    public bool isSelectable = false;
+    public UnitType MyType;
+    protected void Awake()
     {
         UnitMoniter.Instance.AddUnit(this);
         if (this.GetComponent<ItemHolder>() && this.GetComponent<BodyController>())
@@ -37,10 +38,12 @@ public class Unit : MonoBehaviour,Selectable
         this.GetComponentInChildren<SelectedOutline>().OnDeselect();
     }
 
-    public float Speed()
+    public virtual float Speed()
     {
         return 5f;
     }
+
+  
 
     public void OnObjectSelected()
     {
@@ -72,4 +75,17 @@ public class Unit : MonoBehaviour,Selectable
     {
         UnitMoniter.Instance.RemoveUnit(this);
     }
+
+    public bool IsSelectable()
+    {
+        return isSelectable;
+    }
 }
+
+public enum UnitType {
+None,
+Zombie,
+Human
+
+}
+

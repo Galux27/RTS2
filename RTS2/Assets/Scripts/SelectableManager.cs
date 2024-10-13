@@ -23,7 +23,7 @@ public class SelectableManager : MonoBehaviour
     public void AddSelectable(Selectable toAdd)
     {
         Debug.Log("Added selectable is selected " + toAdd.GetIsSelected());
-        if (toAdd.GetIsSelected() == false)
+        if (toAdd.IsSelectable()&& toAdd.GetIsSelected() == false)
         {
             Debug.Log("Setting objects to selected ");
             CurrentlySelected.Add(toAdd);
