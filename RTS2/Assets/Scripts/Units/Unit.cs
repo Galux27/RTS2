@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour,Selectable
         }
         MyHealth=this.GetComponentInChildren<ObjectHealth>();
         MyAttackController = this.GetComponent<UnitAttackController>();
+        MyHealth.OnDeath += OnDeath;
     }
 
     void OnHoldItem(ItemInWorld holding)
@@ -35,6 +36,13 @@ public class Unit : MonoBehaviour,Selectable
     public SelectableType GetSelectableType()
     {
         return SelectableType.Unit;
+    }
+
+
+    void OnDeath()
+    {
+        OnObjectDeselected();
+        UnitMoniter.Instance.RemoveUnit(this);
     }
 
     public void OnObjectDeselected()

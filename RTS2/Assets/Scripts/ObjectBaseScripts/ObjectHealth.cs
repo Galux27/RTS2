@@ -6,6 +6,7 @@ public class ObjectHealth : MonoBehaviour
 {
     public float CurrentHealth, MaxHealth;
     public Action<float> OnHealthIncrease, OnHealthDecrease;
+    public Action OnDeath;
     HealthUI healthUI;
 
     private void Awake()
@@ -28,5 +29,9 @@ public class ObjectHealth : MonoBehaviour
         CurrentHealth = Mathf.Max(0, CurrentHealth);
         OnHealthDecrease?.Invoke(CurrentHealth);
         healthUI?.UpdateHealth();
+        if (CurrentHealth <= 0)
+        {
+            OnDeath?.Invoke();
+        }
     }
 }

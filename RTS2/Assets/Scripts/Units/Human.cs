@@ -8,6 +8,7 @@ public class Human : Unit
     {
         this.GetComponent<BehaviourRunner>().SetDecisionMaker(new BehaviourDecisionMaker());
         this.GetComponent<BehaviourRunner>().SetUnitPerforming(this);
+        this.GetComponent<ItemHolder>().OnSetHolding += this.GetComponent<UnitAttackController>().OnNewItem;
         base.Awake();
     }
 }

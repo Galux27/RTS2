@@ -9,11 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bd940213db577446accab63c12fdceb, type: 3}
-  m_Name: Rifle
+  m_Script: {fileID: 11500000, guid: 379a3a9c9a3fa02448895a4edf4781a7, type: 3}
+  m_Name: AR
   m_EditorClassIdentifier: 
   Name: Rifle
-  Description: A rifle.
+  Description: Assault Rifle
   Sprite: {fileID: 21300000, guid: 7190e16a63f732f48841edba2bacc151, type: 3}
   Slot: 0
   Tags: 01000000
+  AttackRate: 2
+  AttackDamage: 3
+  AttackRange: 1.5
+  IsRanged: 1
+  FireMinRange: 3
+  FireMaxRange: 30
+  FireRate: 1
+  RangedProjectile: {fileID: 0}

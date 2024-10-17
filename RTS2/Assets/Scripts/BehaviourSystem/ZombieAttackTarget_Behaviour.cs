@@ -15,11 +15,6 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
     }
 
 
-    float DistToTarget()
-    {
-        return Vector3.Distance(objectToFollow.transform.position, unitToMove.transform.position);
-    }
-
     public override bool CanPerformBehaviour()
     {
         return true;
