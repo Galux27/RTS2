@@ -14,7 +14,16 @@ public class UnitAttackController : MonoBehaviour
     {
         if (itemHeld.MyItem.GetType() == typeof(Weapon))
         {
-            Debug.Log("Holding Weapon, updating attack values");
+           Weapon equiped = (Weapon)itemHeld.MyItem;
+            SetAttackValues(equiped.AttackDamage,equiped.AttackRate,equiped.AttackRange);
+            if (equiped.IsRanged)
+            {
+                SetRangedValues(5,equiped.FireRate,equiped.FireMinRange,equiped.FireMaxRange,equiped.RangedProjectile);
+            }
+            else
+            {
+                HasRanged = false;
+            }
         }
     }
 
@@ -26,18 +35,26 @@ public class UnitAttackController : MonoBehaviour
         AttackRange = range;
     }
 
-    public void SetRangedValues(float damage,float rate,float minRange,float maxRange)
+    public void SetRangedValues(float damage,float rate,float minRange,float maxRange,GameObject projectile)
     {
+        HasRanged= true; 
         RangedFireRate = rate;
         RangedDamage = damage;
         MinRange = minRange;
         MaxRange= maxRange;
+        this.RangedProjectile = projectile;
     }
     
     
     
     float attackTimer = 0f;
     float rangedTimer = 0f;
+
+
+    public bool CanIAttackTarget(GameObject target)
+    {
+        return CanRangedAttack(target) || CanMeleeAttack(target);
+    }
 
     bool CanRangedAttack(GameObject target)
     {
@@ -72,6 +89,7 @@ public class UnitAttackController : MonoBehaviour
                 GameObject g = Instantiate(RangedProjectile, this.transform.position, Quaternion.identity);
                 Projectile p = g.GetComponent<Projectile>();
                 p.SetMomentum(DirectionToTarget(attacking.gameObject), 20f, this.GetComponent<Unit>(),5f);
+                rangedTimer = RangedFireRate;
             }
         }
 

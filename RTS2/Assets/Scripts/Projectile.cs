@@ -39,7 +39,7 @@ public class Projectile : MonoBehaviour
         }
         else
         {
-            OnHit(collision.gameObject);
+            //OnHit(collision.gameObject);
         }
     }
 
