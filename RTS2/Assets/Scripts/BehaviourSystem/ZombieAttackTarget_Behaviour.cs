@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ZombieFollowTarget_Behaviour : BehaviourBase
+public class ZombieAttackTarget_Behaviour : BehaviourBase
 {
-    GameObject objectToFollow;
-    float MinDistFrom = 1f;
-    public void InitBehaviour(GameObject objectToFollow, Unit me)
+    Unit objectToFollow;
+    float MinDistFrom = .25f;
+    ObjectHealth healthOfUnitAttacking;
+    public void InitBehaviour(Unit objectToFollow, Unit me)
     {
         InitBehaviour(me);
-        this.objectToFollow= objectToFollow; 
+        this.objectToFollow = objectToFollow;
+        healthOfUnitAttacking=objectToFollow.GetComponent<ObjectHealth>();
     }
 
 
@@ -20,14 +22,15 @@ public class ZombieFollowTarget_Behaviour : BehaviourBase
 
     public override bool CanPerformBehaviour()
     {
-        return DistToTarget() > MinDistFrom ;
+        return true;
     }
 
     public override bool IsBehaviourComplete()
     {
-        return false;// DistToTarget()<= MinDistFrom ;
+        return healthOfUnitAttacking.CurrentHealth <= 0;
     }
 
+   
 
     Vector3 DirectionToTarget()
     {
@@ -38,5 +41,7 @@ public class ZombieFollowTarget_Behaviour : BehaviourBase
     public override void PerformBehaviour()
     {
         unitToMove.MoveUnit(DirectionToTarget());
+        unitToMove.MyAttackController.AttemptAttack(objectToFollow);
     }
 }
+

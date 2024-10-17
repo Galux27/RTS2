@@ -37,8 +37,10 @@ public class PathFollower
             if (Vector3.Distance(curPos, GetCurrentNode()) < MinDistToPoint)
             {
                 currentIndex++;
-                if(currentIndex >= pathfindingNodes.Count) {
+              
+                if(currentIndex >= pathfindingNodes.Count-1) {
                     isPathDone = true;
+                    currentIndex = pathfindingNodes.Count - 1;
                     Cleanup();
                 }
             }

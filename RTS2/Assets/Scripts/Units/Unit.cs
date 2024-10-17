@@ -8,6 +8,8 @@ public class Unit : MonoBehaviour,Selectable
     public bool isSelected=false;
     public bool isSelectable = false;
     public UnitType MyType;
+    public UnitAttackController MyAttackController;
+    ObjectHealth MyHealth;
     protected void Awake()
     {
         UnitMoniter.Instance.AddUnit(this);
@@ -15,6 +17,8 @@ public class Unit : MonoBehaviour,Selectable
         {
             this.GetComponent<ItemHolder>().OnSetHolding += OnHoldItem;
         }
+        MyHealth=this.GetComponentInChildren<ObjectHealth>();
+        MyAttackController = this.GetComponent<UnitAttackController>();
     }
 
     void OnHoldItem(ItemInWorld holding)
@@ -69,6 +73,11 @@ public class Unit : MonoBehaviour,Selectable
         this.transform.position += (direction * Speed() * Time.deltaTime);
     }
 
+    public virtual void AttackUnit(float damage)
+    {
+        Debug.Log("UNit " + this.gameObject.name + " attacked for " + damage);
+        MyHealth.DecreaseHealth(damage);
+    }
  
 
     private void OnDestroy()

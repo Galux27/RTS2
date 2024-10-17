@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8821387789036715487}
   - component: {fileID: 6054107152344473633}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 566734449481886920}
   - component: {fileID: 330217438033007796}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -185,7 +185,8 @@ GameObject:
   - component: {fileID: 7652595014143650964}
   - component: {fileID: 6865716415776570820}
   - component: {fileID: 1213923859724149880}
-  m_Layer: 0
+  - component: {fileID: 2671481711700667218}
+  m_Layer: 7
   m_Name: Person
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -292,6 +293,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSelected: 0
   isSelectable: 1
+  MyType: 2
+  MyAttackController: {fileID: 0}
 --- !u!61 &6865716415776570820
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -364,6 +367,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &2671481711700667218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589492439018105632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5c3ab62f95eede4e87c8895a751a041, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttackDamage: 0
+  AttackRate: 0
+  AttackRange: 0
 --- !u!1 &3625423641063902942
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,7 +391,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7844866126724313151}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HandsSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -405,7 +423,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2910865643547650467}
   - component: {fileID: 1325635056635846851}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Torso
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -494,7 +512,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224787639885218441}
   - component: {fileID: 1766871266672776138}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -578,7 +596,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9135018032022957603}
   - component: {fileID: 8323228731574227215}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
