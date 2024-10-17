@@ -6,13 +6,20 @@ public class ObjectHealth : MonoBehaviour
 {
     public float CurrentHealth, MaxHealth;
     public Action<float> OnHealthIncrease, OnHealthDecrease;
+    HealthUI healthUI;
+
+    private void Awake()
+    {
+        healthUI = Instantiate(WorldspaceUIManager.Instance.WorldspaceHealthBar).GetComponent<HealthUI>();
+        healthUI.LinkToHealth(this);
+    }
 
     public void IncreaseHealth(float val)
     {
         CurrentHealth += val;
         CurrentHealth= Mathf.Min(CurrentHealth, MaxHealth);
         OnHealthIncrease?.Invoke(CurrentHealth);
-        
+        healthUI?.UpdateHealth();
     }
 
     public void DecreaseHealth(float val)
@@ -20,5 +27,6 @@ public class ObjectHealth : MonoBehaviour
         CurrentHealth -= val;
         CurrentHealth = Mathf.Max(0, CurrentHealth);
         OnHealthDecrease?.Invoke(CurrentHealth);
+        healthUI?.UpdateHealth();
     }
 }

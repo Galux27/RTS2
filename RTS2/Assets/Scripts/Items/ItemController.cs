@@ -46,6 +46,6 @@ public class ItemController : MonoBehaviour
 
     private void Start()
     {
-        FindObjectOfType<ItemHolder>().SetHolding(ItemInWorld.CreateItemInstanceInWorld(AllItems["Rifle"]));
+        FindObjectOfType<Human>().GetComponentInChildren<ItemHolder>().SetHolding(ItemInWorld.CreateItemInstanceInWorld(AllItems["Rifle"]));
     }
 }
