@@ -2,10 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class to help with converting mouse clicks to world positions for use when selecting objects and giving orders
+/// </summary>
 public class CursorSelect : MonoBehaviour
 {
 
-    Camera Camera;
+    static CursorSelect instance;
+    public static CursorSelect Instance
+    {
+        get
+        {
+            if(instance== null)
+            {
+                instance=FindObjectOfType<CursorSelect>();
+
+            }
+            return instance;
+        }
+    }
+    public Camera Camera;
     public LayerMask CursorLayermask;
     public LayerMask UnitLayermask;
     private void Awake()
@@ -13,123 +29,61 @@ public class CursorSelect : MonoBehaviour
         Camera = GetComponent<Camera>();
     }
 
+    Vector3 GetMousePosition()
+    {
+        if (GotPositionThisFrame)
+        {
+            return cachedPosition;
+        }
+        Ray r = Camera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorLayermask);
+        if (hit.collider != null)
+        {
+            GotPositionThisFrame = true;
+            cachedPosition = hit.point;
+            return cachedPosition;
+        }
+        else
+        {
+            return Vector3.zero;
+        }
+    }
+
 
     public Vector2 startPoint,endPoint;
-    bool mouseDown = false;
+    Vector3 cachedPosition;
+    bool mouseDown = false,GotPositionThisFrame=false;
     // Update is called once per frame
-    void Update()
+    public void UpdateSelectionPoints()
     {
+        GotPositionThisFrame = false;
         if(Input.GetMouseButtonDown(0))
         {
-            Ray r = Camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(r.origin,r.direction,999f,CursorLayermask);
-            if (hit.collider != null)
-            {
-               startPoint=hit.point;
-                mouseDown = true;
-            }
-            else
-            {
-                
-            }
+            startPoint = GetMousePosition() ;
+            mouseDown = true;
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            Ray r = Camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorLayermask);
-            if (hit.collider != null)
-            {
-                endPoint = hit.point;
-            }
-            else
-            {
-
-            }
-
+            endPoint = GetMousePosition();
             mouseDown = false;
         }
         if (Input.GetMouseButton(0) && mouseDown)
         {
-            Ray r = Camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorLayermask);
-            if (hit.collider != null)
+           Vector3 pos = GetMousePosition();
+            if (pos!=Vector3.zero)
             {
-                endPoint = hit.point;
+                endPoint = pos;
                 CursorUI.Instance.SetCorners(startPoint, endPoint);
             }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            OnSelection();
             mouseDown = false;
         }
         CursorUI.Instance.SetShouldRender(mouseDown);
-
-        if (SelectableManager.Instance.CurrentlySelected.Count > 0)
-        {
-            if (Input.GetMouseButtonUp(1))
-            {
-
-                bool DoneCommand = false;
-
-
-                Ray r = Camera.ScreenPointToRay(Input.mousePosition);
-
-                RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, UnitLayermask);
-                if (hit.collider != null)
-                {
-                    Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
-                    for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
-                    {
-                        Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
-                        BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                        HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
-                        attack.InitBehaviour(targetUnit, toPerfrom);
-                        br.SetBehaviour(attack);
-
-                    }
-
-                    DoneCommand = true;
-                }
-
-                if (!DoneCommand)
-                {
-
-
-                    hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorLayermask);
-                    if (hit.collider != null)
-                    {
-                        Vector3 targetPos = hit.point;
-                        targetPos.z = 0;
-
-                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
-                        {
-                            Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
-                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                            MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
-                            moveTo_Behaviour.InitBehaviour(toPerfrom, targetPos);
-                            br.SetBehaviour(moveTo_Behaviour);
-                        }
-                    }
-                }
-            }
-        }
-        
-
-
-    }
-
-
-    void OnSelection()
-    {
-        SelectableManager.Instance.ClearSelectables();
-        List<Unit> selected = UnitMoniter.Instance.GetUnitsWithinBounds(startPoint, endPoint);
-        Debug.Log("Selected unit count " + selected.Count);
-        for(int x=0;x<selected.Count; x++)
-        {
-            SelectableManager.Instance.AddSelectable(selected[x]);
-        }
+        CursorIcon.Instance.SetPosition(GetMousePosition());
+        CursorIcon.Instance.SetVisible(!mouseDown);
     }
 }

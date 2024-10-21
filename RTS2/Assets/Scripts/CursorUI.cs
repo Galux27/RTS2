@@ -17,13 +17,9 @@ public class CursorUI : MonoBehaviour
         }
     }
 
-
-    SpriteRenderer spriteRenderer;
+    public SpriteRenderer RectSpriteRenderer;
     bool shouldRender = false;
-    private void Awake()
-    {
-        spriteRenderer = this.GetComponent<SpriteRenderer>();
-    }
+   
     public void SetShouldRender(bool shouldRender)
     {
         this.shouldRender = shouldRender;
@@ -33,11 +29,11 @@ public class CursorUI : MonoBehaviour
     {
         if (shouldRender)
         {
-            spriteRenderer.color= new Color(1,1,1,.2f); 
+            RectSpriteRenderer.color= new Color(1,1,1,.2f); 
         }
         else
         {
-            spriteRenderer.color = Color.clear;
+            RectSpriteRenderer.color = Color.clear;
             this.transform.localScale = Vector3.zero;
         }
     }
