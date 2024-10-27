@@ -29,7 +29,11 @@ public class CursorSelect : MonoBehaviour
         Camera = GetComponent<Camera>();
     }
 
-    Vector3 GetMousePosition()
+    /// <summary>
+    /// Gets mouse position in world
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetMousePosition()
     {
         if (GotPositionThisFrame)
         {

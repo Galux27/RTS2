@@ -50,6 +50,17 @@ public class WorldController : MonoBehaviour
         WallManager.RenderWalls(BuildingTilemap, WallTest);
         Pathfinding.CreateNodesFromWorld(WorldTiles);
     }
+
+    public Vector2Int ConvertWorldToTileCoords(Vector3 pos)
+    {
+        return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+    }
+
+
+    public void SetTraversible(int x,int y,bool traversable)
+    {
+        WorldTiles[x, y].traversable = traversable;
+    }
 }
 
 public class WorldTile 

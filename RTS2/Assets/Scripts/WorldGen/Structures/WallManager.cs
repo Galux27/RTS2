@@ -21,9 +21,9 @@ public class WallManager
         }
     }
 
-    public void SetWall(int x,int y)
+    public void SetWall(int x, int y, bool value = true)
     {
-        WallsInWorld[x, y].SetHasWall(true);
+        WallsInWorld[x, y].SetHasWall(value) ;
 
     }
 
@@ -53,6 +53,7 @@ public class WallManager
                 if (WallsInWorld[x, y].HasWall)
                 {
                     WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+                    WorldController.Instance.SetTraversible(x, y, false);
                 }
             }
         }
@@ -67,5 +68,77 @@ public class WallManager
         }
     }
 
+    public void RemoveSingleWall(int x, int y, Tilemap toDrawOn, WallTile toUse)
+    {
+        SetWall(x, y,false);
+        WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+
+        toDrawOn.SetTile(new Vector3Int(x, y, 0), null);
+
+        for (int x1 = x - 1; x1 < x + 1; x1++)
+        {
+            for (int y1 = y - 1; y1 < y + 1; y1++)
+            {
+                WallHelpers.CalculateTileType(ref WallsInWorld[x1, y1], this, toUse);
+
+            }
+        }
+
+        for (int x1 = x - 1; x1 < x + 1; x1++)
+        {
+            for (int y1 = y - 1; y1 < y + 1; y1++)
+            {
+                toDrawOn.SetTile(new Vector3Int(x1, y1, 0), WallsInWorld[x1, y1].ToDraw);
+
+            }
+        }
+    }
+
+    bool CoordsValid(int x,int y)
+    {
+        return x>0&&y>0 &&x<width&&y<height;
+    }
+
+    public void AddSingleWall(int x,int y,Tilemap toDrawOn,WallTile toUse)
+    {
+        SetWall(x, y);
+        WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+
+        toDrawOn.SetTile(new Vector3Int(x, y, 0), WallsInWorld[x, y].ToDraw);
+
+        for (int x1 = x - 1; x1 < x + 1; x1++)
+        {
+            for (int y1 = y - 1; y1 < y + 1; y1++)
+            {
+                if (!CoordsValid(x1, y1))
+                {
+                    continue;
+                }
+
+                if (WallsInWorld[x1, y1].HasWall)
+                {
+
+                    WallHelpers.CalculateTileType(ref WallsInWorld[x1, y1], this, toUse);
+                }
+            }
+        }
+
+        for (int x1 = x - 1; x1 < x + 1; x1++)
+        {
+            for (int y1 = y - 1; y1 < y + 1; y1++)
+            {
+                if (!CoordsValid(x1, y1))
+                {
+                    continue;
+                }
+
+                if (WallsInWorld[x1, y1].HasWall)
+                {
+
+                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), WallsInWorld[x1, y1].ToDraw);
+                }
+            }
+        }
+    }
 
 }
