@@ -14,5 +14,11 @@ public class SelectionMode
     }
 
 
+    public virtual void OnHover()
+    {
+
+    }
+
+
 
 }

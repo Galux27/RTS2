@@ -70,5 +70,29 @@ public class Units_SelectionMode : SelectionMode
         }
     }
 
-   
+
+
+    public override void OnHover()
+    {
+        Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
+
+        RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.UnitLayermask);
+        bool SetIcon = false;
+        if (hit.collider != null)
+        {
+            Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
+            if(targetUnit != null)
+            {
+                if (targetUnit.MyType == UnitType.Zombie)
+                {
+                    //attack icon
+                    CursorIcon.Instance.SetAttackIcon();
+                    return;
+                }
+            }
+        }
+        CursorIcon.Instance.SetMoveIcon();
+
+    }
+
 }
