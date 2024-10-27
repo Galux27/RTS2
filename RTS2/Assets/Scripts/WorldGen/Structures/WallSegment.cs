@@ -28,6 +28,12 @@ public class WallSegment
     public Tile ToDraw;
     public void SetTile(Tile tile)
     {
+        if (Input.GetKey(KeyCode.LeftControl) && ToDraw!=tile)
+        {
+            Debug.Log("Set tile " + x + "," + y + " to " + tile.sprite.name.ToString());
+        }
+
+
         ToDraw = tile;
         Drawn = true;
     }

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Walls
   m_EditorClassIdentifier: 
   NoNeighbours: {fileID: 11400000, guid: 51529dcb6cdc86d4289b4fb509ac5c1b, type: 2}
-  Left: {fileID: 11400000, guid: 8a7aa28a714320f40aa82907a4d4341a, type: 2}
-  Right: {fileID: 11400000, guid: afbdbc26e3fbb704a92d23370acda643, type: 2}
-  Above: {fileID: 11400000, guid: 30f3d1d70247b914e9a0993392107090, type: 2}
-  Below: {fileID: 11400000, guid: 9f33af7d860dde7499b2023b58df227a, type: 2}
+  Left: {fileID: 11400000, guid: afbdbc26e3fbb704a92d23370acda643, type: 2}
+  Right: {fileID: 11400000, guid: 8a7aa28a714320f40aa82907a4d4341a, type: 2}
+  Above: {fileID: 11400000, guid: 9f33af7d860dde7499b2023b58df227a, type: 2}
+  Below: {fileID: 11400000, guid: 30f3d1d70247b914e9a0993392107090, type: 2}
   LeftBelow: {fileID: 11400000, guid: 7ff7ee69adaf61245b0cb45e31a62096, type: 2}
   LeftAbove: {fileID: 11400000, guid: 428cdb34dc0f7154bb7a25168f9fd15b, type: 2}
   RightBelow: {fileID: 11400000, guid: d4ad0832587de244aa2dc683cbb305e7, type: 2}

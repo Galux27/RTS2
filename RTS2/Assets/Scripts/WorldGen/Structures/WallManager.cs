@@ -114,9 +114,8 @@ public class WallManager
     public void AddSingleWall(int x,int y,Tilemap toDrawOn,WallTile toUse)
     {
         SetWall(x, y);
-        WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+       // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
 
-        toDrawOn.SetTile(new Vector3Int(x, y, 0), WallsInWorld[x, y].ToDraw);
 
         for (int x1 = 0; x1 < width; x1++)
         {
