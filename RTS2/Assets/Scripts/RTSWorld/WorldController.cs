@@ -53,7 +53,7 @@ public class WorldController : MonoBehaviour
 
     public Vector2Int ConvertWorldToTileCoords(Vector3 pos)
     {
-        return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+        return new Vector2Int(Mathf.RoundToInt(pos.x-.5f), Mathf.RoundToInt(pos.y-.5f));
     }
 
 

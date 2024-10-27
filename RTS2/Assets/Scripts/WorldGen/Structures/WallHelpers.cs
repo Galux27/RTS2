@@ -39,7 +39,7 @@ public static class WallHelpers
                 up = true;
             }
         }
-
+        
 
 
         if (up && down && left && right)
