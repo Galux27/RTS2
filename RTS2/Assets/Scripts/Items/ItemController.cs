@@ -40,12 +40,4 @@ public class ItemController : MonoBehaviour
     }
 
     public List<ItemInWorld> AllItemsInWorld = new List<ItemInWorld>();
-
-
-
-
-    private void Start()
-    {
-        FindObjectOfType<Human>().GetComponentInChildren<ItemHolder>().SetHolding(ItemInWorld.CreateItemInstanceInWorld(AllItems["Rifle"]));
-    }
 }
