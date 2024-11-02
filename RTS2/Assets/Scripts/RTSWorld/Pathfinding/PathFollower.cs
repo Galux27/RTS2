@@ -23,6 +23,7 @@ public class PathFollower
     Vector3 GetCurrentNode()
     {
         return pathfindingNodes[currentIndex].worldPos;
+       
     }
 
     public Vector3 GetDirToNode(Vector3 curPos)

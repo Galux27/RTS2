@@ -20,7 +20,7 @@ public class CursorIcon : MonoBehaviour
 
     public SpriteRenderer Icon;
 
-    public Sprite Move, Attack, Build;
+    public Sprite Move, Attack, Build,WallPlace;
 
 
     public void SetMoveIcon()
@@ -37,6 +37,17 @@ public class CursorIcon : MonoBehaviour
     {
         Icon.sprite= Build;
     }
+
+    public void SetWallPlaceIcon()
+    {
+        Icon.sprite= WallPlace;
+    }
+
+    public void SetCustomIcon(Sprite icon)
+    {
+        Icon.sprite= icon;
+    }
+
 
     public void SetPosition(Vector3 pos)
     {

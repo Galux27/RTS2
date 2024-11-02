@@ -6,7 +6,14 @@ public class ConstructSelectionMode : SelectionMode
 {
     public override void OnHover()
     {
-
+       
+        CursorIcon.Instance.SetWallPlaceIcon();
+        Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
+        Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+        Sprite icon = WallHelpers.GetSpriteForWallType(WorldController.Instance.WallManager.WallsInWorld[coords.x, coords.y], WorldController.Instance.WallManager,
+            WorldController.Instance.WallTest);
+        CursorIcon.Instance.SetPosition(new Vector3(coords.x+.5f,coords.y+.5f,0f));
+        CursorIcon.Instance.SetCustomIcon(icon);
     }
 
     public override void OnLeftMouseUp()

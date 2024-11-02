@@ -5,7 +5,6 @@ using UnityEngine;
 public class ZombieAttackTarget_Behaviour : BehaviourBase
 {
     Unit objectToFollow;
-    float MinDistFrom = .25f;
     ObjectHealth healthOfUnitAttacking;
     public void InitBehaviour(Unit objectToFollow, Unit me)
     {
@@ -22,21 +21,30 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
 
     public override bool IsBehaviourComplete()
     {
-        return healthOfUnitAttacking.CurrentHealth <= 0;
+        return objectToFollow==null|| healthOfUnitAttacking.CurrentHealth <= 0;
     }
 
    
 
     Vector3 DirectionToTarget()
     {
-
-        return (objectToFollow.transform.position - unitToMove.transform.position).normalized;
+        if (objectToFollow != null)
+        {
+            return (objectToFollow.transform.position - unitToMove.transform.position).normalized;
+        }
+        else
+        {
+            return Vector3.zero;
+        }
     }
 
     public override void PerformBehaviour()
     {
-        unitToMove.MoveUnit(DirectionToTarget());
-        unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+        if (objectToFollow != null)
+        {
+            unitToMove.MoveUnit(DirectionToTarget());
+            unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+        }
     }
 }
 

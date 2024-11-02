@@ -27,8 +27,14 @@ public class MoveTo_Behaviour : BehaviourBase
 
     Vector3 DirectionToTarget()
     {
-
-        return follower.GetDirToNode(unitToMove.transform.position);
+        if (follower.HasPath())
+        {
+            return follower.GetDirToNode(unitToMove.transform.position);
+        }
+        else
+        {
+            return Vector3.zero;
+        }
     }
 
     public override void PerformBehaviour()
@@ -38,7 +44,5 @@ public class MoveTo_Behaviour : BehaviourBase
             follower.OnUpdate(unitToMove.transform.position);
             unitToMove.MoveUnit(DirectionToTarget());
         }
-
-       
     }
 }

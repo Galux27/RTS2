@@ -43,11 +43,12 @@ public class Unit : MonoBehaviour,Selectable
     {
         OnObjectDeselected();
         UnitMoniter.Instance.RemoveUnit(this);
+        Destroy(this.gameObject);
     }
 
     public void OnObjectDeselected()
     {
-        this.GetComponentInChildren<SelectedOutline>().OnDeselect();
+        this.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
     }
 
     public virtual float Speed()

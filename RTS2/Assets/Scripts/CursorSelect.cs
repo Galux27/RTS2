@@ -57,6 +57,7 @@ public class CursorSelect : MonoBehaviour
     public Vector2 startPoint,endPoint;
     Vector3 cachedPosition;
     bool mouseDown = false,GotPositionThisFrame=false;
+    public bool UpdateCursorPos = true;
     // Update is called once per frame
     public void UpdateSelectionPoints()
     {
@@ -87,7 +88,10 @@ public class CursorSelect : MonoBehaviour
             mouseDown = false;
         }
         CursorUI.Instance.SetShouldRender(mouseDown);
-        CursorIcon.Instance.SetPosition(GetMousePosition());
-        CursorIcon.Instance.SetVisible(!mouseDown);
+        if (UpdateCursorPos)
+        {
+            CursorIcon.Instance.SetPosition(GetMousePosition());
+        }
+            CursorIcon.Instance.SetVisible(!mouseDown);
     }
 }

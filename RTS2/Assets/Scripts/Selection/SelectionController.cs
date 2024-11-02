@@ -60,6 +60,12 @@ public class SelectionController : MonoBehaviour
     private void Update()
     {
         CursorSelect.Instance.UpdateSelectionPoints();
+
+        if (CurrentSelectionModeObj == null)
+        {
+            return;
+        }
+
         CurrentSelectionModeObj.OnHover();
 
         if (Input.GetMouseButtonUp(0))
