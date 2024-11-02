@@ -42,13 +42,13 @@ public class WorldController : MonoBehaviour
                 WorldTiles[x, y] = new WorldTile(x, y);
             }
         }
+        Pathfinding.CreateNodesFromWorld(WorldTiles);
 
         WallManager = new WallManager(WorldWidth, WorldHeight);
         WallManager.DrawSomeRandomWalls();
 
         WorldRenderer.Instance.RenderWorld(WorldTiles);
         WallManager.RenderWalls(BuildingTilemap, WallTest);
-        Pathfinding.CreateNodesFromWorld(WorldTiles);
     }
 
     public Vector2Int ConvertWorldToTileCoords(Vector3 pos)
@@ -65,6 +65,8 @@ public class WorldController : MonoBehaviour
     public void SetTraversible(int x,int y,bool traversable)
     {
         WorldTiles[x, y].traversable = traversable;
+        Pathfinding.UpdateNodeData(x, y, traversable);
+      
     }
 }
 

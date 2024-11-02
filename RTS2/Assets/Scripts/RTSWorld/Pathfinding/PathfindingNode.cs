@@ -29,6 +29,11 @@ public class PathfindingNode
         neighbours = Pathfinding.GetNeighbours(this);
     }
 
+    public void UpdatePassable(bool val)
+    {
+        Debug.Log("Updated passible for node " + x + "," + y + " to " + val);
+        IsPassable = val;
+    }
 
     public int FCost
     {

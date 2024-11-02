@@ -8,6 +8,7 @@ public static class Pathfinding
     static int worldWidth, worldHeight;
     public static void CreateNodesFromWorld(WorldTile[,] world)
     {
+        Debug.Log("Creating nodes");
         worldWidth = world.GetLength(0);
         worldHeight = world.GetLength(1);
         pathfindingNodes = new PathfindingNode[worldWidth, worldHeight];
@@ -28,6 +29,13 @@ public static class Pathfinding
             }
         }
     }
+
+    public static void UpdateNodeData(int x,int y,bool traversable)
+    {
+        pathfindingNodes[x, y].UpdatePassable(traversable);
+    }
+
+
 
     public static List<PathfindingNode> GetNeighbours(PathfindingNode node)
     {
@@ -109,7 +117,7 @@ public static class Pathfinding
             //adds neighbor nodes to openSet
             foreach (PathfindingNode neighbour in node.neighbours)
             {
-                if (neighbour.obstacle || closedSet.Contains(neighbour))
+                if (neighbour.IsPassable==false || closedSet.Contains(neighbour))
                 {
                     continue;
                 }

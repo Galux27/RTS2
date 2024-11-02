@@ -63,6 +63,6 @@ public class BehaviourRunner : MonoBehaviour
     void OnBehaviourComplete()
     {
         CurrentBehaviour.OnComplete?.Invoke();
-        CurrentBehaviour = null;
+       
     }
 }
