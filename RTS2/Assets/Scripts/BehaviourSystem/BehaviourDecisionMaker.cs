@@ -5,9 +5,15 @@ using UnityEngine;
 public class BehaviourDecisionMaker
 {
     BehaviourBase b;
+
     public BehaviourBase currentBehaviour { get { return b; } set { Debug.Log("Setting behaviour to " + (value==null)); b = value; } }
     bool behaviourOverridden = false;
     public virtual void PerformBehaivourUpdate(Unit performingBehaviour)
+    {
+
+    }
+
+    public virtual void OnUnitAttacked(Unit attackingUnit)
     {
 
     }

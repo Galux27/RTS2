@@ -6,17 +6,23 @@ public class Projectile : MonoBehaviour
 {
     Rigidbody2D rb;
     UnitType ignoreHits;
+    Unit creator = null;
     private void Awake()
     {
-        rb= GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
     float lifetime = 20f;
     float projectileDamage = 5f;
-    public void SetMomentum(Vector3 direction,float force,Unit firing,float damage)
+    public void SetMomentum(Vector3 direction, float force, Unit firing, float damage)
     {
         ignoreHits = firing.MyType;
-        rb.AddForce(direction*force, ForceMode2D.Impulse);
+        rb.AddForce(direction * force, ForceMode2D.Impulse);
         projectileDamage = damage;
+    }
+
+    public void SetCreator(Unit createdMe)
+    {
+        creator=createdMe;
     }
     private void Update()
     {
@@ -47,7 +53,7 @@ public class Projectile : MonoBehaviour
     {
         if (hit.GetComponent<Unit>())
         {
-            hit.GetComponent<Unit>().AttackUnit(projectileDamage);
+            hit.GetComponent<Unit>().AttackUnit(projectileDamage, creator);
         }
         Destroy(this.gameObject);
     }

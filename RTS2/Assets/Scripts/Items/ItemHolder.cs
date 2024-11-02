@@ -17,4 +17,15 @@ public class ItemHolder : MonoBehaviour
         CurrentlyHolding.transform.localScale = Vector3.one;
         OnSetHolding?.Invoke(toHold);
     }
+
+
+    public bool IsHoldingItem()
+    {
+        return CurrentlyHolding != null;
+    }
+
+    public bool IsHoldingWeapon()
+    {
+        return IsHoldingItem() && CurrentlyHolding.MyItem.Tags.Contains(ItemTags.Weapon);
+    }
 }

@@ -83,12 +83,13 @@ public class UnitAttackController : MonoBehaviour
     {
         if (HasRanged)
         {
-            rangedTimer -= Mathf.Max(Time.deltaTime, 1f / 60f);
-            if (CanRangedAttack(attacking.gameObject))
+            rangedTimer -= Time.deltaTime;
+            if (CanRangedAttack(attacking.gameObject) && rangedTimer<=0)
             {
                 GameObject g = Instantiate(RangedProjectile, this.transform.position, Quaternion.identity);
                 Projectile p = g.GetComponent<Projectile>();
                 p.SetMomentum(DirectionToTarget(attacking.gameObject), 20f, this.GetComponent<Unit>(),5f);
+                p.SetCreator(this.GetComponent<Unit>());
                 rangedTimer = RangedFireRate;
             }
         }
@@ -102,7 +103,7 @@ public class UnitAttackController : MonoBehaviour
         attackTimer -= Mathf.Max( Time.deltaTime,1f/60f);
         if (attackTimer <= 0)
         {
-            attacking.AttackUnit(AttackDamage);
+            attacking.AttackUnit(AttackDamage,this.GetComponent<Unit>());
             attackTimer = AttackRate;
         }
     }

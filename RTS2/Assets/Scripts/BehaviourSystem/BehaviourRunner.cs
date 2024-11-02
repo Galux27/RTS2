@@ -6,7 +6,11 @@ public class BehaviourRunner : MonoBehaviour
 {
     Unit UnitPerforming;
     BehaviourDecisionMaker myDecisionMaker;
-    public void SetDecisionMaker(BehaviourDecisionMaker decisionMaker) {  myDecisionMaker = decisionMaker; }
+    public void SetDecisionMaker(BehaviourDecisionMaker decisionMaker) 
+    {  
+        myDecisionMaker = decisionMaker; 
+    
+    }
 
     public void SetBehaviour(BehaviourBase toPerform)
     {
@@ -16,6 +20,7 @@ public class BehaviourRunner : MonoBehaviour
     public void SetUnitPerforming(Unit toPerform)
     {
         UnitPerforming = toPerform;
+        toPerform.OnAttacked += myDecisionMaker.OnUnitAttacked;
     }
 
 
@@ -58,6 +63,6 @@ public class BehaviourRunner : MonoBehaviour
     void OnBehaviourComplete()
     {
         CurrentBehaviour.OnComplete?.Invoke();
-       // CurrentBehaviour = null;
+        CurrentBehaviour = null;
     }
 }

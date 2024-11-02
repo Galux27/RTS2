@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,30 @@ public class Unit : MonoBehaviour,Selectable
     public bool isSelectable = false;
     public UnitType MyType;
     public UnitAttackController MyAttackController;
+    public Action<Unit> OnAttacked;
     ObjectHealth MyHealth;
+
+
+
+    BehaviourRunner behaviourRunner;
+
+    public BehaviourRunner BehaviourRunner {
+        get
+        {
+            return behaviourRunner;
+        }
+    }
+
+
+    ItemHolder itemHolder;
+    public ItemHolder ItemHolder
+    {
+        get
+        {
+            return itemHolder;
+        }
+    }
+
     protected void Awake()
     {
         UnitMoniter.Instance.AddUnit(this);
@@ -20,6 +44,8 @@ public class Unit : MonoBehaviour,Selectable
         MyHealth=this.GetComponentInChildren<ObjectHealth>();
         MyAttackController = this.GetComponent<UnitAttackController>();
         MyHealth.OnDeath += OnDeath;
+        behaviourRunner= this.GetComponent<BehaviourRunner>();
+        itemHolder=this.GetComponent<ItemHolder>(); 
     }
 
     void OnHoldItem(ItemInWorld holding)
@@ -82,10 +108,10 @@ public class Unit : MonoBehaviour,Selectable
         this.transform.position += (direction * Speed() * Time.deltaTime);
     }
 
-    public virtual void AttackUnit(float damage)
+    public virtual void AttackUnit(float damage,Unit isAttackingMe=null)
     {
-        Debug.Log("UNit " + this.gameObject.name + " attacked for " + damage);
         MyHealth.DecreaseHealth(damage);
+        OnAttacked?.Invoke(isAttackingMe);
     }
  
 
