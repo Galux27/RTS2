@@ -26,6 +26,7 @@ public class WorldChunkManager : MonoBehaviour
     {
         InitWorldChunks();
     }
+    int Width, Height;
     public void InitWorldChunks()
     {
         Chunks=new WorldChunk[WorldController.Instance.WorldWidth/ChunkSize, WorldController.Instance.WorldHeight / ChunkSize];
@@ -37,7 +38,8 @@ public class WorldChunkManager : MonoBehaviour
                 Chunks[x,y] = new WorldChunk();
             }
         }
-
+        Height = Chunks.GetLength(1);
+        Width = Chunks.GetLength(0);
     }
 
 
@@ -56,6 +58,33 @@ public class WorldChunkManager : MonoBehaviour
     {
         DebugDrawChunks();
     }
+
+
+    bool CoordsValid(int x,int y)
+    {
+        return x>=0&&y>=0&&x<Width&&y<Height;
+    }
+
+    public List<WorldChunk> GetChunksInRadius(float radius,Vector3 searchCenter)
+    {
+        List<WorldChunk> retVal = new List<WorldChunk>();
+        GetChunkCoordsFromWorldPos(searchCenter);
+        int chunkRadius = Mathf.Max(Mathf.RoundToInt(radius/ChunkSize), 1);
+
+        for (int x = getCoordsCache.x-chunkRadius; x < getCoordsCache.x + chunkRadius; x++)
+        {
+            for (int y= getCoordsCache.y - chunkRadius;y < getCoordsCache.y + chunkRadius; y++)
+            {
+                if (CoordsValid(x, y))
+                {
+                    retVal.Add(Chunks[x,y]);
+                }
+            }
+        }
+
+        return retVal;
+    }
+
 
     void DebugDrawChunks()
     {

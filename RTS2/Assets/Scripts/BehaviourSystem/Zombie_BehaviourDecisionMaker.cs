@@ -13,26 +13,13 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
         {
             UnitThatAttacked = attackingUnit;
         }
-        Debug.Log("Zombie attacked by " + attackingUnit.gameObject.name + "|" + attackingUnit.gameObject.transform.position);
     }
 
 
     void PerformPassiveZombieBehaviour(Unit toCheck)
     {
-        Unit UnitNearMe = null;
-        float distToNear = 9999999f;
-        for (int x = 0; x < UnitMoniter.Instance.AllUnits.Count; x++)
-        {
-            if (UnitMoniter.Instance.AllUnits[x].MyType != UnitType.Zombie)
-            {
-                float dist = Vector3.Distance(toCheck.transform.position, UnitMoniter.Instance.AllUnits[x].transform.position);
-                if (dist < distToNear && dist < 5f)
-                {
-                    distToNear = dist;
-                    UnitNearMe = UnitMoniter.Instance.AllUnits[x];
-                }
-            }
-        }
+        Unit UnitNearMe = BehaviourUtilities.GetClosestTargetThatsNotType(toCheck, 5f, UnitType.Zombie);
+       
         if (UnitNearMe != null)
         {
             if (currentBehaviour == null || currentBehaviour.GetType() != typeof(ZombieAttackTarget_Behaviour))
