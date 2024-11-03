@@ -12,7 +12,14 @@ public class Unit : MonoBehaviour,Selectable
     public UnitAttackController MyAttackController;
     public Action<Unit> OnAttacked;
     ObjectHealth MyHealth;
+    public Vector2Int MyCurrentChunk;
 
+
+    public void UpdateChunk(Vector2Int newChunk)
+    {
+        Debug.Log("Chunk: updating chunk from " + MyCurrentChunk + " to " + newChunk);
+        MyCurrentChunk = newChunk;
+    }
 
 
     BehaviourRunner behaviourRunner;
@@ -36,7 +43,6 @@ public class Unit : MonoBehaviour,Selectable
 
     protected void Awake()
     {
-        UnitMoniter.Instance.AddUnit(this);
         if (this.GetComponent<ItemHolder>() && this.GetComponent<BodyController>())
         {
             this.GetComponent<ItemHolder>().OnSetHolding += OnHoldItem;
@@ -46,6 +52,13 @@ public class Unit : MonoBehaviour,Selectable
         MyHealth.OnDeath += OnDeath;
         behaviourRunner= this.GetComponent<BehaviourRunner>();
         itemHolder=this.GetComponent<ItemHolder>(); 
+    }
+
+
+    void Start()
+    {
+        UnitMoniter.Instance.AddUnit(this);
+        WorldChunkManager.Instance.OnUnitCreated(this);
     }
 
     void OnHoldItem(ItemInWorld holding)
@@ -69,6 +82,7 @@ public class Unit : MonoBehaviour,Selectable
     {
         OnObjectDeselected();
         UnitMoniter.Instance.RemoveUnit(this);
+        WorldChunkManager.Instance.OnUnitDeath(this);
         Destroy(this.gameObject);
     }
 
@@ -106,6 +120,7 @@ public class Unit : MonoBehaviour,Selectable
     public void MoveUnit(Vector3 direction)
     {
         this.transform.position += (direction * Speed() * Time.deltaTime);
+        WorldChunkManager.Instance.OnUnitMove(this);
     }
 
     public virtual void AttackUnit(float damage,Unit isAttackingMe=null)

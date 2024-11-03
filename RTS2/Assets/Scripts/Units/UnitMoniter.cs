@@ -23,6 +23,7 @@ public class UnitMoniter : MonoBehaviour
     public void AddUnit(Unit toAdd)
     {
         AllUnits.Add(toAdd);
+
     }
 
     public void RemoveUnit(Unit toRemove) 
