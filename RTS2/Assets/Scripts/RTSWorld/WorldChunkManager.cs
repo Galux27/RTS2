@@ -48,8 +48,8 @@ public class WorldChunkManager : MonoBehaviour
     Vector2Int getCoordsCache=new Vector2Int();
     public Vector2Int GetChunkCoordsFromWorldPos(Vector3 worldPos)
     {
-        getCoordsCache.x = Mathf.RoundToInt(worldPos.x/ChunkSize);
-        getCoordsCache.y = Mathf.RoundToInt(worldPos.y / ChunkSize);
+        getCoordsCache.x = Mathf.Min(Mathf.RoundToInt(worldPos.x/ChunkSize), Chunks.GetLength(0) - 1);
+        getCoordsCache.y = Mathf.Min( Mathf.RoundToInt(worldPos.y / ChunkSize),Chunks.GetLength(1)-1);
 
         return getCoordsCache;
     }
@@ -60,7 +60,7 @@ public class WorldChunkManager : MonoBehaviour
     }
 
 
-    bool CoordsValid(int x,int y)
+   public bool CoordsValid(int x,int y)
     {
         return x>=0&&y>=0&&x<Width&&y<Height;
     }

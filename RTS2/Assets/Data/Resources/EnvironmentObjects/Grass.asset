@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fe5742114abe4f448387c979245c094, type: 3}
+  m_Name: Grass
+  m_EditorClassIdentifier: 
+  Name: Grass
+  Sprite: {fileID: 2005976254, guid: 22d4580ff3cd39b44828fc72fc09c1dd, type: 3}
+  BlocksTile: 0
+  Width: 1
+  Height: 1

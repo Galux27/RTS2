@@ -29,7 +29,7 @@ public class Projectile : MonoBehaviour
         lifetime -= Time.deltaTime;
         if(lifetime < 0)
         {
-            Destroy(this.gameObject);
+            DestroyProjectile();
         }
     }
 
@@ -55,6 +55,13 @@ public class Projectile : MonoBehaviour
         {
             hit.GetComponent<Unit>().AttackUnit(projectileDamage, creator);
         }
-        Destroy(this.gameObject);
+        DestroyProjectile();
+    }
+
+
+    void DestroyProjectile()
+    {
+        rb.velocity = Vector2.zero;
+        GameObjectPoolManager.Instance.ReturnObjectToPool(this.gameObject, "Projectile");
     }
 }

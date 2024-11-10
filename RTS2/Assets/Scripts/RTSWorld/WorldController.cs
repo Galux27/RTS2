@@ -49,6 +49,8 @@ public class WorldController : MonoBehaviour
 
         WorldRenderer.Instance.RenderWorld(WorldTiles);
         WallManager.RenderWalls(BuildingTilemap, WallTest);
+
+        EnvironmentObjectManager.Instance.GenerateEnvironmentObjects();
     }
 
     public Vector2Int ConvertWorldToTileCoords(Vector3 pos)

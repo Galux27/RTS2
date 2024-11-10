@@ -8,7 +8,7 @@ using UnityEngine;
 public class WorldChunk
 {
     public List<Unit> UnitsInChunk=new List<Unit>();
-
+    public List<EnvironmentObjectInstance> EnvironmentObjectsInChunk = new List<EnvironmentObjectInstance>();
     public Color DebugColor;
 
     public WorldChunk()
@@ -24,5 +24,36 @@ public class WorldChunk
     public void RemoveUnitFromChunk(Unit unit)
     {
         UnitsInChunk.Remove(unit);
+    }
+
+    public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
+    {
+        EnvironmentObjectsInChunk.Add(environmentObject);
+    }
+
+    public bool ShouldDrawEnvironmentObjects()
+    {
+        return EnvironmentObjectsInChunk.Count > 0;
+    }
+
+    public bool DrawnEnvironmentObjects()
+    {
+        return  EnvironmentObjectsInChunk[0].Drawn;
+    }
+
+    public void RenderEnvironmentObjects()
+    {
+        for(int x=0;x<EnvironmentObjectsInChunk.Count;x++)
+        {
+            EnvironmentObjectsInChunk[x].RenderInstance();
+        }
+    }
+
+    public void CleanupEnvironmentObjects()
+    {
+        for (int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
+        {
+            EnvironmentObjectsInChunk[x].CleanupInstance();
+        }
     }
 }

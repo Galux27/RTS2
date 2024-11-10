@@ -86,7 +86,9 @@ public class UnitAttackController : MonoBehaviour
             rangedTimer -= Time.deltaTime;
             if (CanRangedAttack(attacking.gameObject) && rangedTimer<=0)
             {
-                GameObject g = Instantiate(RangedProjectile, this.transform.position, Quaternion.identity);
+                GameObject g = GameObjectPoolManager.Instance.GetObjectFromPool("Projectile");//Instantiate(RangedProjectile, this.transform.position, Quaternion.identity);
+                g.transform.position = this.transform.position;
+                g.transform.rotation = Quaternion.identity;
                 Projectile p = g.GetComponent<Projectile>();
                 p.SetMomentum(DirectionToTarget(attacking.gameObject), 20f, this.GetComponent<Unit>(),5f);
                 p.SetCreator(this.GetComponent<Unit>());
