@@ -186,6 +186,7 @@ GameObject:
   - component: {fileID: 6865716415776570820}
   - component: {fileID: 1213923859724149880}
   - component: {fileID: 2671481711700667218}
+  - component: {fileID: 5187675372641942538}
   m_Layer: 7
   m_Name: Person
   m_TagString: Untagged
@@ -295,6 +296,7 @@ MonoBehaviour:
   isSelectable: 1
   MyType: 2
   MyAttackController: {fileID: 0}
+  MyCurrentChunk: {x: 0, y: 0}
 --- !u!61 &6865716415776570820
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -382,6 +384,24 @@ MonoBehaviour:
   AttackDamage: 0
   AttackRate: 0
   AttackRange: 0
+  MinRange: 0
+  MaxRange: 0
+  RangedFireRate: 0
+  RangedDamage: 0
+--- !u!114 &5187675372641942538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589492439018105632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be668d16b7a3274f81db7d5a21646a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Sight: 35
+  Hearing: 35
 --- !u!1 &3625423641063902942
 GameObject:
   m_ObjectHideFlags: 0

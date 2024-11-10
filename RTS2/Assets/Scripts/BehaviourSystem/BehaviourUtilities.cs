@@ -7,7 +7,7 @@ public static class BehaviourUtilities
     static List<Unit> GetUnitCache=new List<Unit>();
     public static List<Unit> GetTargetsThatAreNotType(Unit searching,float range,UnitType toFilter)
     {
-
+        GetUnitCache.Clear();
        List<WorldChunk> toCheck = WorldChunkManager.Instance.GetChunksInRadius(range, searching.transform.position);
         List<Unit> result = new List<Unit>();
         for(int x = 0; x < toCheck.Count; x++)

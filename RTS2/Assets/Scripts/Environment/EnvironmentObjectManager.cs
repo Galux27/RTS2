@@ -58,7 +58,6 @@ public class EnvironmentObjectManager : MonoBehaviour
                 posCache.y = y;
                 chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(posCache);
                 objectToCreate = EnvironmentObjectKeys[Random.Range(0, EnvironmentObjectKeys.Count-1)];
-                Debug.Log("Chunk Coords " + chunk.ToString() + "|" + WorldChunkManager.Instance.Chunks.GetLength(0));
                 WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(new EnvironmentObjectInstance(x, y,objectToCreate ));
                 WorldController.Instance.SetTraversible(x, y, !AllObjects[objectToCreate].BlocksTile);
             }

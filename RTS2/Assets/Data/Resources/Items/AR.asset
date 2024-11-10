@@ -23,5 +23,5 @@ MonoBehaviour:
   IsRanged: 1
   FireMinRange: 3
   FireMaxRange: 30
-  FireRate: 3
+  FireRate: 0.5
   RangedProjectile: {fileID: 1622912225751206279, guid: 567c2e509f1f8194f8a02253309829dd, type: 3}

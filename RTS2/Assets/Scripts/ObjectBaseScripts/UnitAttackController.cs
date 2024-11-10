@@ -90,8 +90,10 @@ public class UnitAttackController : MonoBehaviour
                 g.transform.position = this.transform.position;
                 g.transform.rotation = Quaternion.identity;
                 Projectile p = g.GetComponent<Projectile>();
+                g.SetActive(true);
                 p.SetMomentum(DirectionToTarget(attacking.gameObject), 20f, this.GetComponent<Unit>(),5f);
                 p.SetCreator(this.GetComponent<Unit>());
+               
                 rangedTimer = RangedFireRate;
             }
         }

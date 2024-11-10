@@ -15,6 +15,18 @@ public class Human_BehaviourDecisionMaker : BehaviourDecisionMaker
     }
 
 
+    void CheckForHostilesNearby(Unit performingBehaviour)
+    {
+        Unit target = BehaviourUtilities.GetClosestTargetThatsNotType(performingBehaviour, performingBehaviour.GetComponent<UnitSenses>().Sight, UnitType.Human);
+
+        if (target != null)
+        {
+            HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
+            attack.InitBehaviour(target, performingBehaviour);
+            performingBehaviour.BehaviourRunner.SetBehaviour(attack);
+        }
+    
+    }
 
     public override void PerformBehaivourUpdate(Unit performingBehaviour)
     {
@@ -40,6 +52,10 @@ public class Human_BehaviourDecisionMaker : BehaviourDecisionMaker
                 performingBehaviour.BehaviourRunner.SetBehaviour(attack);
 
             }
+        }
+        else
+        {
+            CheckForHostilesNearby(performingBehaviour);
         }
     }
 
