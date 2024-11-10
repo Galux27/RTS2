@@ -35,9 +35,12 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
 
     public override void PerformBehaviour()
     {
-        if (unitToMove.MyAttackController.CanIAttackTarget(objectToFollow.gameObject)==false)
+        if (unitToMove.MyAttackController.CanRangedAttack(objectToFollow.gameObject) == false)
         {
-            unitToMove.MoveUnit(DirectionToTarget());
+            if (unitToMove.MyAttackController.CanMeleeAttack(objectToFollow.gameObject) == false && unitToMove.MyAttackController.HasRanged==false)
+            {
+                unitToMove.MoveUnit(DirectionToTarget());
+            }
         }
         unitToMove.MyAttackController.AttemptAttack(objectToFollow);
     }

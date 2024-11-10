@@ -6,7 +6,7 @@ public class UnitAttackController : MonoBehaviour
 {
     public float AttackDamage, AttackRate,AttackRange;
 
-    bool HasRanged = false;
+    public bool HasRanged = false;
     public float MinRange, MaxRange, RangedFireRate,RangedDamage;
     GameObject RangedProjectile;
 
@@ -56,7 +56,7 @@ public class UnitAttackController : MonoBehaviour
         return CanRangedAttack(target) || CanMeleeAttack(target);
     }
 
-    bool CanRangedAttack(GameObject target)
+    public bool CanRangedAttack(GameObject target)
     {
         if (HasRanged == false)
         {
@@ -69,7 +69,7 @@ public class UnitAttackController : MonoBehaviour
     }
 
 
-    bool CanMeleeAttack(GameObject target)
+   public bool CanMeleeAttack(GameObject target)
     {
         return Vector3.Distance(this.transform.position, target.transform.position) <= AttackRange;
     }
