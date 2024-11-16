@@ -22,7 +22,6 @@ public class MoveTo_Behaviour : BehaviourBase
 
     public override bool IsBehaviourComplete()
     {
-        Debug.Log("Move to dist " + Vector3.Distance(unitToMove.transform.position, TargetPosition));
         return Vector3.Distance(unitToMove.transform.position, TargetPosition) < 1f;
     }
 

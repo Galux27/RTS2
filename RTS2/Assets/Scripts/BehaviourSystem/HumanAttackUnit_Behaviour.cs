@@ -35,13 +35,24 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
 
     public override void PerformBehaviour()
     {
+
+
         if (unitToMove.MyAttackController.CanRangedAttack(objectToFollow.gameObject) == false)
         {
+         
             if (unitToMove.MyAttackController.CanMeleeAttack(objectToFollow.gameObject) == false && unitToMove.MyAttackController.HasRanged==false)
             {
+
                 unitToMove.MoveUnit(DirectionToTarget());
+            }else if (unitToMove.MyAttackController.CanMeleeAttack(objectToFollow.gameObject) == false)
+            {
+                if (unitToMove.GetOrderVal(OrderConstants.ORDER_PURSUE_ENEMIES))
+                {
+                    unitToMove.MoveUnit(DirectionToTarget());
+                }
             }
         }
+     
         unitToMove.MyAttackController.AttemptAttack(objectToFollow);
     }
 }

@@ -23,6 +23,7 @@ public class Units_SelectionMode : SelectionMode
         {
             if (Input.GetMouseButtonUp(1))
             {
+                Debug.Log("Unit Order: right mouse up");
 
                 bool DoneCommand = false;
 
@@ -39,7 +40,9 @@ public class Units_SelectionMode : SelectionMode
                         BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                         HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
                         attack.InitBehaviour(targetUnit, toPerfrom);
+                        attack.IsUserInstruction = true;
                         br.SetBehaviour(attack);
+                        Debug.Log("Unit Order: attacking target");
 
                     }
 
@@ -62,7 +65,10 @@ public class Units_SelectionMode : SelectionMode
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
                             moveTo_Behaviour.InitBehaviour(toPerfrom, targetPos);
+                            moveTo_Behaviour.IsUserInstruction = true;
                             br.SetBehaviour(moveTo_Behaviour);
+                            Debug.Log("Unit Order: move to target " + targetPos);
+
                         }
                     }
                 }

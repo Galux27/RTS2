@@ -8,6 +8,7 @@ public class BehaviourBase
     protected Unit unitToMove;
 
     public Action OnComplete;
+    public bool IsUserInstruction = false;
 
     public virtual void InitBehaviour(Unit toPerform)
     {

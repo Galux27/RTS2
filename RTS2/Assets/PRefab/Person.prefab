@@ -187,6 +187,8 @@ GameObject:
   - component: {fileID: 1213923859724149880}
   - component: {fileID: 2671481711700667218}
   - component: {fileID: 5187675372641942538}
+  - component: {fileID: 8074962993494145537}
+  - component: {fileID: 75192819254074558}
   m_Layer: 7
   m_Name: Person
   m_TagString: Untagged
@@ -384,6 +386,7 @@ MonoBehaviour:
   AttackDamage: 0
   AttackRate: 0
   AttackRange: 0
+  HasRanged: 0
   MinRange: 0
   MaxRange: 0
   RangedFireRate: 0
@@ -402,6 +405,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Sight: 35
   Hearing: 35
+--- !u!114 &8074962993494145537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589492439018105632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 299f9359290397247ad9779cde783800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &75192819254074558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589492439018105632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 752d203801c2b3944872bd8218d690f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3625423641063902942
 GameObject:
   m_ObjectHideFlags: 0

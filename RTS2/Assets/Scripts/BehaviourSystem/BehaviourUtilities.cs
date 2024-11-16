@@ -46,6 +46,14 @@ public static class BehaviourUtilities
             }
         }
         return retVal;
+    }
+
+    public static Vector3 GetPositionAwayFromTarget(Vector3 posToAvoid)
+    {
+        PathfindingNode runFrom = Pathfinding.GetNodeFromPosition(posToAvoid + new Vector3(Random.Range(-5, 5), Random.Range(-5, 5)) );
+
+        return runFrom.worldPos;
+
 
     }
 }

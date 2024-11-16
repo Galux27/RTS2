@@ -13,7 +13,6 @@ public class ZombieRoam_Behaviour :BehaviourBase
     {
         InitBehaviour(me);
         direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-        Debug.Log("Init roam behaviour " + direction);
     }
 
 

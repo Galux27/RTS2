@@ -10,6 +10,7 @@ public class Unit : MonoBehaviour,Selectable
     public bool isSelectable = false;
     public UnitType MyType;
     public UnitAttackController MyAttackController;
+    public UnitOrders MyOrders;
     public Action<Unit> OnAttacked;
     ObjectHealth MyHealth;
     public Vector2Int MyCurrentChunk;
@@ -52,7 +53,18 @@ public class Unit : MonoBehaviour,Selectable
         MyHealth.OnDeath += OnDeath;
         behaviourRunner= this.GetComponent<BehaviourRunner>();
         itemHolder=this.GetComponent<ItemHolder>(); 
+        MyOrders= this.GetComponent<UnitOrders>();
     }
+
+    public bool GetOrderVal(string key)
+    {
+        if (MyOrders == null || MyOrders.GetOrder(key) == null)
+        {
+            return false;
+        }
+        return MyOrders.GetOrder(key).Value;
+    }
+
 
 
     void Start()

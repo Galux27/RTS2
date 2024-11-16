@@ -41,10 +41,8 @@ public class BehaviourRunner : MonoBehaviour
         if (myDecisionMaker == null) { return; }
 
         myDecisionMaker.PerformBehaivourUpdate(UnitPerforming);
-        Debug.Log("Performing behaviour update " + (CurrentBehaviour==null)+" "+this.gameObject.name);
         if ( CurrentBehaviour != null)
         {
-            Debug.Log("Current behaviour not null, type is " + CurrentBehaviour.GetType().ToString());
             if(CurrentBehaviour.CanPerformBehaviour())
             {
 

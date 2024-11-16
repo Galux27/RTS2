@@ -17,6 +17,11 @@ public class Human_BehaviourDecisionMaker : BehaviourDecisionMaker
 
     void CheckForHostilesNearby(Unit performingBehaviour)
     {
+        if (performingBehaviour.GetOrderVal(OrderConstants.ORDER_ATTACK_NEARBY_ENEMIES)==false)
+        {
+            return;
+        }
+
         Unit target = BehaviourUtilities.GetClosestTargetThatsNotType(performingBehaviour, performingBehaviour.GetComponent<UnitSenses>().Sight, UnitType.Human);
 
         if (target != null)
@@ -43,14 +48,27 @@ public class Human_BehaviourDecisionMaker : BehaviourDecisionMaker
                 canRetaliate = false;
             }
 
-            Debug.Log("Human can retaliate " + canRetaliate+"|"+ performingBehaviour.ItemHolder.IsHoldingWeapon()+"|"+(performingBehaviour.BehaviourRunner.CurrentBehaviour == null));
+
+            if (currentBehaviour!=null && currentBehaviour.IsUserInstruction)
+            {
+                canRetaliate = false;
+            }
 
             if (canRetaliate)
             {
-                HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
-                attack.InitBehaviour(UnitThatAttacked, performingBehaviour);
-                performingBehaviour.BehaviourRunner.SetBehaviour(attack);
-
+                if (performingBehaviour.GetOrderVal(OrderConstants.ORDER_DEFEND_SELF)) {
+                    HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
+                    attack.InitBehaviour(UnitThatAttacked, performingBehaviour);
+                    performingBehaviour.BehaviourRunner.SetBehaviour(attack);
+                } 
+                else if (performingBehaviour.GetOrderVal(OrderConstants.ORDER_FLEE_DANGER))
+                {
+                    MoveTo_Behaviour move = new MoveTo_Behaviour();
+                    Vector3 fleeTo = BehaviourUtilities.GetPositionAwayFromTarget(UnitThatAttacked.transform.position);
+                    move.InitBehaviour(performingBehaviour,fleeTo);
+                    Debug.Log("Fleeing to " + fleeTo);
+                    performingBehaviour.BehaviourRunner.SetBehaviour(move);
+                }
             }
         }
         else
