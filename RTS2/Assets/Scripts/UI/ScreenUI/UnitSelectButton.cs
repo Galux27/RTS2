@@ -24,7 +24,8 @@ public class UnitSelectButton : MonoBehaviour
 
     void OnButtonClick()
     {
-        
+        SelectableManager.Instance.SetOnlyTypeSelected(type);
+        SelectableManager.OnSelectionChanged();
     }
 
 }

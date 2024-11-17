@@ -156,7 +156,9 @@ public class Unit : MonoBehaviour,Selectable
 public enum UnitType {
 None,
 Zombie,
-Human
+Human,
+Rifleman,
+Civilian
 
 }
 

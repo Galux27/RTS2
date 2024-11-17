@@ -25,14 +25,10 @@ public class SelectableManager : MonoBehaviour
 
     public void AddSelectable(Selectable toAdd)
     {
-        Debug.Log("Added selectable is selected " + toAdd.GetIsSelected());
         if (toAdd.IsSelectable()&& toAdd.GetIsSelected() == false)
         {
-            Debug.Log("Setting objects to selected ");
             CurrentlySelected.Add(toAdd);
-            toAdd.SetIsSelected(true);
-
-          
+            toAdd.SetIsSelected(true);  
         }
     }
 
@@ -56,6 +52,19 @@ public class SelectableManager : MonoBehaviour
 
     }
 
+
+    public void SetOnlyTypeSelected(UnitType toSelect)
+    {
+        Dictionary<UnitType, List<Unit>> curSelection = FilterUnitsByType();
+        ClearSelectables();
+        if(curSelection.ContainsKey(toSelect))
+        {
+            for(int x=0;x< curSelection[toSelect].Count; x++)
+            {
+                AddSelectable(curSelection[toSelect][x]);
+            }
+        }
+    }
 
     public List<Selectable> GetAllSelectableOfType(SelectableType typeToGet)
     {
