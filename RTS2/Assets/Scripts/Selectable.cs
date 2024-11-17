@@ -5,7 +5,7 @@ public interface Selectable
     void OnObjectSelected();
     void OnObjectDeselected();
 
-    SelectableType GetSelectableType();
+    public SelectableType GetSelectableType();
 
     public bool GetIsSelected();
 

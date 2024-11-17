@@ -14,6 +14,7 @@ public class Units_SelectionMode : SelectionMode
         {
             SelectableManager.Instance.AddSelectable(selected[x]);
         }
+        SelectableManager.OnSelectionChanged?.Invoke();
     }
 
 
@@ -23,7 +24,6 @@ public class Units_SelectionMode : SelectionMode
         {
             if (Input.GetMouseButtonUp(1))
             {
-                Debug.Log("Unit Order: right mouse up");
 
                 bool DoneCommand = false;
 
@@ -42,7 +42,6 @@ public class Units_SelectionMode : SelectionMode
                         attack.InitBehaviour(targetUnit, toPerfrom);
                         attack.IsUserInstruction = true;
                         br.SetBehaviour(attack);
-                        Debug.Log("Unit Order: attacking target");
 
                     }
 
@@ -67,7 +66,6 @@ public class Units_SelectionMode : SelectionMode
                             moveTo_Behaviour.InitBehaviour(toPerfrom, targetPos);
                             moveTo_Behaviour.IsUserInstruction = true;
                             br.SetBehaviour(moveTo_Behaviour);
-                            Debug.Log("Unit Order: move to target " + targetPos);
 
                         }
                     }

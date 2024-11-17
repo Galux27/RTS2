@@ -59,6 +59,11 @@ public class SelectionController : MonoBehaviour
 
     private void Update()
     {
+
+        if (ScreenUIUtilities.IsCursorOverUI())
+        {
+            return;
+        }
         CursorSelect.Instance.UpdateSelectionPoints();
 
         if (CurrentSelectionModeObj == null)

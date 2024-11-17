@@ -18,6 +18,9 @@ public class SelectableManager : MonoBehaviour
         }
     }
 
+
+
+    public static System.Action OnSelectionChanged;
     public List<Selectable> CurrentlySelected=new List<Selectable>();
 
     public void AddSelectable(Selectable toAdd)
@@ -28,6 +31,8 @@ public class SelectableManager : MonoBehaviour
             Debug.Log("Setting objects to selected ");
             CurrentlySelected.Add(toAdd);
             toAdd.SetIsSelected(true);
+
+          
         }
     }
 
@@ -38,6 +43,7 @@ public class SelectableManager : MonoBehaviour
             CurrentlySelected[x].SetIsSelected(false);
         }
         CurrentlySelected.Clear();
+
     }
 
     public void RemoveSelectable(Selectable toRemove)
@@ -47,6 +53,75 @@ public class SelectableManager : MonoBehaviour
             CurrentlySelected.Remove(toRemove);
             toRemove.SetIsSelected(false);
         }
-    
+
     }
+
+
+    public List<Selectable> GetAllSelectableOfType(SelectableType typeToGet)
+    {
+        List<Selectable> retVal = new List<Selectable>();
+
+        for(int x = 0; x < CurrentlySelected.Count; x++)
+        {
+            if (CurrentlySelected[x].GetSelectableType() == typeToGet)
+            {
+                retVal.Add(CurrentlySelected[x]);
+            }
+        }
+
+        return retVal;
+    }
+
+    public List<Unit> GetSelectedUnits()
+    {
+        List<Unit> ret = new List<Unit>();
+        List<Selectable> units = GetAllSelectableOfType(SelectableType.Unit);
+        Unit u = null;
+        for(int x = 0; x < units.Count; x++)
+        {
+            u = units[x] as Unit;
+            if (u == null)
+            {
+                continue;
+            }
+            ret.Add(u);
+            
+        }
+        return ret;
+    }
+
+    public Dictionary<UnitType,List<Unit>> FilterUnitsByType()
+    {
+        Dictionary<UnitType, List<Unit>> retVal = new Dictionary<UnitType, List<Unit>>();
+        List<Unit> units = GetSelectedUnits();
+
+        for(int x = 0; x < units.Count; x++)
+        {
+            if (!retVal.ContainsKey(units[x].MyType))
+            {
+                retVal.Add(units[x].MyType, new List<Unit>());
+            }
+            retVal[units[x].MyType].Add(units[x]);
+        }
+
+        return retVal;
+    }
+
+    public void SetOrderValue(string key,bool value)
+    {
+        Unit toSet = null;
+        for (int x = 0; x < CurrentlySelected.Count; x++)
+        {
+            if (CurrentlySelected[x].GetSelectableType() == SelectableType.Unit)
+            {
+                toSet = CurrentlySelected[x] as Unit;
+
+                if (toSet != null && toSet.MyOrders!=null)
+                {
+                    toSet.MyOrders.SetOrder(key,value);
+                }
+            }
+        }
+    }
+
 }

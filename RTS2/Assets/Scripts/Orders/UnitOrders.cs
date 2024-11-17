@@ -19,4 +19,13 @@ public class UnitOrders : MonoBehaviour
             Orders.Add(order.Key, order);
         }
     }
+
+    public void SetOrder(string key, bool val)
+    {
+        if (Orders.ContainsKey(key))
+        {
+            Orders[key].Value = val;
+        }
+
+    }
 }
