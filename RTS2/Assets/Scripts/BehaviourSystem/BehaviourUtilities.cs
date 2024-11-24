@@ -5,7 +5,7 @@ using UnityEngine;
 public static class BehaviourUtilities 
 {
     static List<Unit> GetUnitCache=new List<Unit>();
-    public static List<Unit> GetTargetsThatAreNotType(Unit searching,float range,UnitType toFilter)
+    public static List<Unit> GetHostileUnits(Unit searching,float range)
     {
         GetUnitCache.Clear();
        List<WorldChunk> toCheck = WorldChunkManager.Instance.GetChunksInRadius(range, searching.transform.position);
@@ -17,7 +17,7 @@ public static class BehaviourUtilities
         float dist = 999999f;
         for(int x = 0; x < GetUnitCache.Count; x++)
         {
-            if (GetUnitCache[x].MyType != toFilter)
+            if (FactionController.Instance.IsHostile(searching, GetUnitCache[x]))
             {
                 dist = Vector3.Distance(GetUnitCache[x].transform.position, searching.transform.position);
                 if (dist < range)
@@ -31,9 +31,9 @@ public static class BehaviourUtilities
     }
 
     
-    public static Unit GetClosestTargetThatsNotType(Unit searching,float range,UnitType toFilter)
+    public static Unit GetClosestTargetThatsHostile(Unit searching,float range)
     {
-        GetUnitCache = GetTargetsThatAreNotType(searching,range,toFilter);
+        GetUnitCache = GetHostileUnits(searching,range);
         if(GetUnitCache.Count==0) return null;
         float dist = 9999999f;
         Unit retVal = null;

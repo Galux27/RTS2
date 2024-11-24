@@ -1,0 +1,59 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class FactionController : MonoBehaviour
+{
+    static FactionController instance;
+    public static FactionController Instance
+    {
+        get
+        {
+            if(instance == null)
+            {
+                instance = FindObjectOfType<FactionController>(true);
+            }
+            return instance ;
+        }
+    }
+
+    private void Awake()
+    {
+        LoadFactions();
+    }
+
+    Dictionary<string, Faction> FactionLookup;
+    const string FactionLocation = "Factions";
+
+    void LoadFactions()
+    {
+        FactionLookup = new Dictionary<string, Faction>();
+        Object[] factions = Resources.LoadAll(FactionLocation);
+        for (int x = 0; x < factions.Length; x++)
+        {
+            Faction i = (Faction)factions[x];
+            if (FactionLookup.ContainsKey(i.FactionID) == false)
+            {
+                FactionLookup.Add(i.FactionID, i);
+            }
+        }
+
+    }
+
+    public bool IsHostile(Unit me,Unit target)
+    {
+        return HostileCheck(me.MyFaction.MyFactionID,target.MyFaction.MyFactionID);
+    }
+
+    bool HostileCheck(string id1,string id2)
+    {
+        if(FactionLookup.ContainsKey(id1) == false)
+        {
+            return false;
+        }
+        return FactionLookup[id1].FactionEnemies.Contains(id2);
+
+    }
+
+
+}

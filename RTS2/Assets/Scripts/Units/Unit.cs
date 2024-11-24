@@ -14,7 +14,7 @@ public class Unit : MonoBehaviour,Selectable
     public Action<Unit> OnAttacked;
     ObjectHealth MyHealth;
     public Vector2Int MyCurrentChunk;
-
+    public UnitFaction MyFaction;
 
     public void UpdateChunk(Vector2Int newChunk)
     {
@@ -54,6 +54,7 @@ public class Unit : MonoBehaviour,Selectable
         behaviourRunner= this.GetComponent<BehaviourRunner>();
         itemHolder=this.GetComponent<ItemHolder>(); 
         MyOrders= this.GetComponent<UnitOrders>();
+        MyFaction = this.GetComponent<UnitFaction>();
     }
 
     public bool GetOrderVal(string key)

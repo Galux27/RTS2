@@ -22,7 +22,7 @@ public class Human_BehaviourDecisionMaker : BehaviourDecisionMaker
             return;
         }
 
-        Unit target = BehaviourUtilities.GetClosestTargetThatsNotType(performingBehaviour, performingBehaviour.GetComponent<UnitSenses>().Sight, UnitType.Human);
+        Unit target = BehaviourUtilities.GetClosestTargetThatsHostile(performingBehaviour, performingBehaviour.GetComponent<UnitSenses>().Sight);
 
         if (target != null)
         {

@@ -18,7 +18,7 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
 
     void PerformPassiveZombieBehaviour(Unit toCheck)
     {
-        Unit UnitNearMe = BehaviourUtilities.GetClosestTargetThatsNotType(toCheck, 5f, UnitType.Zombie);
+        Unit UnitNearMe = BehaviourUtilities.GetClosestTargetThatsHostile(toCheck, 5f);
        
         if (UnitNearMe != null)
         {

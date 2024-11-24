@@ -189,6 +189,7 @@ GameObject:
   - component: {fileID: 5187675372641942538}
   - component: {fileID: 8074962993494145537}
   - component: {fileID: 75192819254074558}
+  - component: {fileID: 1874797377567117355}
   m_Layer: 7
   m_Name: Person
   m_TagString: Untagged
@@ -298,7 +299,9 @@ MonoBehaviour:
   isSelectable: 1
   MyType: 2
   MyAttackController: {fileID: 0}
+  MyOrders: {fileID: 0}
   MyCurrentChunk: {x: 0, y: 0}
+  MyFaction: {fileID: 0}
 --- !u!61 &6865716415776570820
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -429,6 +432,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 752d203801c2b3944872bd8218d690f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1874797377567117355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589492439018105632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d8c200cf8e0cf4c919caf27ab500c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MyFactionID: User
 --- !u!1 &3625423641063902942
 GameObject:
   m_ObjectHideFlags: 0
