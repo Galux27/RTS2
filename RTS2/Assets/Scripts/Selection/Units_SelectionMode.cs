@@ -48,10 +48,24 @@ public class Units_SelectionMode : SelectionMode
                     DoneCommand = true;
                 }
 
+                if (OnHoverUnit != null)
+                {
+                    for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                    {
+                        Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                        BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                        HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
+                        attack.InitBehaviour(OnHoverUnit, toPerfrom);
+                        attack.IsUserInstruction = true;
+                        br.SetBehaviour(attack);
+
+                    }
+
+                    DoneCommand = true;
+                }
+
                 if (!DoneCommand)
                 {
-
-
                     hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.CursorLayermask);
                     if (hit.collider != null)
                     {
@@ -75,7 +89,7 @@ public class Units_SelectionMode : SelectionMode
     }
 
 
-
+    Unit OnHoverUnit;
     public override void OnHover()
     {
         Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
@@ -95,6 +109,13 @@ public class Units_SelectionMode : SelectionMode
                 }
             }
         }
+        OnHoverUnit = SelectionUtilities.GetUnitWithinRangeOfPoint(r.origin, 1f, UnitType.Zombie);
+        if (OnHoverUnit != null)
+        {
+            CursorIcon.Instance.SetAttackIcon();
+            return;
+        }
+
         CursorIcon.Instance.SetMoveIcon();
 
     }

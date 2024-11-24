@@ -71,7 +71,6 @@ public class UnitMoniter : MonoBehaviour
         for(int x = 0; x < AllUnits.Count; x++)
         {
             pos = AllUnits[x].transform.position;
-            Debug.Log("Checking pos " + pos);
             if(pos.x<=high.x && pos.x >= low.x)
             {
                 if(pos.y<=high.y&& pos.y >= low.y)
@@ -80,7 +79,6 @@ public class UnitMoniter : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Getting selected between " + high + " & " + low+" found " + units.Count+"/"+AllUnits.Count);
 
         return units;
     }
