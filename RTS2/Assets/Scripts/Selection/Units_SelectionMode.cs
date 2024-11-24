@@ -10,6 +10,12 @@ public class Units_SelectionMode : SelectionMode
         SelectableManager.Instance.ClearSelectables();
         List<Unit> selected = UnitMoniter.Instance.GetUnitsWithinBounds(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint);
         Debug.Log("Selected unit count " + selected.Count);
+
+        if (selected.Count == 0 && OnHoverMyUnit!=null)
+        {
+            selected.Add(OnHoverMyUnit);
+        }
+
         for (int x = 0; x < selected.Count; x++)
         {
             SelectableManager.Instance.AddSelectable(selected[x]);
@@ -48,14 +54,14 @@ public class Units_SelectionMode : SelectionMode
                     DoneCommand = true;
                 }
 
-                if (OnHoverUnit != null)
+                if (OnHoverEnemyUnit != null)
                 {
                     for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
                     {
                         Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
                         BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                         HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
-                        attack.InitBehaviour(OnHoverUnit, toPerfrom);
+                        attack.InitBehaviour(OnHoverEnemyUnit, toPerfrom);
                         attack.IsUserInstruction = true;
                         br.SetBehaviour(attack);
 
@@ -89,7 +95,8 @@ public class Units_SelectionMode : SelectionMode
     }
 
 
-    Unit OnHoverUnit;
+    Unit OnHoverEnemyUnit;
+    Unit OnHoverMyUnit;
     public override void OnHover()
     {
         Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
@@ -109,8 +116,12 @@ public class Units_SelectionMode : SelectionMode
                 }
             }
         }
-        OnHoverUnit = SelectionUtilities.GetUnitWithinRangeOfPoint(r.origin, 1f, UnitType.Zombie);
-        if (OnHoverUnit != null)
+        OnHoverMyUnit = SelectionUtilities.GetUserUnitWithinRangeOfPoint(r.origin, 1f);
+
+
+
+        OnHoverEnemyUnit = SelectionUtilities.GetHostileUnitWithinRangeOfPoint(r.origin, 1f);
+        if (OnHoverEnemyUnit != null)
         {
             CursorIcon.Instance.SetAttackIcon();
             return;

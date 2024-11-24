@@ -24,7 +24,7 @@ public class FactionController : MonoBehaviour
 
     Dictionary<string, Faction> FactionLookup;
     const string FactionLocation = "Factions";
-
+    public const string USER_FACTION = "User";
     void LoadFactions()
     {
         FactionLookup = new Dictionary<string, Faction>();
@@ -43,6 +43,12 @@ public class FactionController : MonoBehaviour
     public bool IsHostile(Unit me,Unit target)
     {
         return HostileCheck(me.MyFaction.MyFactionID,target.MyFaction.MyFactionID);
+    }
+
+    public bool IsHostile(Unit target,string me)
+    {
+        return HostileCheck(me, target.MyFaction.MyFactionID);
+
     }
 
     bool HostileCheck(string id1,string id2)
