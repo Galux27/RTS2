@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnvironmentObject : ScriptableObject
 {
     public string Name;
-    public Sprite Sprite;
+    public Sprite ForwardsSprite,SideSprite,BackwardsSprite;
     public bool BlocksTile;
     public int Width, Height;
 }

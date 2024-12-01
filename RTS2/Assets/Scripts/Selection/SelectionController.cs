@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,7 @@ public class SelectionController : MonoBehaviour
             return instance;
         }
     }
-
+    public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
     public CurrentSelectionMode selectionMode;
     public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj;
 
@@ -45,6 +46,7 @@ public class SelectionController : MonoBehaviour
             CurrentSelectionModeObj = Construction;
         }
         SelectableManager.Instance.ClearSelectables();
+        OnSwitchSelectionMode?.Invoke(mode);
     }
 
 

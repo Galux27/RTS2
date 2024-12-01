@@ -9,13 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fe5742114abe4f448387c979245c094, type: 3}
-  m_Name: Bush
+  m_Script: {fileID: 11500000, guid: a57896610a77a024ba59f95e22968c95, type: 3}
+  m_Name: TankTrap
   m_EditorClassIdentifier: 
-  Name: Bush
-  ForwardsSprite: {fileID: -351759696, guid: 22d4580ff3cd39b44828fc72fc09c1dd, type: 3}
+  Name: Tank Trap
+  ForwardsSprite: {fileID: 674372836, guid: 1ab05d752aa0e7c4fb44333a9e64f7fd, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   BlocksTile: 1
   Width: 1
   Height: 1
+  Cost: 100
+  TimeToBuild: 5

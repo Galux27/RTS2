@@ -17,7 +17,7 @@ public class EnvironmentObjectInstance
     }
 
 
-    public void RenderInstance()
+    public virtual void RenderInstance()
     {
         if (Drawn)
         {
@@ -27,12 +27,12 @@ public class EnvironmentObjectInstance
         EnvironmentObject obj = EnvironmentObjectManager.Instance.AllObjects[ObjectKey];
         Object = GameObjectPoolManager.Instance.GetObjectFromPool("EnvironmentObject");
         Object.transform.position = new Vector3(PosX, PosY, 0);
-        Object.GetComponent<SpriteRenderer>().sprite = obj.Sprite;     
+        Object.GetComponent<SpriteRenderer>().sprite = obj.ForwardsSprite;     
         Object.SetActive(true);
         Drawn = true;
     }
 
-    public void CleanupInstance()
+    public virtual void CleanupInstance()
     {
         if(!Drawn) { return; }
         GameObjectPoolManager.Instance.ReturnObjectToPool(Object,"EnvironmentObject");

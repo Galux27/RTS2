@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Grass 2
   m_EditorClassIdentifier: 
   Name: Grass_2
-  Sprite: {fileID: 1894236614, guid: 22d4580ff3cd39b44828fc72fc09c1dd, type: 3}
+  ForwardsSprite: {fileID: 798087786, guid: 22d4580ff3cd39b44828fc72fc09c1dd, type: 3}
+  SideSprite: {fileID: 0}
+  BackwardsSprite: {fileID: 0}
   BlocksTile: 0
   Width: 1
   Height: 1
