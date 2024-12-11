@@ -70,6 +70,15 @@ public class WorldController : MonoBehaviour
         Pathfinding.UpdateNodeData(x, y, traversable);
       
     }
+
+
+    public bool IsTraversible(int x,int y)
+    {
+        if(x<0 || y<0) return false;
+        if(x>WorldWidth || y>WorldHeight) return false;
+        return WorldTiles[x, y].traversable;
+
+    }
 }
 
 public class WorldTile 

@@ -43,8 +43,18 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance, Constructa
 
     public override void RenderInstance()
     {
-        base.RenderInstance();
-        
+        if (Drawn)
+        {
+            return;
+        }
+
+        EnvironmentObject obj = ConstructableObjectManager.Instance.AllObjects[ObjectKey];
+        Object = GameObjectPoolManager.Instance.GetObjectFromPool("EnvironmentObject");
+        Object.transform.position = new Vector3(PosX, PosY, 0);
+        Object.GetComponent<SpriteRenderer>().sprite = obj.ForwardsSprite;
+        Object.SetActive(true);
+        Drawn = true;
+
     }
     public override void CleanupInstance()
     {

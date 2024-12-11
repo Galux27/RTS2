@@ -29,6 +29,10 @@ public class WorldChunk
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
     {
         EnvironmentObjectsInChunk.Add(environmentObject);
+        if (ShouldDrawEnvironmentObjects() && environmentObject.Drawn == false)
+        {
+            environmentObject.RenderInstance();
+        }
     }
 
     public bool ShouldDrawEnvironmentObjects()

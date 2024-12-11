@@ -58,4 +58,9 @@ public class CursorIcon : MonoBehaviour
     {
         Icon.enabled = visible;
     }
+
+    public void SetColor(Color c)
+    {
+        Icon.color = c;
+    }
 }

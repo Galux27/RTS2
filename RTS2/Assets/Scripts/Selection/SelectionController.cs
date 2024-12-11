@@ -31,7 +31,9 @@ public class SelectionController : MonoBehaviour
         {
             return;
         }
+        OnCloseSelectionMode();
         selectionMode = mode;
+
         if (mode == CurrentSelectionMode.None)
         {
             CurrentSelectionModeObj = None;
@@ -49,13 +51,17 @@ public class SelectionController : MonoBehaviour
         OnSwitchSelectionMode?.Invoke(mode);
     }
 
-
+    void OnCloseSelectionMode()
+    {
+        ConstructableObjectManager.Instance.selectedToConstruct = null;
+    }
     private void Awake()
     {
         None = new SelectionMode();
         Units=new Units_SelectionMode();
         CurrentSelectionModeObj = Units;
         Construction = new ConstructSelectionMode();
+        Buildings = new BuildingsSelectionMode();
         selectionMode = CurrentSelectionMode.None;
     }
 
