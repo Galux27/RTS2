@@ -28,6 +28,7 @@ public class WorldChunk
 
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
     {
+        Debug.Log("On Hover Constructable added instance " + environmentObject.PosX + "," + environmentObject.PosY);
         EnvironmentObjectsInChunk.Add(environmentObject);
         if (ShouldDrawEnvironmentObjects() && environmentObject.Drawn == false)
         {

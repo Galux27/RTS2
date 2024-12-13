@@ -98,6 +98,5 @@ public class ConstructableObjectManager : MonoBehaviour
         }
 
 
-        // WorldController.Instance.SetTraversible(x, y, !AllObjects[objectToCreate].BlocksTile);
     }
 }

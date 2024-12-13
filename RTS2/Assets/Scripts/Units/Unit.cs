@@ -159,7 +159,8 @@ None,
 Zombie,
 Human,
 Rifleman,
-Civilian
+Civilian,
+Engineer
 
 }
 

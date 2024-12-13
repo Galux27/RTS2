@@ -39,6 +39,10 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance, Constructa
         }
     }
 
+    public bool IsBuilt()
+    {
+        return isBuilt;
+    }
 
 
     public override void RenderInstance()
@@ -53,6 +57,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance, Constructa
         Object.transform.position = new Vector3(PosX, PosY, 0);
         Object.GetComponent<SpriteRenderer>().sprite = obj.ForwardsSprite;
         Object.SetActive(true);
+        SetBuilt(isBuilt);
         Drawn = true;
 
     }
@@ -64,10 +69,11 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance, Constructa
 
     public void ConstructObject()
     {
-        if(!isBuilt)
+        if(isBuilt)
         {
             return;
         }
+        Debug.Log("Building " + buildProgress+"/"+buildAmountTarget);
         buildProgress += Time.deltaTime;
         if(buildProgress >= buildAmountTarget)
         {
@@ -77,6 +83,8 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance, Constructa
 
     public void OnObjectConstructed()
     {
+        isBuilt = true;
+        Object.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
 
     }
 }

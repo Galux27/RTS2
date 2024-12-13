@@ -70,6 +70,25 @@ public class Units_SelectionMode : SelectionMode
                     DoneCommand = true;
                 }
 
+
+                if (OnHoverConstructable != null)
+                {
+                    for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                    {
+                        Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                        if (toPerfrom.MyType == UnitType.Engineer)
+                        {
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanBehaviour_ConstructObject construct = new HumanBehaviour_ConstructObject();
+                            construct.InitBehaviour( toPerfrom,OnHoverConstructable);
+                            construct.IsUserInstruction = true;
+                            br.SetBehaviour(construct);
+                        }
+                    }
+
+                    DoneCommand = true;
+                }
+
                 if (!DoneCommand)
                 {
                     hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.CursorLayermask);
@@ -97,6 +116,7 @@ public class Units_SelectionMode : SelectionMode
 
     Unit OnHoverEnemyUnit;
     Unit OnHoverMyUnit;
+    ConstructableObjectInstance OnHoverConstructable;
     public override void OnHover()
     {
         Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
@@ -119,11 +139,21 @@ public class Units_SelectionMode : SelectionMode
         OnHoverMyUnit = SelectionUtilities.GetUserUnitWithinRangeOfPoint(r.origin, 1f);
 
 
+      
 
         OnHoverEnemyUnit = SelectionUtilities.GetHostileUnitWithinRangeOfPoint(r.origin, 1f);
         if (OnHoverEnemyUnit != null)
         {
             CursorIcon.Instance.SetAttackIcon();
+            return;
+        }
+
+
+        OnHoverConstructable = SelectionUtilities.GetConstructableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
+        Debug.Log("On Hover Constructable is null " + (OnHoverConstructable==null));
+        if (OnHoverConstructable != null)
+        {
+            CursorIcon.Instance.SetBuildIcon();
             return;
         }
 
