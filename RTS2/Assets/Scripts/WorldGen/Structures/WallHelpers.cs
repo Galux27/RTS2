@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -236,12 +237,27 @@ public static class WallHelpers
     
     }
 
+    static Bounds boundsCheck;
+    public static bool CanIPlaceWallAtPosition(int x, int y, Vector3 worldPos)
+    {
+        Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos);
+         if(WorldController.Instance.WallManager.WallsInWorld[x, y].HasWall|| WorldController.Instance.WallManager.WallsInWorld[x, y].HasWallUnderConstruction)
+        {
+            return false;
+        }
+       
+        return true;
+    }
+
 
     public static void CreateWallBuildableStructure(int x, int y,Tilemap toDrawOn,WallTile toUse,Vector3 worldPos,Vector3 offset=default)
     {
+        Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos);
+
         Action OnBuilt = () => { WallHelpers.CreateWallObject(x, y, toDrawOn, toUse); };
         BuildableStructure bs = new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one,offset);
-        Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos);
+        Debug.Log("Creating buildable wall at " + x + "," + y+" coords "+ coords    );
+        WorldController.Instance.WallManager.WallsInWorld[x, y].SetWallUnderConstruction(true);
         WorldChunkManager.Instance.Chunks[coords.x,coords.y].AddConstructable(bs);
     }
 

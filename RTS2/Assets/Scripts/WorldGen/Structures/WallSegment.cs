@@ -10,7 +10,7 @@ using UnityEngine.Tilemaps;
 public class WallSegment
 {
     public int x, y;
-    public bool HasWall = false;
+    public bool HasWall = false,HasWallUnderConstruction=false;
     public WallSegment(int x, int y, bool hasWall)
     {
         this.x = x;
@@ -21,18 +21,23 @@ public class WallSegment
     public void SetHasWall(bool hasWall)
     {
         this.HasWall = hasWall;
+        if (hasWall)
+        {
+            SetWallUnderConstruction(false);
+        }
     }
 
+
+    public void SetWallUnderConstruction(bool val)
+    {
+        HasWallUnderConstruction = val;
+    }
 
     public bool Drawn = false;
     public Tile ToDraw;
     public void SetTile(Tile tile)
     {
-        if (Input.GetKey(KeyCode.LeftControl) && ToDraw!=tile)
-        {
-            Debug.Log("Set tile " + x + "," + y + " to " + tile.sprite.name.ToString());
-        }
-
+        
 
         ToDraw = tile;
         Drawn = true;

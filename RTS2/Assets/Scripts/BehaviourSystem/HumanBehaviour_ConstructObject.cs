@@ -47,7 +47,6 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
     public override void PerformBehaviour()
     {
         float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);
-        Debug.Log("Build Action: Dist to building " + dist);
         if (dist > 1f)
         {
             follower.OnUpdate(unitToMove.transform.position);
@@ -55,7 +54,6 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
         }
         else
         {
-            Debug.Log("Build Action: Is Built " + toConstruct.IsBuilt());
             if (toConstruct.IsBuilt() == false)
             {
                 toConstruct.ConstructObject();
