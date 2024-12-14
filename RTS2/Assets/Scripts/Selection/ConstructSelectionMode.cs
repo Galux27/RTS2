@@ -20,7 +20,7 @@ public class ConstructSelectionMode : SelectionMode
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        WallHelpers.CreateWallBuildableStructure (coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest,cursorPos);
+        WallHelpers.CreateWallBuildableStructure (coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest,cursorPos,new Vector3(.5f,.5f,0f));
     }
 
     public override void OnRightMouseUp()

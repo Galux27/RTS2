@@ -89,7 +89,7 @@ public class ConstructableObjectManager : MonoBehaviour
         ConstructableObject buildingData = AllObjects[toBuild];
 
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(pos);
-        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddConstructable(new BuildableStructure(coords.x, coords.y, buildingData.TimeToBuild, false, OnBuilt, buildingData.Size()));
+        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddConstructable(new BuildableStructure(coords.x, coords.y, buildingData.TimeToBuild, false, OnBuilt, buildingData.Size(),default));
 
     }
 

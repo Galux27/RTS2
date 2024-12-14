@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BuildableStructure:Constructable
-{ 
+{
 
-    public BuildableStructure(int x,int y,float maxProgress,bool forceComplete,Action onComplete,Vector3 size)
+    public BuildableStructure(int x, int y, float maxProgress, bool forceComplete, Action onComplete, Vector3 size, Vector3 offset)
     {
         this.x = x; this.y = y;
         this.maxProgress = maxProgress;
         pos=new Vector3(x,y,0);
         this.onComplete = onComplete;
         this.size= size;
+        this.offset = offset;
         if (forceComplete)
         {
             OnObjectConstructed();
@@ -21,7 +22,7 @@ public class BuildableStructure:Constructable
     Action onComplete;
     public int x, y;
     float progress = 0f, maxProgress = 1f;
-
+    Vector3 offset;
 
     Vector3 pos,size;
     bool isBuilt = false;
@@ -75,7 +76,7 @@ public class BuildableStructure:Constructable
     public void Render()
     {
         Object = GameObjectPoolManager.Instance.GetObjectFromPool("ConstructionMarker");
-        Object.GetComponent<ConstructableObjectUI>().InitUI(size, pos);
+        Object.GetComponent<ConstructableObjectUI>().InitUI(size, pos+offset);
         Object.SetActive(true);
         isDrawn = true;
     }
