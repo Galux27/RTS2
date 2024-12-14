@@ -36,12 +36,43 @@ public class WorldChunk
         }
     }
 
+    public Constructable GetConstructableAtPosition(int x,int y)
+    {
+        Constructable retVal = null;
+        Vector3 pos = new Vector3(x+.5f, y+.5f);
+        Bounds b = new Bounds();
+        for(int x1 = 0; x1 < ToBuild.Count; x1++)
+        {
+            b = new Bounds(ToBuild[x1].GetPosition(), ToBuild[x1].Size());
+            if (b.Contains(pos))
+            {
+                return ToBuild[x1];
+            }
+        }
+
+        return retVal;
+    }
+
+
     public void AddConstructable(Constructable toBuild)
     {
         ToBuild.Add(toBuild);
         if (ShouldDrawEnvironmentObjects() && !toBuild.IsDrawn())
         {
             toBuild.Render();
+        }
+    }
+
+    public void RemoveConstructable(Constructable toRemove)
+    {
+        if (toRemove == null)
+        {
+            return;
+        }
+        if(ToBuild.Contains(toRemove))
+        {
+            toRemove.Cleanup();
+            ToBuild.Remove(toRemove);
         }
     }
 

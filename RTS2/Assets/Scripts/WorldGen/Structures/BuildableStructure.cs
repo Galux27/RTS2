@@ -92,4 +92,21 @@ public class BuildableStructure:Constructable
     {
         return isDrawn;
     }
+
+    public void OnHover()
+    {
+        if(Object != null)
+        {
+            Object.GetComponent<ConstructableObjectUI>().SetSpriteRendererColour(Color.green);
+
+        }
+    }
+
+    public void OnHoverExit()
+    {
+        if (Object != null)
+        {
+            Object.GetComponent<ConstructableObjectUI>().SetSpriteRendererColour(Color.white);
+        }
+    }
 }

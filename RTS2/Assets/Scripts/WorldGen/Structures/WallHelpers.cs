@@ -238,10 +238,9 @@ public static class WallHelpers
     }
 
     static Bounds boundsCheck;
-    public static bool CanIPlaceWallAtPosition(int x, int y, Vector3 worldPos)
+    public static bool CanIPlaceWallAtPosition(int x, int y)
     {
-        Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos);
-         if(WorldController.Instance.WallManager.WallsInWorld[x, y].HasWall|| WorldController.Instance.WallManager.WallsInWorld[x, y].HasWallUnderConstruction)
+         if(DoesUnderConstructionWallExistAtPosition (x,y)|| DoesConstructedWallExistAtPosition(x,y))
         {
             return false;
         }
@@ -250,14 +249,25 @@ public static class WallHelpers
     }
 
 
+    public static bool DoesUnderConstructionWallExistAtPosition(int x,int y)
+    {
+        return WorldController.Instance.WallManager.WallsInWorld[x, y].HasWallUnderConstruction;
+    }
+
+    public static bool DoesConstructedWallExistAtPosition(int x,int y)
+    {
+        return WorldController.Instance.WallManager.WallsInWorld[x, y].HasWall;
+    }
+
     public static void CreateWallBuildableStructure(int x, int y,Tilemap toDrawOn,WallTile toUse,Vector3 worldPos,Vector3 offset=default)
     {
-        Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos);
+        Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos+offset);
 
         Action OnBuilt = () => { WallHelpers.CreateWallObject(x, y, toDrawOn, toUse); };
         BuildableStructure bs = new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one,offset);
-        Debug.Log("Creating buildable wall at " + x + "," + y+" coords "+ coords    );
         WorldController.Instance.WallManager.WallsInWorld[x, y].SetWallUnderConstruction(true);
+        Debug.Log("Adding constructable to " + coords.ToString());
+
         WorldChunkManager.Instance.Chunks[coords.x,coords.y].AddConstructable(bs);
     }
 

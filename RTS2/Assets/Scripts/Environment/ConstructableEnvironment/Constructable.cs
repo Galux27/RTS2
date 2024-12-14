@@ -22,4 +22,6 @@ public interface Constructable
     public bool IsDrawn();
 
 
+    public void OnHover();
+    public void OnHoverExit();
 }
