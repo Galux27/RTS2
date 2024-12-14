@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public static class WallHelpers
 {
@@ -232,4 +235,19 @@ public static class WallHelpers
     
     
     }
+
+
+    public static void CreateWallBuildableStructure(int x, int y,Tilemap toDrawOn,WallTile toUse,Vector3 worldPos)
+    {
+        Action OnBuilt = () => { WallHelpers.CreateWallObject(x, y, toDrawOn, toUse); };
+        BuildableStructure bs = new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one);
+        Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos);
+        WorldChunkManager.Instance.Chunks[coords.x,coords.y].AddConstructable(bs);
+    }
+
+    public static void CreateWallObject(int x, int y, Tilemap toDrawOn, WallTile toUse)
+    {
+        WorldController.Instance.WallManager.AddSingleWall(x, y, toDrawOn, toUse);
+    }
+
 }
