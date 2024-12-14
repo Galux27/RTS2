@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,7 +69,7 @@ public class ConstructableObjectManager : MonoBehaviour
     {
         AllObjects = new Dictionary<string, ConstructableObject>();
         EnvironmentObjectKeys = new List<string>();
-        Object[] items = Resources.LoadAll(FilePath);
+        UnityEngine.Object[] items = Resources.LoadAll(FilePath);
         for (int x = 0; x < items.Length; x++)
         {
             ConstructableObject i = (ConstructableObject)items[x];
@@ -80,20 +81,32 @@ public class ConstructableObjectManager : MonoBehaviour
         }
     }
 
-    public void CreateObject(Vector2Int coords,Vector3 pos)
+
+    public void CreateBuildableForObject(Vector2Int coords, Vector3 pos)
     {
-        foreach(var item in AllObjects)
-        {
-            Debug.Log(item.Value.Name);
-        }
+        string toBuild = selectedToConstruct.Name;
+        Action OnBuilt = () => {  CreateObject(coords, pos, toBuild); };
+        ConstructableObject buildingData = AllObjects[toBuild];
+
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(pos);
-        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name, false,
-            AllObjects[selectedToConstruct.Name].TimeToBuild));
+        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddConstructable(new BuildableStructure(coords.x, coords.y, buildingData.TimeToBuild, false, OnBuilt, buildingData.Size()));
+
+    }
+
+    public void CreateObject(Vector2Int coords, Vector3 pos, string toConstruct)
+    {
+        if (AllObjects.ContainsKey(toConstruct) == false)
+        {
+            return;
+        }
+        ConstructableObject selectedToConstruct = AllObjects[toConstruct];
+        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(pos);
+        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name));
         for (int x = coords.x; x < coords.x + selectedToConstruct.Width; x++)
         {
             for (int y = coords.y; y < coords.y + selectedToConstruct.Height; y++)
             {
-                WorldController.Instance.SetTraversible(x, y, !AllObjects[selectedToConstruct.Name].BlocksTile);
+                WorldController.Instance.SetTraversible(x, y, !AllObjects[toConstruct].BlocksTile);
             }
         }
 

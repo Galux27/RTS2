@@ -42,7 +42,15 @@ public class WorldChunkManager : MonoBehaviour
         Width = Chunks.GetLength(0);
     }
 
-
+    public void OnBuildableFinished(BuildableStructure bs)
+    {
+        Vector2Int coords = GetChunkCoordsFromWorldPos(bs.GetPosition());
+        if (!CoordsValid(coords.x, coords.y))
+        {
+            return;
+        }
+        Chunks[coords.x, coords.y].ToBuild.Remove(bs);
+    }
     
 
     Vector2Int getCoordsCache=new Vector2Int();

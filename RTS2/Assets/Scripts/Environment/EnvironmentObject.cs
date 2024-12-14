@@ -9,4 +9,9 @@ public class EnvironmentObject : ScriptableObject
     public Sprite ForwardsSprite,SideSprite,BackwardsSprite;
     public bool BlocksTile;
     public int Width, Height;
+
+    public Vector3 Size()
+    {
+        return new Vector3(Width, Height);
+    }
 }

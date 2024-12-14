@@ -145,7 +145,7 @@ public class Unit : MonoBehaviour,Selectable
 
     private void OnDestroy()
     {
-        UnitMoniter.Instance.RemoveUnit(this);
+        UnitMoniter.Instance?.RemoveUnit(this);
     }
 
     public bool IsSelectable()

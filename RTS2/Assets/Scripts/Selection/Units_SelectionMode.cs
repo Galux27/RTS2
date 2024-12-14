@@ -71,7 +71,7 @@ public class Units_SelectionMode : SelectionMode
                 }
 
 
-                if (OnHoverConstructable != null)
+                if (OnHoverBuildable != null)
                 {
                     for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
                     {
@@ -80,7 +80,7 @@ public class Units_SelectionMode : SelectionMode
                         {
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_ConstructObject construct = new HumanBehaviour_ConstructObject();
-                            construct.InitBehaviour( toPerfrom,OnHoverConstructable);
+                            construct.InitBehaviour( toPerfrom, OnHoverBuildable);
                             construct.IsUserInstruction = true;
                             br.SetBehaviour(construct);
                         }
@@ -99,7 +99,7 @@ public class Units_SelectionMode : SelectionMode
 
                         for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
                         {
-                            Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                            Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
                             moveTo_Behaviour.InitBehaviour(toPerfrom, targetPos);
@@ -117,6 +117,7 @@ public class Units_SelectionMode : SelectionMode
     Unit OnHoverEnemyUnit;
     Unit OnHoverMyUnit;
     ConstructableObjectInstance OnHoverConstructable;
+    Constructable OnHoverBuildable;
     public override void OnHover()
     {
         Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
@@ -149,9 +150,9 @@ public class Units_SelectionMode : SelectionMode
         }
 
 
-        OnHoverConstructable = SelectionUtilities.GetConstructableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
+        OnHoverBuildable = SelectionUtilities.GetConstructableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
         Debug.Log("On Hover Constructable is null " + (OnHoverConstructable==null));
-        if (OnHoverConstructable != null)
+        if (OnHoverBuildable != null)
         {
             CursorIcon.Instance.SetBuildIcon();
             return;

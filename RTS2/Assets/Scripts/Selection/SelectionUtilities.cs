@@ -4,10 +4,10 @@ using UnityEngine;
 
 public static class SelectionUtilities
 {
-    static List<ConstructableObjectInstance> construcableObjectCache = new List<ConstructableObjectInstance>();
-    public static ConstructableObjectInstance GetConstructableObjectInstanceWithinRangeOfPoint(Vector3 point, float maxDist)
+    static List<ConstructableObjectInstance> constructedObjectCache = new List<ConstructableObjectInstance>();
+    public static ConstructableObjectInstance GetConstructedObjectInRangeOfPoint(Vector3 point, float maxDist)
     {
-        construcableObjectCache.Clear();
+        constructedObjectCache.Clear();
        point.z = 0;
         ConstructableObjectInstance retVal = null;
         chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
@@ -17,7 +17,7 @@ public static class SelectionUtilities
             for(int y = 0; y < chunksToCheck[x].EnvironmentObjectsInChunk.Count; y++)
             {
                 if (chunksToCheck[x].EnvironmentObjectsInChunk[y].GetType() == typeof(ConstructableObjectInstance)){
-                    construcableObjectCache.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y] as ConstructableObjectInstance);
+                    constructedObjectCache.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y] as ConstructableObjectInstance);
                 }
             }
         }
@@ -27,16 +27,15 @@ public static class SelectionUtilities
         float curDist = -1f;
         Vector3 objPosition = Vector3.zero;
 
-        for (int x = 0; x < construcableObjectCache.Count; x++)
+        for (int x = 0; x < constructedObjectCache.Count; x++)
         {
-            objPosition.x = construcableObjectCache[x].PosX;
-            objPosition.y = construcableObjectCache[x].PosY;
+            objPosition.x = constructedObjectCache[x].PosX;
+            objPosition.y = constructedObjectCache[x].PosY;
             curDist = Vector3.Distance(point, objPosition);
-            Debug.Log("On Hover Constructable pos at " + objPosition + " cursor at " + point +" dist " +curDist);
 
             if (curDist < maxDist && curDist < closest)
             {
-                retVal = construcableObjectCache[x];
+                retVal = constructedObjectCache[x];
                 closest = curDist;
             }
 
@@ -44,6 +43,41 @@ public static class SelectionUtilities
         return retVal;
     }
 
+    static List<Constructable> constructableObjectCache = new List<Constructable>();
+    public static Constructable GetConstructableObjectInstanceWithinRangeOfPoint(Vector3 point, float maxDist)
+    {
+        constructableObjectCache.Clear();
+        point.z = 0;
+        Constructable retVal = null;
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
+
+        for (int x = 0; x < chunksToCheck.Count; x++)
+        {
+            for (int y = 0; y < chunksToCheck[x].ToBuild.Count; y++)
+            {
+                constructableObjectCache.Add(chunksToCheck[x].ToBuild[y]);
+            }
+        }
+
+
+        float closest = 99999f;
+        float curDist = -1f;
+        Vector3 objPosition = Vector3.zero;
+
+        for (int x = 0; x < constructableObjectCache.Count; x++)
+        {
+            objPosition = constructableObjectCache[x].GetPosition();
+            curDist = Vector3.Distance(point, objPosition);
+
+            if (curDist < maxDist && curDist < closest)
+            {
+                retVal = constructableObjectCache[x];
+                closest = curDist;
+            }
+
+        }
+        return retVal;
+    }
 
     static List<Unit> toCheck=new List<Unit>();
     static List<WorldChunk> chunksToCheck = new List<WorldChunk>();

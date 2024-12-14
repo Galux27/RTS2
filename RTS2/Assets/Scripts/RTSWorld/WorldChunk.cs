@@ -9,6 +9,7 @@ public class WorldChunk
 {
     public List<Unit> UnitsInChunk=new List<Unit>();
     public List<EnvironmentObjectInstance> EnvironmentObjectsInChunk = new List<EnvironmentObjectInstance>();
+    public List<Constructable> ToBuild=new List<Constructable>();
     public Color DebugColor;
 
     public WorldChunk()
@@ -28,11 +29,19 @@ public class WorldChunk
 
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
     {
-        Debug.Log("On Hover Constructable added instance " + environmentObject.PosX + "," + environmentObject.PosY);
         EnvironmentObjectsInChunk.Add(environmentObject);
         if (ShouldDrawEnvironmentObjects() && environmentObject.Drawn == false)
         {
             environmentObject.RenderInstance();
+        }
+    }
+
+    public void AddConstructable(Constructable toBuild)
+    {
+        ToBuild.Add(toBuild);
+        if (ShouldDrawEnvironmentObjects() && !toBuild.IsDrawn())
+        {
+            toBuild.Render();
         }
     }
 
@@ -52,6 +61,11 @@ public class WorldChunk
         {
             EnvironmentObjectsInChunk[x].RenderInstance();
         }
+
+        for (int x = 0; x < ToBuild.Count; x++)
+        {
+            ToBuild[x].Render();
+        }
     }
 
     public void CleanupEnvironmentObjects()
@@ -59,6 +73,11 @@ public class WorldChunk
         for (int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
         {
             EnvironmentObjectsInChunk[x].CleanupInstance();
+        }
+
+        for (int x = 0; x < ToBuild.Count; x++)
+        {
+            ToBuild[x].Cleanup();
         }
     }
 }

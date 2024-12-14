@@ -7,4 +7,6 @@ public class ConstructableObject : EnvironmentObject
 {
     public int Cost;
     public float TimeToBuild;
+
+    
 }

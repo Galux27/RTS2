@@ -67,7 +67,8 @@ public class BuildingsSelectionMode : SelectionMode
             
             if (IsValidToConstruct(coords))
             {
-                ConstructableObjectManager.Instance.CreateObject(coords,cursorPos);
+                ConstructableObjectManager.Instance.CreateBuildableForObject(coords, cursorPos);
+               // ConstructableObjectManager.Instance.CreateObject(coords,cursorPos,constructable);
             }
         }
     }

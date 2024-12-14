@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class HumanBehaviour_ConstructObject : BehaviourBase
 {
-    ConstructableObjectInstance toConstruct;
+    Constructable toConstruct;
     PathFollower follower;
 
-    public void InitBehaviour(Unit toPerform,ConstructableObjectInstance obj)
+    public void InitBehaviour(Unit toPerform, Constructable obj)
     {
         base.InitBehaviour(toPerform);
         toConstruct = obj;
         follower = new PathFollower();
-        TargetPosition = new Vector3(toConstruct.PosX, toConstruct.PosY);
+        TargetPosition = toConstruct.GetPosition();
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
 
@@ -47,7 +47,7 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
     public override void PerformBehaviour()
     {
         float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);
-        Debug.Log("Dist to building " + dist);
+        Debug.Log("Build Action: Dist to building " + dist);
         if (dist > 1f)
         {
             follower.OnUpdate(unitToMove.transform.position);
@@ -55,7 +55,7 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
         }
         else
         {
-            Debug.Log("Is Built " + toConstruct.IsBuilt());
+            Debug.Log("Build Action: Is Built " + toConstruct.IsBuilt());
             if (toConstruct.IsBuilt() == false)
             {
                 toConstruct.ConstructObject();

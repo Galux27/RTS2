@@ -6,4 +6,20 @@ public interface Constructable
 {
     public void ConstructObject();
     public void OnObjectConstructed();
+
+    public Vector3 GetPosition();
+    public float MaxDistToConstruct();
+    public void SetBuilt(bool val);
+
+    public bool IsBuilt();
+
+    public Vector3 Size();
+
+    public void Render();
+
+    public void Cleanup();
+
+    public bool IsDrawn();
+
+
 }
