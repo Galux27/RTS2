@@ -17,7 +17,7 @@ public class BuildingsSelectionMode : SelectionMode
 
             ConstructableObjectManager.Instance.GetCursor().SetActive(true);
 
-            if (AreAllTilesWalkable(coords))
+            if (AreAllTilesWalkable(coords) && DoBoundsIntersectExisting(coords)==false)
             {
                 ConstructableObjectManager.Instance.SetCursorColour(new Color(0, 1, 0, .5f));
             }
@@ -38,7 +38,7 @@ public class BuildingsSelectionMode : SelectionMode
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
         Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Furniture);
 
-
+        
 
         if (ConstructableHoveringOver != ConstructableHoveringOverThisFrame)
         {
@@ -94,9 +94,9 @@ public class BuildingsSelectionMode : SelectionMode
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
 
-        Bounds toBuild = new Bounds(new Vector3(coords.x, coords.y), ConstructableObjectManager.Instance.selectedToConstruct.Size());
+        Bounds toBuild = new Bounds(new Vector3(coords.x, coords.y), ConstructableObjectManager.Instance.selectedToConstruct.Size()*.9f);
 
-
+        ///DrawBounds(toBuild, Color.red);
         List<Constructable> selectables= SelectionUtilities.GetAllConstructablesInRangeOfObject(cursorPos, 20);
         Bounds comparison = new Bounds();
 
@@ -105,11 +105,50 @@ public class BuildingsSelectionMode : SelectionMode
             comparison = new Bounds(selectables[x].GetPosition(), selectables[x].Size());
             if (comparison.Intersects(toBuild))
             {
+                Debug.Log("Blocked By intersection at " + selectables[x].GetPosition());
+
+                // DrawBounds(comparison, Color.red);
                 return true;
+            }
+            else
+            {
+               // DrawBounds(comparison, Color.green);
             }
         }
 
         return false;
+    }
+
+    void DrawBounds(Bounds b,Color c )
+    {
+        
+        // bottom
+        var p1 = new Vector3(b.min.x, b.min.y, b.min.z);
+        var p2 = new Vector3(b.max.x, b.min.y, b.min.z);
+        var p3 = new Vector3(b.max.x, b.min.y, b.max.z);
+        var p4 = new Vector3(b.min.x, b.min.y, b.max.z);
+
+        Debug.DrawLine(p1, p2, c);
+        Debug.DrawLine(p2, p3, c);
+        Debug.DrawLine(p3, p4,c);
+        Debug.DrawLine(p4, p1,c);
+
+        // top
+        var p5 = new Vector3(b.min.x, b.max.y, b.min.z);
+        var p6 = new Vector3(b.max.x, b.max.y, b.min.z);
+        var p7 = new Vector3(b.max.x, b.max.y, b.max.z);
+        var p8 = new Vector3(b.min.x, b.max.y, b.max.z);
+
+        Debug.DrawLine(p5, p6, c);
+        Debug.DrawLine(p6, p7, c);
+        Debug.DrawLine(p7, p8, c);
+        Debug.DrawLine(p8, p5, c);
+
+        // sides
+        Debug.DrawLine(p1, p5, c);
+        Debug.DrawLine(p2, p6, c);
+        Debug.DrawLine(p3, p7, c);
+        Debug.DrawLine(p4, p8,c);
     }
 
     public override void OnRightMouseUp()

@@ -16,6 +16,6 @@ MonoBehaviour:
   ForwardsSprite: {fileID: -351759696, guid: 22d4580ff3cd39b44828fc72fc09c1dd, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
-  BlocksTile: 1
+  BlocksTile: 0
   Width: 1
   Height: 1
