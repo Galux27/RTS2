@@ -36,13 +36,17 @@ public class WorldChunk
         }
     }
 
-    public Constructable GetConstructableAtPosition(int x,int y)
+    public Constructable GetConstructableAtPosition(int x,int y,ConstructableType type)
     {
         Constructable retVal = null;
         Vector3 pos = new Vector3(x+.5f, y+.5f);
         Bounds b = new Bounds();
         for(int x1 = 0; x1 < ToBuild.Count; x1++)
         {
+            if (ToBuild[x1].GetType() != type)
+            {
+                continue;
+            }
             b = new Bounds(ToBuild[x1].GetPosition(), ToBuild[x1].Size());
             if (b.Contains(pos))
             {

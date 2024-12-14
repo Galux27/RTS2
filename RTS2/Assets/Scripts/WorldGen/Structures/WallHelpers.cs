@@ -264,7 +264,7 @@ public static class WallHelpers
         Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos+offset);
 
         Action OnBuilt = () => { WallHelpers.CreateWallObject(x, y, toDrawOn, toUse); };
-        BuildableStructure bs = new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one,offset);
+        BuildableStructure bs = new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one,offset,ConstructableType.Wall);
         WorldController.Instance.WallManager.WallsInWorld[x, y].SetWallUnderConstruction(true);
         Debug.Log("Adding constructable to " + coords.ToString());
 

@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildableStructure:Constructable
+public class BuildableStructure : Constructable
 {
 
-    public BuildableStructure(int x, int y, float maxProgress, bool forceComplete, Action onComplete, Vector3 size, Vector3 offset)
+    public BuildableStructure(int x, int y, float maxProgress, bool forceComplete, Action onComplete, Vector3 size, Vector3 offset,ConstructableType myType)
     {
         this.x = x; this.y = y;
         this.maxProgress = maxProgress;
@@ -14,6 +14,7 @@ public class BuildableStructure:Constructable
         this.onComplete = onComplete;
         this.size= size;
         this.offset = offset;
+        this.myType = myType;
         if (forceComplete)
         {
             OnObjectConstructed();
@@ -98,7 +99,6 @@ public class BuildableStructure:Constructable
         if(Object != null)
         {
             Object.GetComponent<ConstructableObjectUI>().SetSpriteRendererColour(Color.green);
-
         }
     }
 
@@ -109,4 +109,10 @@ public class BuildableStructure:Constructable
             Object.GetComponent<ConstructableObjectUI>().SetSpriteRendererColour(Color.white);
         }
     }
+    ConstructableType myType;
+    ConstructableType Constructable.GetType()
+    {
+        return myType;
+    }
 }
+

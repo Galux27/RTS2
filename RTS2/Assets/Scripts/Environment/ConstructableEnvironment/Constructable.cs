@@ -24,4 +24,13 @@ public interface Constructable
 
     public void OnHover();
     public void OnHoverExit();
+
+    public ConstructableType GetType();
+}
+public enum ConstructableType
+{
+    None,
+    Wall,
+    Furniture,
+    Door
 }
