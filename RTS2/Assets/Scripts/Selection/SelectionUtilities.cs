@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public static class SelectionUtilities
@@ -40,6 +41,27 @@ public static class SelectionUtilities
             }
 
         }
+        return retVal;
+    }
+
+
+    public static List<Constructable> GetAllConstructablesInRangeOfObject(Vector3 point, float maxDist)
+    {
+        List<Constructable> retVal = new List<Constructable>();
+
+        constructableObjectCache.Clear();
+        point.z = 0;
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
+
+        for (int x = 0; x < chunksToCheck.Count; x++)
+        {
+            for (int y = 0; y < chunksToCheck[x].ToBuild.Count; y++)
+            {
+                constructableObjectCache.Add(chunksToCheck[x].ToBuild[y]);
+            }
+        }
+
+        retVal.AddRange(constructableObjectCache);
         return retVal;
     }
 

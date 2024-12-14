@@ -244,10 +244,36 @@ public static class WallHelpers
         {
             return false;
         }
+
+         if(DoWallBoundsIntersectExisting(new Vector2Int(x, y)))
+        {
+            return false;
+        }
        
         return true;
     }
 
+   static  bool DoWallBoundsIntersectExisting(Vector2Int coords)
+    {
+        Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
+
+        Bounds toBuild = new Bounds(new Vector3(coords.x+.5f, coords.y+.5f),Vector3.one*.9f);
+
+
+        List<Constructable> selectables = SelectionUtilities.GetAllConstructablesInRangeOfObject(cursorPos, 20);
+        Bounds comparison = new Bounds();
+
+        for (int x = 0; x < selectables.Count; x++)
+        {
+            comparison = new Bounds(selectables[x].GetPosition(), selectables[x].Size());
+            if (comparison.Intersects(toBuild))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public static bool DoesUnderConstructionWallExistAtPosition(int x,int y)
     {
