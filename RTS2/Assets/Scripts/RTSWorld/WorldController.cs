@@ -45,8 +45,6 @@ public class WorldController : MonoBehaviour
         Pathfinding.CreateNodesFromWorld(WorldTiles);
 
         WallManager = new WallManager(WorldWidth, WorldHeight);
-        WallManager.DrawSomeRandomWalls();
-
         WorldRenderer.Instance.RenderWorld(WorldTiles);
         WallManager.RenderWalls(BuildingTilemap, WallTest);
 
