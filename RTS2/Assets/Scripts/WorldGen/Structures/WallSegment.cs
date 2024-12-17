@@ -10,23 +10,35 @@ using UnityEngine.Tilemaps;
 public class WallSegment
 {
     public int x, y;
-    public bool HasWall = false,HasWallUnderConstruction=false;
-    public WallSegment(int x, int y, bool hasWall)
+    public bool HasWallUnderConstruction=false;
+    public WallType WallType=WallType.None;
+    public WallSegment(int x, int y)
     {
         this.x = x;
         this.y = y;
-        HasWall = hasWall;
     }
 
-    public void SetHasWall(bool hasWall)
+    public bool HasWall
     {
-        this.HasWall = hasWall;
-        if (hasWall)
+        get
         {
-            SetWallUnderConstruction(false);
+            return WallType == WallType.Wall;
         }
     }
 
+
+    public void SetHasWall(bool hasWall)
+    {
+        if (hasWall)
+        {
+            SetWallUnderConstruction(false);
+            WallType = WallType.Wall;
+        }
+        else
+        {
+            WallType=WallType.None;
+        }
+    }
 
     public void SetWallUnderConstruction(bool val)
     {
@@ -37,9 +49,16 @@ public class WallSegment
     public Tile ToDraw;
     public void SetTile(Tile tile)
     {
-        
-
         ToDraw = tile;
         Drawn = true;
     }
+
 }
+
+public enum WallType 
+{
+    None,
+    Wall,
+    Door
+}
+

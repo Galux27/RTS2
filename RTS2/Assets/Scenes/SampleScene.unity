@@ -132,8 +132,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 36023319}
+  - component: {fileID: 36023320}
   m_Layer: 5
-  m_Name: SelectedUnitParent
+  m_Name: StructureTypesParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,6 +160,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &36023320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36023318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52a8c470e954443439341de8908ebcbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ButtonPrefab: {fileID: 4794754492524904521, guid: 0cd33546d507d494ebc072353ac4b7b4, type: 3}
+  ButtonParent: {fileID: 1662747136}
 --- !u!1 &39981592
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,7 +327,7 @@ GameObject:
   m_Component:
   - component: {fileID: 136119553}
   m_Layer: 5
-  m_Name: ConstructionSelectionUI
+  m_Name: StructureSelectUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -551,6 +566,7 @@ GameObject:
   - component: {fileID: 247636648}
   - component: {fileID: 247636649}
   - component: {fileID: 247636650}
+  - component: {fileID: 247636651}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -712,6 +728,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedToConstruct: {fileID: 0}
+--- !u!114 &247636651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 247636639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c95bea9f9d88ad43b8ef148023c71a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &279856670
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1225,7 +1253,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Construction
+  m_text: Structures
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2027,7 +2055,7 @@ GameObject:
   m_Component:
   - component: {fileID: 763734444}
   m_Layer: 5
-  m_Name: BuildingSelectionUI
+  m_Name: FurnitureSelectUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5001,7 +5029,6 @@ GameObject:
   - component: {fileID: 1662747141}
   - component: {fileID: 1662747140}
   - component: {fileID: 1662747139}
-  - component: {fileID: 1662747138}
   m_Layer: 5
   m_Name: SelectedUnitsGrid
   m_TagString: Untagged
@@ -5028,20 +5055,6 @@ RectTransform:
   m_AnchoredPosition: {x: -485.7843, y: -390.43716}
   m_SizeDelta: {x: 443.6314, y: 196.5257}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1662747138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1662747136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2893a1e45eb6ae845b42fdeec0f520fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ButtonPrefab: {fileID: 4794754492524904521, guid: 14cc0b283fafcc245885d658bd216ed1, type: 3}
-  ButtonParent: {fileID: 1662747137}
 --- !u!114 &1662747139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6040,7 +6053,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Buildings
+  m_text: Furniture
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

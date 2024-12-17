@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 42144dd4509bde747aef674f6c187046
+guid: 3de58e3fdf273b04983f37ed27340cb7
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,7 +123,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Door_0
+      name: DoorRight_0
       rect:
         serializedVersion: 2
         x: 0
@@ -137,14 +137,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cc4470bc01c842c479185b1e5db8d6d9
-      internalID: -2002845798
+      spriteID: afeebd734a9868f489c3dd69bd096f77
+      internalID: -1565469419
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_1
+      name: DoorRight_1
       rect:
         serializedVersion: 2
         x: 40
@@ -158,14 +158,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 01dff455cc8947b499a5e046f5b9ea32
-      internalID: 332601006
+      spriteID: d49c10185fe496f47a4bc6be29db7de7
+      internalID: 163347165
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_2
+      name: DoorRight_2
       rect:
         serializedVersion: 2
         x: 80
@@ -179,14 +179,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bc3413c17cc06064895b130ccb6e8abf
-      internalID: -449662324
+      spriteID: b4e3d0253fc266d41ae4a2f40c5dab97
+      internalID: 1601699081
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_3
+      name: DoorRight_3
       rect:
         serializedVersion: 2
         x: 120
@@ -200,14 +200,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 421d2bf5150a03b4b9df0765e1099dfd
-      internalID: -993606388
+      spriteID: a21c4445d495e844d84684aac2441a2a
+      internalID: -384098054
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_4
+      name: DoorRight_4
       rect:
         serializedVersion: 2
         x: 160
@@ -221,14 +221,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b2d182ec030be464fb261dfe03d6d104
-      internalID: 1542001164
+      spriteID: 85caa83da65b43f4db9ad6b3bee56c29
+      internalID: -2017682176
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_5
+      name: DoorRight_5
       rect:
         serializedVersion: 2
         x: 200
@@ -242,14 +242,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f2f37db0f5620134cb5254c3c3660ee1
-      internalID: 460327244
+      spriteID: be30524d1cdae4747983efa40c326289
+      internalID: 1729613837
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_6
+      name: DoorRight_6
       rect:
         serializedVersion: 2
         x: 240
@@ -263,14 +263,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b01e66951c3067f47a432c6758334ba5
-      internalID: -1568459880
+      spriteID: 4452ca2090a76c04b8b5be2b6bcbd3b1
+      internalID: 384818588
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_7
+      name: DoorRight_7
       rect:
         serializedVersion: 2
         x: 280
@@ -284,14 +284,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c79436455ba7964d886ae8cf9c538f8
-      internalID: -2017039826
+      spriteID: d4e23771423bb7f428f908db9beef25e
+      internalID: 777267414
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_8
+      name: DoorRight_8
       rect:
         serializedVersion: 2
         x: 320
@@ -305,8 +305,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6633f0759d81100498e34c3e5663df2e
-      internalID: -1245482497
+      spriteID: b0791ac629da8964e99df6d58b248d97
+      internalID: -1132062333
       vertices: []
       indices: 
       edges: []
@@ -322,15 +322,15 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Door_0: -2002845798
-      Door_1: 332601006
-      Door_2: -449662324
-      Door_3: -993606388
-      Door_4: 1542001164
-      Door_5: 460327244
-      Door_6: -1568459880
-      Door_7: -2017039826
-      Door_8: -1245482497
+      DoorRight_0: -1565469419
+      DoorRight_1: 163347165
+      DoorRight_2: 1601699081
+      DoorRight_3: -384098054
+      DoorRight_4: -2017682176
+      DoorRight_5: 1729613837
+      DoorRight_6: 384818588
+      DoorRight_7: 777267414
+      DoorRight_8: -1132062333
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

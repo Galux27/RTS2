@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18771e9c4250bf74a8e7a6d99d1768b2, type: 3}
+  m_Name: DoorForward
+  m_EditorClassIdentifier: 
+  AnimationFrames:
+  - {fileID: 11400000, guid: 61a5b88a752b323429aed00725ddf133, type: 2}
+  - {fileID: 11400000, guid: ab186640e4cef8844b9a518de625f1e1, type: 2}
+  - {fileID: 11400000, guid: cede7774b392e6d4dab07baf965ca53a, type: 2}
+  - {fileID: 11400000, guid: 032d67d45f8e39649a14175c56e46b0b, type: 2}
+  - {fileID: 11400000, guid: 4c4d4bc4382183c45a373cfb29280ed9, type: 2}
+  - {fileID: 11400000, guid: 3efdfd554a5cec5488cf029be269b600, type: 2}
+  - {fileID: 11400000, guid: 001b85973e115854f8f0b2811a598825, type: 2}
+  - {fileID: 11400000, guid: 4f8f7209c5107964b9de10853ff887f3, type: 2}
+  - {fileID: 11400000, guid: 0ae042042a894ad498a822a47fc6c15f, type: 2}
+  TimePerFrame: 0.1
+  AnimationID: DoorBwd

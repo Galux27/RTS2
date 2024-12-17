@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18771e9c4250bf74a8e7a6d99d1768b2, type: 3}
+  m_Name: DoorBackward
+  m_EditorClassIdentifier: 
+  AnimationFrames:
+  - {fileID: 11400000, guid: d28f904806482ae42a5772948b411eba, type: 2}
+  - {fileID: 11400000, guid: 12fab3176e10b93439a54dbfcf82b6ff, type: 2}
+  - {fileID: 11400000, guid: 259797bfbb3946e499ad8c3ec5de14a2, type: 2}
+  - {fileID: 11400000, guid: dfde88b5adc002247a122d9dfc7bdea2, type: 2}
+  - {fileID: 11400000, guid: 665bd3c67343d334ea2d45a575ad26eb, type: 2}
+  - {fileID: 11400000, guid: c8d024a6d5ccc744082628ed91f3de10, type: 2}
+  - {fileID: 11400000, guid: e8e1790bfc90f9a4aa25f84167e7c293, type: 2}
+  - {fileID: 11400000, guid: eb7ca26b077c62249ba4627c9d7e4bae, type: 2}
+  - {fileID: 11400000, guid: f9dd323cb6856a74fb22835f09d59baf, type: 2}
+  TimePerFrame: 0.1
+  AnimationID: DoorFwd

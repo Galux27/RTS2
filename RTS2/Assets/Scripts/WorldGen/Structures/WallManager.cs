@@ -16,7 +16,7 @@ public class WallManager
         {
             for(int y=0;y< height; y++)
             {
-                WallsInWorld[x,y] = new WallSegment(x,y,false);
+                WallsInWorld[x,y] = new WallSegment(x,y);
             }
         }
     }
@@ -83,7 +83,7 @@ public class WallManager
                 if (WallsInWorld[x1, y1].HasWall)
                 {
                     WallHelpers.CalculateTileType(ref WallsInWorld[x1, y1], this, toUse);
-                    WorldController.Instance.SetTraversible(x1, y1, false);
+                    WorldController.Instance.SetTraversible(x1, y1, !WallsInWorld[x1, y1].HasWall);
                 }
             }
         }
@@ -124,7 +124,7 @@ public class WallManager
                 if (WallsInWorld[x1, y1].HasWall)
                 {
                     WallHelpers.CalculateTileType(ref WallsInWorld[x1, y1], this, toUse);
-                    WorldController.Instance.SetTraversible(x1, y1, false);
+                    WorldController.Instance.SetTraversible(x1, y1, !WallsInWorld[x1, y1].HasWall);
                 }
             }
         }

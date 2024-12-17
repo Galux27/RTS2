@@ -60,7 +60,7 @@ public class SelectionController : MonoBehaviour
         None = new SelectionMode();
         Units=new Units_SelectionMode();
         CurrentSelectionModeObj = Units;
-        Construction = new ConstructSelectionMode();
+        Construction = new StructureSelectionMode();
         Buildings = new BuildingsSelectionMode();
         selectionMode = CurrentSelectionMode.None;
     }

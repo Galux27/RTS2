@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18771e9c4250bf74a8e7a6d99d1768b2, type: 3}
+  m_Name: DoorRight
+  m_EditorClassIdentifier: 
+  AnimationFrames:
+  - {fileID: 11400000, guid: 89541597bf19ce34f87ada9b23d57a7b, type: 2}
+  - {fileID: 11400000, guid: fae131e8c843dd245aad84e4b68f692f, type: 2}
+  - {fileID: 11400000, guid: cc167524867ea68419185f16bc190a14, type: 2}
+  - {fileID: 11400000, guid: 16aa0bfc8cc718e448eae8a47951f9d4, type: 2}
+  - {fileID: 11400000, guid: ea3ff4528bfbee744b82cc3b918a2ec8, type: 2}
+  - {fileID: 11400000, guid: ca1c2d52ea32b0944ab408a83b2cf41f, type: 2}
+  - {fileID: 11400000, guid: b9fb731c047921742a8c77a897272e54, type: 2}
+  - {fileID: 11400000, guid: 46f7968dc15e3b04787aa6553dba02e0, type: 2}
+  - {fileID: 11400000, guid: 7abff2ab7133c974292cc2ae53b0c41f, type: 2}
+  TimePerFrame: 0.1
+  AnimationID: DoorRight

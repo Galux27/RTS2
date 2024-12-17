@@ -96,7 +96,6 @@ public class BuildingsSelectionMode : SelectionMode
 
         Bounds toBuild = new Bounds(new Vector3(coords.x, coords.y), ConstructableObjectManager.Instance.selectedToConstruct.Size()*.9f);
 
-        ///DrawBounds(toBuild, Color.red);
         List<Constructable> selectables= SelectionUtilities.GetAllConstructablesInRangeOfObject(cursorPos, 20);
         Bounds comparison = new Bounds();
 
@@ -105,15 +104,9 @@ public class BuildingsSelectionMode : SelectionMode
             comparison = new Bounds(selectables[x].GetPosition(), selectables[x].Size());
             if (comparison.Intersects(toBuild))
             {
-                Debug.Log("Blocked By intersection at " + selectables[x].GetPosition());
-
-                // DrawBounds(comparison, Color.red);
                 return true;
             }
-            else
-            {
-               // DrawBounds(comparison, Color.green);
-            }
+          
         }
 
         return false;

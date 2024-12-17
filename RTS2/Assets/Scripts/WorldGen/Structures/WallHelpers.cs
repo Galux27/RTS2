@@ -8,6 +8,60 @@ using UnityEngine.Tilemaps;
 
 public static class WallHelpers
 {
+    const string DoorHorizontal = "DoorFwd", DoorVertical = "DoorLeft";
+    public static TilemapAnimation GetDoorVisual(WallSegment segment, WallManager wallManager)
+    {
+        bool up = false, down = false, left = false, right = false;
+
+        if (segment.x > 0)
+        {
+            if (wallManager.WallsInWorld[segment.x - 1, segment.y].HasWall)
+            {
+                left = true;
+            }
+        }
+
+        if (segment.x < wallManager.WallsInWorld.GetLength(0) - 1)
+        {
+            if (wallManager.WallsInWorld[segment.x + 1, segment.y].HasWall)
+            {
+                right = true;
+            }
+        }
+
+        if (segment.y > 0)
+        {
+            if (wallManager.WallsInWorld[segment.x, segment.y - 1].HasWall)
+            {
+                down = true;
+            }
+        }
+
+        if (segment.y < wallManager.WallsInWorld.GetLength(1) - 1)
+        {
+            if (wallManager.WallsInWorld[segment.x, segment.y + 1].HasWall)
+            {
+                up = true;
+            }
+        }
+
+
+        if (up || down)
+        {
+            return TilemapAnimationController.Instance.Animations[DoorVertical];
+
+        }
+        else if (left || right)
+        {
+            return TilemapAnimationController.Instance.Animations[DoorHorizontal];
+
+        }
+
+        return TilemapAnimationController.Instance.Animations[DoorHorizontal];
+
+    }
+
+
 
     public static Sprite GetSpriteForWallType(WallSegment segment, WallManager wallManager, WallTile toGetTileFrom)
     {
@@ -142,7 +196,7 @@ public static class WallHelpers
             }
         }
 
-         if (segment.y > 0)
+        if (segment.y > 0)
         {
             if (wallManager.WallsInWorld[segment.x , segment.y - 1].HasWall)
             {
