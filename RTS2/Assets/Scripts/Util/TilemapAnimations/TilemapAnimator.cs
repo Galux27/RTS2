@@ -23,6 +23,7 @@ public class TilemapAnimator
         Timer = animation.TimePerFrame;
         Coords = coords;
         TilemapAnimationController.Instance.AddAnimator(this);
+        UpdateTile();
     }
 
     public void Cleanup()

@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class DoorSegment : WallSegment
 {
-    public DoorSegment(int x,int y) : base(x, y)
+    public DoorSegment(int x,int y,Tilemap toPlaceOn) : base(x, y)
     {
         WallType = WallType.Door;
-    }
 
+        myAnim = WallHelpers.GetDoorVisual(this, WorldController.Instance.WallManager);
+        DoorAnimator=new TilemapAnimator(myAnim,toPlaceOn,new Vector3Int(x,y,0));
+    }
+    TilemapAnimation myAnim;
     public TilemapAnimator DoorAnimator;
 
     public void OpenDoor()

@@ -22,7 +22,7 @@ public class WallSegment
     {
         get
         {
-            return WallType == WallType.Wall;
+            return WallType == WallType.Wall && HasWallUnderConstruction == false ;
         }
     }
 
@@ -40,9 +40,13 @@ public class WallSegment
         }
     }
 
-    public void SetWallUnderConstruction(bool val)
+    public void SetWallUnderConstruction(bool val,WallType typeOverride = WallType.None)
     {
         HasWallUnderConstruction = val;
+        if (typeOverride != WallType.None)
+        {
+            WallType = typeOverride;
+        }
     }
 
     public bool Drawn = false;

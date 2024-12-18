@@ -27,6 +27,11 @@ public class WallManager
 
     }
 
+    public void SetDoor(int x,int y,Tilemap toPlaceOn)
+    {
+        WallsInWorld[x,y]=new DoorSegment(x,y,toPlaceOn);
+    }
+
     public void DrawSomeRandomWalls()
     {
         for(int q = 0; q < 10; q++)
@@ -109,6 +114,43 @@ public class WallManager
     bool CoordsValid(int x,int y)
     {
         return x>0&&y>0 &&x<width&&y<height;
+    }
+
+    public void AddSingleDoor(int x,int y,Tilemap toDrawOn, WallTile toUse)
+    {
+        SetDoor(x, y,toDrawOn);
+        // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+
+
+        for (int x1 = 0; x1 < width; x1++)
+        {
+            for (int y1 = 0; y1 < height; y1++)
+            {
+                if (WallsInWorld[x1, y1].HasWall)
+                {
+                    WallHelpers.CalculateTileType(ref WallsInWorld[x1, y1], this, toUse);
+                    WorldController.Instance.SetTraversible(x1, y1, !WallsInWorld[x1, y1].HasWall);
+                }
+            }
+        }
+
+
+        for (int x1 = x - 1; x1 <= x + 1; x1++)
+        {
+            for (int y1 = y - 1; y1 <= y + 1; y1++)
+            {
+                if (!CoordsValid(x1, y1))
+                {
+                    continue;
+                }
+
+                if (WallsInWorld[x1, y1].HasWall)
+                {
+
+                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), WallsInWorld[x1, y1].ToDraw);
+                }
+            }
+        }
     }
 
     public void AddSingleWall(int x,int y,Tilemap toDrawOn,WallTile toUse)
