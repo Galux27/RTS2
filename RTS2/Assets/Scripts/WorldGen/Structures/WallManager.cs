@@ -121,7 +121,6 @@ public class WallManager
         SetDoor(x, y,toDrawOn);
         // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
 
-
         for (int x1 = 0; x1 < width; x1++)
         {
             for (int y1 = 0; y1 < height; y1++)
@@ -151,6 +150,8 @@ public class WallManager
                 }
             }
         }
+        WorldController.Instance.SetTraversible(x, y, true);
+
     }
 
     public void AddSingleWall(int x,int y,Tilemap toDrawOn,WallTile toUse)

@@ -22,7 +22,7 @@ public class WallSegment
     {
         get
         {
-            return WallType == WallType.Wall && HasWallUnderConstruction == false ;
+            return WallType == WallType.Wall && HasWallUnderConstruction == false;
         }
     }
 
