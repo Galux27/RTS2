@@ -34,7 +34,7 @@ public class SelectModeUI : MonoBehaviour
 
                 break;
             case CurrentSelectionMode.Buildings:
-                BuildingSelectButtonManager.Instance.RefreshUI();
+                FurnitureSelectButtonManager.Instance.RefreshUI();
               BuildingUI.SetActive(true);
 
                 break;

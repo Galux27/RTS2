@@ -14,4 +14,20 @@ public class EnvironmentObject : ScriptableObject
     {
         return new Vector3(Width, Height);
     }
+
+    public int HalfWidth
+    {
+        get
+        {
+            return Mathf.Max(Width / 2, 1);
+        }
+    }
+
+    public int HalfHeight
+    {
+        get
+        {
+            return Mathf.Max(Height / 2, 1);
+        }
+    }
 }

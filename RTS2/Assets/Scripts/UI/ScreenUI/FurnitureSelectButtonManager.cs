@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildingSelectButtonManager : BaseUI
+public class FurnitureSelectButtonManager : BaseUI
 {
-    static BuildingSelectButtonManager instance;
-    public static BuildingSelectButtonManager Instance
+    static FurnitureSelectButtonManager instance;
+    public static FurnitureSelectButtonManager Instance
     {
         get
         {
             if (instance == null)
             {
-                instance = FindObjectOfType<BuildingSelectButtonManager>(true);
+                instance = FindObjectOfType<FurnitureSelectButtonManager>(true);
             }
             return instance;
         }

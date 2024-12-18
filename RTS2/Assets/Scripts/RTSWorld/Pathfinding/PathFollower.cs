@@ -4,8 +4,24 @@ using UnityEngine;
 
 public class PathFollower
 {
+
+
+
+    public PathFollower(Unit FollowingPath)
+    {
+        followingPath = FollowingPath;
+    }
+
+    public PathFollower() 
+    { 
+    
+    }
+
+    Unit followingPath;
+
+
     public bool debugDrawPath = true;
-    const float MinDistToPoint = .5f;
+    const float MinDistToPoint = .015f;
     List<PathfindingNode> pathfindingNodes;
     int currentIndex = 0;
     bool isPathDone = false;

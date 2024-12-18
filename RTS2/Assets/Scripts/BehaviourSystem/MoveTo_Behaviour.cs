@@ -11,7 +11,7 @@ public class MoveTo_Behaviour : BehaviourBase
     {
         base.InitBehaviour(toPerform);
         TargetPosition = targetPos;
-        follower = new PathFollower();
+        follower = new PathFollower(toPerform);
         follower.GetPath(toPerform.transform.position, targetPos);
     }
 

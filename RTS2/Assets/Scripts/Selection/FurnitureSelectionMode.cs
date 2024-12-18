@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildingsSelectionMode : SelectionMode
+public class FurnitureSelectionMode : SelectionMode
 {
     Constructable ConstructableHoveringOver;
 
@@ -57,11 +57,26 @@ public class BuildingsSelectionMode : SelectionMode
 
     bool AreAllTilesWalkable(Vector2Int coords)
     {
-        for(int x=coords.x;x<coords.x+ ConstructableObjectManager.Instance.selectedToConstruct.Width; x++)
+        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x <= coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
         {
-            for (int y = coords.y;y < coords.y + ConstructableObjectManager.Instance.selectedToConstruct.Height; y++)
+            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y <= coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
             {
-                if(WorldController.Instance.IsTraversible(x, y) == false)
+                Color c = Color.green;
+                if (WorldController.Instance.IsTraversible(x, y) == false)
+                {
+                    c = Color.red;
+                }
+                    Debug.DrawLine(CursorSelect.Instance.GetMousePosition(), new Vector3(x, y),c);
+            }
+
+        }
+
+
+        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x <= coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
+        {
+            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y <= coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
+            {
+                if (WorldController.Instance.IsTraversible(x, y) == false)
                 {
                     return false;
                 }

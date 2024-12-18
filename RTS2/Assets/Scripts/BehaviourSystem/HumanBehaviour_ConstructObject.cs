@@ -12,7 +12,7 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
     {
         base.InitBehaviour(toPerform);
         toConstruct = obj;
-        follower = new PathFollower();
+        follower = new PathFollower(toPerform);
         TargetPosition = toConstruct.GetPosition();
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
