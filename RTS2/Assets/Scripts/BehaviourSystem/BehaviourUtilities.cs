@@ -57,4 +57,11 @@ public static class BehaviourUtilities
 
 
     }
+
+    public static bool CanIMoveInDirection(Vector3 pos,Vector3 dir,Unit performing)
+    {
+        return Pathfinding.GetNodeFromPosition(pos+dir).GetPassable(performing);
+    }
+
+
 }

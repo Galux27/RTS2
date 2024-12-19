@@ -9,20 +9,30 @@ using UnityEngine;
 /// </summary>
 public class PathNodeModifier
 {
-    List<string> FactionsIsValidFor = new List<string>();
+    public string modifierKey = "None";
 
-    public bool IsValid()
+    public virtual bool IsValid(Unit performing)
     {
         return false;
     }
 
 
-    public virtual bool ModifyWalkable(bool originalVal)
+    public virtual bool ModifyWalkable(bool originalVal,Unit performing)
     {
         return originalVal;
     }
 
-    public virtual int ModifyFCost(int originalCost)
+    public virtual int ModifyFCost(int originalCost,Unit performing)
+    {
+        return originalCost;
+    }
+
+    public virtual int ModifyHCost(int originalCost, Unit performing)
+    {
+        return originalCost;
+    }
+
+    public virtual int ModifyGCost(int originalCost,Unit performing)
     {
         return originalCost;
     }

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class UnitSenses : MonoBehaviour
 {
-    public float Sight, Hearing;
+    [Range(0f,100f)]
+    public float Sight, Hearing,Intelligence,Dexterity;
 
     public float GetSightRange()
     {

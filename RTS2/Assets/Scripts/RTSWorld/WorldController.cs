@@ -66,7 +66,13 @@ public class WorldController : MonoBehaviour
     {
         WorldTiles[x, y].traversable = traversable;
         Pathfinding.UpdateNodeData(x, y, traversable);
-      
+
+    }
+
+    public void AddPathfindingModifier(int x,int y, PathNodeModifier toAdd)
+    {
+        Pathfinding.AddPathNodeModifier(x, y, toAdd);
+
     }
 
 

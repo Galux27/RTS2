@@ -151,7 +151,7 @@ public class WallManager
             }
         }
         WorldController.Instance.SetTraversible(x, y, true);
-
+        WorldController.Instance.AddPathfindingModifier(x, y, new PathNodeModifier_Door());
     }
 
     public void AddSingleWall(int x,int y,Tilemap toDrawOn,WallTile toUse)

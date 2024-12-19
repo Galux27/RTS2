@@ -38,12 +38,17 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         }
     }
 
+  
+
     public override void PerformBehaviour()
     {
         if (objectToFollow != null)
         {
-            unitToMove.MoveUnit(DirectionToTarget());
-            unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+            if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectionToTarget(),unitToMove))
+            {
+                unitToMove.MoveUnit(DirectionToTarget());
+                unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+            }
         }
     }
 }

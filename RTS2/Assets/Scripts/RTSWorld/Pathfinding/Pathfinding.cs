@@ -8,7 +8,6 @@ public static class Pathfinding
     static int worldWidth, worldHeight;
     public static void CreateNodesFromWorld(WorldTile[,] world)
     {
-        Debug.Log("Creating nodes");
         worldWidth = world.GetLength(0);
         worldHeight = world.GetLength(1);
         pathfindingNodes = new PathfindingNode[worldWidth, worldHeight];
@@ -34,8 +33,17 @@ public static class Pathfinding
     {
         pathfindingNodes[x, y].UpdatePassable(traversable);
     }
+    public static void AddPathNodeModifier(int x,int y,PathNodeModifier toAdd)
+    {
+        Debug.Log("Path node modifier door adding " + toAdd.modifierKey);
+        pathfindingNodes[x, y].AddModifier(toAdd);
+    }
 
+    public static void RemovePathModifier(int x,int y,string key)
+    {
+        pathfindingNodes[x, y].RemoveModifier(key);
 
+    }
 
     public static List<PathfindingNode> GetNeighbours(PathfindingNode node)
     {
@@ -79,7 +87,7 @@ public static class Pathfinding
 
     
 
-    public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos)
+    public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,Unit performing)
     {
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos);
@@ -97,9 +105,9 @@ public static class Pathfinding
             PathfindingNode node = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
             {
-                if (openSet[i].FCost <= node.FCost)
+                if (openSet[i].GetFCost(performing) <= node.GetFCost(performing))
                 {
-                    if (openSet[i].hCost < node.hCost)
+                    if (openSet[i].GetHCost(performing) < node.GetHCost(performing))
                         node = openSet[i];
                 }
             }
@@ -117,13 +125,13 @@ public static class Pathfinding
             //adds neighbor nodes to openSet
             foreach (PathfindingNode neighbour in node.neighbours)
             {
-                if (neighbour.IsPassable==false || closedSet.Contains(neighbour))
+                if (neighbour.GetPassable(performing)==false || closedSet.Contains(neighbour))
                 {
                     continue;
                 }
 
-                int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
-                if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                int newCostToNeighbour = node.GetGCost(performing) + GetDistance(node, neighbour);
+                if (newCostToNeighbour < neighbour.GetGCost(performing) || !openSet.Contains(neighbour))
                 {
                     neighbour.gCost = newCostToNeighbour;
                     neighbour.hCost = GetDistance(neighbour, targetNode);

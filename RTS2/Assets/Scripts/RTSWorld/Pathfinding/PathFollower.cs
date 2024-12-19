@@ -32,7 +32,7 @@ public class PathFollower
 
     public void GetPath(Vector3 myPos,Vector3 targetPos)
     {
-        pathfindingNodes = Pathfinding.FindPath(myPos, targetPos);
+        pathfindingNodes = Pathfinding.FindPath(myPos, targetPos,followingPath);
 
     }
 

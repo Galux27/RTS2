@@ -15,10 +15,10 @@ public class Unit : MonoBehaviour,Selectable
     ObjectHealth MyHealth;
     public Vector2Int MyCurrentChunk;
     public UnitFaction MyFaction;
+    public UnitSenses MySenses;
 
     public void UpdateChunk(Vector2Int newChunk)
     {
-        Debug.Log("Chunk: updating chunk from " + MyCurrentChunk + " to " + newChunk);
         MyCurrentChunk = newChunk;
     }
 
@@ -55,6 +55,7 @@ public class Unit : MonoBehaviour,Selectable
         itemHolder=this.GetComponent<ItemHolder>(); 
         MyOrders= this.GetComponent<UnitOrders>();
         MyFaction = this.GetComponent<UnitFaction>();
+        MySenses = this.GetComponent<UnitSenses>();
     }
 
     public bool GetOrderVal(string key)

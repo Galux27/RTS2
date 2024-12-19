@@ -92,6 +92,22 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: Sight
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: Hearing
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: Dexterity
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: Intelligence
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5234928227469654220, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -171,3 +187,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Sight: 10
   Hearing: 50
+  Intelligence: 0
+  Dexterity: 0
