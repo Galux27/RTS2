@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PathfindingNode
 {
-    public int gCost, hCost;
+    //The cumulative cost from the starting point to the current point
+    public int gCost;
+   //The estimated cost from the current point to the end of the current traversal
+    public int hCost;
     public bool obstacle;
 
     public int x, y;
