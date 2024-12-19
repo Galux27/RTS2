@@ -36,7 +36,7 @@ public class WallSegment
         }
         else
         {
-            WallType=WallType.None;
+            DestroyWall();
         }
     }
 
@@ -55,6 +55,13 @@ public class WallSegment
     {
         ToDraw = tile;
         Drawn = true;
+    }
+
+    public virtual void DestroyWall()
+    {
+        ToDraw = null;
+        WallType = WallType.None;
+        Pathfinding.UpdateNodeData(x, y, true);
     }
 
 }

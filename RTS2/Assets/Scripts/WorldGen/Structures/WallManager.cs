@@ -107,8 +107,8 @@ public class WallManager
                     toDrawOn.SetTile(new Vector3Int(x1, y1, 0), WallsInWorld[x1, y1].ToDraw);
                 }
 
-                }
             }
+        }
     }
 
     bool CoordsValid(int x,int y)

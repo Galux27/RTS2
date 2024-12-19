@@ -39,4 +39,9 @@ public class DoorSegment : WallSegment
         }
     }
 
+    public override void DestroyWall()
+    {
+        base.DestroyWall();
+        Pathfinding.RemovePathModifier(x, y, "Door");
+    }
 }
