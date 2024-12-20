@@ -22,5 +22,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 02abb5b592c506a42a27b85361910ede, type: 2}
   - {fileID: 11400000, guid: 249aa31f80b935241863cebd12be6f0f, type: 2}
   - {fileID: 11400000, guid: b2c0e1e45869955448fcdd33e715bfa2, type: 2}
-  TimePerFrame: 0.1
+  TimePerFrame: 0.01
   AnimationID: DoorLeft

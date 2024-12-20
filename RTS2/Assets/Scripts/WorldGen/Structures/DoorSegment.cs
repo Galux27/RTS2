@@ -11,32 +11,59 @@ public class DoorSegment : WallSegment
 
         myAnim = WallHelpers.GetDoorVisual(this, WorldController.Instance.WallManager);
         DoorAnimator=new TilemapAnimator(myAnim,toPlaceOn,new Vector3Int(x,y,0));
+        DoorAnimator.OnEnd += OnAnimEnd;
     }
     TilemapAnimation myAnim;
     public TilemapAnimator DoorAnimator;
+    public int UnitsInTile = 0;
+    public DoorState currentState=DoorState.Closed;
+
+    public void UnitEnterDoor(Unit onTile)
+    {
+        UnitsInTile++;
+        Debug.Log("Door: Unit " + onTile.gameObject.name + " entering door " + onTile.MySenses.Intelligence + " " + currentState.ToString() + " " + UnitsInTile);
+        if (onTile.MySenses.Intelligence > 50)
+        {
+            OpenDoor();
+        }
+    }
+
+    public void UnitExitDoor(Unit onTile)
+    {
+        if (UnitsInTile > 0)
+        {
+            UnitsInTile--;
+        }
+        Debug.Log("Door: Unit " + onTile.gameObject.name + " xiting door " + onTile.MySenses.Intelligence + " " + currentState.ToString() + " " + UnitsInTile);
+
+        if (onTile.MySenses.Intelligence > 50&&UnitsInTile==0)
+        {
+            CloseDoor();
+        }
+    }
+
+
 
     public void OpenDoor()
     {
+        if (currentState != DoorState.Closed && currentState != DoorState.Closing)
+        {
+            return;
+        }
+        currentState = DoorState.Opening;
         DoorAnimator.Reverse = false;
         DoorAnimator.StartAnimation();
     }
 
     public void CloseDoor()
     {
+        if (currentState != DoorState.Open && currentState != DoorState.Opening)
+        {
+            return;
+        }
+        currentState = DoorState.Closing;
         DoorAnimator.Reverse = true;
         DoorAnimator.StartAnimation();
-    }
-
-    public void OnAnimDone()
-    {
-        if (DoorAnimator.Reverse)
-        {
-
-        }
-        else
-        {
-
-        }
     }
 
     public override void DestroyWall()
@@ -44,4 +71,24 @@ public class DoorSegment : WallSegment
         base.DestroyWall();
         Pathfinding.RemovePathModifier(x, y, "Door");
     }
+
+    void OnAnimEnd()
+    {
+        if(currentState == DoorState.Opening)
+        {
+            currentState = DoorState.Open;
+        }else if (currentState == DoorState.Closing)
+        {
+            currentState = DoorState.Closed;
+        }
+    }
 }
+
+public enum DoorState 
+{ 
+    Open,
+    Closed,
+    Opening,
+    Closing
+}
+

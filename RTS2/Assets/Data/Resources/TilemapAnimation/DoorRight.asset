@@ -22,5 +22,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b9fb731c047921742a8c77a897272e54, type: 2}
   - {fileID: 11400000, guid: 46f7968dc15e3b04787aa6553dba02e0, type: 2}
   - {fileID: 11400000, guid: 7abff2ab7133c974292cc2ae53b0c41f, type: 2}
-  TimePerFrame: 0.1
+  TimePerFrame: 0.01
   AnimationID: DoorRight

@@ -22,5 +22,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e8e1790bfc90f9a4aa25f84167e7c293, type: 2}
   - {fileID: 11400000, guid: eb7ca26b077c62249ba4627c9d7e4bae, type: 2}
   - {fileID: 11400000, guid: f9dd323cb6856a74fb22835f09d59baf, type: 2}
-  TimePerFrame: 0.1
+  TimePerFrame: 0.01
   AnimationID: DoorFwd

@@ -19,7 +19,36 @@ public class WallManager
                 WallsInWorld[x,y] = new WallSegment(x,y);
             }
         }
+        WorldController.Instance.OnTileEnterAction += OnTileEnter;
+        WorldController.Instance.OnTileExitAction += OnTileExit;
     }
+
+    public void OnTileEnter(Vector2Int coords,Unit unit)
+    {
+        if (WallsInWorld[coords.x, coords.y].WallType == WallType.Door) 
+        {
+            DoorSegment ds = WallsInWorld[coords.x, coords.y] as DoorSegment;
+            if (ds==null)
+            {
+                return;
+            }
+            ds.UnitEnterDoor(unit);
+        }
+
+    }
+
+    public void OnTileExit(Vector2Int coords, Unit unit)
+    {
+        if (WallsInWorld[coords.x,coords.y].WallType==WallType.Door) {
+            DoorSegment ds = WallsInWorld[coords.x, coords.y] as DoorSegment;
+            if (ds == null)
+            {
+                return;
+            }
+            ds.UnitExitDoor(unit);
+        }
+    }
+
 
     public void SetWall(int x, int y, bool value = true)
     {

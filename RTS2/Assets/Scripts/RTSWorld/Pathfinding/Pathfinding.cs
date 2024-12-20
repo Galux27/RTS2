@@ -72,6 +72,19 @@ public static class Pathfinding
     }
 
 
+   public static Vector2Int GetCoordsFromPosition (Vector3 Position)
+    {
+        int x = Mathf.RoundToInt(Position.x);
+        x = Mathf.Max(0, x);
+        x = Mathf.Min(worldWidth - 1, x);
+
+        int y = Mathf.RoundToInt(Position.y);
+        y = Mathf.Max(0, y);
+        y = Mathf.Min(worldHeight - 1, y);
+
+        return new Vector2Int(x, y);
+    }
+
     public static PathfindingNode GetNodeFromPosition(Vector3 Position)
     {
         int x= Mathf.RoundToInt(Position.x);

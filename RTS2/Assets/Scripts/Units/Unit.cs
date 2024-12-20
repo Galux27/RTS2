@@ -135,6 +135,23 @@ public class Unit : MonoBehaviour,Selectable
     {
         this.transform.position += (direction * Speed() * Time.deltaTime);
         WorldChunkManager.Instance.OnUnitMove(this);
+        OnUnitMove();
+    }
+
+    Vector2Int lastCoords = new Vector2Int();
+ 
+    void OnUnitMove()
+    {
+        Vector2Int coordsCurrent=Pathfinding.GetCoordsFromPosition(this.transform.position);
+
+        if (coordsCurrent != lastCoords)
+        {
+            WorldController.Instance.OnTileExit(lastCoords, this);
+
+            lastCoords = coordsCurrent;
+            WorldController.Instance.OnTileEnter(coordsCurrent, this);
+
+        }
     }
 
     public virtual void AttackUnit(float damage,Unit isAttackingMe=null)

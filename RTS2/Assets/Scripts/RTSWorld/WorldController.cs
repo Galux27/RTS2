@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -75,6 +76,20 @@ public class WorldController : MonoBehaviour
 
     }
 
+    public Action<Vector2Int, Unit> OnTileEnterAction, OnTileExitAction;
+    public void OnTileEnter(Vector2Int coords, Unit unit)
+    {
+        WorldTiles[coords.x, coords.y].OnTileEntered(coords);
+        OnTileEnterAction?.Invoke(coords, unit);
+    }
+
+    public void OnTileExit(Vector2Int coords, Unit unit)
+    {
+        WorldTiles[coords.x, coords.y].OnTileExit(coords);
+        OnTileExitAction?.Invoke(coords,unit);
+
+    }
+
 
     public bool IsTraversible(int x,int y)
     {
@@ -95,6 +110,16 @@ public class WorldTile
     {
         this.x = x;
         this.y = y;
+    }
+
+    public void OnTileEntered(Vector2Int vector2Int)
+    {
+
+    }
+
+    public void OnTileExit(Vector2Int vector2Int)
+    {
+
     }
 }
 
