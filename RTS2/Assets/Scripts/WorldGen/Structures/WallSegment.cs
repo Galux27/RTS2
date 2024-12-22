@@ -12,6 +12,7 @@ public class WallSegment
     public int x, y;
     public bool HasWallUnderConstruction=false;
     public WallType WallType=WallType.None;
+    public GameObject Collider;
     public WallSegment(int x, int y)
     {
         this.x = x;

@@ -8,7 +8,6 @@ public class PathNodeModifier_Door : PathNodeModifier
     public PathNodeModifier_Door()
     {
         modifierKey = "Door";
-        Debug.Log("Path node modifier door created one ");
     }
 
 
@@ -19,7 +18,6 @@ public class PathNodeModifier_Door : PathNodeModifier
 
     public override bool ModifyWalkable(bool originalVal, Unit performing)
     {
-        Debug.Log("Path node modifier door " + originalVal);
         if (performing.MySenses.Intelligence > 50)
         {
             return originalVal;

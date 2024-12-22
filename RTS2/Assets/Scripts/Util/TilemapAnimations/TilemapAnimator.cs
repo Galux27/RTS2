@@ -55,7 +55,7 @@ public class TilemapAnimator
             if (Reverse == false)
             {
                 index++;
-                if (index >= Animation.AnimationFrames.Count - 1)
+                if (index > Animation.AnimationFrames.Count - 2)
                 {
                     StopAnimation();
                     OnEnd?.Invoke();
@@ -64,7 +64,7 @@ public class TilemapAnimator
             else
             {
                 index--;
-                if (index <=0)
+                if (index < 1)
                 {
                     StopAnimation();
                     OnEnd?.Invoke();
@@ -77,6 +77,7 @@ public class TilemapAnimator
 
     void UpdateTile()
     {
+        index=Mathf.Clamp(index, 0, Animation.AnimationFrames.Count-1);
         ToEdit.SetTile(Coords, Animation.AnimationFrames[index]);
         OnFrameChange?.Invoke();
     }

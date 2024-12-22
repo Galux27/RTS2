@@ -22,7 +22,7 @@ public class DoorSegment : WallSegment
     {
         UnitsInTile++;
         Debug.Log("Door: Unit " + onTile.gameObject.name + " entering door " + onTile.MySenses.Intelligence + " " + currentState.ToString() + " " + UnitsInTile);
-        if (onTile.MySenses.Intelligence > 50)
+        if (UnitCanUseDoor(onTile))
         {
             OpenDoor();
         }
@@ -36,28 +36,45 @@ public class DoorSegment : WallSegment
         }
         Debug.Log("Door: Unit " + onTile.gameObject.name + " xiting door " + onTile.MySenses.Intelligence + " " + currentState.ToString() + " " + UnitsInTile);
 
-        if (onTile.MySenses.Intelligence > 50&&UnitsInTile==0)
+        if (UnitCanUseDoor(onTile)&& UnitsInTile==0)
         {
             CloseDoor();
         }
     }
 
+    public bool UnitCanUseDoor(Unit toUse)
+    {
+        return toUse.MySenses.Intelligence >= 50;
+    }
 
+    public bool NeedToOpenDoor()
+    {
+        return currentState == DoorState.Closed || currentState == DoorState.Closing;
+    }
+
+    public bool NeedToCloseDoor()
+    {
+        return currentState == DoorState.Open || currentState == DoorState.Opening;
+    }
 
     public void OpenDoor()
     {
-        if (currentState != DoorState.Closed && currentState != DoorState.Closing)
+        Debug.Log("Door: open door " + NeedToOpenDoor());
+
+        if (NeedToOpenDoor()==false)
         {
             return;
         }
         currentState = DoorState.Opening;
         DoorAnimator.Reverse = false;
         DoorAnimator.StartAnimation();
+        Collider.SetActive(false);
     }
 
     public void CloseDoor()
     {
-        if (currentState != DoorState.Open && currentState != DoorState.Opening)
+        Debug.Log("Door: closing door " + NeedToCloseDoor());
+        if (NeedToCloseDoor()==false)
         {
             return;
         }
@@ -80,6 +97,8 @@ public class DoorSegment : WallSegment
         }else if (currentState == DoorState.Closing)
         {
             currentState = DoorState.Closed;
+            Collider.SetActive(true);
+
         }
     }
 }

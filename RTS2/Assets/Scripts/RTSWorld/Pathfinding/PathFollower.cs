@@ -47,10 +47,29 @@ public class PathFollower
         return (GetCurrentNode()-curPos).normalized;
     }
 
+    public void DoorCheck()
+    {
+
+        DoorSegment ds = WorldController.Instance.WallManager.IsThereADoorAtCoords(
+            pathfindingNodes[currentIndex].x, pathfindingNodes[currentIndex].y);
+        if (ds!=null)
+        {
+            if (ds.UnitCanUseDoor(followingPath))
+            {
+                if (ds.NeedToOpenDoor())
+                {
+                    ds.OpenDoor();
+                }
+            }
+        }
+    }
+
+
     public void OnUpdate(Vector3 curPos)
     {
         if(!isPathDone && HasPath())
         {
+            DoorCheck();
             if (Vector3.Distance(curPos, GetCurrentNode()) < MinDistToPoint)
             {
                 currentIndex++;

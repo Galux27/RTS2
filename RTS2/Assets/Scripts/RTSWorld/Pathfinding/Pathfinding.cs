@@ -35,7 +35,6 @@ public static class Pathfinding
     }
     public static void AddPathNodeModifier(int x,int y,PathNodeModifier toAdd)
     {
-        Debug.Log("Path node modifier door adding " + toAdd.modifierKey);
         pathfindingNodes[x, y].AddModifier(toAdd);
     }
 
@@ -85,7 +84,12 @@ public static class Pathfinding
         return new Vector2Int(x, y);
     }
 
-    public static PathfindingNode GetNodeFromPosition(Vector3 Position)
+    static bool ValidCoords(int x,int y)
+    {
+        return x>=0&&y>=0&&x<worldWidth&&y<worldHeight;
+    }
+
+    public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null)
     {
         int x= Mathf.RoundToInt(Position.x);
         x = Mathf.Max(0, x);
@@ -95,7 +99,31 @@ public static class Pathfinding
         y = Mathf.Max(0, y);
         y = Mathf.Min(worldHeight-1, y);
 
-        return pathfindingNodes[x,y];
+        int retX=x,retY=y;
+        float closestDist = 999999f, distCheck = 0f ;
+        Vector3 cache = Vector3.zero;
+
+        for(int x1 = x - 1; x1 <= x + 1; x1++)
+        {
+            for (int y1 = y - 1; y1 <= y + 1; y1++)
+            {
+                if (ValidCoords(x1, y1) && pathfindingNodes[x1, y1].GetPassable(performing))
+                {
+                    cache.x = x1;
+                    cache.y = y1;
+                    distCheck = Vector3.Distance(cache, Position);
+                    if (distCheck < closestDist)
+                    {
+                        closestDist = distCheck;
+                        retX = x1;
+                        retY = y1;
+                    }
+                }
+            }
+        }
+
+
+        return pathfindingNodes[retX,retY];
     }
 
     
@@ -103,8 +131,8 @@ public static class Pathfinding
     public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,Unit performing)
     {
         //get player and target position in grid coords
-        PathfindingNode seekerNode = GetNodeFromPosition(startPos);
-        PathfindingNode targetNode = GetNodeFromPosition(targetPos);
+        PathfindingNode seekerNode = GetNodeFromPosition(startPos,performing);
+        PathfindingNode targetNode = GetNodeFromPosition(targetPos,performing);
 
         List<PathfindingNode> openSet = new List<PathfindingNode>();
         HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();

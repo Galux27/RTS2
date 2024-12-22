@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,7 +9,7 @@ public class WallManager
     public WallSegment[,] WallsInWorld;
     int width, height;
    public WallManager(int width,int height)
-    {
+   {
         this.width = width;
         this.height = height;
         WallsInWorld = new WallSegment[width, height];
@@ -37,7 +38,16 @@ public class WallManager
 
     }
 
-    public void OnTileExit(Vector2Int coords, Unit unit)
+
+    public DoorSegment IsThereADoorAtCoords(int x, int y)
+    {
+        if (WallsInWorld[x, y].WallType == WallType.Door)
+        {
+           return WallsInWorld[x, y] as DoorSegment; 
+        }
+        return null;
+    }
+        public void OnTileExit(Vector2Int coords, Unit unit)
     {
         if (WallsInWorld[coords.x,coords.y].WallType==WallType.Door) {
             DoorSegment ds = WallsInWorld[coords.x, coords.y] as DoorSegment;
@@ -53,12 +63,19 @@ public class WallManager
     public void SetWall(int x, int y, bool value = true)
     {
         WallsInWorld[x, y].SetHasWall(value) ;
+        GenerateWallCollider(x, y);
+    }
 
+    public void GenerateWallCollider(int x,int y)
+    {
+        GameObject col = GameObject.Instantiate(WorldController.Instance.WallCollider, new Vector3(x+.5f, y+.5f, 0), Quaternion.identity);
+        WallsInWorld[x,y].Collider= col;
     }
 
     public void SetDoor(int x,int y,Tilemap toPlaceOn)
     {
         WallsInWorld[x,y]=new DoorSegment(x,y,toPlaceOn);
+        GenerateWallCollider(x,y);
     }
 
     public void DrawSomeRandomWalls()

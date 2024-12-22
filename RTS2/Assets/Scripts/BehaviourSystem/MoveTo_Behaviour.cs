@@ -39,11 +39,9 @@ public class MoveTo_Behaviour : BehaviourBase
 
     public override void PerformBehaviour()
     {
-       
-            follower.OnUpdate(unitToMove.transform.position);
-            unitToMove.MoveUnit(DirectionToTarget());
-        
+        unitToMove.MoveUnit(DirectionToTarget());
+        follower.OnUpdate(unitToMove.transform.position);
     }
 
-    
+
 }

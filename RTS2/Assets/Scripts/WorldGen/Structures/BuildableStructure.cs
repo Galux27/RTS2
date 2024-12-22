@@ -32,6 +32,7 @@ public class BuildableStructure : Constructable
     public void ConstructObject()
     {
         progress += Time.deltaTime;
+        UpdateProgress();
         if (progress > maxProgress)
         {
             OnObjectConstructed();
@@ -42,6 +43,7 @@ public class BuildableStructure : Constructable
     {
         SetBuilt(true);
         WorldChunkManager.Instance.OnBuildableFinished(this);
+        ProgressBar.ReturnProgressBar();
         Cleanup();
         onComplete?.Invoke();
     }
@@ -74,6 +76,18 @@ public class BuildableStructure : Constructable
 
     public bool isDrawn = false;
     GameObject Object;
+    ProgressBarUI ProgressBar;
+    void UpdateProgress()
+    {
+        if (ProgressBar == null)
+        {
+            ProgressBar = ProgressBarUI.CreateProgressBar();
+            ProgressBar.InitProgressBar(maxProgress, progress, Object.transform.position);
+        }
+        ProgressBar.UpdateCurrent(progress);
+    }
+
+
     public void Render()
     {
         Object = GameObjectPoolManager.Instance.GetObjectFromPool("ConstructionMarker");

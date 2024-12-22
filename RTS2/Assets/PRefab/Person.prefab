@@ -302,6 +302,7 @@ MonoBehaviour:
   MyOrders: {fileID: 0}
   MyCurrentChunk: {x: 0, y: 0}
   MyFaction: {fileID: 0}
+  MySenses: {fileID: 0}
 --- !u!61 &6865716415776570820
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -345,7 +346,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 2.8}
+  m_Size: {x: 1, y: 2.44}
   m_EdgeRadius: 0
 --- !u!50 &1213923859724149880
 Rigidbody2D:

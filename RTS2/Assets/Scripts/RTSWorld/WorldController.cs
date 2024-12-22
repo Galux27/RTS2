@@ -27,7 +27,7 @@ public class WorldController : MonoBehaviour
     public WallManager WallManager;
     public Tilemap BuildingTilemap;
     public WallTile WallTest;
-
+    public GameObject WallCollider;
     private void Start()
     {
         InitWorld();

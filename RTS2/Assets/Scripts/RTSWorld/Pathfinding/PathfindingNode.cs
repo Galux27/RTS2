@@ -30,7 +30,7 @@ public class PathfindingNode
 
     public void InitData()
     {
-        worldPos = new Vector3(x, y);
+        worldPos = new Vector3(x+.5f, y+.5f);
         neighbours = Pathfinding.GetNeighbours(this);
     }
 
@@ -71,8 +71,13 @@ public class PathfindingNode
 
     public bool GetPassable(Unit performing)
     {
+        
         bool Cache = IsPassable;
-        foreach(KeyValuePair<string,PathNodeModifier> kvp in modifiers)
+        if (performing==null)
+        {
+            return Cache;
+        }
+        foreach (KeyValuePair<string,PathNodeModifier> kvp in modifiers)
         {
             if (kvp.Value.IsValid(performing))
             {
