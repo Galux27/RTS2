@@ -704,6 +704,9 @@ MonoBehaviour:
   - Key: ConstructionMarker
     InitCount: 20
     Object: {fileID: 1307020045061640133, guid: 31ef675903244464e8f58723fa3101f4, type: 3}
+  - Key: ProgressBar
+    InitCount: 20
+    Object: {fileID: 2408530287784991639, guid: aad71848fbfe59046a86b83b7bf66545, type: 3}
 --- !u!114 &247636649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1197,6 +1200,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb2a90feefb5adf4aa37bd5029a8195a, type: 3}
+--- !u!1 &465142747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 465142748}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &465142748
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 465142747}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 33.016644, y: 24.303545, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &496668637
 GameObject:
   m_ObjectHideFlags: 0
@@ -6643,3 +6677,4 @@ SceneRoots:
   - {fileID: 84661701}
   - {fileID: 2890232561295529049}
   - {fileID: 1344295068}
+  - {fileID: 465142748}

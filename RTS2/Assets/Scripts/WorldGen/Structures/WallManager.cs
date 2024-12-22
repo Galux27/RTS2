@@ -38,6 +38,14 @@ public class WallManager
 
     }
 
+    public bool DoesSomethingExistAtCoords(Vector2Int coords)
+    {
+        if (WallsInWorld[coords.x,coords.y].WallType == WallType.Door|| WallsInWorld[coords.x, coords.y].WallType == WallType.Wall)
+        {
+            return true;
+        }
+        return false;
+    }
 
     public DoorSegment IsThereADoorAtCoords(int x, int y)
     {
