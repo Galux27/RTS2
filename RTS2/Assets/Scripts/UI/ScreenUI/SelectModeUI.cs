@@ -7,18 +7,19 @@ using UnityEngine.UI;
 public class SelectModeUI : MonoBehaviour
 {
 
-    public Button None, Units, Buildings,Construction;
+    public Button None, Units, Buildings,Construction,Rooms;
 
 
-    public GameObject NoneUI, UnitsUI, BuildingUI, ConstructionUI;
+    public GameObject NoneUI, UnitsUI, BuildingUI, ConstructionUI,RoomsUI;
     private void Awake()
     {
         SelectionController.OnSwitchSelectionMode += OnChangeCursorMode;
 
         None.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.None); });
         Units.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Units); });
-        Buildings.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Buildings); });
-        Construction.onClick.AddListener(()=> { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Construction); });
+        Buildings.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Furniture); });
+        Construction.onClick.AddListener(()=> { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Structures); });
+        Rooms.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode (CurrentSelectionMode.Rooms); });
     }
 
     public void OnChangeCursorMode(CurrentSelectionMode switchedTo)
@@ -33,14 +34,17 @@ public class SelectModeUI : MonoBehaviour
                 UnitsUI.SetActive(true);
 
                 break;
-            case CurrentSelectionMode.Buildings:
+            case CurrentSelectionMode.Furniture:
                 FurnitureSelectButtonManager.Instance.RefreshUI();
               BuildingUI.SetActive(true);
 
                 break;
-            case CurrentSelectionMode.Construction:
+            case CurrentSelectionMode.Structures:
                 ConstructionUI.SetActive(true);
 
+                break;
+            case CurrentSelectionMode.Rooms:
+                RoomsUI.SetActive(true);
                 break;
             default:
                 break;
@@ -49,10 +53,13 @@ public class SelectModeUI : MonoBehaviour
 
     void DisableUI()
     {
+        RoomDrawrer.Instance.CleanupRoom();
         NoneUI.SetActive(false);
         UnitsUI.SetActive(false);
         BuildingUI.SetActive(false);
         ConstructionUI.SetActive(false);
+        RoomsUI.SetActive(false);
+
     }
 
 }

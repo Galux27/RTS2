@@ -6,6 +6,8 @@ public class RoomUtils
 {
     static List<Vector2Int> ToCheck = new List<Vector2Int>(), CoordsChecked = new List<Vector2Int>(), neighbours=new List<Vector2Int>();
     static HashSet<Vector2Int> Checked;
+
+    //go out from given position and get all tiles, stopping if we hit a wall
    public static void PerformFloodCheck(Vector2Int startCoords)
     {
         ToCheck = new List<Vector2Int>();
@@ -76,4 +78,17 @@ public class RoomUtils
             neighbours.Add(coords+Vector2Int.up);
         }
     }
+
+    
+    public static Bounds CreateBoundsFromPoints(List<Vector2Int> points)
+    {
+        Bounds b = new Bounds();
+        for(int x=0;x<points.Count; x++)
+        {
+            b.Encapsulate(new Vector3(points[x].x, points[x].y));
+        }
+        return b;
+    }
+
+
 }

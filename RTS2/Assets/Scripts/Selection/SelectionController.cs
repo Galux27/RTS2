@@ -22,7 +22,7 @@ public class SelectionController : MonoBehaviour
     }
     public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
     public CurrentSelectionMode selectionMode;
-    public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj;
+    public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj,Rooms;
 
 
     public void SetCursorSelectionMode(CurrentSelectionMode mode)
@@ -37,15 +37,22 @@ public class SelectionController : MonoBehaviour
         if (mode == CurrentSelectionMode.None)
         {
             CurrentSelectionModeObj = None;
-        }else if(mode == CurrentSelectionMode.Units)
+        }
+        else if (mode == CurrentSelectionMode.Units)
         {
             CurrentSelectionModeObj = Units;
-        }else if (mode == CurrentSelectionMode.Buildings)
+        }
+        else if (mode == CurrentSelectionMode.Furniture)
         {
             CurrentSelectionModeObj = Buildings;
-        }else if(mode== CurrentSelectionMode.Construction)
+        }
+        else if (mode == CurrentSelectionMode.Structures)
         {
             CurrentSelectionModeObj = Construction;
+        }
+        else if (mode == CurrentSelectionMode.Rooms)
+        {
+            CurrentSelectionModeObj= Rooms;
         }
         SelectableManager.Instance.ClearSelectables();
         OnSwitchSelectionMode?.Invoke(mode);
@@ -62,9 +69,10 @@ public class SelectionController : MonoBehaviour
         CurrentSelectionModeObj = Units;
         Construction = new StructureSelectionMode();
         Buildings = new FurnitureSelectionMode();
+        Rooms = new RoomsSelectionMode();
         selectionMode = CurrentSelectionMode.None;
     }
-
+   
     private void Update()
     {
 
@@ -97,7 +105,8 @@ public enum CurrentSelectionMode
 { 
     None,
     Units,
-    Buildings,
-    Construction
+    Furniture,
+    Structures,
+    Rooms
 }
 

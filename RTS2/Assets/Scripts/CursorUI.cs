@@ -37,12 +37,12 @@ public class CursorUI : MonoBehaviour
             this.transform.localScale = Vector3.zero;
         }
     }
-
+    public Vector3 low, high;
     public void SetCorners(Vector3 pos1,Vector3 pos2)
     {
         this.transform.position = Vector3.Lerp(pos1, pos2, .5f);
-        Vector3 high = new Vector3();
-        Vector3 low = new Vector3();
+        high = new Vector3();
+        low = new Vector3();
         if (pos1.x > pos2.x)
         {
             high.x = pos1.x;
