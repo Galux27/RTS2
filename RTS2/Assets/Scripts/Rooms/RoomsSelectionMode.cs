@@ -19,7 +19,10 @@ public class RoomsSelectionMode : SelectionMode
             {
                 currentPosition.x = Mathf.FloorToInt(x + .5f);
                 currentPosition.y = Mathf.FloorToInt(y + .5f);
-                positions.Add(currentPosition);
+                if (!positions.Contains(currentPosition))
+                {
+                    positions.Add(currentPosition);
+                }
             }
         }
         return positions;
@@ -36,28 +39,66 @@ public class RoomsSelectionMode : SelectionMode
     {
       
     }
-    List<Vector2Int> PositionsCurrentlySelected;
+    List<Vector2Int> PositionsCurrentlySelected=new List<Vector2Int>();
     public override void OnHover()
     {
+        int countLastSelected = PositionsCurrentlySelected.Count;
         PositionsCurrentlySelected = GetCurrentPositions();
-        RoomDrawrer.Instance.SetCoords(PositionsCurrentlySelected);
-        RoomDrawrer.Instance.RenderRoom();
+        if (PositionsCurrentlySelected.Count != countLastSelected)
+        {
+            RoomDrawrer.Instance.RenderPoints(RoomDrawrer.Instance.DrawingParent, PositionsCurrentlySelected);
+        }
     }
 
     void OnClick(List<Vector2Int> positions)
     {
-        Debug.Log("Room: on click " + positions.Count);
+        if (RoomManager.Instance.SelectedRoom == null)
+        {
+            return;
+        }
+        Debug.Log("Room: on click " + positions.Count+" current mode "+  CurrentMode.ToString());
         switch (CurrentMode)
         {
             case RoomMode.Expand:
+                positions = FilterTilesInRoom(positions);
                 RoomManager.Instance.SelectedRoom.AddTiles(positions);
                 break;
             case RoomMode.Remove:
+                positions = FilterTilesNotInRoom(RoomManager.Instance.SelectedRoom, positions);
                 RoomManager.Instance.SelectedRoom.RemoveTiles(positions);
                 break;
             default:
                 break;
         }
+        RoomDrawrer.Instance.RenderAllRooms();
+        RoomDrawrer.Instance.CleanupRoom(RoomDrawrer.Instance.DrawingParent);
+    }
+
+
+    List<Vector2Int> FilterTilesInRoom(List<Vector2Int> positions)
+    {
+        List<Vector2Int> retVal = new List<Vector2Int>();
+        for(int x = 0; x < positions.Count; x++)
+        {
+           if(RoomManager.Instance.DoesAnyRoomContainPosition(positions[x]) == false)
+            {
+                retVal.Add(positions[x]);
+            }
+        }
+        return retVal;
+    }
+
+    List<Vector2Int> FilterTilesNotInRoom(Room toCheck,List<Vector2Int> positions)
+    {
+        List<Vector2Int> retVal = new List<Vector2Int>();
+        for (int x = 0; x < positions.Count; x++)
+        {
+            if (toCheck.tilesInRoom.Contains(positions[x]))
+            {
+                retVal.Add(positions[x]);
+            }
+        }
+        return retVal;
     }
 }
 

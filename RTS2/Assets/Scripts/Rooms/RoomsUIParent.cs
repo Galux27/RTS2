@@ -56,6 +56,8 @@ public class RoomsUIParent : MonoBehaviour
     void SelectRoom(Room r)
     {
         RoomManager.Instance.SelectedRoom = r;
+        RoomDrawrer.Instance.RenderAllRooms();
+        
         Debug.Log("Room: set current room ");
     }
 

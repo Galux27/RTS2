@@ -53,7 +53,7 @@ public class SelectModeUI : MonoBehaviour
 
     void DisableUI()
     {
-        RoomDrawrer.Instance.CleanupRoom();
+        RoomDrawrer.Instance.CleanupAllRooms();
         NoneUI.SetActive(false);
         UnitsUI.SetActive(false);
         BuildingUI.SetActive(false);

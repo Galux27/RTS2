@@ -18,32 +18,111 @@ public class RoomDrawrer : MonoBehaviour
     }
 
     public const string BaseTileKey="RoomUI";
-
-    List<Vector2Int> coords;
-    public void SetCoords(List<Vector2Int> coords)
+    Transform drawParent;
+    
+    public Transform DrawingParent
     {
-        this.coords = coords;
+        get
+        {
+            if (drawParent == null)
+            {
+                drawParent = new GameObject().transform;
+                drawParent.transform.parent = this.transform;
+            }
+            return drawParent;
+        }
     }
-
-    public void RenderRoom()
+    Dictionary<Room, GameObject> parentsOfRooms=new Dictionary<Room, GameObject>();
+    public void RenderPoints(Transform parent, List<Vector2Int> coords, Color c =default)
     {
-        CleanupRoom();
+        CleanupRoom(parent);
         GameObject cur = null;
         for(int x=0; x<coords.Count; x++)
         {
             cur = GameObjectPoolManager.Instance.GetObjectFromPool(BaseTileKey);
-            cur.transform.position = new Vector3(coords[x].x, coords[x].y);
-            cur.transform.parent = this.transform;
+            cur.transform.parent = parent;
             cur.SetActive(true);
+
+            if (c != default)
+            {
+                cur.transform.position = new Vector3(coords[x].x + .5f, coords[x].y + .5f,0f);
+
+                cur.GetComponent<SpriteRenderer>().color = c;
+                cur.GetComponent<SpriteRenderer>().sortingOrder=98;
+            }
+            else
+            {
+                cur.transform.position = new Vector3(coords[x].x + .5f, coords[x].y + .5f, .1f);
+
+                cur.GetComponent<SpriteRenderer>().color = new Color(0,1,1,.3f);
+            }
+
         }
     }
 
-    public void CleanupRoom()
+    public void OnCreateRoom(Room r)
+    {
+        if(parentsOfRooms.ContainsKey(r)==false)
+        {
+            GameObject parent = new GameObject();
+            parent.transform.parent = this.transform;
+            parentsOfRooms[r] = parent;
+        }
+    }
+
+    public void OnDestroyRoom(Room r)
+    {
+        if (parentsOfRooms.ContainsKey(r) )
+        {
+            CleanupRoom(parentsOfRooms[r].transform);
+            Destroy(parentsOfRooms[r]);
+            parentsOfRooms.Remove(r);
+        }
+    }
+
+    public void RenderAllRooms()
+    {
+        for(int x = 0; x < RoomManager.Instance.roomList.Count; x++)
+        {
+            RenderRoom(RoomManager.Instance.roomList[x]);
+        }
+    }
+
+    public void RenderRoom(Room r)
+    {
+        if (r==null)
+        {
+            return;
+        }
+        Debug.Log("Rendering room " + r.displayColour.ToString()+" tiles "+ r.tilesInRoom.Count);
+        RenderPoints(parentsOfRooms[r].transform,r.tilesInRoom,r.displayColour);
+    }
+
+    public void CleanupAllRooms()
+    {
+        CleanupRoom(DrawingParent);
+        foreach(KeyValuePair<Room,GameObject> kvp in parentsOfRooms)
+        {
+            CleanupRoom(kvp.Value.transform);
+        }
+    }
+
+    public void CleanupRoom(Room r)
+    {
+        if (r == null)
+        {
+            return;
+        }
+        CleanupRoom(parentsOfRooms[r].transform);
+    }
+
+    public void CleanupRoom(Transform parent)
     {
         GameObject g = null;
-        for(int x = 0; x < this.transform.childCount; x++)
+        while(parent.childCount>0)
         {
-            g = this.transform.GetChild(x).gameObject;
+            g = parent.GetChild(0).gameObject;
+            g.transform.parent = null;
             GameObjectPoolManager.Instance.ReturnObjectToPool(g, BaseTileKey);
         }
     }
