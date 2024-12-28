@@ -91,4 +91,38 @@ public class RoomUtils
     }
 
 
+    public static bool IsValid(Room room)
+    {
+
+        if (room.roomType == RoomUseType.None)
+        {
+            return true;
+        }
+        return RoomManager.Instance.ValidityData[room.roomType].IsValid(room);
+    }
+
+
+    public static bool DoesRoomContainObject(Room r,string objectToFind,out int quantity)
+    {
+        quantity = 0;
+        Vector2Int coords = Vector2Int.zero;
+        List<EnvironmentObjectInstance> objects = new List<EnvironmentObjectInstance>();
+        EnvironmentObjectInstance instance = null;
+        for(int x = 0; x < r.tilesInRoom.Count; x++)
+        {
+           coords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(r.tilesInRoom[x]);
+            WorldChunkManager.Instance.Chunks[coords.x, coords.y].DoesObjectExistAtCoords(r.tilesInRoom[x],objectToFind,out instance);
+            if (instance != null && objects.Contains(instance) == false)
+            {
+                objects.Add(instance);
+            }
+        }
+        if(objects.Count > 0)
+        {
+            quantity = objects.Count;
+            return true;
+        }
+
+        return false;
+    }
 }

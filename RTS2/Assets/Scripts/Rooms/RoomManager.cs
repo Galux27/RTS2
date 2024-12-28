@@ -16,6 +16,31 @@ public class RoomManager : MonoBehaviour
             return instance;
         }
     }
+    private void Awake()
+    {
+        LoadData();
+    }
+
+    public Dictionary<RoomUseType, RoomValidityData> ValidityData;
+
+    const string ValidityDataPath = "RoomData";
+
+    void LoadData()
+    {
+        ValidityData = new Dictionary<RoomUseType, RoomValidityData>();
+        Object[] data = Resources.LoadAll(ValidityDataPath);
+        for (int x = 0; x < data.Length; x++)
+        {
+            RoomValidityData i = (RoomValidityData)data[x];
+            if (ValidityData.ContainsKey(i.TypeToCheckFor) == false)
+            {
+                ValidityData.Add(i.TypeToCheckFor, i);
+            }
+        }
+    }
+
+
+
    public List<Room> roomList=new List<Room>();  
 
     public bool DoesAnyRoomContainPosition(Vector2Int pos)

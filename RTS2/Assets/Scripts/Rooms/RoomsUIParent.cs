@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -22,14 +23,35 @@ public class RoomsUIParent : MonoBehaviour
     public Transform SelectRoomParent;
     public GameObject SelectRoomButton;
     public Button ExpandRoomButton,ReduceRoomButton, DeleteRoomButton;
-
+    public TMP_InputField RoomName;
+    public TextMeshProUGUI RoomDetails,IsValid;
+    public TMPro.TMP_Dropdown RoomType;
     private void Awake()
     {
         RedrawRoomSelectionButtons();
         ExpandRoomButton.onClick.AddListener(() => RoomsSelectionMode.CurrentMode = RoomMode.Expand);
         ReduceRoomButton.onClick.AddListener(() => RoomsSelectionMode.CurrentMode = RoomMode.Remove);
         DeleteRoomButton.onClick.AddListener(RoomManager.Instance.DeleteSelected);
+        RoomName.onValueChanged.AddListener( OnNameTextChanged);
+
+        RoomType.options.Clear();
+        List<string> TypeOptions = new List<string>();
+        TypeOptions.Add(RoomUseType.None.ToString());
+        TypeOptions.Add(RoomUseType.Barracks.ToString());
+        TypeOptions.Add(RoomUseType.Warehouse.ToString());
+        RoomType.AddOptions(TypeOptions);
+
     }
+
+    private void OnNameTextChanged(string arg0)
+    {
+        if(RoomManager.Instance.SelectedRoom!= null)
+        {
+            RoomManager.Instance.SelectedRoom.roomName = arg0;
+        }
+    }
+
+  
 
     public void RedrawRoomSelectionButtons()
     {
@@ -57,7 +79,8 @@ public class RoomsUIParent : MonoBehaviour
     {
         RoomManager.Instance.SelectedRoom = r;
         RoomDrawrer.Instance.RenderAllRooms();
-        
+        RoomName.text = r.roomName;
+        RoomDetails.text = r.GetDetailsForRoom();
         Debug.Log("Room: set current room ");
     }
 

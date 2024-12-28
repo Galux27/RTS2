@@ -36,6 +36,30 @@ public class WorldChunk
         }
     }
 
+    EnvironmentObjectInstance GetObjectAtCoords(Vector2Int coords)
+    {
+        for(int x=0;x<EnvironmentObjectsInChunk.Count;x++)
+        {
+            if (EnvironmentObjectsInChunk[x].PosX==coords.x && EnvironmentObjectsInChunk[x].PosY== coords.y)
+            {
+                return EnvironmentObjectsInChunk[x];
+            }
+        }
+        return null;
+    }
+
+    public bool DoesObjectExistAtCoords(Vector2Int coords,string toCheckFor, out EnvironmentObjectInstance objFound)
+    {
+        EnvironmentObjectInstance atCoords = GetObjectAtCoords(coords);
+        if (atCoords!=null&&atCoords.ObjectKey==toCheckFor)
+        {
+            objFound= atCoords;
+            return true;
+        }
+        objFound = null;
+        return false;
+    }
+
     public Constructable GetConstructableAtPosition(int x,int y,ConstructableType type)
     {
         Constructable retVal = null;

@@ -62,6 +62,14 @@ public class WorldChunkManager : MonoBehaviour
         return getCoordsCache;
     }
 
+    public Vector2Int GetChunkCoordsFromTileCoords(Vector2Int coords)
+    {
+        getCoordsCache.x = Mathf.Min(Mathf.RoundToInt(coords.x / ChunkSize), Chunks.GetLength(0) - 1);
+        getCoordsCache.y = Mathf.Min(Mathf.RoundToInt(coords.y / ChunkSize), Chunks.GetLength(1) - 1);
+
+        return getCoordsCache;
+    }
+
     private void Update()
     {
         DebugDrawChunks();

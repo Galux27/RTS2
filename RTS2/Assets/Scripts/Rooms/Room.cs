@@ -7,12 +7,10 @@ public class Room
     public string roomName = "";
     public Color displayColour;
     public List<Vector2Int> tilesInRoom = new List<Vector2Int>();
-    public RoomType roomType;
+    public RoomUseType roomType;
 
     public Room()
     {
-        Debug.Log("Room: created new room " + tilesInRoom.Count);
-
         roomName = "Room " + RoomManager.Instance.roomList.Count;
         displayColour = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), .25f);
     }
@@ -20,7 +18,6 @@ public class Room
 
     public void AddTiles(List<Vector2Int> tilesInRoom)
     {
-        Debug.Log("Room: adding tiles " + tilesInRoom.Count);
         for(int x=0;x<tilesInRoom.Count;x++)
         {
             if (!this.tilesInRoom.Contains(tilesInRoom[x]))
@@ -38,9 +35,21 @@ public class Room
         }
 
     }
+
+
+    public string GetDetailsForRoom()
+    {
+        return "Room Size: " + tilesInRoom.Count + " tiles" ;
+    }
+
+    public string GetValidityDetailsForRoom()
+    {
+        RoomUtils.IsValid(this);
+        return "";
+    }
 }
 
-public enum RoomType 
+public enum RoomUseType 
 {
     None,
     Barracks,
