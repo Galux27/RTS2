@@ -72,6 +72,10 @@ public class RoomDrawrer : MonoBehaviour
 
     public void OnDestroyRoom(Room r)
     {
+        if (r == null)
+        {
+            return;
+        }
         if (parentsOfRooms.ContainsKey(r) )
         {
             CleanupRoom(parentsOfRooms[r].transform);

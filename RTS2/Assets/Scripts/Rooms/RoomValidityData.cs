@@ -14,11 +14,14 @@ public class RoomValidityData : ScriptableObject
 
     public bool IsValid(Room r)
     {
+        Debug.Log("Room: validity check "+r.roomType);
         int quantity = 0;
         bool contains = false;
         for(int x = 0; x < ValidityObjects.Count; x++)
         {
            contains= RoomUtils.DoesRoomContainObject(r, ValidityObjects[x].ObjectKey, out quantity);
+            Debug.Log("Room: validity check contains " + ValidityObjects[x].ObjectKey+ " q"+quantity);
+
             if (ValidityObjects[x].NeedsObject)
             {
                 if (quantity == 0)

@@ -111,6 +111,7 @@ public class RoomUtils
         for(int x = 0; x < r.tilesInRoom.Count; x++)
         {
            coords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(r.tilesInRoom[x]);
+            Debug.Log("Room: checking chunk " + coords + " for " + objectToFind);
             WorldChunkManager.Instance.Chunks[coords.x, coords.y].DoesObjectExistAtCoords(r.tilesInRoom[x],objectToFind,out instance);
             if (instance != null && objects.Contains(instance) == false)
             {

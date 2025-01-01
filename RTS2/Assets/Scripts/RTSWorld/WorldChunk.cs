@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 /// <summary>
@@ -14,7 +15,7 @@ public class WorldChunk
 
     public WorldChunk()
     {
-        DebugColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f),Random.Range(0f,1f),1f);
+        DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
     }
 
     public void AddUnitToChunk(Unit unit)
@@ -36,26 +37,67 @@ public class WorldChunk
         }
     }
 
+    List<EnvironmentObjectInstance> GetAllObjectsAtCoords(Vector2Int coords)
+    {
+        List<EnvironmentObjectInstance> retVal = new List<EnvironmentObjectInstance>();
+
+        for (int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
+        {
+            if (EnvironmentObjectsInChunk[x].PosX == coords.x && EnvironmentObjectsInChunk[x].PosY == coords.y)
+            {
+                retVal.Add( EnvironmentObjectsInChunk[x]);
+            }
+        }
+        return retVal;
+    }
+
+
     EnvironmentObjectInstance GetObjectAtCoords(Vector2Int coords)
     {
+        EnvironmentObjectInstance retVal = null;
+        int count = 0;
         for(int x=0;x<EnvironmentObjectsInChunk.Count;x++)
         {
             if (EnvironmentObjectsInChunk[x].PosX==coords.x && EnvironmentObjectsInChunk[x].PosY== coords.y)
             {
-                return EnvironmentObjectsInChunk[x];
+                count++;
+               retVal= EnvironmentObjectsInChunk[x];
             }
         }
-        return null;
+        Debug.Log("Room: found " + count + " objects at " + coords);
+        return retVal;
     }
 
     public bool DoesObjectExistAtCoords(Vector2Int coords,string toCheckFor, out EnvironmentObjectInstance objFound)
     {
-        EnvironmentObjectInstance atCoords = GetObjectAtCoords(coords);
-        if (atCoords!=null&&atCoords.ObjectKey==toCheckFor)
+        Debug.Log("Room: check at " + coords+" for "+  toCheckFor);
+        List<EnvironmentObjectInstance> objects = GetAllObjectsAtCoords(coords);
+        if (objects.Count == 0)
         {
-            objFound= atCoords;
-            return true;
+            objFound = null;
+            return false;
         }
+        //for(int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
+        //{
+        //    Debug.Log("Room: Obj in chunk " + EnvironmentObjectsInChunk[x].ObjectKey + " x " + EnvironmentObjectsInChunk[x].PosX + " y " + EnvironmentObjectsInChunk[x].PosY);
+        //}
+
+
+        for(int x = 0; x < objects.Count; x++)
+        {
+            if (objects[x] != null)
+            {
+                Debug.Log("Room: object found " + objects[x].ObjectKey + " at " + coords.ToString());
+            }
+
+            if (objects[x] != null && objects[x].ObjectKey == toCheckFor)
+            {
+                objFound = objects[x];
+                return true;
+            }
+        }
+
+     
         objFound = null;
         return false;
     }

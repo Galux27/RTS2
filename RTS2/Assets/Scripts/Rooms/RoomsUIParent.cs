@@ -40,6 +40,7 @@ public class RoomsUIParent : MonoBehaviour
         TypeOptions.Add(RoomUseType.Barracks.ToString());
         TypeOptions.Add(RoomUseType.Warehouse.ToString());
         RoomType.AddOptions(TypeOptions);
+        RoomType.onValueChanged.AddListener(OnRoomTypeChange);
 
     }
 
@@ -81,7 +82,15 @@ public class RoomsUIParent : MonoBehaviour
         RoomDrawrer.Instance.RenderAllRooms();
         RoomName.text = r.roomName;
         RoomDetails.text = r.GetDetailsForRoom();
+        IsValid.text = r.GetValidityDetailsForRoom();
         Debug.Log("Room: set current room ");
+    }
+
+    void OnRoomTypeChange(int i)
+    {
+        RoomManager.Instance.SelectedRoom.roomType = (RoomUseType)i;
+        IsValid.text = RoomManager.Instance.SelectedRoom.GetValidityDetailsForRoom();
+        RoomManager.Instance.SelectedRoom.SetCanUseRoom(RoomManager.Instance.SelectedRoom.DoesRoomHaveNeededObjects());
     }
 
     void DrawNewRoomButton()

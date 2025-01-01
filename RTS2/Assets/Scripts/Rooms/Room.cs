@@ -42,10 +42,28 @@ public class Room
         return "Room Size: " + tilesInRoom.Count + " tiles" ;
     }
 
+
+    public bool DoesRoomHaveNeededObjects()
+    {
+        return RoomUtils.IsValid(this);
+    }
+
     public string GetValidityDetailsForRoom()
     {
-        RoomUtils.IsValid(this);
-        return "";
+        
+        return RoomUtils.IsValid(this).ToString();
+    }
+
+    bool CanUseRoomValue = false;
+    public virtual bool CanUseRoom()
+    {
+        return CanUseRoomValue;
+    }
+    
+
+    public virtual void SetCanUseRoom(bool value)
+    {
+        CanUseRoomValue = value;
     }
 }
 

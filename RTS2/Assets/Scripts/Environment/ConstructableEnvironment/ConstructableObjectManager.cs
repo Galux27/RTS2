@@ -100,8 +100,10 @@ public class ConstructableObjectManager : MonoBehaviour
             return;
         }
         ConstructableObject selectedToConstruct = AllObjects[toConstruct];
-        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(pos);
+        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name));
+        Debug.Log("Room: creating object from construction at " + selectedToConstruct.name+" at " + coords.ToString()+" chunk " + chunk.ToString());
+        
         for (int x = coords.x; x < coords.x + selectedToConstruct.Width; x++)
         {
             for (int y = coords.y; y < coords.y + selectedToConstruct.Height; y++)

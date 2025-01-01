@@ -7,10 +7,10 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance
 {
     public ConstructableObjectInstance(int x,int y,string envObj):base(x,y,envObj)
     {
-        pos = new Vector3(x, y);
+        PosX = x;
+        PosY= y;
 
     }
-    Vector3 pos;
     
 
     public override void RenderInstance()
