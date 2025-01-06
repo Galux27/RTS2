@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Script for controling what items a unit holds and any needed visuals for things like guns
+/// </summary>
 public class ItemHolder : MonoBehaviour
 {
     public Transform HandsSlot;

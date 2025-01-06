@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Base class for logic that decides what behaviour a unit will perform
+/// </summary>
 public class BehaviourDecisionMaker
 {
     BehaviourBase b;

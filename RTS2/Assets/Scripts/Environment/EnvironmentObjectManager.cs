@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Class to store references to all potential Environment Objects in the game and the drawing/cleaning up
+/// of Environment Objects in the scene based on the camera position
+/// </summary>
 public class EnvironmentObjectManager : MonoBehaviour
 {
     static EnvironmentObjectManager instance;

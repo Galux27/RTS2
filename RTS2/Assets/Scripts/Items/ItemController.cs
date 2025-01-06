@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class for managing all items in the game and all instances of items in the world
+/// </summary>
 public class ItemController : MonoBehaviour
 {
     const string ItemLocation = "Items";

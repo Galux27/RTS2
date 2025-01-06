@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Script to give items to a unit when its created
+/// </summary>
 public class ItemUnitInit : MonoBehaviour
 {
 

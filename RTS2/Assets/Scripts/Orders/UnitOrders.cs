@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Stores all the orders given to set unit
+/// </summary>
 public class UnitOrders : MonoBehaviour
 {
     public Dictionary<string, Order> Orders=new Dictionary<string, Order>();

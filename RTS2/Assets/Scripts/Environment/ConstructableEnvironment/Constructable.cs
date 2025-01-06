@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Interface for any object that will need constructing by units before being placed in the world
+/// </summary>
 public interface Constructable
 {
     public void ConstructObject();

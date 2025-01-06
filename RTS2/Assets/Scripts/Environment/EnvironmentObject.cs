@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Scriptable object that stores an environment object that can be spawned in the world
+/// Think trees, furniture, rocks...
+/// </summary>
 [CreateAssetMenu(fileName = "EnvironmentObject", menuName = "ScriptableObjects/EnvironmentObject", order = 1)]
 public class EnvironmentObject : ScriptableObject
 {

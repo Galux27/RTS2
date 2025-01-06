@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Stores information about an instance of an EnvironmentObject in the world (Does not mean that the object is being drawn)
+/// </summary>
 public class EnvironmentObjectInstance
 {
     public string ObjectKey;

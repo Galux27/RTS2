@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Base class for a behaviour that a unit can perform e.g. move to location, attack other unit...
+/// </summary>
 public class BehaviourBase
 {
     protected Unit unitToMove;

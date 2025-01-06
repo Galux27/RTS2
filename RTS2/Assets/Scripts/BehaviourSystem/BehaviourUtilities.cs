@@ -2,8 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class that stores utilities used in the various behaviour scripts
+/// </summary>
 public static class BehaviourUtilities 
 {
+
+    //using a cache to not allocate memory every time we need to find units
     static List<Unit> GetUnitCache=new List<Unit>();
     public static List<Unit> GetHostileUnits(Unit searching,float range)
     {

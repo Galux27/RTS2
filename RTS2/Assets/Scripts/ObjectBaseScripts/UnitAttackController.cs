@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Script to control units attacking other units in  a way that should work regardless of the weapon (ranged,melee etc...) they ahve
+/// </summary>
 public class UnitAttackController : MonoBehaviour
 {
     public float AttackDamage, AttackRate,AttackRange;
