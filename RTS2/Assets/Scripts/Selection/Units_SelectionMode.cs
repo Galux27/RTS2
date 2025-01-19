@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -26,6 +27,8 @@ public class Units_SelectionMode : SelectionMode
 
     public override void OnRightMouseUp()
     {
+        GameActionController.Instance.OnActionPerformed();
+
         if (SelectableManager.Instance.CurrentlySelected.Count > 0)
         {
             if (Input.GetMouseButtonUp(1))
@@ -39,57 +42,71 @@ public class Units_SelectionMode : SelectionMode
                 RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.UnitLayermask);
                 if (hit.collider != null)
                 {
-                    Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
-                    for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+
+                    System.Action attack = () =>
                     {
-                        Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
-                        BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                        HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
-                        attack.InitBehaviour(targetUnit, toPerfrom);
-                        attack.IsUserInstruction = true;
-                        br.SetBehaviour(attack);
+                        Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
+                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
+                            attack.InitBehaviour(targetUnit, toPerfrom);
+                            attack.IsUserInstruction = true;
+                            br.SetBehaviour(attack);
 
-                    }
+                        }
+                    };
 
-                    DoneCommand = true;
+                    GameAction ga = new GameAction("Attack", attack);
+                    GameActionController.Instance.AddAction(ga);
+                    //DoneCommand = true;
                 }
-
-                if (OnHoverEnemyUnit != null)
+                else if (OnHoverEnemyUnit != null)
                 {
-                    for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                    System.Action attack = () =>
                     {
-                        Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
-                        BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                        HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
-                        attack.InitBehaviour(OnHoverEnemyUnit, toPerfrom);
-                        attack.IsUserInstruction = true;
-                        br.SetBehaviour(attack);
+                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
+                            attack.InitBehaviour(OnHoverEnemyUnit, toPerfrom);
+                            attack.IsUserInstruction = true;
+                            br.SetBehaviour(attack);
 
-                    }
-
-                    DoneCommand = true;
+                        }
+                    };
+                    GameAction ga = new GameAction("Attack", attack);
+                    GameActionController.Instance.AddAction(ga);
+                  //  DoneCommand = true;
                 }
 
 
                 if (OnHoverBuildable != null)
                 {
-                    for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                    Action Build = () =>
                     {
-                        Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
-                        if (toPerfrom.MyType == UnitType.Engineer)
-                        {
-                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                            HumanBehaviour_ConstructObject construct = new HumanBehaviour_ConstructObject();
-                            construct.InitBehaviour( toPerfrom, OnHoverBuildable);
-                            construct.IsUserInstruction = true;
-                            br.SetBehaviour(construct);
-                        }
-                    }
 
+                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                            if (toPerfrom.MyType == UnitType.Engineer)
+                            {
+                                BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                HumanBehaviour_ConstructObject construct = new HumanBehaviour_ConstructObject();
+                                construct.InitBehaviour(toPerfrom, OnHoverBuildable);
+                                construct.IsUserInstruction = true;
+                                br.SetBehaviour(construct);
+                            }
+                        }
+                    };
+                    GameAction ga = new GameAction("Build", Build);
+                    GameActionController.Instance.AddAction(ga);
                     DoneCommand = true;
                 }
 
-                if (!DoneCommand)
+                //if (!DoneCommand)
                 {
                     hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.CursorLayermask);
                     if (hit.collider != null)
@@ -97,16 +114,22 @@ public class Units_SelectionMode : SelectionMode
                         Vector3 targetPos = hit.point;
                         targetPos.z = 0;
 
-                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        Action move = () =>
                         {
-                            Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
-                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                            MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
-                            moveTo_Behaviour.InitBehaviour(toPerfrom, targetPos);
-                            moveTo_Behaviour.IsUserInstruction = true;
-                            br.SetBehaviour(moveTo_Behaviour);
 
-                        }
+                            for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                            {
+                                Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
+                                BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
+                                moveTo_Behaviour.InitBehaviour(toPerfrom, targetPos);
+                                moveTo_Behaviour.IsUserInstruction = true;
+                                br.SetBehaviour(moveTo_Behaviour);
+
+                            }
+                        };
+                        GameAction ga = new GameAction("Move", move);
+                        GameActionController.Instance.AddAction(ga);
                     }
                 }
             }
