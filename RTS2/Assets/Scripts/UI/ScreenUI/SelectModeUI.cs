@@ -29,10 +29,11 @@ public class SelectModeUI : MonoBehaviour
         {
             case CurrentSelectionMode.None:
                 NoneUI.SetActive(true);
+                RoomDrawrer.Instance.CleanupAllRooms();
                 break;
             case CurrentSelectionMode.Units:
                 UnitsUI.SetActive(true);
-
+                RoomDrawrer.Instance.CleanupAllRooms();
                 break;
             case CurrentSelectionMode.Furniture:
                 FurnitureSelectButtonManager.Instance.RefreshUI();
@@ -53,7 +54,7 @@ public class SelectModeUI : MonoBehaviour
 
     void DisableUI()
     {
-        RoomDrawrer.Instance.CleanupAllRooms();
+       
         NoneUI.SetActive(false);
         UnitsUI.SetActive(false);
         BuildingUI.SetActive(false);

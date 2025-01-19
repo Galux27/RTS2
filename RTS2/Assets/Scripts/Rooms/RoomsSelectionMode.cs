@@ -32,12 +32,14 @@ public class RoomsSelectionMode : SelectionMode
     public override void OnLeftMouseUp()
     {
         OnClick(PositionsCurrentlySelected);
+        RefreshRooms();
     }
 
 
     public override void OnRightMouseUp()
     {
-      
+        RefreshRooms();
+
     }
     List<Vector2Int> PositionsCurrentlySelected=new List<Vector2Int>();
     public override void OnHover()
@@ -48,6 +50,12 @@ public class RoomsSelectionMode : SelectionMode
         {
             RoomDrawrer.Instance.RenderPoints(RoomDrawrer.Instance.DrawingParent, PositionsCurrentlySelected);
         }
+    }
+
+    void RefreshRooms()
+    {
+        RoomDrawrer.Instance.CleanupAllRooms();
+        RoomDrawrer.Instance.RenderAllRooms();
     }
 
     void OnClick(List<Vector2Int> positions)

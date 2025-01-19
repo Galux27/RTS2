@@ -32,6 +32,11 @@ public class RoomsUIParent : MonoBehaviour
         ExpandRoomButton.onClick.AddListener(() => RoomsSelectionMode.CurrentMode = RoomMode.Expand);
         ReduceRoomButton.onClick.AddListener(() => RoomsSelectionMode.CurrentMode = RoomMode.Remove);
         DeleteRoomButton.onClick.AddListener(RoomManager.Instance.DeleteSelected);
+
+
+        ExpandRoomButton.onClick.AddListener(()=>OnSelectModeButton(ExpandRoomButton));
+        ReduceRoomButton.onClick.AddListener(() => OnSelectModeButton(ReduceRoomButton));
+
         RoomName.onValueChanged.AddListener( OnNameTextChanged);
 
         RoomType.options.Clear();
@@ -41,7 +46,14 @@ public class RoomsUIParent : MonoBehaviour
         TypeOptions.Add(RoomUseType.Warehouse.ToString());
         RoomType.AddOptions(TypeOptions);
         RoomType.onValueChanged.AddListener(OnRoomTypeChange);
+        Room.OnRoomChanged += RefreshUI;
+    }
 
+    void OnSelectModeButton(Button b)
+    {
+        ExpandRoomButton.GetComponent<Image>().color = Color.white; 
+        ReduceRoomButton.GetComponent<Image>().color = Color.white;
+        b.GetComponent<Image>().color = Color.green;
     }
 
     private void OnNameTextChanged(string arg0)
@@ -74,23 +86,40 @@ public class RoomsUIParent : MonoBehaviour
         GameObject room = Instantiate(SelectRoomButton, SelectRoomParent);
         room.GetComponent<Button>().onClick.AddListener(()=>SelectRoom(r));
         room.GetComponentInChildren<TextMeshProUGUI>().text = r.roomType.ToString();
+        if (r == RoomManager.Instance.SelectedRoom)
+        {
+            room.GetComponent<Image>().color = Color.green;
+        }
     }
 
     void SelectRoom(Room r)
     {
         RoomManager.Instance.SelectedRoom = r;
+        RoomDrawrer.Instance.CleanupAllRooms();
         RoomDrawrer.Instance.RenderAllRooms();
-        RoomName.text = r.roomName;
-        RoomDetails.text = r.GetDetailsForRoom();
-        IsValid.text = r.GetValidityDetailsForRoom();
-        Debug.Log("Room: set current room ");
+        RefreshUI(r);
     }
+
+    void RefreshUI(Room r)
+    {
+        if (r == RoomManager.Instance.SelectedRoom)
+        {
+            RoomName.text = r.roomName;
+            RoomDetails.text = r.GetDetailsForRoom();
+            IsValid.text = r.GetValidityDetailsForRoom(r);
+            RoomDrawrer.Instance.CleanupRoom(r);
+            RoomDrawrer.Instance.RenderRoom(r);
+        }
+        RedrawRoomSelectionButtons();
+    }
+
 
     void OnRoomTypeChange(int i)
     {
         RoomManager.Instance.SelectedRoom.roomType = (RoomUseType)i;
-        IsValid.text = RoomManager.Instance.SelectedRoom.GetValidityDetailsForRoom();
         RoomManager.Instance.SelectedRoom.SetCanUseRoom(RoomManager.Instance.SelectedRoom.DoesRoomHaveNeededObjects());
+        RefreshUI(RoomManager.Instance.SelectedRoom);
+
     }
 
     void DrawNewRoomButton()

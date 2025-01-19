@@ -45,14 +45,19 @@ public class SelectionController : MonoBehaviour
         else if (mode == CurrentSelectionMode.Furniture)
         {
             CurrentSelectionModeObj = Buildings;
+            RoomDrawrer.Instance.RenderAllRooms();
+
         }
         else if (mode == CurrentSelectionMode.Structures)
         {
             CurrentSelectionModeObj = Construction;
+            RoomDrawrer.Instance.RenderAllRooms();
+
         }
         else if (mode == CurrentSelectionMode.Rooms)
         {
             CurrentSelectionModeObj= Rooms;
+            RoomDrawrer.Instance.RenderAllRooms();
         }
         SelectableManager.Instance.ClearSelectables();
         OnSwitchSelectionMode?.Invoke(mode);

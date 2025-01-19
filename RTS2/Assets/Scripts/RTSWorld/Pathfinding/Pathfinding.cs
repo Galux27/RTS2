@@ -126,7 +126,72 @@ public static class Pathfinding
         return pathfindingNodes[retX,retY];
     }
 
-    
+    /// <summary>
+    /// Finds a path without considering the unit performing the path
+    /// Used in calculating whether a building is enclosed or not
+    /// </summary>
+    /// <param name="startPos"></param>
+    /// <param name="targetPos"></param>
+    /// <returns></returns>
+    public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos)
+    {
+        //get player and target position in grid coords
+        PathfindingNode seekerNode = GetNodeFromPosition(startPos);
+        PathfindingNode targetNode = GetNodeFromPosition(targetPos);
+
+        List<PathfindingNode> openSet = new List<PathfindingNode>();
+        HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
+        openSet.Add(seekerNode);
+
+        //calculates path for pathfinding
+        while (openSet.Count > 0)
+        {
+
+            //iterates through openSet and finds lowest FCost
+            PathfindingNode node = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].FCost <= node.FCost)
+                {
+                    if (openSet[i].hCost < node.hCost)
+                        node = openSet[i];
+                }
+            }
+
+            openSet.Remove(node);
+            closedSet.Add(node);
+
+            //If target found, retrace path
+            if (node == targetNode)
+            {
+                return RetracePath(seekerNode, targetNode);
+
+            }
+
+            //adds neighbor nodes to openSet
+            foreach (PathfindingNode neighbour in node.neighbours)
+            {
+                if (neighbour.GetPassable(null) == false || closedSet.Contains(neighbour))
+                {
+                    continue;
+                }
+
+                int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
+                if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = node;
+
+                    if (!openSet.Contains(neighbour))
+                        openSet.Add(neighbour);
+                }
+            }
+        }
+        return null;
+    }
+
+
 
     public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,Unit performing)
     {
