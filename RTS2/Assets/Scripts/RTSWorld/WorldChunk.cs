@@ -10,6 +10,7 @@ public class WorldChunk
 {
     public List<Unit> UnitsInChunk=new List<Unit>();
     public List<EnvironmentObjectInstance> EnvironmentObjectsInChunk = new List<EnvironmentObjectInstance>();
+    public List<ResourceInstance> ResourceObjectsInChunk = new List<ResourceInstance>();
     public List<Constructable> ToBuild=new List<Constructable>();
     public Color DebugColor;
 
@@ -27,6 +28,17 @@ public class WorldChunk
     {
         UnitsInChunk.Remove(unit);
     }
+
+    public void AddResourceObject(ResourceInstance resourceInstance)
+    {
+        ResourceObjectsInChunk.Add(resourceInstance);
+    }
+
+    public void RemoveResourceObject(ResourceInstance resourceInstance)
+    {
+        ResourceObjectsInChunk.Remove(resourceInstance);
+    }
+
 
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
     {

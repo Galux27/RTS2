@@ -116,6 +116,10 @@ public class RoomsUIParent : MonoBehaviour
 
     void OnRoomTypeChange(int i)
     {
+        if (RoomManager.Instance.SelectedRoom==null)
+        {
+            return;
+        }
         RoomManager.Instance.SelectedRoom.roomType = (RoomUseType)i;
         RoomManager.Instance.SelectedRoom.SetCanUseRoom(RoomManager.Instance.SelectedRoom.DoesRoomHaveNeededObjects());
         RefreshUI(RoomManager.Instance.SelectedRoom);

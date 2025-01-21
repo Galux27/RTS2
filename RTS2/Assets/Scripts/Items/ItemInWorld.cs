@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class ItemInWorld : MonoBehaviour
+public class ItemInWorld : MonoBehaviour,InventoryObject
 {
     public static ItemInWorld CreateItemInstanceInWorld(Item toCreate)
     {
@@ -24,6 +24,51 @@ public class ItemInWorld : MonoBehaviour
     public void SetItem(Item item)
     {
         MyItem = item;
+    }
+
+    public string Name()
+    {
+        return MyItem.Name;
+    }
+
+    public float Weight()
+    {
+        return MyItem.Weight;
+    }
+
+    public int Quantity()
+    {
+        return 1;
+    }
+
+    public bool CanSplitStack()
+    {
+        return false;
+    }
+
+    public Object[] SplitStack(int quantityWanted)
+    {
+        return null;
+    }
+
+    public Object[] SplitStack(float weightWanted)
+    {
+        return null;
+    }
+
+    public void RepopulateData(InventoryObject toRepopulateWith)
+    {
+        
+    }
+
+    public void OnAddedToInventory()
+    {
+        
+    }
+
+    public void OnRemovedFromInventory()
+    {
+        this.transform.parent = null;
     }
 
     public Item MyItem;
