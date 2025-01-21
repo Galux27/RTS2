@@ -16,7 +16,7 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
         iw.sr = sr;
         return iw;
     }
-    private void Awake()
+    private void Start()
     {
         ItemController.Instance.AllItemsInWorld.Add(this);
     }

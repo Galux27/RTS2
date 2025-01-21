@@ -16,16 +16,14 @@ public class ItemUnitInit : MonoBehaviour
         {
             for(int x=0;x < itemsToAdd.Count;x++)
             {
-                GetComponent<Human>().GetComponentInChildren<ItemHolder>().SetHolding(ItemInWorld.CreateItemInstanceInWorld(ItemController.Instance.AllItems[itemsToAdd[x]]));
+                ItemInWorld iw = ItemInWorld.CreateItemInstanceInWorld(ItemController.Instance.AllItems[itemsToAdd[x]]);
+                GetComponent<Inventory>().AddItemToInventory(iw);
+                GetComponent<Human>().GetComponentInChildren<ItemHolder>().SetHolding(iw);
 
             }
         }
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 }

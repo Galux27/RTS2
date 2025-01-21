@@ -48,7 +48,7 @@ public class ResourceController : MonoBehaviour
         SpriteRenderer sr = retVal.AddComponent<SpriteRenderer>();
         sr.sprite = AllResources[ toRender.Name()].Item;
         ResourceInstance resourceInstance = retVal.AddComponent<ResourceInstance>();
-        resourceInstance.instanceData = toRender;
+        resourceInstance.InstanceData = toRender;
 
 
         return retVal;
@@ -62,7 +62,7 @@ public class ResourceController : MonoBehaviour
         SpriteRenderer sr = retVal.AddComponent<SpriteRenderer>();
         sr.sprite = toCreate.Item;
         ResourceInstance resourceInstance = retVal.AddComponent<ResourceInstance>();
-        resourceInstance.instanceData = new ResourceInstanceData(toCreate.name, quantity);
+        resourceInstance.InstanceData = new ResourceInstanceData(toCreate.name, quantity);
 
 
         return retVal;

@@ -18,7 +18,7 @@ public class ResourceInstance : MonoBehaviour
             data.instanceInWorld = this.gameObject;
         }
     }
-    private void Awake()
+    private void Start()
     {
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
         WorldChunkManager.Instance.Chunks[chunk.x,chunk.y].AddResourceObject(this);
