@@ -18,8 +18,7 @@ public class ItemUnitInit : MonoBehaviour
             {
                 ItemInWorld iw = ItemInWorld.CreateItemInstanceInWorld(ItemController.Instance.AllItems[itemsToAdd[x]]);
                 GetComponent<Inventory>().AddItemToInventory(iw);
-                GetComponent<Human>().GetComponentInChildren<ItemHolder>().SetHolding(iw);
-
+                iw.EquipObject(this.GetComponent<Human>());
             }
         }
 

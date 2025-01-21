@@ -8,5 +8,9 @@ public class ConstructableObject : EnvironmentObject
     public int Cost;
     public float TimeToBuild;
 
+    public virtual void OnObjectConstructed(GameObject obj)
+    {
+        Debug.Log("Constructable created");
+    }
     
 }

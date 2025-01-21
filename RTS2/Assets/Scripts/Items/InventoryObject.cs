@@ -24,4 +24,10 @@ public interface InventoryObject
     public void OnAddedToInventory();
 
     public void OnRemovedFromInventory();
+
+    public bool CanObjectBeEquiped();
+
+    public void EquipObject(Unit toEquipTo);
+   
+
 }

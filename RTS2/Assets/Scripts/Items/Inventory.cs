@@ -4,11 +4,32 @@ using UnityEngine;
 
 public class Inventory:MonoBehaviour
 {
+
+
+    private void Start()
+    {
+        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddContainerObject(this);
+    }
+
+
+    private void OnDestroy()
+    {
+        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveContainerObject(this);
+    }
+
+
     public List<InventoryObject> ObjectsInInventory =new List<InventoryObject>();
     public float InventoryCapacity;
     float CurrentItemsWeight=0;
+    public ItemFilter Filter;
     public void AddItemToInventory(InventoryObject inventoryObject)
     {
+        if (Filter.ItemCanPass(inventoryObject.Name())==false)
+        {
+            return;
+        }
         if(inventoryObject.Weight() + GetSubOfInventoryWeight() <= InventoryCapacity)
         {
             ObjectsInInventory.Add(inventoryObject);
@@ -28,6 +49,10 @@ public class Inventory:MonoBehaviour
 
     public void TransferItemBetweenInventory(InventoryObject inventoryObject,Inventory comingFrom)
     {
+        if (Filter.ItemCanPass(inventoryObject.Name()) == false)
+        {
+            return;
+        }
         if (inventoryObject.Weight() + GetSubOfInventoryWeight() <= InventoryCapacity)
         {
             comingFrom.RemoveItemFromInventory(inventoryObject);

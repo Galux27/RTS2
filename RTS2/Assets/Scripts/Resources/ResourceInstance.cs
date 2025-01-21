@@ -99,4 +99,14 @@ public class ResourceInstanceData:InventoryObject
             ResourceController.Instance.CreateResourceInstance(this);
         }
     }
+
+    public bool CanObjectBeEquiped()
+    {
+        return false;
+    }
+
+    public void EquipObject(Unit toEquipTo)
+    {
+        
+    }
 }

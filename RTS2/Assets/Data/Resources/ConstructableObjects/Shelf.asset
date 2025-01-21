@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a57896610a77a024ba59f95e22968c95, type: 3}
+  m_Script: {fileID: 11500000, guid: 75ff855f45c09324185613678e6d20f7, type: 3}
   m_Name: Shelf
   m_EditorClassIdentifier: 
   Name: Shelf
@@ -20,4 +20,11 @@ MonoBehaviour:
   Width: 2
   Height: 1
   Cost: 0
-  TimeToBuild: 3
+  TimeToBuild: 1
+  WeightLimit: 25
+  Filter:
+    CheckForForbidden: 1
+    CheckForAllowed: 0
+    ForbiddenItems:
+    - Fuel
+    AllowedItems: []

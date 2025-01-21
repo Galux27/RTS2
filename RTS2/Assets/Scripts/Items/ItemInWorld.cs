@@ -71,6 +71,17 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
         this.transform.parent = null;
     }
 
+    public bool CanObjectBeEquiped()
+    {
+        return MyItem.Slot == ItemEquipSlot.Hands;
+    }
+
+    public void EquipObject(Unit toEquipTo)
+    {
+        toEquipTo.GetComponentInChildren<ItemHolder>().SetHolding(this);
+
+    }
+
     public Item MyItem;
     public SpriteRenderer sr;
 }

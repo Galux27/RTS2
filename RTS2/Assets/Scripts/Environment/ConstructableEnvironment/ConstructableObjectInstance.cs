@@ -25,9 +25,23 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance
         Object.transform.position = new Vector3(PosX, PosY, 0);
         Object.GetComponent<SpriteRenderer>().sprite = obj.ForwardsSprite;
         Object.SetActive(true);
+
+
+
+        ConstructableContainer parentType = (ConstructableContainer)obj;
+        if (parentType != null)
+        {
+            inventoryObject = new GameObject();
+            inventoryObject.transform.position = new Vector3(PosX, PosY, 0);
+            inventoryObject.name = "Inventory For Object " + obj.name + " pos " + PosX + "," + PosY;
+            parentType.OnObjectConstructed(inventoryObject);
+        }
         Drawn = true;
 
     }
+
+    GameObject inventoryObject;
+
     public override void CleanupInstance()
     {
        Component.Destroy(Object.GetComponent<ConstructableObjectWorldReference>());
