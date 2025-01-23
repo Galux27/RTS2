@@ -14,6 +14,8 @@ public class EnvironmentObject : ScriptableObject
     public Sprite ForwardsSprite,SideSprite,BackwardsSprite;
     public bool BlocksTile;
     public int Width, Height;
+    public bool CanHarvest;
+    public HarvestableResourceData Resources;
 
     public Vector3 Size()
     {
@@ -35,4 +37,5 @@ public class EnvironmentObject : ScriptableObject
             return Mathf.Max(Height / 2, 1);
         }
     }
+
 }

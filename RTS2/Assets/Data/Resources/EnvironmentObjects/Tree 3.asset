@@ -19,3 +19,10 @@ MonoBehaviour:
   BlocksTile: 1
   Width: 1
   Height: 1
+  CanHarvest: 1
+  Resources:
+    resources:
+    - ResourceToSpawn: Construction Supplies
+      QuantityToSpawn: 1
+      RangeToSpawn: {x: 1, y: 1, z: 0}
+    HarvestLength: 3

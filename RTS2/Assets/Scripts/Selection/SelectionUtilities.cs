@@ -101,6 +101,84 @@ public static class SelectionUtilities
         return retVal;
     }
 
+    static List<EnvironmentObjectInstance> harvestableObjectCache = new List<EnvironmentObjectInstance>();
+    public static EnvironmentObjectInstance GetHarvestableObjectInstanceWithinRangeOfPoint(Vector3 point, float maxDist)
+    {
+        harvestableObjectCache.Clear();
+        point.z = 0;
+        EnvironmentObjectInstance retVal = null;
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
+
+        for (int x = 0; x < chunksToCheck.Count; x++)
+        {
+            for (int y = 0; y < chunksToCheck[x].EnvironmentObjectsInChunk.Count; y++)
+            {
+               
+                if (chunksToCheck[x].EnvironmentObjectsInChunk[y].CanHarvest()){
+                    harvestableObjectCache.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y]);
+                }
+            }
+        }
+
+        float closest = 99999f;
+        float curDist = -1f;
+        Vector3 objPosition = Vector3.zero;
+
+        for (int x = 0; x < harvestableObjectCache.Count; x++)
+        {
+            objPosition = harvestableObjectCache[x].GetPosition();
+            curDist = Vector3.Distance(point, objPosition);
+
+            if (curDist < maxDist && curDist < closest)
+            {
+                retVal = harvestableObjectCache[x];
+                closest = curDist;
+            }
+
+        }
+        return retVal;
+    }
+
+
+
+    static List<ResourceInstance> ResourceInstanceObjectCache = new List<ResourceInstance>();
+    public static ResourceInstance GetResourceInstanceObjectInstanceWithinRangeOfPoint(Vector3 point, float maxDist)
+    {
+        ResourceInstanceObjectCache.Clear();
+        point.z = 0;
+        ResourceInstance retVal = null;
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
+
+        for (int x = 0; x < chunksToCheck.Count; x++)
+        {
+            for (int y = 0; y < chunksToCheck[x].ResourceObjectsInChunk.Count; y++)
+            {
+
+
+                ResourceInstanceObjectCache.Add(chunksToCheck[x].ResourceObjectsInChunk[y]);
+               
+            }
+        }
+
+        float closest = 99999f;
+        float curDist = -1f;
+        Vector3 objPosition = Vector3.zero;
+
+        for (int x = 0; x < ResourceInstanceObjectCache.Count; x++)
+        {
+            objPosition = ResourceInstanceObjectCache[x].transform.position;
+            curDist = Vector3.Distance(point, objPosition);
+
+            if (curDist < maxDist && curDist < closest)
+            {
+                retVal = ResourceInstanceObjectCache[x];
+                closest = curDist;
+            }
+
+        }
+        return retVal;
+    }
+
     static List<Unit> toCheck=new List<Unit>();
     static List<WorldChunk> chunksToCheck = new List<WorldChunk>();
     public static Unit GetHostileUnitWithinRangeOfPoint(Vector3 point,float maxDist)

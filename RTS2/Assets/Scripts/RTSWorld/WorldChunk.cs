@@ -54,10 +54,20 @@ public class WorldChunk
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
     {
         EnvironmentObjectsInChunk.Add(environmentObject);
+        environmentObject.SetChunk(this);
         if (ShouldDrawEnvironmentObjects() && environmentObject.Drawn == false)
         {
             environmentObject.RenderInstance();
         }
+    }
+
+    public void RemoveEnvironmentObject(EnvironmentObjectInstance instance)
+    {
+        if (instance.Drawn)
+        {
+            instance.CleanupInstance();
+        }
+        EnvironmentObjectsInChunk.Remove(instance);
     }
 
     List<EnvironmentObjectInstance> GetAllObjectsAtCoords(Vector2Int coords)

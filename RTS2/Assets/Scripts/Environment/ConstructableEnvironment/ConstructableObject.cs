@@ -10,7 +10,7 @@ public class ConstructableObject : EnvironmentObject
 
     public virtual void OnObjectConstructed(GameObject obj)
     {
-        Debug.Log("Constructable created");
+        Debug.Log("Constructable created "+obj.name);
     }
     
 }

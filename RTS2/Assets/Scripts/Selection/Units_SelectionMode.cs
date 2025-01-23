@@ -106,7 +106,46 @@ public class Units_SelectionMode : SelectionMode
                     DoneCommand = true;
                 }
 
-                //if (!DoneCommand)
+
+                if (OnHoverHarvestable != null)
+                {
+
+                    Action Harvest = () =>
+                    {
+
+                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            GatherResources_Behaviour gather = new GatherResources_Behaviour();
+                            gather.InitBehaviour(toPerfrom, OnHoverHarvestable);
+                            br.SetBehaviour(gather);
+
+                        }
+                    };
+                    GameAction ga = new GameAction("Harvest Resource", Harvest);
+                    GameActionController.Instance.AddAction(ga);
+                }
+
+                if (OnHoverResource != null)
+                {
+                    Action Gather = () =>
+                    {
+
+                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                            collect.InitBehaviour(toPerfrom, OnHoverResource);
+                            br.SetBehaviour(collect);
+
+                        }
+                    };
+                    GameAction ga = new GameAction("Collect Resource", Gather);
+                    GameActionController.Instance.AddAction(ga);
+                }
+
                 {
                     hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.CursorLayermask);
                     if (hit.collider != null)
@@ -141,6 +180,8 @@ public class Units_SelectionMode : SelectionMode
     Unit OnHoverMyUnit;
     ConstructableObjectInstance OnHoverConstructable;
     Constructable OnHoverBuildable;
+    EnvironmentObjectInstance OnHoverHarvestable;
+    ResourceInstance OnHoverResource;
     public override void OnHover()
     {
         Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
@@ -172,14 +213,29 @@ public class Units_SelectionMode : SelectionMode
             return;
         }
 
+        OnHoverHarvestable = SelectionUtilities.GetHarvestableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
+
+        if (OnHoverHarvestable != null)
+        {
+            CursorIcon.Instance.SetBuildIcon();
+            return;
+        }
+
+        OnHoverResource = SelectionUtilities.GetResourceInstanceObjectInstanceWithinRangeOfPoint(r.origin, 1f);
+        if (OnHoverResource != null)
+        {
+            CursorIcon.Instance.SetBuildIcon();
+            return;
+        }
 
         OnHoverBuildable = SelectionUtilities.GetConstructableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
-        Debug.Log("On Hover Constructable is null " + (OnHoverConstructable==null));
         if (OnHoverBuildable != null)
         {
             CursorIcon.Instance.SetBuildIcon();
             return;
         }
+
+      
 
         CursorIcon.Instance.SetMoveIcon();
 

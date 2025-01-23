@@ -26,7 +26,8 @@ public class Inventory:MonoBehaviour
     public ItemFilter Filter;
     public void AddItemToInventory(InventoryObject inventoryObject)
     {
-        if (Filter.ItemCanPass(inventoryObject.Name())==false)
+        Debug.Log("Adding to inventory " + inventoryObject.Name() + " weight " + inventoryObject.Weight());
+        if (Filter!=null && Filter.ItemCanPass(inventoryObject.Name())==false)
         {
             return;
         }
@@ -95,6 +96,11 @@ public class Inventory:MonoBehaviour
         {
             CurrentItemsWeight += ObjectsInInventory[i].Weight();
         }
+    }
+
+    public bool IsNotFull()
+    {
+        return CurrentItemsWeight < InventoryCapacity;
     }
 
 }

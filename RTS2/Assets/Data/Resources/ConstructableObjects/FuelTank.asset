@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FuelTank
   m_EditorClassIdentifier: 
   Name: Fuel Tank
-  ForwardsSprite: {fileID: 0}
+  ForwardsSprite: {fileID: 4797048792760686579, guid: 40944dc7d70d71143be6821ddd2f9fb2, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   BlocksTile: 0

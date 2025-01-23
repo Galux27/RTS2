@@ -29,7 +29,7 @@ public class EnvironmentObjectManager : MonoBehaviour
     }
 
     public Dictionary<string, EnvironmentObject> AllObjects;
-    List<string> EnvironmentObjectKeys;
+    public List<string> EnvironmentObjectKeys;
     void LoadItemsFromResources()
     {
         AllObjects = new Dictionary<string, EnvironmentObject>();
@@ -62,7 +62,7 @@ public class EnvironmentObjectManager : MonoBehaviour
                 posCache.x = x;
                 posCache.y = y;
                 chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(posCache);
-                objectToCreate = EnvironmentObjectKeys[Random.Range(0, EnvironmentObjectKeys.Count-1)];
+                objectToCreate = EnvironmentObjectKeys[Random.Range(0, EnvironmentObjectKeys.Count)];
                 WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(new EnvironmentObjectInstance(x, y,objectToCreate ));
                 WorldController.Instance.SetTraversible(x, y, !AllObjects[objectToCreate].BlocksTile);
             }
