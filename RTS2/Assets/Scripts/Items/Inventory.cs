@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class Inventory:MonoBehaviour
@@ -8,17 +9,45 @@ public class Inventory:MonoBehaviour
 
     private void Start()
     {
-        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
-        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddContainerObject(this);
+        if (!this.GetComponent<Unit>())
+        {
+            Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+            WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddContainerObject(this);
+        }
     }
 
 
     private void OnDestroy()
     {
-        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
-        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveContainerObject(this);
+        if (!this.GetComponent<Unit>())
+        {
+            Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+            WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveContainerObject(this);
+        }
     }
 
+        public bool CanAddItemToInventory(InventoryObject inventoryObject)
+    {
+        if (Filter != null && Filter.ItemCanPass(inventoryObject.Name()) == false)
+        {
+            return false;
+        }
+        if (inventoryObject.Weight() + GetSubOfInventoryWeight() > InventoryCapacity)
+        {
+            
+            return CanAddItemToInventory(inventoryObject);
+        }
+        return true;
+    }
+
+    public bool CanAddSomeOfItemToInventory(InventoryObject inventoryObject)
+    {
+        if (inventoryObject.CanSplitStack())
+        {
+            return true;
+        }
+        return false;
+    }
 
     public List<InventoryObject> ObjectsInInventory =new List<InventoryObject>();
     public float InventoryCapacity;

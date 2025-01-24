@@ -51,7 +51,8 @@ public class EnvironmentObjectInstance
 
     public virtual bool CanHarvest()
     {
-        return EnvironmentObjectManager.Instance.AllObjects[ObjectKey].CanHarvest;
+        return EnvironmentObjectManager.Instance.AllObjects.ContainsKey(ObjectKey) &&
+            EnvironmentObjectManager.Instance.AllObjects[ObjectKey].CanHarvest;
     }
 
     ProgressBarUI ProgressBar;

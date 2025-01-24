@@ -44,6 +44,7 @@ public class GameActionController : MonoBehaviour
     {
         currentValidGameActions.Clear();
         ActionSelectMenu.Instance.CloseMenu();
+        SelectionController.Instance.blockInputTimer = .2f;
 
     }
 

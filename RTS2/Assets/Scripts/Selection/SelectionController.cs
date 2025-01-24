@@ -23,7 +23,7 @@ public class SelectionController : MonoBehaviour
     public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
     public CurrentSelectionMode selectionMode;
     public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj,Rooms;
-
+    public float LastLeftClick=-1,LastRightClick=-1;
 
     public void SetCursorSelectionMode(CurrentSelectionMode mode)
     {
@@ -77,6 +77,9 @@ public class SelectionController : MonoBehaviour
         Rooms = new RoomsSelectionMode();
         selectionMode = CurrentSelectionMode.None;
     }
+
+
+   public float blockInputTimer = 0f;
    
     private void Update()
     {
@@ -92,17 +95,33 @@ public class SelectionController : MonoBehaviour
             return;
         }
 
+
+
+
         CurrentSelectionModeObj.OnHover();
 
+        
+        if(blockInputTimer > 0f) {
+            blockInputTimer -= Time.deltaTime;
+            return;
+        }
+        
         if (Input.GetMouseButtonUp(0))
         {
             CurrentSelectionModeObj.OnLeftMouseUp();
+            LastLeftClick = Time.time;
         }
 
         if (Input.GetMouseButtonUp(1))
         {
             CurrentSelectionModeObj.OnRightMouseUp();
+            LastRightClick = Time.time;
         }
+    }
+
+    public float GetTimeSinceLastLeftClick()
+    {
+        return Time.time - LastLeftClick;
     }
 }
 

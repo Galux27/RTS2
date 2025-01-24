@@ -6,8 +6,10 @@ using UnityEngine;
 
 public class Units_SelectionMode : SelectionMode
 {
+  
     public override void OnLeftMouseUp()
     {
+        
         SelectableManager.Instance.ClearSelectables();
         List<Unit> selected = UnitMoniter.Instance.GetUnitsWithinBounds(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint);
         Debug.Log("Selected unit count " + selected.Count);
@@ -146,6 +148,27 @@ public class Units_SelectionMode : SelectionMode
                     GameActionController.Instance.AddAction(ga);
                 }
 
+
+                if (OnHoverInventory != null)
+                {
+                    Action Gather = () =>
+                    {
+
+                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+
+                            TransferResourcesToContainer_Behaviour storeResoruces = new TransferResourcesToContainer_Behaviour();
+                            storeResoruces.InitBehaviour(toPerfrom, OnHoverInventory);
+                            br.SetBehaviour(storeResoruces);
+
+                        }
+                    };
+                    GameAction ga = new GameAction("Store Resources", Gather);
+                    GameActionController.Instance.AddAction(ga);
+                }
+
                 {
                     hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.CursorLayermask);
                     if (hit.collider != null)
@@ -182,6 +205,7 @@ public class Units_SelectionMode : SelectionMode
     Constructable OnHoverBuildable;
     EnvironmentObjectInstance OnHoverHarvestable;
     ResourceInstance OnHoverResource;
+    Inventory OnHoverInventory;
     public override void OnHover()
     {
         Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
@@ -227,13 +251,20 @@ public class Units_SelectionMode : SelectionMode
             CursorIcon.Instance.SetBuildIcon();
             return;
         }
-
+        OnHoverInventory = SelectionUtilities.GetInventoryObjectWithinRangeOfPoint(r.origin, 1f);
+        if (OnHoverInventory != null)
+        {
+            CursorIcon.Instance.SetMoveIcon();
+            return;
+        }
         OnHoverBuildable = SelectionUtilities.GetConstructableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
         if (OnHoverBuildable != null)
         {
-            CursorIcon.Instance.SetBuildIcon();
+            CursorIcon.Instance.SetMoveIcon();
             return;
         }
+
+       
 
       
 
