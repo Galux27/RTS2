@@ -47,7 +47,7 @@ public class ResourceInstanceData:InventoryObject
     public GameObject instanceInWorld;
     public bool CanSplitStack()
     {
-        return Quantity>1;
+        return true;
     }
 
     public string Name()
@@ -64,14 +64,35 @@ public class ResourceInstanceData:InventoryObject
         }
     }
 
-    public Object[] SplitStack(int quantityWanted)
+    public object[] SplitStack(int quantityWanted)
     {
-        return null;
+        ResourceInstanceData[] retVal = new ResourceInstanceData[2];
+        retVal[0] = new ResourceInstanceData(Resource, quantityWanted);
+        this.Quantity -= quantityWanted;
+        retVal[1] = this;
+        return retVal;
+
     }
 
-    public Object[] SplitStack(float weightWanted)
+    public object[] SplitStack(float weightWanted)
     {
-        return null;
+
+        int quantity = 0;
+        float currentWeight = 0f;
+        float weightPer = ResourceController.Instance.AllResources[Name()].WeightPerUnit;
+        while (currentWeight < weightWanted)
+        {
+            quantity++;
+            currentWeight += weightPer;
+        }
+
+        ResourceInstanceData[] retVal = new ResourceInstanceData[2];
+
+        retVal[0] = new ResourceInstanceData(Resource, quantity);
+        this.Quantity -= quantity;
+        retVal[1] = this;
+
+        return retVal;
     }
 
     public float Weight()

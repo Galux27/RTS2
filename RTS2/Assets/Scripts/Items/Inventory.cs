@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
-public class Inventory:MonoBehaviour
+public class Inventory : MonoBehaviour
 {
 
 
@@ -26,7 +26,7 @@ public class Inventory:MonoBehaviour
         }
     }
 
-        public bool CanAddItemToInventory(InventoryObject inventoryObject)
+    public bool CanAddItemToInventory(InventoryObject inventoryObject)
     {
         if (Filter != null && Filter.ItemCanPass(inventoryObject.Name()) == false)
         {
@@ -34,7 +34,7 @@ public class Inventory:MonoBehaviour
         }
         if (inventoryObject.Weight() + GetSubOfInventoryWeight() > InventoryCapacity)
         {
-            
+
             return CanAddItemToInventory(inventoryObject);
         }
         return true;
@@ -44,40 +44,58 @@ public class Inventory:MonoBehaviour
     {
         if (inventoryObject.CanSplitStack())
         {
-            return true;
+            if (inventoryObject.Weight() / inventoryObject.Quantity() >= GetRemainingCapacity())
+            { 
+                return true;
+            }
         }
-        return false;
+            return false;
     }
 
-    public List<InventoryObject> ObjectsInInventory =new List<InventoryObject>();
+    public List<InventoryObject> ObjectsInInventory = new List<InventoryObject>();
     public float InventoryCapacity;
-    float CurrentItemsWeight=0;
+    float CurrentItemsWeight = 0;
     public ItemFilter Filter;
     public void AddItemToInventory(InventoryObject inventoryObject)
     {
-        Debug.Log("Adding to inventory " + inventoryObject.Name() + " weight " + inventoryObject.Weight());
-        if (Filter!=null && Filter.ItemCanPass(inventoryObject.Name())==false)
+        if (Filter != null && Filter.ItemCanPass(inventoryObject.Name()) == false)
         {
             return;
         }
-        if(inventoryObject.Weight() + GetSubOfInventoryWeight() <= InventoryCapacity)
+        if (inventoryObject.Weight() + GetSubOfInventoryWeight() <= InventoryCapacity)
         {
+            
             ObjectsInInventory.Add(inventoryObject);
             inventoryObject.OnAddedToInventory();
             RefreshWeightOfCurrentItems();
         }
         else
         {
-            if(inventoryObject.CanSplitStack())
+            if (inventoryObject.CanSplitStack())
             {
-                Object[] split = inventoryObject.SplitStack(InventoryCapacity - CurrentItemsWeight);
+                if (ObjectsInInventory == null)
+                {
+                    ObjectsInInventory = new List<InventoryObject>();
+                }
+                object[] split = inventoryObject.SplitStack(InventoryCapacity - CurrentItemsWeight);
                 ObjectsInInventory.Add(split[0] as InventoryObject);
                 inventoryObject.RepopulateData(split[1] as InventoryObject);
             }
         }
     }
 
-    public void TransferItemBetweenInventory(InventoryObject inventoryObject,Inventory comingFrom)
+    public void AddQuantityOfItemToInventory(InventoryObject inventoryObject, int quantity)
+    {
+        if (inventoryObject.CanSplitStack())
+        {
+            float weightOfOne = inventoryObject.Weight() / inventoryObject.Quantity();
+            object[] split = inventoryObject.SplitStack(weightOfOne);
+            ObjectsInInventory.Add(split[0] as InventoryObject);
+            inventoryObject.RepopulateData(split[1] as InventoryObject);
+        }
+    }
+
+    public void TransferItemBetweenInventory(InventoryObject inventoryObject, Inventory comingFrom)
     {
         if (Filter.ItemCanPass(inventoryObject.Name()) == false)
         {
@@ -94,15 +112,46 @@ public class Inventory:MonoBehaviour
             if (inventoryObject.CanSplitStack())
             {
                 comingFrom.RemoveItemFromInventory(inventoryObject);
-                Object[] split = inventoryObject.SplitStack(InventoryCapacity- CurrentItemsWeight);
+                object[] split = inventoryObject.SplitStack(InventoryCapacity - CurrentItemsWeight);
 
                 ObjectsInInventory.Add(split[0] as InventoryObject);
-                comingFrom.AddItemToInventory(split[1] as InventoryObject);
+                InventoryObject remainder = split[1] as InventoryObject;
+                if (remainder.Quantity() > 0)
+                {
+                    comingFrom.AddItemToInventory(remainder);
+                }
             }
         }
     }
 
-    public void RemoveItemFromInventory(InventoryObject inventoryObject)
+    public void TransferItemBetweenInventory(InventoryObject inventoryObject, Inventory comingFrom,int quantity)
+    {
+        if (Filter.ItemCanPass(inventoryObject.Name()) == false)
+        {
+            return;
+        }
+
+        float individiualWeight = inventoryObject.Weight() / inventoryObject.Quantity();
+        if (GetRemainingCapacity() >= individiualWeight*quantity)
+        {
+            if (inventoryObject.CanSplitStack())
+            {
+                comingFrom.RemoveItemFromInventory(inventoryObject);
+                object[] split = inventoryObject.SplitStack(quantity);
+
+                ObjectsInInventory.Add(split[0] as InventoryObject);
+
+                InventoryObject remainder = split[1] as InventoryObject;
+                if (remainder.Quantity() > 0)
+                {
+                    comingFrom.AddItemToInventory(remainder);
+                }
+                }
+            }
+
+        }
+
+        public void RemoveItemFromInventory(InventoryObject inventoryObject)
     {
         if (!ObjectsInInventory.Contains(inventoryObject))
         {
@@ -121,10 +170,15 @@ public class Inventory:MonoBehaviour
     void RefreshWeightOfCurrentItems()
     {
         CurrentItemsWeight = 0;
-        for(int i = 0; i < ObjectsInInventory.Count; i++)
+        for (int i = 0; i < ObjectsInInventory.Count; i++)
         {
             CurrentItemsWeight += ObjectsInInventory[i].Weight();
         }
+    }
+
+    public float GetRemainingCapacity()
+    {
+        return InventoryCapacity - CurrentItemsWeight;
     }
 
     public bool IsNotFull()

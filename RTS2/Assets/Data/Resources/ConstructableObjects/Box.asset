@@ -19,9 +19,13 @@ MonoBehaviour:
   BlocksTile: 0
   Width: 1
   Height: 1
+  CanHarvest: 0
+  Resources:
+    resources: []
+    HarvestLength: 0
   Cost: 0
   TimeToBuild: 1
-  WeightLimit: 10
+  WeightLimit: 9999
   Filter:
     CheckForForbidden: 1
     CheckForAllowed: 0

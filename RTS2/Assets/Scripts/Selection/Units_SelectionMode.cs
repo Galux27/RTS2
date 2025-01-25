@@ -167,6 +167,18 @@ public class Units_SelectionMode : SelectionMode
                     };
                     GameAction ga = new GameAction("Store Resources", Gather);
                     GameActionController.Instance.AddAction(ga);
+
+
+                    Action transfer = () =>
+                    {
+                        Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[0];
+                        Inventory unitInventory = toPerfrom.GetComponent<Inventory>();
+                        InventoryParentUI.Instance.PopulateUI(unitInventory, OnHoverInventory);
+
+
+                    };
+                    GameAction tr = new GameAction("Transfer Items", transfer);
+                    GameActionController.Instance.AddAction(tr);
                 }
 
                 {

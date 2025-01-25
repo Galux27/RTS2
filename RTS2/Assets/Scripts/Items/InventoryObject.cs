@@ -16,8 +16,8 @@ public interface InventoryObject
     /// </summary>
     /// <param name="quantityWanted"></param>
     /// <returns></returns>
-    public Object[] SplitStack(int quantityWanted);
-    public Object[] SplitStack(float weightWanted);
+    public object[] SplitStack(int quantityWanted);
+    public object[] SplitStack(float weightWanted);
 
     public void RepopulateData(InventoryObject toRepopulateWith);
 
