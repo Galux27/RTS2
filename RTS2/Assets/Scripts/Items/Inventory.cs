@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, Storage
 {
 
 
@@ -32,7 +32,7 @@ public class Inventory : MonoBehaviour
         {
             return false;
         }
-        if (inventoryObject.Weight() + GetSubOfInventoryWeight() > InventoryCapacity)
+        if (inventoryObject.Weight() + GetSumOfInventoryWeight() > InventoryCapacity)
         {
 
             return CanAddItemToInventory(inventoryObject);
@@ -62,7 +62,7 @@ public class Inventory : MonoBehaviour
         {
             return;
         }
-        if (inventoryObject.Weight() + GetSubOfInventoryWeight() <= InventoryCapacity)
+        if (inventoryObject.Weight() + GetSumOfInventoryWeight() <= InventoryCapacity)
         {
             
             ObjectsInInventory.Add(inventoryObject);
@@ -101,7 +101,7 @@ public class Inventory : MonoBehaviour
         {
             return;
         }
-        if (inventoryObject.Weight() + GetSubOfInventoryWeight() <= InventoryCapacity)
+        if (inventoryObject.Weight() + GetSumOfInventoryWeight() <= InventoryCapacity)
         {
             comingFrom.RemoveItemFromInventory(inventoryObject);
             ObjectsInInventory.Add(inventoryObject);
@@ -162,12 +162,12 @@ public class Inventory : MonoBehaviour
     }
 
 
-    float GetSubOfInventoryWeight()
+    public float GetSumOfInventoryWeight()
     {
         return CurrentItemsWeight;
     }
 
-    void RefreshWeightOfCurrentItems()
+    public void RefreshWeightOfCurrentItems()
     {
         CurrentItemsWeight = 0;
         for (int i = 0; i < ObjectsInInventory.Count; i++)
