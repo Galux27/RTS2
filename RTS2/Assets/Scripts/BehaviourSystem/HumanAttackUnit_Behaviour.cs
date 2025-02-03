@@ -61,7 +61,7 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
 
     void UpdatePath()
     {
-        DistRefreshTimer -= Time.deltaTime;
+        DistRefreshTimer -= DeltaTimeWrapper.GameplayDelta;
         if (DistRefreshTimer <= 0)
         {
             if(Vector3.Distance(targetPosition, objectToFollow.transform.position) > DistanceTargetRefresh)

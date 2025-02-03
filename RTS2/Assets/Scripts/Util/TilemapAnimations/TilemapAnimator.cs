@@ -49,7 +49,7 @@ public class TilemapAnimator
         {
             return;
         }
-        Timer -= Time.deltaTime;
+        Timer -= DeltaTimeWrapper.GameplayDelta;
         if (Timer <= 0f)
         {
             if (Reverse == false)

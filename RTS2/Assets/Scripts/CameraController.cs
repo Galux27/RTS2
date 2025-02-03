@@ -18,7 +18,7 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        this.transform.position += new Vector3(GetHorizontalMovement() * HorizontalMoveSpeed * Time.deltaTime, GetVerticalMovement() * VerticalMoveSpeed * Time.deltaTime);
+        this.transform.position += new Vector3(GetHorizontalMovement() * HorizontalMoveSpeed * DeltaTimeWrapper.GameplayDelta, GetVerticalMovement() * VerticalMoveSpeed * DeltaTimeWrapper.GameplayDelta);
 
         GameCamera.orthographicSize += GetScrollAdjustment();
 
@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour
 
     float GetScrollAdjustment()
     {
-        return Input.mouseScrollDelta.y * -ZoomSpeed * Time.deltaTime;
+        return Input.mouseScrollDelta.y * -ZoomSpeed * DeltaTimeWrapper.GameplayDelta;
     }
 
     float GetVerticalMovement()

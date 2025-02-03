@@ -102,7 +102,7 @@ public class SelectionController : MonoBehaviour
 
         
         if(blockInputTimer > 0f) {
-            blockInputTimer -= Time.deltaTime;
+            blockInputTimer -= DeltaTimeWrapper.GameplayDelta;
             return;
         }
         

@@ -133,7 +133,7 @@ public class Unit : MonoBehaviour,Selectable
 
     public void MoveUnit(Vector3 direction)
     {
-        this.transform.position += (direction * Speed() * Time.deltaTime);
+        this.transform.position += (direction * Speed() * DeltaTimeWrapper.GameplayDelta);
         WorldChunkManager.Instance.OnUnitMove(this);
         OnUnitMove();
     }

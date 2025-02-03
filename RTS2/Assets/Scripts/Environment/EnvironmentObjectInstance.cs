@@ -55,7 +55,7 @@ public class EnvironmentObjectInstance
             EnvironmentObjectManager.Instance.AllObjects[ObjectKey].CanHarvest;
     }
 
-    ProgressBarUI ProgressBar;
+    Timer Timer;
     float harvestTimer = 0;
    public bool isHarvested = false;
     public virtual void Harvest()
@@ -64,19 +64,18 @@ public class EnvironmentObjectInstance
         {
             return;
         }
-        if (ProgressBar == null)
+        if (Timer == null)
         {
-            ProgressBar = ProgressBarUI.CreateProgressBar();
-            ProgressBar.InitProgressBar(EnvironmentObjectManager.Instance.AllObjects[ObjectKey].Resources.HarvestLength, 0, GetPosition());
+            Timer = new Timer(EnvironmentObjectManager.Instance.AllObjects[ObjectKey].Resources.HarvestLength);
+            Timer.CreateProgressBarFromTimer(GetPosition());
+            
         }
-        harvestTimer += Time.deltaTime;
-        ProgressBar.UpdateCurrent(harvestTimer);
+        Timer.ProgressTime(DeltaTimeWrapper.GameplayDelta);
         
-        if (harvestTimer >= EnvironmentObjectManager.Instance.AllObjects[ObjectKey].Resources.HarvestLength)
+        if (Timer.IsTimerFinished())
         {
             EnvironmentObjectManager.Instance.AllObjects[ObjectKey].Resources.GenerateResoruces(new Vector3(PosX, PosY, 0));
             DestroyInstance();
-            ProgressBar.ReturnProgressBar();
             isHarvested = true;
         }
     }

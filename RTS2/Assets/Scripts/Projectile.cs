@@ -26,7 +26,7 @@ public class Projectile : MonoBehaviour
     }
     private void Update()
     {
-        lifetime -= Time.deltaTime;
+        lifetime -= DeltaTimeWrapper.GameplayDelta;
         if(lifetime < 0)
         {
             DestroyProjectile();

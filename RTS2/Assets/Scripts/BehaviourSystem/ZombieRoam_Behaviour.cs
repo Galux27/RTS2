@@ -39,7 +39,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
         if (!IsBehaviourComplete())
         {
             unitToMove.MoveUnit(DirectionToTarget());
-            directionChangeTimer += Mathf.Max(Time.deltaTime,0.01f);
+            directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta,0.01f);
             if (directionChangeTimer > directionChangeTimerLength)
             {
                 direction=new Vector3(Random.Range(-1f,1f),Random.Range(-1f,1f), Random.Range(-1f, 1f));
