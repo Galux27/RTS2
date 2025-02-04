@@ -37,6 +37,7 @@ public class SelectionController : MonoBehaviour
         if (mode == CurrentSelectionMode.None)
         {
             CurrentSelectionModeObj = Hybrid;
+           ((Hybrid_SelectionMode) Hybrid).ResetSelected();
         }
         else if (mode == CurrentSelectionMode.Units)
         {

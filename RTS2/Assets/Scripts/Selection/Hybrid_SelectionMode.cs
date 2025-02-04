@@ -44,7 +44,7 @@ public class Hybrid_SelectionMode : SelectionMode
         }
     }
 
-    void ResetSelected()
+    public void ResetSelected()
     {
         currentSubSelectionMode = null;
     }

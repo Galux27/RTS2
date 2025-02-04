@@ -51,7 +51,7 @@ public class SelectModeUI : MonoBehaviour
 
     void DisableUI()
     {
-       
+        ActionSelectMenu.Instance.CloseMenu();
         NoneUI.SetActive(false);
         UnitsUI.SetActive(false);
         BuildingUI.SetActive(false);
