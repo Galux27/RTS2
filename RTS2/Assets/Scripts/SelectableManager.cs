@@ -23,6 +23,15 @@ public class SelectableManager : MonoBehaviour
     public static System.Action OnSelectionChanged;
     public List<Selectable> CurrentlySelected=new List<Selectable>();
 
+    public void AddSelectable(List<Selectable> selectables)
+    {
+        for(int x=0;x<selectables.Count;x++)
+        {
+            AddSelectable(selectables[x]);
+        }
+    }
+
+
     public void AddSelectable(Selectable toAdd)
     {
         if (toAdd.IsSelectable()&& toAdd.GetIsSelected() == false)

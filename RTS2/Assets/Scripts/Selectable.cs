@@ -16,6 +16,13 @@ public interface Selectable
 
 public enum SelectableType
 {
+    None,
     Unit,
-    Building
+    ConstructableObject,
+    Item,
+    UnderConstructionObject,
+    Resource
+
+
+
 }

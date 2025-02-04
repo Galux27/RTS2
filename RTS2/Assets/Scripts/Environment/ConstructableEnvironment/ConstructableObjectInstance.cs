@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConstructableObjectInstance : EnvironmentObjectInstance
+public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 {
     public ConstructableObjectInstance(int x,int y,string envObj):base(x,y,envObj)
     {
@@ -48,8 +48,33 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance
         base.CleanupInstance();
     }
 
-    
+    void Selectable.OnObjectSelected()
+    {
+        throw new NotImplementedException();
+    }
 
+    void Selectable.OnObjectDeselected()
+    {
+        throw new NotImplementedException();
+    }
 
-    
+    SelectableType Selectable.GetSelectableType()
+    {
+        return SelectableType.ConstructableObject;
+    }
+
+    bool Selectable.GetIsSelected()
+    {
+        throw new NotImplementedException();
+    }
+
+    bool Selectable.IsSelectable()
+    {
+        throw new NotImplementedException();
+    }
+
+    void Selectable.SetIsSelected(bool val)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using UnityEngine;
 
 public static class SelectionUtilities
@@ -44,6 +45,85 @@ public static class SelectionUtilities
         return retVal;
     }
 
+    public static List<ConstructableObjectInstance> GetConstrutableObjectsInBounds(Vector3 p1,Vector3 p2)
+    {
+        constructedObjectCache.Clear();
+        Vector3 point = Vector3.Lerp(p1, p2, .5f);
+        float maxDist = Vector3.Distance(p1, p2);
+        Vector3 low = Vector3.zero, high = Vector3.zero;
+
+        SetHighAndLowPoints(p1, p2, ref low, ref high);
+
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
+        for (int x = 0; x < chunksToCheck.Count; x++)
+        {
+            for (int y = 0; y < chunksToCheck[x].EnvironmentObjectsInChunk.Count; y++)
+            {
+                if (chunksToCheck[x].EnvironmentObjectsInChunk[y].GetType() == typeof(ConstructableObjectInstance) 
+                    && IsPointInRangeOfBounds( chunksToCheck[x].EnvironmentObjectsInChunk[y].GetPosition(),low,high))
+                {
+
+                    constructedObjectCache.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y] as ConstructableObjectInstance);
+                }
+            }
+        }
+
+        return constructedObjectCache;
+    }
+
+    static bool IsPointInRangeOfBounds(Vector3 p,Vector3 low,Vector3 high)
+    {
+        if (p.x < low.x || p.x > high.x)
+        {
+            return false;
+        }
+        if (p.y < low.y || p.y > high.y)
+        {
+            return false;
+        }
+        //if (p.z < low.z || p.z > high.z)
+        //{
+        //    return false;
+        //}
+
+        return true;
+    }
+
+    static void SetHighAndLowPoints(Vector3 p1,Vector3 p2,ref Vector3 low,ref Vector3 high)
+    {
+        if (p1.x < p2.x)
+        {
+            low.x = p1.x;
+            high.x = p2.x;
+        }
+        else
+        {
+            low.x = p2.x;
+            high.x = p1.x;
+        }
+
+        if (p1.y < p2.y)
+        {
+            low.y = p1.y;
+            high.y = p2.y;
+        }
+        else
+        {
+            low.y = p2.y;
+            high.y = p1.y;
+        }
+
+        if (p1.z < p2.z)
+        {
+            low.z = p1.z;
+            high.z = p2.z;
+        }
+        else
+        {
+            low.z = p2.z;
+            high.z = p1.z;
+        }
+    }
 
     public static List<Constructable> GetAllConstructablesInRangeOfObject(Vector3 point, float maxDist)
     {
@@ -101,6 +181,35 @@ public static class SelectionUtilities
         return retVal;
     }
 
+
+    public static List<Constructable> GetConstrutablesInBounds(Vector3 p1, Vector3 p2)
+    {
+        constructableObjectCache.Clear();
+        Vector3 point = Vector3.Lerp(p1, p2, .5f);
+        Vector3 low = Vector3.zero, high = Vector3.zero;
+
+        SetHighAndLowPoints(p1, p2, ref low, ref high);
+        float maxDist = Vector2.Distance(low, high);
+
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
+
+        for (int x = 0; x < chunksToCheck.Count; x++)
+        {
+            for (int y = 0; y < chunksToCheck[x].ToBuild.Count; y++)
+            {
+                if (IsPointInRangeOfBounds(chunksToCheck[x].ToBuild[y].GetPosition(),low,high))
+                {
+                    constructableObjectCache.Add(chunksToCheck[x].ToBuild[y]);
+                }
+            }
+        }
+
+
+        return constructableObjectCache;
+    }
+
+
+
     static List<EnvironmentObjectInstance> harvestableObjectCache = new List<EnvironmentObjectInstance>();
     public static EnvironmentObjectInstance GetHarvestableObjectInstanceWithinRangeOfPoint(Vector3 point, float maxDist)
     {
@@ -138,8 +247,6 @@ public static class SelectionUtilities
         }
         return retVal;
     }
-
-
 
     static List<ResourceInstance> ResourceInstanceObjectCache = new List<ResourceInstance>();
     public static ResourceInstance GetResourceInstanceObjectInstanceWithinRangeOfPoint(Vector3 point, float maxDist)
@@ -286,5 +393,36 @@ public static class SelectionUtilities
         chunksToCheck.Clear();
         return retVal;
     }
+
+
+    public static SelectableType GetSelectablesInRange( out List<Selectable> selectables)
+    {
+        selectables = new List<Selectable>();
+
+        List<Unit> units = UnitMoniter.Instance.GetUnitsWithinBounds(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint);
+        if (units.Count > 0)
+        {
+            selectables.AddRange(units);
+            return SelectableType.Unit;
+        }
+
+        List<ConstructableObjectInstance> constructedObjects = GetConstrutableObjectsInBounds(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint);
+        if(constructedObjects.Count > 0)
+        {
+            selectables.AddRange(constructedObjects);
+            return SelectableType.ConstructableObject;
+        }
+
+        List<Constructable> constructables = GetConstrutablesInBounds(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint);
+        if (constructables.Count > 0)
+        {
+            selectables.AddRange(constructables);
+            return SelectableType.UnderConstructionObject;
+        }
+
+
+        return SelectableType.None;
+    }
+
 
 }

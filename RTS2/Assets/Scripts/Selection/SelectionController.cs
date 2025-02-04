@@ -22,21 +22,21 @@ public class SelectionController : MonoBehaviour
     }
     public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
     public CurrentSelectionMode selectionMode;
-    public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj,Rooms;
+    public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj,Rooms,Hybrid;
     public float LastLeftClick=-1,LastRightClick=-1;
 
     public void SetCursorSelectionMode(CurrentSelectionMode mode)
     {
         if (selectionMode == mode)
         {
-            return;
+            mode = CurrentSelectionMode.None;
         }
         OnCloseSelectionMode();
         selectionMode = mode;
 
         if (mode == CurrentSelectionMode.None)
         {
-            CurrentSelectionModeObj = None;
+            CurrentSelectionModeObj = Hybrid;
         }
         else if (mode == CurrentSelectionMode.Units)
         {
@@ -71,10 +71,13 @@ public class SelectionController : MonoBehaviour
     {
         None = new SelectionMode();
         Units=new Units_SelectionMode();
-        CurrentSelectionModeObj = Units;
         Construction = new StructureSelectionMode();
         Buildings = new FurnitureSelectionMode();
         Rooms = new RoomsSelectionMode();
+        Hybrid = new Hybrid_SelectionMode();
+
+        CurrentSelectionModeObj = Hybrid;
+
         selectionMode = CurrentSelectionMode.None;
     }
 

@@ -7,16 +7,13 @@ using UnityEngine.UI;
 public class SelectModeUI : MonoBehaviour
 {
 
-    public Button None, Units, Buildings,Construction,Rooms;
+    public Button None, Buildings,Construction,Rooms;
 
 
     public GameObject NoneUI, UnitsUI, BuildingUI, ConstructionUI,RoomsUI;
     private void Awake()
     {
         SelectionController.OnSwitchSelectionMode += OnChangeCursorMode;
-
-        None.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.None); });
-        Units.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Units); });
         Buildings.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Furniture); });
         Construction.onClick.AddListener(()=> { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Structures); });
         Rooms.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode (CurrentSelectionMode.Rooms); });

@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// Interface for any object that will need constructing by units before being placed in the world
 /// </summary>
-public interface Constructable
+public interface Constructable: Selectable
 {
     public void ConstructObject();
     public void OnObjectConstructed();

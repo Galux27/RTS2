@@ -123,5 +123,35 @@ public class BuildableStructure : Constructable
     {
         return myType;
     }
+
+    void Selectable.OnObjectSelected()
+    {
+        throw new NotImplementedException();
+    }
+
+    void Selectable.OnObjectDeselected()
+    {
+        throw new NotImplementedException();
+    }
+
+    SelectableType Selectable.GetSelectableType()
+    {
+        throw new NotImplementedException();
+    }
+
+    bool Selectable.GetIsSelected()
+    {
+        throw new NotImplementedException();
+    }
+
+    bool Selectable.IsSelectable()
+    {
+        throw new NotImplementedException();
+    }
+
+    void Selectable.SetIsSelected(bool val)
+    {
+        throw new NotImplementedException();
+    }
 }
 
