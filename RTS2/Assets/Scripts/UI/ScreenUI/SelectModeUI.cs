@@ -21,6 +21,7 @@ public class SelectModeUI : MonoBehaviour
 
     public void OnChangeCursorMode(CurrentSelectionMode switchedTo)
     {
+        Debug.Log("On Change Cursor Mode " + switchedTo.ToString());
         DisableUI();
         switch (switchedTo)
         {

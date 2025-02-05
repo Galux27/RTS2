@@ -10,13 +10,14 @@ public class Hybrid_SelectionMode : SelectionMode
 
     public override void OnLeftMouseUp()
     {
-        if (currentSubSelectionMode != null)
-        {
-            currentSubSelectionMode.OnLeftMouseUp();
-        }
-        else
+        //if (currentSubSelectionMode != null)
+        //{
+        //    currentSubSelectionMode.OnLeftMouseUp();
+        //}
+        //else
         {
             CurrentSelectionType = SelectionUtilities.GetSelectablesInRange(out CurrentlySelected);
+            Debug.Log("Current selection type "+  CurrentSelectionType.ToString()+"|"+CurrentlySelected.Count);
             if(CurrentSelectionType!=SelectableType.None)
             {
                 OnSelectObjects();

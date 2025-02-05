@@ -55,7 +55,7 @@ public class WallManager
         }
         return null;
     }
-        public void OnTileExit(Vector2Int coords, Unit unit)
+    public void OnTileExit(Vector2Int coords, Unit unit)
     {
         if (WallsInWorld[coords.x,coords.y].WallType==WallType.Door) {
             DoorSegment ds = WallsInWorld[coords.x, coords.y] as DoorSegment;
@@ -163,6 +163,40 @@ public class WallManager
 
             }
         }
+    }
+
+    public List<WallSegment> GetWallSegments(Vector3 low,Vector3 high)
+    {
+        Vector3 l = low, h = high;
+        SelectionUtilities.SetHighAndLowPoints(low, high,ref l,ref h);
+
+        List<WallSegment> retVal = new List<WallSegment>();
+        Vector2Int coords = Vector2Int.zero;
+        Debug.Log("Wall Check: " + l + "|" + h);
+        if (Vector3.Distance(l, h) > 1f) { 
+            for (float x = l.x; x < h.x; x += 1f)
+            {
+                for(float y=l.y;y < h.y; y += 1f)
+                {
+                    coords = WorldController.Instance.ConvertWorldToTileCoords(new Vector3(x,y,0));
+                    if (WallsInWorld[coords.x, coords.y].HasWall || WallsInWorld[coords.x, coords.y].HasDoor)
+                    {
+                        retVal.Add(WallsInWorld[coords.x, coords.y]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            coords = WorldController.Instance.ConvertWorldToTileCoords(Vector3.Lerp(l,h,.5f));
+            if (WallsInWorld[coords.x, coords.y].HasWall || WallsInWorld[coords.x, coords.y].HasDoor)
+            {
+                retVal.Add(WallsInWorld[coords.x, coords.y]);
+            }
+        }
+
+
+        return retVal;
     }
 
     bool CoordsValid(int x,int y)

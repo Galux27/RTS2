@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
@@ -76,5 +77,15 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     void Selectable.SetIsSelected(bool val)
     {
         throw new NotImplementedException();
+    }
+
+    public Vector3 GetSize()
+    {
+        return ConstructableObjectManager.Instance.AllObjects[ObjectKey].Size() ;
+    }
+    public bool IsPointInBounds(Vector3 point)
+    {
+        return SelectionUtilities.IsInBounds(GetSize(), new Vector3(PosX,PosY,0), point);
+
     }
 }

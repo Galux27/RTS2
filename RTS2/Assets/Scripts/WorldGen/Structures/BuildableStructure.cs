@@ -153,5 +153,18 @@ public class BuildableStructure : Constructable
     {
         throw new NotImplementedException();
     }
+
+  
+
+
+    Vector3 Selectable.GetSize()
+    {
+        return size;
+    }
+
+    bool Selectable.IsPointInBounds(Vector3 point)
+    {
+        return SelectionUtilities.IsInBounds(size, pos+offset, point);
+    }
 }
 

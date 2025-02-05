@@ -1,5 +1,5 @@
 
-
+using UnityEngine;
 public interface Selectable 
 {
     void OnObjectSelected();
@@ -12,12 +12,16 @@ public interface Selectable
     public bool IsSelectable();
 
     public void SetIsSelected(bool val);
+
+    public Vector3 GetSize();
+    public bool IsPointInBounds(Vector3 point);
 }
 
 public enum SelectableType
 {
     None,
     Unit,
+    Structure,
     ConstructableObject,
     Item,
     UnderConstructionObject,

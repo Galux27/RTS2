@@ -170,6 +170,16 @@ public class Unit : MonoBehaviour,Selectable
     {
         return isSelectable;
     }
+
+    public Vector3 GetSize()
+    {
+        return Vector3.one;
+    }
+
+   public bool IsPointInBounds(Vector3 point)
+    {
+        return SelectionUtilities.IsInBounds(GetSize(), this.transform.position, point);
+    }
 }
 
 public enum UnitType {

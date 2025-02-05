@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 /// Class to represent a tile of wall within the world
 /// used to know the location to then identify what tiles are going to be used
 /// </summary>
-public class WallSegment
+public class WallSegment:Selectable 
 {
     public int x, y;
     public bool HasWallUnderConstruction=false;
@@ -27,6 +27,14 @@ public class WallSegment
         }
     }
 
+    public bool HasDoor
+    {
+        get
+        {
+            return WallType == WallType.Door && HasWallUnderConstruction == false;
+
+        }
+    }
 
     public void SetHasWall(bool hasWall)
     {
@@ -65,6 +73,45 @@ public class WallSegment
         Pathfinding.UpdateNodeData(x, y, true);
     }
 
+    public void OnObjectSelected()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnObjectDeselected()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public SelectableType GetSelectableType()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool GetIsSelected()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool IsSelectable()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void SetIsSelected(bool val)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public Vector3 GetSize()
+    {
+        return Vector3.one;
+    }
+
+    public bool IsPointInBounds(Vector3 point)
+    {
+        return SelectionUtilities.IsInBounds(GetSize(),new Vector3(x,y,0), point);
+    }
 }
 
 public enum WallType 
