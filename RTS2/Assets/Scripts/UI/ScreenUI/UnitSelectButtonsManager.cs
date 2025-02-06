@@ -25,10 +25,15 @@ public class UnitSelectButtonsManager : BaseUI
 
     public override void RefreshUI()
     {
-        for(int x=0;x<ButtonParent.transform.childCount;x++)
+        for (int x = 0; x < ButtonParent.transform.childCount; x++)
         {
             Destroy(ButtonParent.transform.GetChild(x).gameObject);
         }
+        if (SelectableManager.Instance.CurrentSelectedType != SelectableType.Unit)
+        {
+            return;
+        }
+       
         if (SelectableManager.Instance.CurrentlySelected.Count > 0)
         {
             Dictionary<UnitType, List<Unit>> units = SelectableManager.Instance.FilterUnitsByType();

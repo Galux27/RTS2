@@ -73,15 +73,15 @@ public class WallSegment:Selectable
         Pathfinding.UpdateNodeData(x, y, true);
     }
 
-    public void OnObjectSelected()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void OnObjectDeselected()
     {
-        throw new System.NotImplementedException();
+        Collider.gameObject.GetComponent<SelectedOutline>()?.OnDeselect();
     }
+    public void OnObjectSelected()
+    {
+        SelectedOutlineManager.Instance.OnSelectObject(Collider,GetSize());
+    }
+
 
     public SelectableType GetSelectableType()
     {

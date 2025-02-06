@@ -46,17 +46,17 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     public override void CleanupInstance()
     {
        Component.Destroy(Object.GetComponent<ConstructableObjectWorldReference>());
+        OnObjectDeselected();
         base.CleanupInstance();
     }
 
-    void Selectable.OnObjectSelected()
+    public void OnObjectDeselected()
     {
-        throw new NotImplementedException();
+        Object.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
     }
-
-    void Selectable.OnObjectDeselected()
+    public void OnObjectSelected()
     {
-        throw new NotImplementedException();
+        SelectedOutlineManager.Instance.OnSelectObject(Object, GetSize());
     }
 
     SelectableType Selectable.GetSelectableType()
@@ -66,17 +66,25 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     bool Selectable.GetIsSelected()
     {
-        throw new NotImplementedException();
+        return selected;
     }
-
+    bool selected = false;
     bool Selectable.IsSelectable()
     {
-        throw new NotImplementedException();
+        return true;
     }
 
     void Selectable.SetIsSelected(bool val)
     {
-        throw new NotImplementedException();
+        if (val)
+        {
+            OnObjectSelected();
+        }
+        else
+        {
+            OnObjectDeselected();
+        }
+        selected = val;
     }
 
     public Vector3 GetSize()

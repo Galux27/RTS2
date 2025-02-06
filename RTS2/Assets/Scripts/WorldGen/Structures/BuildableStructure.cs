@@ -124,40 +124,51 @@ public class BuildableStructure : Constructable
         return myType;
     }
 
-    void Selectable.OnObjectSelected()
+    public void OnObjectDeselected()
     {
-        throw new NotImplementedException();
+        if (Object != null)
+        {
+            Object.GetComponent<ConstructableObjectUI>().SetSpriteRendererColour(Color.white);
+            Object.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
+        }
     }
-
-    void Selectable.OnObjectDeselected()
+    public void OnObjectSelected()
     {
-        throw new NotImplementedException();
+        SelectedOutlineManager.Instance.OnSelectObject(Object,  GetSize());
     }
 
     SelectableType Selectable.GetSelectableType()
     {
-        throw new NotImplementedException();
+        return SelectableType.ConstructableObject;
     }
 
     bool Selectable.GetIsSelected()
     {
-        throw new NotImplementedException();
+        return selected;
     }
-
+    bool selected = false;
     bool Selectable.IsSelectable()
     {
-        throw new NotImplementedException();
+        return true;
     }
 
     void Selectable.SetIsSelected(bool val)
     {
-        throw new NotImplementedException();
+        if (val)
+        {
+            OnObjectSelected();
+        }
+        else
+        {
+            OnObjectDeselected();
+        }
+        selected = val;
     }
 
   
 
 
-    Vector3 Selectable.GetSize()
+    public Vector3 GetSize()
     {
         return size;
     }

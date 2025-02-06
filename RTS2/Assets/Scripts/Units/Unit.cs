@@ -104,6 +104,10 @@ public class Unit : MonoBehaviour,Selectable
     {
         this.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
     }
+    public void OnObjectSelected()
+    {
+        SelectedOutlineManager.Instance.OnSelectObject(this.gameObject);
+    }
 
     public virtual float Speed()
     {
@@ -112,11 +116,7 @@ public class Unit : MonoBehaviour,Selectable
 
   
 
-    public void OnObjectSelected()
-    {
-        SelectedOutlineManager.Instance.OnSelectObject(this.gameObject);
-    }
-
+   
     public void SetIsSelected(bool v)
     {
         isSelected = v;

@@ -35,10 +35,10 @@ public class SelectedOutlineManager : MonoBehaviour
         return retVal;
     }
 
-    public void OnSelectObject(GameObject selected)
+    public void OnSelectObject(GameObject selected,Vector3 size=default)
     {
         GameObject g = GetFreeSelectionOutline();
-        g.GetComponent<SelectedOutline>().ApplyToObject(selected);
+        g.GetComponent<SelectedOutline>().ApplyToObject(selected,size);
         inUseSelectionOutlines.Add(g);
     }
 

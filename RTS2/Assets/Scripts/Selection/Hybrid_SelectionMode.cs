@@ -48,6 +48,9 @@ public class Hybrid_SelectionMode : SelectionMode
     public void ResetSelected()
     {
         currentSubSelectionMode = null;
+        SelectableManager.Instance.ClearSelectables();
+        SelectableManager.OnSelectionChanged?.Invoke();
+        SelectableManager.Instance.CurrentSelectedType= CurrentSelectionType;
     }
 
     void OnSelectObjects()
@@ -56,13 +59,9 @@ public class Hybrid_SelectionMode : SelectionMode
         {
             case SelectableType.None:
                 break;
-            case SelectableType.Unit:
-                
+            case SelectableType.Unit:        
                 currentSubSelectionMode = SelectionController.Instance.Units;
-                SelectionController.OnSwitchSelectionMode.Invoke(CurrentSelectionMode.Units);
-                SelectableManager.Instance.AddSelectable(CurrentlySelected);
-                SelectableManager.OnSelectionChanged?.Invoke();
-
+                SelectionController.OnSwitchSelectionMode.Invoke(CurrentSelectionMode.Units);  
                 break;
             case SelectableType.ConstructableObject:
                 break;
@@ -75,6 +74,11 @@ public class Hybrid_SelectionMode : SelectionMode
             default:
                 break;
         }
+        SelectableManager.Instance.ClearSelectables();
+        SelectableManager.Instance.AddSelectable(CurrentlySelected);
+        SelectableManager.OnSelectionChanged?.Invoke();
+        SelectableManager.Instance.CurrentSelectedType = CurrentSelectionType;
+
     }
 
 }

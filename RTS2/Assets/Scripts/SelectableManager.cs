@@ -22,7 +22,7 @@ public class SelectableManager : MonoBehaviour
 
     public static System.Action OnSelectionChanged;
     public List<Selectable> CurrentlySelected=new List<Selectable>();
-
+    public SelectableType CurrentSelectedType;
     public void AddSelectable(List<Selectable> selectables)
     {
         for(int x=0;x<selectables.Count;x++)
