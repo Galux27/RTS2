@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// Stores information about an instance of an EnvironmentObject in the world (Does not mean that the object is being drawn)
 /// </summary>
-public class EnvironmentObjectInstance
+public class EnvironmentObjectInstance:ObjectInfo
 {
     public string ObjectKey;
     public int PosX, PosY;
@@ -92,5 +92,35 @@ public class EnvironmentObjectInstance
             CleanupInstance();
         }
         myChunk.RemoveEnvironmentObject(this);
+    }
+
+    public string Name()
+    {
+        return ObjectKey;
+    }
+
+    public string Description()
+    {
+        return "";
+    }
+
+    public int Quantitiy()
+    {
+        return 1;
+    }
+
+    public float Health()
+    {
+        return 1f;
+    }
+
+    public float MaxHealth()
+    {
+        return 1f;
+    }
+
+    public Vector3 Position()
+    {
+        return position;
     }
 }

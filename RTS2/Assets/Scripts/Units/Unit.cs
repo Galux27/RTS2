@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class Unit : MonoBehaviour,Selectable
+public class Unit : MonoBehaviour,Selectable,ObjectInfo
 {
     public bool isSelected=false;
     public bool isSelectable = false;
@@ -179,6 +179,36 @@ public class Unit : MonoBehaviour,Selectable
    public bool IsPointInBounds(Vector3 point)
     {
         return SelectionUtilities.IsInBounds(GetSize(), this.transform.position, point);
+    }
+
+    public string Name()
+    {
+        return MyType.ToString();
+    }
+
+    public string Description()
+    {
+        return MyType.ToString();
+    }
+
+    public int Quantitiy()
+    {
+        return 1;
+    }
+
+    public float Health()
+    {
+        return MyHealth.CurrentHealth;
+    }
+
+    public float MaxHealth()
+    {
+        return MyHealth.MaxHealth;
+    }
+
+    public Vector3 Position()
+    {
+        return this.transform.position;
     }
 }
 

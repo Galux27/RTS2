@@ -21,6 +21,7 @@ public class UnitSelectButtonsManager : BaseUI
     private void Awake()
     {
         SelectableManager.OnSelectionChanged += RefreshUI;
+        this.gameObject.SetActive(false);
     }
 
     public override void RefreshUI()
@@ -29,13 +30,18 @@ public class UnitSelectButtonsManager : BaseUI
         {
             Destroy(ButtonParent.transform.GetChild(x).gameObject);
         }
-        if (SelectableManager.Instance.CurrentSelectedType != SelectableType.Unit)
+
+        if (SelectableManager.Instance.CurrentSelectedType != SelectableType.Unit
+            ||SelectionController.Instance.selectionMode!=CurrentSelectionMode.Units && SelectionController.Instance.selectionMode != CurrentSelectionMode.None)
         {
+            this.gameObject.SetActive(false);
             return;
         }
        
         if (SelectableManager.Instance.CurrentlySelected.Count > 0)
         {
+            this.gameObject.SetActive(true);
+
             Dictionary<UnitType, List<Unit>> units = SelectableManager.Instance.FilterUnitsByType();
             foreach (var item in units)
             {

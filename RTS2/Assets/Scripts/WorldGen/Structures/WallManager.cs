@@ -172,7 +172,6 @@ public class WallManager
 
         List<WallSegment> retVal = new List<WallSegment>();
         Vector2Int coords = Vector2Int.zero;
-        Debug.Log("Wall Check: " + l + "|" + h);
         if (Vector3.Distance(l, h) > 1f) { 
             for (float x = l.x; x < h.x; x += 1f)
             {

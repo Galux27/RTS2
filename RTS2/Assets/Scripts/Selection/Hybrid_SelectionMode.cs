@@ -48,28 +48,22 @@ public class Hybrid_SelectionMode : SelectionMode
     public void ResetSelected()
     {
         currentSubSelectionMode = null;
+        SelectableManager.Instance.CurrentSelectedType = CurrentSelectionType;
+
         SelectableManager.Instance.ClearSelectables();
         SelectableManager.OnSelectionChanged?.Invoke();
-        SelectableManager.Instance.CurrentSelectedType= CurrentSelectionType;
     }
 
     void OnSelectObjects()
     {
+        SelectedObjectsUI.Instance.CloseUI();
+        SelectableManager.Instance.CurrentSelectedType = CurrentSelectionType;
+
         switch (CurrentSelectionType)
         {
-            case SelectableType.None:
-                break;
             case SelectableType.Unit:        
                 currentSubSelectionMode = SelectionController.Instance.Units;
                 SelectionController.OnSwitchSelectionMode.Invoke(CurrentSelectionMode.Units);  
-                break;
-            case SelectableType.ConstructableObject:
-                break;
-            case SelectableType.Item:
-                break;
-            case SelectableType.UnderConstructionObject:
-                break;
-            case SelectableType.Resource:
                 break;
             default:
                 break;
@@ -77,8 +71,24 @@ public class Hybrid_SelectionMode : SelectionMode
         SelectableManager.Instance.ClearSelectables();
         SelectableManager.Instance.AddSelectable(CurrentlySelected);
         SelectableManager.OnSelectionChanged?.Invoke();
-        SelectableManager.Instance.CurrentSelectedType = CurrentSelectionType;
 
+        switch (CurrentSelectionType)
+        {
+            case SelectableType.ConstructableObject:
+                SelectedObjectsUI.Instance.OpenUI();
+                break;
+            case SelectableType.Item:
+                SelectedObjectsUI.Instance.OpenUI();
+                break;
+            case SelectableType.UnderConstructionObject:
+                SelectedObjectsUI.Instance.OpenUI();
+                break;
+            case SelectableType.Resource:
+                SelectedObjectsUI.Instance.OpenUI();
+                break;
+            default:
+                break;
+        }
     }
 
 }

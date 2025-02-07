@@ -35,7 +35,6 @@ public class SelectedOutline : MonoBehaviour
         {
             scale = size;
         }
-            Debug.Log("Scale is " + scale,this.transform);
         this.transform.localScale = scale;
 
         this.transform.parent = obj.transform;

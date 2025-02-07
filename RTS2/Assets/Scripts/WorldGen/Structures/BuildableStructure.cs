@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildableStructure : Constructable
+public class BuildableStructure : Constructable,ObjectInfo
 {
 
-    public BuildableStructure(int x, int y, float maxProgress, bool forceComplete, Action onComplete, Vector3 size, Vector3 offset,ConstructableType myType)
+    public BuildableStructure(int x, int y, float maxProgress, bool forceComplete, Action onComplete, Vector3 size, Vector3 offset,ConstructableType myType,string toConstruct)
     {
         this.x = x; this.y = y;
         this.maxProgress = maxProgress;
@@ -15,11 +15,13 @@ public class BuildableStructure : Constructable
         this.size= size;
         this.offset = offset;
         this.myType = myType;
+        constructOnComplete = toConstruct;
         if (forceComplete)
         {
             OnObjectConstructed();
         }
     }
+    string constructOnComplete;
     Action onComplete;
     public int x, y;
     float progress = 0f, maxProgress = 1f;
@@ -176,6 +178,36 @@ public class BuildableStructure : Constructable
     bool Selectable.IsPointInBounds(Vector3 point)
     {
         return SelectionUtilities.IsInBounds(size, pos+offset, point);
+    }
+
+    public string Name()
+    {
+        return "Under Construction " + myType.ToString()+"("+ constructOnComplete+")";
+    }
+
+    public string Description()
+    {
+        return "Under Construction " + myType.ToString()  +"(" + constructOnComplete + ")";
+    }
+
+    public int Quantitiy()
+    {
+        return 1;
+    }
+
+    public float Health()
+    {
+        return 1f;
+    }
+
+    public float MaxHealth()
+    {
+        return 1f;
+    }
+
+    public Vector3 Position()
+    {
+        return GetPosition();
     }
 }
 

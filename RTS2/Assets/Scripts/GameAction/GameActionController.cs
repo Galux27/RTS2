@@ -20,7 +20,10 @@ public class GameActionController : MonoBehaviour
         }
     }
 
-  
+    private void Awake()
+    {
+        SelectableManager.OnSelectionChanged += OnSelectionChanged;
+    }
 
     public List<GameAction> currentValidGameActions=new List<GameAction>();
 
@@ -40,6 +43,14 @@ public class GameActionController : MonoBehaviour
             }
         }
     }
+
+    void OnSelectionChanged()
+    {
+        currentValidGameActions.Clear();
+    }
+
+
+
     public void OnActionPerformed()
     {
         currentValidGameActions.Clear();

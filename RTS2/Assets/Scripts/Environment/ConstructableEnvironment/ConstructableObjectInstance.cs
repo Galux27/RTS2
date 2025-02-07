@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 {
@@ -95,5 +96,35 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     {
         return SelectionUtilities.IsInBounds(GetSize(), new Vector3(PosX,PosY,0), point);
 
+    }
+
+    new public string Name()
+    {
+        return ObjectKey;
+    }
+
+    new public string Description()
+    {
+        return "";
+    }
+
+    new public int Quantitiy()
+    {
+        return 1;
+    }
+
+    new public float Health()
+    {
+        return 1f;
+    }
+
+    new public float MaxHealth()
+    {
+        return 1f;
+    }
+
+    new public Vector3 Position()
+    {
+        return new Vector3(PosX, PosY, 0);
     }
 }

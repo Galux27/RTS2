@@ -48,7 +48,7 @@ public class SelectableManager : MonoBehaviour
             CurrentlySelected[x].SetIsSelected(false);
         }
         CurrentlySelected.Clear();
-
+        OnSelectionChanged?.Invoke();
     }
 
     public void RemoveSelectable(Selectable toRemove)
@@ -61,6 +61,34 @@ public class SelectableManager : MonoBehaviour
 
     }
 
+    public void SetToOnlySelected(Selectable toSet)
+    {
+        if (toSet != null)
+        {
+            ClearSelectables();
+            AddSelectable(toSet);
+        }
+    }
+
+    public void SetToOnlyNameSelected(string key)
+    {
+        List<Selectable> newSelected = new List<Selectable>();
+
+        ObjectInfo oi = null;
+        for (int x = 0; x < CurrentlySelected.Count; x++)
+        {
+          oi = (ObjectInfo)CurrentlySelected[x];
+            if (oi != null)
+            {
+                if (oi.Name() == key)
+                {
+                    newSelected.Add(CurrentlySelected[x]);
+                }
+            }
+        }
+        ClearSelectables();
+        AddSelectable(newSelected);
+    }
 
     public void SetOnlyTypeSelected(UnitType toSelect)
     {

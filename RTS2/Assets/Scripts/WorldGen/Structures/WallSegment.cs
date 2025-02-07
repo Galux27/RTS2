@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 /// Class to represent a tile of wall within the world
 /// used to know the location to then identify what tiles are going to be used
 /// </summary>
-public class WallSegment:Selectable 
+public class WallSegment:Selectable ,ObjectInfo
 {
     public int x, y;
     public bool HasWallUnderConstruction=false;
@@ -85,22 +85,30 @@ public class WallSegment:Selectable
 
     public SelectableType GetSelectableType()
     {
-        throw new System.NotImplementedException();
+        return SelectableType.Structure;
     }
 
     public bool GetIsSelected()
     {
-        throw new System.NotImplementedException();
+        return selected;
     }
-
+    bool selected = false;
     public bool IsSelectable()
     {
-        throw new System.NotImplementedException();
+        return HasDoor||HasWall;
     }
 
     public void SetIsSelected(bool val)
     {
-        throw new System.NotImplementedException();
+        if (val)
+        {
+            OnObjectSelected();
+        }
+        else
+        {
+            OnObjectDeselected();
+        }
+        selected = val;
     }
 
     public Vector3 GetSize()
@@ -111,6 +119,43 @@ public class WallSegment:Selectable
     public bool IsPointInBounds(Vector3 point)
     {
         return SelectionUtilities.IsInBounds(GetSize(),new Vector3(x,y,0), point);
+    }
+
+    public string Name()
+    {
+        if (HasDoor)
+        {
+            return "Door";
+        }else if (HasWall)
+        {
+            return "Wall";
+        }
+        return "Empty";
+    }
+
+    public string Description()
+    {
+        return "";
+    }
+
+    public int Quantitiy()
+    {
+        return 1;
+    }
+
+    public float Health()
+    {
+        return 1f;
+    }
+
+    public float MaxHealth()
+    {
+        return 1f;
+    }
+
+    public Vector3 Position()
+    {
+        return new Vector3(x, y, 0);
     }
 }
 

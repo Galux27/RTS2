@@ -38,12 +38,22 @@ public class ActionSelectMenu : MonoBehaviour
         return cg.alpha > 0;
     }
 
+    private void Update()
+    {
+        if(SelectableManager.Instance.CurrentSelectedType!=SelectableType.Unit && IsDisplaying())
+        {
+            CloseMenu();
+        }
+    }
+
     public void ShowUI()
     {
         cg.alpha = 1f;
         transform.localScale = Vector3.one;
         Vector3 startPos = Input.mousePosition / GetComponentInParent<Canvas>().scaleFactor;
         GetComponent<RectTransform>().anchoredPosition = startPos;
+        this.gameObject.SetActive(true);
+
     }
 
     public void CreateButtonsForActions(List<GameAction> potentialActions)
@@ -69,5 +79,6 @@ public class ActionSelectMenu : MonoBehaviour
         Cleanup();
         cg.alpha = 0f;
         transform.localScale = Vector3.zero;
+        this.gameObject.SetActive(false);
     }
 }

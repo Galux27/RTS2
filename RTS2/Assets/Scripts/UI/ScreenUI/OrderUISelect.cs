@@ -31,7 +31,7 @@ public class OrderUISelect : BaseUI
     {
         CleanupExisting();
         List<Unit> units = SelectableManager.Instance.GetSelectedUnits();
-        if (units.Count == 0)
+        if (units.Count == 0|| SelectionController.Instance.selectionMode != CurrentSelectionMode.Units && SelectionController.Instance.selectionMode != CurrentSelectionMode.None)
         {
             return;
         }
