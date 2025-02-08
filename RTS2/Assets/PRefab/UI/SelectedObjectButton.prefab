@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 580080947853053175}
   - component: {fileID: 3840701221547655646}
   - component: {fileID: 3182765561357482812}
+  - component: {fileID: 9001992278979174054}
   m_Layer: 5
   m_Name: SelectedObjectButton
   m_TagString: Untagged
@@ -408,6 +409,26 @@ MonoBehaviour:
   ZoomToButton: {fileID: 6062424837368226203}
   name: {fileID: 1314145115538912267}
   quantitiy: {fileID: 1146378396300990613}
+--- !u!114 &9001992278979174054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4794754492524904521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &6818240675108618260
 GameObject:
   m_ObjectHideFlags: 0

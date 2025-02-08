@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 580080947853053175}
   - component: {fileID: 3840701221547655646}
   - component: {fileID: 2634610835971213105}
+  - component: {fileID: 6389810900389000841}
   m_Layer: 5
   m_Name: SelectedUnitTab
   m_TagString: Untagged
@@ -272,6 +273,26 @@ MonoBehaviour:
   SelectButton: {fileID: 3840701221547655646}
   NameText: {fileID: 1314145115538912267}
   QuantityText: {fileID: 1146378396300990613}
+--- !u!114 &6389810900389000841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4794754492524904521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &8229777302679050277
 GameObject:
   m_ObjectHideFlags: 0

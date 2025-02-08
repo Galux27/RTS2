@@ -26,8 +26,16 @@ public class SelectedObjectButton : MonoBehaviour
         name.text = objectInfo.Name();
         ZoomToButton.gameObject.SetActive(true);
         quantitiy.text = "";
-        SelectButton.onClick.AddListener(() => { SelectableManager.Instance.SetToOnlySelected(objectInfo as Selectable);
+        SelectButton.onClick.AddListener(() => { 
+            SelectableManager.Instance.SetToOnlySelected(objectInfo as Selectable);
             SelectionController.Instance.blockInputTimer = .2f;
+
+        });
+
+        ZoomToButton.onClick.AddListener(() => {
+            CameraController.Instance.SetToAutoMove(objectInfo.Position());
+            SelectionController.Instance.blockInputTimer = .2f;
+
 
         });
     }
