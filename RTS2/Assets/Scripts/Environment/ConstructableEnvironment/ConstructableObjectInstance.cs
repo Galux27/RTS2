@@ -29,14 +29,16 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         Object.SetActive(true);
 
 
-
-        ConstructableContainer parentType = (ConstructableContainer)obj;
-        if (parentType != null)
+        if (obj.GetType() == typeof(ConstructableContainer))
         {
-            inventoryObject = new GameObject();
-            inventoryObject.transform.position = new Vector3(PosX, PosY, 0);
-            inventoryObject.name = "Inventory For Object " + obj.name + " pos " + PosX + "," + PosY;
-            parentType.OnObjectConstructed(inventoryObject);
+            ConstructableContainer parentType = (ConstructableContainer)obj;
+            if (parentType != null)
+            {
+                inventoryObject = new GameObject();
+                inventoryObject.transform.position = new Vector3(PosX, PosY, 0);
+                inventoryObject.name = "Inventory For Object " + obj.name + " pos " + PosX + "," + PosY;
+                parentType.OnObjectConstructed(inventoryObject);
+            }
         }
         Drawn = true;
 

@@ -57,7 +57,9 @@ public class SelectedObjectsUI : BaseUI
     {
         CleanupUI();
 
-        if (SelectableManager.Instance.CurrentSelectedType == SelectableType.Unit || SelectableManager.Instance.CurrentSelectedType == SelectableType.None || SelectableManager.Instance.CurrentlySelected.Count==0)
+        if (SelectableManager.Instance.CurrentSelectedType == SelectableType.Unit 
+            || SelectableManager.Instance.CurrentSelectedType == SelectableType.None 
+            )
         {
             CloseUI();
             return;

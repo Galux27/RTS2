@@ -75,7 +75,7 @@ public class WallSegment:Selectable ,ObjectInfo
 
     public void OnObjectDeselected()
     {
-        Collider.gameObject.GetComponent<SelectedOutline>()?.OnDeselect();
+        Collider.gameObject.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
     }
     public void OnObjectSelected()
     {

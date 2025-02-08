@@ -86,6 +86,10 @@ public class Hybrid_SelectionMode : SelectionMode
             case SelectableType.Resource:
                 SelectedObjectsUI.Instance.OpenUI();
                 break;
+            case SelectableType.Structure:
+                SelectedObjectsUI.Instance.OpenUI();
+
+                break;
             default:
                 break;
         }
