@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WreckedCar
   m_EditorClassIdentifier: 
   Name: WreckedCar
-  ForwardsSprite: {fileID: 21300000, guid: df144bc0f4f75994ab67752666b8d95c, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: 9fa18b3f967534f459337208798a36fb, type: 3}
   SideSprite: {fileID: 21300000, guid: df144bc0f4f75994ab67752666b8d95c, type: 3}
   BackwardsSprite: {fileID: 21300000, guid: df144bc0f4f75994ab67752666b8d95c, type: 3}
   BlocksTile: 1

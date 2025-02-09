@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tree 3
   m_EditorClassIdentifier: 
   Name: Tree_2
-  ForwardsSprite: {fileID: 2061999983, guid: 22d4580ff3cd39b44828fc72fc09c1dd, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: 535d2ce7dee7b9949b55ba62211311cf, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   BlocksTile: 1
