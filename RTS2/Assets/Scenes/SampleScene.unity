@@ -5019,7 +5019,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 28.771
+      value: 28.157
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5083,7 +5083,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7652595014143650964, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: MyType
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9202118205438252388, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
@@ -6475,16 +6475,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1325635056635846851, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e0eb6e8ac7a73444287cc7114c17fc45, type: 3}
+    - target: {fileID: 1325635056635846851, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Color.b
-      value: 0.023139905
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1325635056635846851, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Color.g
-      value: 0.62582564
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1325635056635846851, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Color.r
-      value: 0.9811321
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalScale.x
@@ -6500,7 +6504,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 28.771
+      value: 28.83
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6541,6 +6545,10 @@ PrefabInstance:
     - target: {fileID: 3589492439018105632, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Name
       value: Person (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652595014143650964, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: MyType
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
