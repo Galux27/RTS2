@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Box
   m_EditorClassIdentifier: 
   Name: Box
-  ForwardsSprite: {fileID: 679836952, guid: 4667d1aa1ea246f45be8642860363ff5, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: 08e0b2f1174dc9f4ba52a1043d4b6cbd, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   BlocksTile: 0

@@ -13,12 +13,16 @@ MonoBehaviour:
   m_Name: Shelf
   m_EditorClassIdentifier: 
   Name: Shelf
-  ForwardsSprite: {fileID: 5029067551505643273, guid: 40944dc7d70d71143be6821ddd2f9fb2, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: 450dec200737f8a4ebd6190e9ac6aeb9, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   BlocksTile: 0
   Width: 2
   Height: 1
+  CanHarvest: 0
+  Resources:
+    resources: []
+    HarvestLength: 0
   Cost: 0
   TimeToBuild: 1
   WeightLimit: 25
