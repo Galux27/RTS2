@@ -16,14 +16,6 @@ public class ResourceUI : MonoBehaviour
 
     public void UpdateQuantity(int newVal)
     {
-        //if (newVal > 0)
-        //{
-        //    this.gameObject.SetActive(true);
-        //}
-        //else
-        //{
-        //    this.gameObject.SetActive(false);
-        //}
         Quantitiy.text = newVal.ToString();
     }
 }

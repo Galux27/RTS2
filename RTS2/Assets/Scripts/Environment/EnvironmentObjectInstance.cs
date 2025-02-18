@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 
@@ -9,11 +10,27 @@ using UnityEngine;
 public class EnvironmentObjectInstance:ObjectInfo
 {
     public string ObjectKey;
-    public int PosX, PosY;
+    public int PosX
+    {
+        get
+        {
+            return coords.x;
+        }
+    }
+        
+     public int PosY
+    {
+        get
+        {
+            return coords.y;
+        }
+    }
     public bool Drawn = false;
     public GameObject Object;
     WorldChunk myChunk;
     Vector3 position;
+    public Vector2Int coords;
+
     public void SetChunk(WorldChunk chunk)
     {
         myChunk= chunk;
@@ -22,8 +39,8 @@ public class EnvironmentObjectInstance:ObjectInfo
     public EnvironmentObjectInstance(int x,int y,string envObj)
     {
         ObjectKey = envObj;
-        PosX= x; PosY = y;
         position = new Vector3(x, y);
+        coords = new Vector2Int(x, y);
     }
 
 

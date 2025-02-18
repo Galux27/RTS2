@@ -15,10 +15,8 @@ MonoBehaviour:
   TypeToCheckFor: 2
   ValidityObjects:
   - ObjectKey: Box
-    NeedsObject: 1
-    NeedsQuantity: 0
-    Quantity: 0
-  - ObjectKey: Shelf
-    NeedsObject: 1
-    NeedsQuantity: 0
+    OptionalKeys:
+    - Box
+    - Shelf
+    ValidityType: 3
     Quantity: 0

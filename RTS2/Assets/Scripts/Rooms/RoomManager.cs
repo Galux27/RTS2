@@ -19,6 +19,7 @@ public class RoomManager : MonoBehaviour
     private void Awake()
     {
         LoadData();
+        InitEvents();
     }
 
     public Dictionary<RoomUseType, RoomValidityData> ValidityData;
@@ -39,7 +40,10 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-
+    void InitEvents()
+    {
+        EventManager.Instance.OnConstructableObjectCreated+= OnConstructableCreated;
+    }
 
    public List<Room> roomList=new List<Room>();  
 
@@ -74,6 +78,18 @@ public class RoomManager : MonoBehaviour
         RoomDrawrer.Instance.OnDestroyRoom(SelectedRoom);
         SelectedRoom = null;
         RoomsUIParent.Instance.RedrawRoomSelectionButtons();
+    }
+
+    public void OnConstructableCreated(Vector2Int coords, ConstructableObjectInstance Created)
+    {
+        for(int x=0;x< roomList.Count;x++)
+        {
+            if (roomList[x].DoesRoomContainPosition(coords))
+            {
+                roomList[x].OnObjectAddedToRoom(Created);
+                roomList[x].RefreshRoom();
+            }
+        }
     }
 
 }

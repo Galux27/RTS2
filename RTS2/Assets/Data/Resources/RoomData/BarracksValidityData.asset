@@ -15,6 +15,6 @@ MonoBehaviour:
   TypeToCheckFor: 1
   ValidityObjects:
   - ObjectKey: Bunk Bed
-    NeedsObject: 1
-    NeedsQuantity: 0
-    Quantity: 0
+    OptionalKeys: []
+    ValidityType: 1
+    Quantity: 1

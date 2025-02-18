@@ -20,20 +20,33 @@ public class RoomValidityData : ScriptableObject
         for(int x = 0; x < ValidityObjects.Count; x++)
         {
            contains= RoomUtils.DoesRoomContainObject(r, ValidityObjects[x].ObjectKey, out quantity);
-            if (ValidityObjects[x].NeedsObject)
+
+            if (ValidityObjects[x].ValidityType == ValidityType.NeedsObject)
             {
                 if (quantity == 0)
                 {
                     return false;
                 }
-                if (ValidityObjects[x].NeedsQuantity && quantity < ValidityObjects[x].Quantity)
-                {
-                    return false;
-                }
+
             }
-            else
+            else if (ValidityObjects[x].ValidityType == ValidityType.NeedObjectAndNeedsQuantity && quantity < ValidityObjects[x].Quantity)
             {
-                if (quantity > 0)
+                return false;
+
+            }
+            else if (ValidityObjects[x].ValidityType == ValidityType.NeedOneOfMany)
+            {
+                bool hasOne = false;
+                int amount = 0;
+                for (int q = 0; q < ValidityObjects[x].OptionalKeys.Count; q++)
+                {
+                    hasOne = RoomUtils.DoesRoomContainObject(r, ValidityObjects[x].OptionalKeys[q], out quantity);
+                    if (hasOne)
+                    {
+                        break;
+                    }
+                }
+                if (hasOne == false)
                 {
                     return false;
                 }
@@ -51,16 +64,38 @@ public class RoomValidityData : ScriptableObject
         for (int x = 0; x < ValidityObjects.Count; x++)
         {
             contains = RoomUtils.DoesRoomContainObject(r, ValidityObjects[x].ObjectKey, out quantity);
-            if (ValidityObjects[x].NeedsObject)
+            if (ValidityObjects[x].ValidityType==ValidityType.NeedsObject)
             {
                 if (quantity == 0)
                 {
                     issues.Add("Need " + (ValidityObjects[x].Quantity) + " " + ValidityObjects[x].ObjectKey);
-
                 }
-                else if (ValidityObjects[x].NeedsQuantity && quantity < ValidityObjects[x].Quantity)
+             
+            }else if (ValidityObjects[x].ValidityType == ValidityType.NeedObjectAndNeedsQuantity && quantity < ValidityObjects[x].Quantity)
+            {
+                issues.Add("Need " + (ValidityObjects[x].Quantity - quantity) + " more " + ValidityObjects[x].ObjectKey);
+
+            }
+            else if (ValidityObjects[x].ValidityType == ValidityType.NeedOneOfMany)
+            {
+                bool hasOne = false;
+                int amount = 0;
+                for(int q = 0; q < ValidityObjects[x].OptionalKeys.Count; q++)
                 {
-                    issues.Add("Need " + (ValidityObjects[x].Quantity-quantity) + " more " + ValidityObjects[x].ObjectKey);
+                    hasOne = RoomUtils.DoesRoomContainObject(r, ValidityObjects[x].OptionalKeys[q], out quantity);
+                    if (hasOne)
+                    {
+                        break;
+                    }
+                }
+                if (hasOne == false)
+                {
+                    string validItems = "";
+                    for (int q = 0; q < ValidityObjects[x].OptionalKeys.Count; q++)
+                    {
+                        validItems += ValidityObjects[x].OptionalKeys[q] + ", ";
+                    }
+                        issues.Add("Needs at least one of " + validItems+".");
                 }
             }
             else
@@ -85,6 +120,16 @@ public class RoomValidityData : ScriptableObject
 public class RoomValidityObject
 {
     public string ObjectKey;
-    public bool NeedsObject, NeedsQuantity;
+    public List<string> OptionalKeys;
+    public ValidityType ValidityType;
     public int Quantity;
+}
+
+public enum ValidityType
+{
+    None,
+    NeedsObject,
+    NeedObjectAndNeedsQuantity,
+    NeedOneOfMany,
+    NeedAllOfMany
 }

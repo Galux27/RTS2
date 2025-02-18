@@ -9,11 +9,9 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 {
     public ConstructableObjectInstance(int x,int y,string envObj):base(x,y,envObj)
     {
-        PosX = x;
-        PosY= y;
-
+        EventManager.Instance.OnConstructableObjectCreated(coords, this);
     }
-    
+
 
     public override void RenderInstance()
     {

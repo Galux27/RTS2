@@ -16,7 +16,7 @@ public class BuildableStructure : Constructable,ObjectInfo
         this.offset = offset;
         this.myType = myType;
         constructOnComplete = toConstruct;
-        if (forceComplete)
+        if (forceComplete||DebugCheats.Instance.InstantConstruct())
         {
             OnObjectConstructed();
         }
@@ -95,12 +95,16 @@ public class BuildableStructure : Constructable,ObjectInfo
 
     public void Cleanup()
     {
-        GameObjectPoolManager.Instance.ReturnObjectToPool(Object, "ConstructionMarker");
-        Object = null;
-       isDrawn = false;
+        if (Object != null)
+        {
+            GameObjectPoolManager.Instance.ReturnObjectToPool(Object, "ConstructionMarker");
+            Object = null;
+        }
+            isDrawn = false;
+       
     }
 
-    public bool IsDrawn()
+        public bool IsDrawn()
     {
         return isDrawn;
     }
