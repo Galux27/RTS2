@@ -1836,7 +1836,7 @@ MonoBehaviour:
   WorldWidth: 100
   WorldHeight: 100
   BuildingTilemap: {fileID: 1289217260}
-  WallTest: {fileID: 11400000, guid: a9b3059c8bf658746b0b9dd57bd9b59b, type: 2}
+  WallTest: {fileID: 11400000, guid: 102a885a2c1508846a5c80a9e702808e, type: 2}
   WallCollider: {fileID: 1150100288391625594, guid: 55ebbfcdb71636b4b822993bf8bcffd5, type: 3}
 --- !u!114 &247636641
 MonoBehaviour:
