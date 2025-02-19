@@ -35,10 +35,10 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
     {
         return MyItem.Weight;
     }
-
+    public int QuantityVal = 1;
     public int Quantity()
     {
-        return 1;
+        return QuantityVal ;
     }
 
     public bool CanSplitStack()
@@ -101,6 +101,11 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
     {
         toEquipTo.GetComponentInChildren<ItemHolder>().SetHolding(this);
 
+    }
+
+    public void MergeWith(InventoryObject obj)
+    {
+        
     }
 
     public Item MyItem;

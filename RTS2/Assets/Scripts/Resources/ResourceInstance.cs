@@ -130,4 +130,9 @@ public class ResourceInstanceData:InventoryObject
     {
         
     }
+
+    public void MergeWith(InventoryObject obj)
+    {
+        Quantity += obj.Quantity();
+    }
 }

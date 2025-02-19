@@ -64,8 +64,8 @@ public class Inventory : MonoBehaviour, Storage
         }
         if (inventoryObject.Weight() + GetSumOfInventoryWeight() <= InventoryCapacity)
         {
-            
-            ObjectsInInventory.Add(inventoryObject);
+
+            AddOrMergeWithExisting(inventoryObject);
             inventoryObject.OnAddedToInventory();
             ResourceManager.Instance.RefreshResourceData();
             RefreshWeightOfCurrentItems();
@@ -79,12 +79,26 @@ public class Inventory : MonoBehaviour, Storage
                     ObjectsInInventory = new List<InventoryObject>();
                 }
                 object[] split = inventoryObject.SplitStack(InventoryCapacity - CurrentItemsWeight);
-                ObjectsInInventory.Add(split[0] as InventoryObject);
+                AddOrMergeWithExisting(split[0] as InventoryObject);
                 inventoryObject.RepopulateData(split[1] as InventoryObject);
                 ResourceManager.Instance.RefreshResourceData();
 
             }
         }
+    }
+
+    void AddOrMergeWithExisting(InventoryObject inventoryObject)
+    {
+        for(int x = 0; x < ObjectsInInventory.Count; x++)
+        {
+            if (ObjectsInInventory[x].Name() == inventoryObject.Name())
+            {
+                ObjectsInInventory[x].MergeWith(inventoryObject);
+                return;
+            }
+        }
+
+        ObjectsInInventory.Add(inventoryObject);
     }
 
     public void AddQuantityOfItemToInventory(InventoryObject inventoryObject, int quantity)
@@ -93,7 +107,7 @@ public class Inventory : MonoBehaviour, Storage
         {
             float weightOfOne = inventoryObject.Weight() / inventoryObject.Quantity();
             object[] split = inventoryObject.SplitStack(weightOfOne);
-            ObjectsInInventory.Add(split[0] as InventoryObject);
+            AddOrMergeWithExisting(split[0] as InventoryObject);
             inventoryObject.RepopulateData(split[1] as InventoryObject);
             ResourceManager.Instance.RefreshResourceData();
 
@@ -109,7 +123,7 @@ public class Inventory : MonoBehaviour, Storage
         if (inventoryObject.Weight() + GetSumOfInventoryWeight() <= InventoryCapacity)
         {
             comingFrom.RemoveItemFromInventory(inventoryObject);
-            ObjectsInInventory.Add(inventoryObject);
+            AddOrMergeWithExisting(inventoryObject);
             RefreshWeightOfCurrentItems();
             ResourceManager.Instance.RefreshResourceData();
 
@@ -121,7 +135,7 @@ public class Inventory : MonoBehaviour, Storage
                 comingFrom.RemoveItemFromInventory(inventoryObject);
                 object[] split = inventoryObject.SplitStack(InventoryCapacity - CurrentItemsWeight);
 
-                ObjectsInInventory.Add(split[0] as InventoryObject);
+                AddOrMergeWithExisting(split[0] as InventoryObject);
                 InventoryObject remainder = split[1] as InventoryObject;
                 if (remainder.Quantity() > 0)
                 {
@@ -148,7 +162,7 @@ public class Inventory : MonoBehaviour, Storage
                 comingFrom.RemoveItemFromInventory(inventoryObject);
                 object[] split = inventoryObject.SplitStack(quantity);
 
-                ObjectsInInventory.Add(split[0] as InventoryObject);
+                AddOrMergeWithExisting(split[0] as InventoryObject);
 
                 InventoryObject remainder = split[1] as InventoryObject;
                 if (remainder.Quantity() > 0)

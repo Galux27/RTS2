@@ -112,16 +112,18 @@ public class Units_SelectionMode : SelectionMode
 
                 if (OnHoverHarvestable != null)
                 {
+                    EnvironmentObjectInstance toHarvest = OnHoverHarvestable;
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
 
                     Action Harvest = () =>
                     {
 
-                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        for (int x = 0; x < currentlySelected.Count; x++)
                         {
-                            Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
+                            Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             GatherResources_Behaviour gather = new GatherResources_Behaviour();
-                            gather.InitBehaviour(toPerfrom, OnHoverHarvestable);
+                            gather.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(gather);
 
                         }

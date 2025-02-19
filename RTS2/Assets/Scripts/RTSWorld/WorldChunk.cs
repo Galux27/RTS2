@@ -67,6 +67,7 @@ public class WorldChunk
         {
             instance.CleanupInstance();
         }
+        
         EnvironmentObjectsInChunk.Remove(instance);
     }
 
@@ -110,11 +111,7 @@ public class WorldChunk
             objFound = null;
             return false;
         }
-        //for(int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
-        //{
-        //    Debug.Log("Room: Obj in chunk " + EnvironmentObjectsInChunk[x].ObjectKey + " x " + EnvironmentObjectsInChunk[x].PosX + " y " + EnvironmentObjectsInChunk[x].PosY);
-        //}
-
+     
 
         for(int x = 0; x < objects.Count; x++)
         {

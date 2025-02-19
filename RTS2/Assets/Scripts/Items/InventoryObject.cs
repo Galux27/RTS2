@@ -28,6 +28,6 @@ public interface InventoryObject
     public bool CanObjectBeEquiped();
 
     public void EquipObject(Unit toEquipTo);
-   
 
+    public void MergeWith(InventoryObject obj);
 }
