@@ -25,6 +25,10 @@ public class ResourcesDisplayUI : BaseUI
     public Dictionary<string, ResourceUI> ResourceUIElements=new Dictionary<string, ResourceUI>();
     public void CreateUIElement(ResourceData toDraw)
     {
+        if (ResourceUIElements.ContainsKey(toDraw.ResourceName))
+        {
+            return;
+        }
         GameObject g = Instantiate(ResourceUIPrefab,ContentsParent);
         ResourceUI resource=g.GetComponent<ResourceUI>();
         resource.Init(toDraw.ResourceName, toDraw.Quantity, ResourceController.Instance.AllResources[toDraw.ResourceName].Item);

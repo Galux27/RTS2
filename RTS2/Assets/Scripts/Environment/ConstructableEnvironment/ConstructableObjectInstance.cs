@@ -42,7 +42,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     }
 
-    GameObject inventoryObject;
+    public GameObject inventoryObject;
 
     public override void CleanupInstance()
     {

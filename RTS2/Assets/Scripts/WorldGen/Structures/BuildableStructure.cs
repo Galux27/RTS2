@@ -18,6 +18,7 @@ public class BuildableStructure : Constructable,ObjectInfo
         constructOnComplete = toConstruct;
         if (forceComplete||DebugCheats.Instance.InstantConstruct())
         {
+            Render();
             OnObjectConstructed();
         }
     }
@@ -87,6 +88,11 @@ public class BuildableStructure : Constructable,ObjectInfo
 
     public void Render()
     {
+        if (isBuilt)
+        {
+
+            return;
+        }
         Object = GameObjectPoolManager.Instance.GetObjectFromPool("ConstructionMarker");
         Object.GetComponent<ConstructableObjectUI>().InitUI(size, pos+offset);
         Object.SetActive(true);
@@ -94,13 +100,12 @@ public class BuildableStructure : Constructable,ObjectInfo
     }
 
     public void Cleanup()
-    {
-        if (Object != null)
-        {
-            GameObjectPoolManager.Instance.ReturnObjectToPool(Object, "ConstructionMarker");
-            Object = null;
-        }
-            isDrawn = false;
+    {   
+        GameObjectPoolManager.Instance.ReturnObjectToPool(Object, "ConstructionMarker");
+        Vector2Int coords= WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(new Vector2Int (x, y));
+        WorldChunkManager.Instance.Chunks[coords.x, coords.y].RemoveConstructable(this);
+        Object = null;
+        isDrawn = false;
        
     }
 

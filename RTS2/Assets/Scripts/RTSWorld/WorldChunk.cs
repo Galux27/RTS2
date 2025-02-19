@@ -172,8 +172,10 @@ public class WorldChunk
         {
             return;
         }
-        if(ToBuild.Contains(toRemove))
+        if (ToBuild.Contains(toRemove))
         {
+            Debug.Log("Removed Constructable");
+
             toRemove.Cleanup();
             ToBuild.Remove(toRemove);
         }

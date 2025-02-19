@@ -67,6 +67,7 @@ public class Inventory : MonoBehaviour, Storage
             
             ObjectsInInventory.Add(inventoryObject);
             inventoryObject.OnAddedToInventory();
+            ResourceManager.Instance.RefreshResourceData();
             RefreshWeightOfCurrentItems();
         }
         else
@@ -80,6 +81,8 @@ public class Inventory : MonoBehaviour, Storage
                 object[] split = inventoryObject.SplitStack(InventoryCapacity - CurrentItemsWeight);
                 ObjectsInInventory.Add(split[0] as InventoryObject);
                 inventoryObject.RepopulateData(split[1] as InventoryObject);
+                ResourceManager.Instance.RefreshResourceData();
+
             }
         }
     }
@@ -92,6 +95,8 @@ public class Inventory : MonoBehaviour, Storage
             object[] split = inventoryObject.SplitStack(weightOfOne);
             ObjectsInInventory.Add(split[0] as InventoryObject);
             inventoryObject.RepopulateData(split[1] as InventoryObject);
+            ResourceManager.Instance.RefreshResourceData();
+
         }
     }
 
@@ -106,6 +111,8 @@ public class Inventory : MonoBehaviour, Storage
             comingFrom.RemoveItemFromInventory(inventoryObject);
             ObjectsInInventory.Add(inventoryObject);
             RefreshWeightOfCurrentItems();
+            ResourceManager.Instance.RefreshResourceData();
+
         }
         else
         {
@@ -120,6 +127,8 @@ public class Inventory : MonoBehaviour, Storage
                 {
                     comingFrom.AddItemToInventory(remainder);
                 }
+                ResourceManager.Instance.RefreshResourceData();
+
             }
         }
     }
@@ -146,12 +155,14 @@ public class Inventory : MonoBehaviour, Storage
                 {
                     comingFrom.AddItemToInventory(remainder);
                 }
-                }
+                ResourceManager.Instance.RefreshResourceData();
+
             }
+        }
 
         }
 
-        public void RemoveItemFromInventory(InventoryObject inventoryObject)
+    public void RemoveItemFromInventory(InventoryObject inventoryObject)
     {
         if (!ObjectsInInventory.Contains(inventoryObject))
         {
@@ -159,6 +170,8 @@ public class Inventory : MonoBehaviour, Storage
         }
         ObjectsInInventory.Remove(inventoryObject);
         RefreshWeightOfCurrentItems();
+        ResourceManager.Instance.RefreshResourceData();
+
     }
 
 
