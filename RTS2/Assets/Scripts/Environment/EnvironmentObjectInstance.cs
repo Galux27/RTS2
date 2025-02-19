@@ -109,6 +109,7 @@ public class EnvironmentObjectInstance:ObjectInfo
             CleanupInstance();
         }
         myChunk.RemoveEnvironmentObject(this);
+        EnvironmentObjectManager.Instance.OnDestroyEnvironmentObject(this);
     }
 
     public string Name()

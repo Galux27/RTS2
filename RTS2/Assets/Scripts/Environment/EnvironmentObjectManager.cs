@@ -69,6 +69,12 @@ public class EnvironmentObjectManager : MonoBehaviour
         }
     }
 
+    public void OnDestroyEnvironmentObject(EnvironmentObjectInstance obj)
+    {
+        WorldController.Instance.SetTraversible(obj.PosX, obj.PosY ,AllObjects[obj.Name()].BlocksTile);
+
+    }
+
     const float DrawEnvironmentObjectRadius = 20f;
     List<WorldChunk> UpdatedLastFrame = new List<WorldChunk>();
     private void Update()
