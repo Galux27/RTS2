@@ -45,13 +45,13 @@ public class Units_SelectionMode : SelectionMode
                 RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.UnitLayermask);
                 if (hit.collider != null)
                 {
-
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
                     System.Action attack = () =>
                     {
-                        Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
-                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        for (int x = 0; x < currentlySelected.Count; x++)
                         {
-                            Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                            Unit toPerfrom = ((Unit)currentlySelected[x]);
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
                             attack.InitBehaviour(targetUnit, toPerfrom);
@@ -67,14 +67,16 @@ public class Units_SelectionMode : SelectionMode
                 }
                 else if (OnHoverEnemyUnit != null)
                 {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    Unit enemy = OnHoverEnemyUnit;
                     System.Action attack = () =>
                     {
-                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        for (int x = 0; x < currentlySelected.Count; x++)
                         {
-                            Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                            Unit toPerfrom = ((Unit)currentlySelected[x]);
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
-                            attack.InitBehaviour(OnHoverEnemyUnit, toPerfrom);
+                            attack.InitBehaviour(enemy, toPerfrom);
                             attack.IsUserInstruction = true;
                             br.SetBehaviour(attack);
 
@@ -88,17 +90,19 @@ public class Units_SelectionMode : SelectionMode
 
                 if (OnHoverBuildable != null)
                 {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    Constructable toBuild = OnHoverBuildable;
                     Action Build = () =>
                     {
 
-                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        for (int x = 0; x < currentlySelected.Count; x++)
                         {
-                            Unit toPerfrom = ((Unit)SelectableManager.Instance.CurrentlySelected[x]);
+                            Unit toPerfrom = ((Unit)currentlySelected[x]);
                             if (toPerfrom.MyType == UnitType.Engineer)
                             {
                                 BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                                 HumanBehaviour_ConstructObject construct = new HumanBehaviour_ConstructObject();
-                                construct.InitBehaviour(toPerfrom, OnHoverBuildable);
+                                construct.InitBehaviour(toPerfrom, toBuild);
                                 construct.IsUserInstruction = true;
                                 br.SetBehaviour(construct);
                             }
@@ -134,15 +138,17 @@ public class Units_SelectionMode : SelectionMode
 
                 if (OnHoverResource != null)
                 {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    ResourceInstance toHarvest = OnHoverResource;
                     Action Gather = () =>
                     {
 
-                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        for (int x = 0; x < currentlySelected.Count; x++)
                         {
-                            Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
+                            Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             CollectResources_Behaviour collect = new CollectResources_Behaviour();
-                            collect.InitBehaviour(toPerfrom, OnHoverResource);
+                            collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(collect);
 
                         }

@@ -34,7 +34,10 @@ public class GameObjectPoolManager : MonoBehaviour
     public void ReturnObjectToPool(GameObject inst,string poolName)
     {
         Debug.Log("Returning Object from to " + name);
-
+        if (inst == null)
+        {
+            return;
+        }
         AllPools[poolName].ReturnObjectToPool(inst);
     }
 }
