@@ -31,6 +31,10 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    public void PopulateWithCombined()
+    {
+
+    }
 
 
     public void PopulateInventory(Inventory i,int id,bool displayOnly,bool flipFunctions)

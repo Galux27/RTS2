@@ -22,7 +22,7 @@ public class InventoryParentUI : MonoBehaviour
         }
     }
 
-    public InventoryUI InventoryOneUI, InventoryTwoUI;
+    public InventoryUI InventoryOneUI, InventoryTwoUI,SelectedInventory;
     public Inventory InventoryOne, InventoryTwo;
     public Button closeUI;
     public Action OnInventoryChange;
@@ -50,8 +50,22 @@ public class InventoryParentUI : MonoBehaviour
         InventoryTwo = toDisplay2;
         InventoryTwoUI.PopulateInventory(toDisplay2, 2, false,true);
         InventoryTwoUI.DisplayUI(true);
+        SelectedInventory.DisplayUI(false);
+
         DisplayUI(true);
     }
+
+    public void PopulateSelectedInventoryUI(Inventory toDisplay)
+    {
+        InventoryOne = toDisplay;
+        SelectedInventory.PopulateInventory(toDisplay, 1, true, false);
+        SelectedInventory.DisplayUI(true);
+        InventoryTwoUI.DisplayUI(false);
+        InventoryOneUI.DisplayUI(false);
+        DisplayUI(true);
+
+    }
+
 
     public void DisplayUI(bool val)
     {
