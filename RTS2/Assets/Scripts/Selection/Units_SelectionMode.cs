@@ -196,18 +196,19 @@ public class Units_SelectionMode : SelectionMode
                     {
                         Vector3 targetPos = hit.point;
                         targetPos.z = 0;
-
+                        List<Selectable> selected = SelectableManager.Instance.CurrentlySelected;
+                        List<Vector3> targetPositions = UnitHelpers.GetRelativePositionsForUnitsToMoveTo(selected, targetPos);
 
 
                         Action move = () =>
                         {
 
-                            for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                            for (int x = 0; x < selected.Count; x++)
                             {
-                                Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
+                                Unit toPerfrom = (Unit)selected[x];
                                 BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                                 MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
-                                moveTo_Behaviour.InitBehaviour(toPerfrom, targetPos);
+                                moveTo_Behaviour.InitBehaviour(toPerfrom, targetPositions[x]);
                                 moveTo_Behaviour.IsUserInstruction = true;
                                 br.SetBehaviour(moveTo_Behaviour);
 

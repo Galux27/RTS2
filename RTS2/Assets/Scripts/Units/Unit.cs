@@ -131,9 +131,23 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
     }
 
 
+    public void SetPassable()
+    {
+        StartCoroutine(MakePassable());
+    }
+
+    IEnumerator MakePassable()
+    {
+        this.gameObject.layer = LayerMask.NameToLayer("PawnsSwap");
+        yield return new WaitForSeconds(1f);
+        this.gameObject.layer = LayerMask.NameToLayer("Pawns");
+
+    }
+
     public void MoveUnit(Vector3 direction)
     {
         this.transform.position += (direction * Speed() * DeltaTimeWrapper.GameplayDelta);
+        HasMovedThisFrame = true;
         WorldChunkManager.Instance.OnUnitMove(this);
         OnUnitMove();
     }
@@ -152,6 +166,22 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
             WorldController.Instance.OnTileEnter(coordsCurrent, this);
 
         }
+        HasBeenSwapped = false;
+    }
+    public bool HasBeenSwapped = false, HasMovedThisFrame = false;
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        
+        Unit unitHit = collision.collider.GetComponent<Unit>();
+        if (unitHit!=null && HasMovedThisFrame)
+        {
+            UnitHelpers.OnUnitCollision(this, unitHit);
+        }
+    }
+
+    private void Update()
+    {
+        HasMovedThisFrame = false;
     }
 
     public virtual void AttackUnit(float damage,Unit isAttackingMe=null)
