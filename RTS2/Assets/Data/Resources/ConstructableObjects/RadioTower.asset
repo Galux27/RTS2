@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ff855f45c09324185613678e6d20f7, type: 3}
+  m_Name: RadioTower
+  m_EditorClassIdentifier: 
+  Name: Radio Tower
+  ForwardsSprite: {fileID: 21300000, guid: 1e7279b5f8737a54894e6b911f9524e1, type: 3}
+  SideSprite: {fileID: 0}
+  BackwardsSprite: {fileID: 0}
+  BlocksTile: 1
+  Width: 2
+  Height: 2
+  CanHarvest: 0
+  Resources:
+    resources: []
+    HarvestLength: 0
+  Cost: 0
+  TimeToBuild: 10
+  WeightLimit: 30
+  Filter:
+    CheckForForbidden: 0
+    CheckForAllowed: 0
+    ForbiddenItems: []
+    AllowedItems:
+    - Fuel

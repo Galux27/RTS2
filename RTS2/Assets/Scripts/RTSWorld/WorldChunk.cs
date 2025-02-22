@@ -163,7 +163,7 @@ public class WorldChunk
         }
     }
 
-    public void RemoveConstructable(Constructable toRemove)
+    public void RemoveConstructable(Constructable toRemove, bool needsCleanup = true)
     {
         if (toRemove == null)
         {
@@ -172,8 +172,10 @@ public class WorldChunk
         if (ToBuild.Contains(toRemove))
         {
             Debug.Log("Removed Constructable");
-
-            toRemove.Cleanup();
+            if (needsCleanup)
+            {
+                toRemove.Cleanup();
+            }
             ToBuild.Remove(toRemove);
         }
     }
