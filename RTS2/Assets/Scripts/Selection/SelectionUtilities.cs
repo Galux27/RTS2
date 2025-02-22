@@ -413,6 +413,12 @@ public static class SelectionUtilities
             return SelectableType.Unit;
         }
 
+        Unit hoverdOver = SelectionUtilities.GetUserUnitWithinRangeOfPoint(Vector3.Lerp(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint,.5f), 1f);
+        if (hoverdOver != null)
+        {
+            selectables.Add(hoverdOver);
+            return SelectableType.Unit;
+        }
         List<WallSegment> wallSegments = WorldController.Instance.WallManager.GetWallSegments(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint) ;
         if (wallSegments.Count > 0)
         {
