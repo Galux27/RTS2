@@ -18,6 +18,7 @@ public class InventoryUI : MonoBehaviour
     private void Start()
     {
         InventoryParentUI.Instance.OnInventoryChange += RedrawUI;
+        
     }
 
     void RedrawUI()
@@ -33,7 +34,12 @@ public class InventoryUI : MonoBehaviour
 
     public void PopulateWithCombined()
     {
-
+        CleanupUI();
+        float weight =0f;
+        DisplayOnly = true;
+       CombinedInventory.Instance.GetAllObjects(CreateUIForItem,ref weight);
+        Title.text ="Selected Inventories";
+        InfoDisp.text = "Weight: " +weight;
     }
 
 

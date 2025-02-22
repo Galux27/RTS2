@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -86,7 +87,7 @@ public class Inventory : MonoBehaviour, Storage
             }
         }
     }
-
+    public Action OnInventoryChange;
     void AddOrMergeWithExisting(InventoryObject inventoryObject)
     {
         for(int x = 0; x < ObjectsInInventory.Count; x++)
@@ -94,10 +95,11 @@ public class Inventory : MonoBehaviour, Storage
             if (ObjectsInInventory[x].Name() == inventoryObject.Name())
             {
                 ObjectsInInventory[x].MergeWith(inventoryObject);
+                OnInventoryChange?.Invoke();
                 return;
             }
         }
-
+        OnInventoryChange?.Invoke();
         ObjectsInInventory.Add(inventoryObject);
     }
 
@@ -185,7 +187,7 @@ public class Inventory : MonoBehaviour, Storage
         ObjectsInInventory.Remove(inventoryObject);
         RefreshWeightOfCurrentItems();
         ResourceManager.Instance.RefreshResourceData();
-
+        OnInventoryChange?.Invoke();
     }
 
 

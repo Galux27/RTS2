@@ -18,11 +18,19 @@ public class CombinedInventory
         }
     }
 
-    List<Inventory> inventorysDisplaying;
+    public CombinedInventory()
+    {
+        SelectableManager.OnSelectionChanged += RefreshInventoriesSelected;
+        SelectableManager.OnSelectionChanged += () => InventoryParentUI.Instance.PopulateSelectedInventoryUI();
+
+
+    }
+
+    List<Inventory> inventorysDisplaying=new List<Inventory>();
 
     public void RefreshInventoriesSelected()
     {
-        inventorysDisplaying = new List<Inventory>();
+        CleanupCombinedInventories();
         Unit selectedUnit = null;
         ConstructableObjectInstance selectedObject = null;
         for (int x=0;x< SelectableManager.Instance.CurrentlySelected.Count; x++)
@@ -30,14 +38,15 @@ public class CombinedInventory
             selectedUnit = SelectableManager.Instance.CurrentlySelected[x] as Unit;
             if (selectedUnit != null)
             {
-                inventorysDisplaying.Add( selectedUnit.GetComponent<Inventory>());
+               AddCombinedInventory( selectedUnit.GetComponent<Inventory>());
             }
             else
             {
                 selectedObject = SelectableManager.Instance.CurrentlySelected[x] as ConstructableObjectInstance;
                 if (selectedObject != null)
                 {
-                    inventorysDisplaying.Add(selectedObject.inventoryObject.GetComponent<Inventory>());
+                    AddCombinedInventory(selectedObject.inventoryObject.GetComponent<Inventory>());
+                  
                 }
             }
         }
@@ -55,5 +64,32 @@ public class CombinedInventory
             }
         }
         return retVal;
+    }
+
+    public void AddCombinedInventory(Inventory i)
+    {
+        i.OnInventoryChange += OnSelectedInventoryChange;
+        inventorysDisplaying.Add(i);
+    }
+
+    public void RemoveCombinedInventory(Inventory i)
+    {
+        i.OnInventoryChange-= OnSelectedInventoryChange;
+        inventorysDisplaying.Remove(i);
+    }
+
+    void CleanupCombinedInventories()
+    {
+        for(int x=0; x<inventorysDisplaying.Count; x++)
+        {
+            RemoveCombinedInventory(inventorysDisplaying[x]);
+        }
+        inventorysDisplaying.Clear();
+    }
+
+    void OnSelectedInventoryChange()
+    {
+        Debug.Log("On selected inventory change");
+        InventoryParentUI.Instance.PopulateSelectedInventoryUI();
     }
 }

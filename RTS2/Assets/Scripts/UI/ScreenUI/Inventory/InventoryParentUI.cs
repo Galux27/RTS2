@@ -21,14 +21,15 @@ public class InventoryParentUI : MonoBehaviour
             return instance;
         }
     }
-
+    public Transform TransferParent, SelectedParent;
     public InventoryUI InventoryOneUI, InventoryTwoUI,SelectedInventory;
     public Inventory InventoryOne, InventoryTwo;
     public Button closeUI;
     public Action OnInventoryChange;
     private void Awake()
     {
-        closeUI.onClick.AddListener(() => DisplayUI(false));
+        closeUI.onClick.AddListener(CloseUI);
+        CombinedInventory.Instance.RefreshInventoriesSelected();
     }
 
     public void PopulateUI(Inventory toDisplay)
@@ -38,7 +39,9 @@ public class InventoryParentUI : MonoBehaviour
         InventoryOneUI.PopulateInventory(toDisplay, 1, true,false);
         InventoryOneUI.DisplayUI(true);
         InventoryTwoUI.DisplayUI(false);
-        DisplayUI(true);
+        TransferParent.gameObject.SetActive(true);
+        SelectedParent.gameObject.SetActive(false);
+
     }
 
     public void PopulateUI(Inventory toDisplay,Inventory toDisplay2)
@@ -51,25 +54,40 @@ public class InventoryParentUI : MonoBehaviour
         InventoryTwoUI.PopulateInventory(toDisplay2, 2, false,true);
         InventoryTwoUI.DisplayUI(true);
         SelectedInventory.DisplayUI(false);
+        TransferParent.gameObject.SetActive(true);
+        SelectedParent.gameObject.SetActive(false);
 
-        DisplayUI(true);
     }
 
-    public void PopulateSelectedInventoryUI(Inventory toDisplay)
+    public void PopulateSelectedInventoryUI()
     {
-        InventoryOne = toDisplay;
-        SelectedInventory.PopulateInventory(toDisplay, 1, true, false);
-        SelectedInventory.DisplayUI(true);
-        InventoryTwoUI.DisplayUI(false);
-        InventoryOneUI.DisplayUI(false);
-        DisplayUI(true);
+        if (SelectableManager.Instance.CurrentlySelected.Count > 0)
+        {
 
+            SelectedInventory.PopulateWithCombined();
+            SelectedInventory.DisplayUI(true);
+            InventoryTwoUI.DisplayUI(false);
+            InventoryOneUI.DisplayUI(false);
+
+            TransferParent.gameObject.SetActive(false);
+            SelectedParent.gameObject.SetActive(true);
+        }
+        else
+        {
+            CloseUI();
+        }
     }
 
 
-    public void DisplayUI(bool val)
+        public void DisplayUI(bool val)
     {
         this.gameObject.SetActive(val);
+    }
+
+    public void CloseUI()
+    {
+        TransferParent.gameObject.SetActive(false);
+        SelectedParent.gameObject.SetActive(false);
     }
 
     public bool IsVisible()

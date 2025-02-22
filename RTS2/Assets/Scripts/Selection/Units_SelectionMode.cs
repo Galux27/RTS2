@@ -15,7 +15,7 @@ public class Units_SelectionMode : SelectionMode
         List<Unit> selected = UnitMoniter.Instance.GetUnitsWithinBounds(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint);
         Debug.Log("Selected unit count " + selected.Count);
 
-        if (selected.Count == 0 && OnHoverMyUnit!=null)
+        if (OnHoverMyUnit!=null)
         {
             selected.Add(OnHoverMyUnit);
         }
