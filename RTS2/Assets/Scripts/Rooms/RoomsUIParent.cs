@@ -44,6 +44,8 @@ public class RoomsUIParent : MonoBehaviour
         TypeOptions.Add(RoomUseType.None.ToString());
         TypeOptions.Add(RoomUseType.Barracks.ToString());
         TypeOptions.Add(RoomUseType.Warehouse.ToString());
+        TypeOptions.Add(RoomUseType.Dwelling.ToString());
+
         RoomType.AddOptions(TypeOptions);
         RoomType.onValueChanged.AddListener(OnRoomTypeChange);
         Room.OnRoomChanged += RefreshUI;

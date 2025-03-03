@@ -57,9 +57,9 @@ public class FurnitureSelectionMode : SelectionMode
 
     bool AreAllTilesWalkable(Vector2Int coords)
     {
-        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x <= coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
+        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x < coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
         {
-            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y <= coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
+            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y < coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
             {
                 Color c = Color.green;
                 if (WorldController.Instance.IsTraversible(x, y) == false)
@@ -72,9 +72,9 @@ public class FurnitureSelectionMode : SelectionMode
         }
 
 
-        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x <= coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
+        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x < coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
         {
-            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y <= coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
+            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y < coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
             {
                 if (WorldController.Instance.IsTraversible(x, y) == false)
                 {

@@ -243,12 +243,11 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
 }
 
 public enum UnitType {
-None,
-Zombie,
-Human,
-Rifleman,
-Civilian,
-Engineer
-
+    None,
+    Zombie,
+    Human,
+    Rifleman,
+    Civilian,
+    Engineer
 }
 

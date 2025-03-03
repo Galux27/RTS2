@@ -142,7 +142,6 @@ public class Room
     public void RefreshRoom()
     {
         SetCanUseRoom(DoesRoomHaveNeededObjects());
-        Debug.Log("Total Objects in room: " + ObjectsInRoom.Count);
     }
 }
 
@@ -150,6 +149,7 @@ public enum RoomUseType
 {
     None,
     Barracks,
-    Warehouse
+    Warehouse,
+    Dwelling
 }
 

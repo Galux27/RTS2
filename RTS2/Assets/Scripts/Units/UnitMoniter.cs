@@ -19,15 +19,53 @@ public class UnitMoniter : MonoBehaviour
     }
 
     public List<Unit> AllUnits=new List<Unit>();
+    Dictionary<UnitType, UserUnitTypeCount> unitCounts=new Dictionary<UnitType, UserUnitTypeCount>();
 
     public void AddUnit(Unit toAdd)
     {
+        if (toAdd.MyFaction.MyFactionID == FactionController.USER_FACTION)
+        {
+            IncreaseUnitCount(toAdd);
+        }
         AllUnits.Add(toAdd);
 
     }
 
+    void IncreaseUnitCount(Unit toAdd)
+    {
+        if(!unitCounts.ContainsKey(toAdd.MyType))
+        {
+            unitCounts.Add(toAdd.MyType, new UserUnitTypeCount(toAdd.MyType));
+        }
+        unitCounts[toAdd.MyType].Count++;
+        OnUnitCountsChanged();
+
+    }
+
+    void DecreaseUnitCount(Unit toRemove)
+    {
+        if (!unitCounts.ContainsKey(toRemove.MyType))
+        {
+            unitCounts.Add(toRemove.MyType, new UserUnitTypeCount(toRemove.MyType));
+        }
+        unitCounts[toRemove.MyType].Count--;
+        OnUnitCountsChanged();
+    }
+
+    void OnUnitCountsChanged()
+    {
+        foreach(KeyValuePair<UnitType, UserUnitTypeCount > KeyValuePair in unitCounts)
+        {
+            UnitPopulationUI.Instance.UpdateDisplay(KeyValuePair.Value);
+        }
+    }
+
     public void RemoveUnit(Unit toRemove) 
     {
+        if (toRemove.MyFaction.MyFactionID == FactionController.USER_FACTION)
+        {
+            DecreaseUnitCount(toRemove);
+        }
         AllUnits.Remove(toRemove);
     }
 
@@ -81,5 +119,17 @@ public class UnitMoniter : MonoBehaviour
         }
 
         return units;
+    }
+}
+
+public class UserUnitTypeCount
+{
+    public UnitType Type;
+    public int Count;
+
+    public UserUnitTypeCount(UnitType type)
+    {
+        Type = type;
+        Count = 0;
     }
 }
