@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a6791021c6248d64d958d393374258c1, type: 3}
-  m_Name: BarracksValidityData
+  m_Name: Workshop
   m_EditorClassIdentifier: 
-  TypeToCheckFor: 1
+  TypeToCheckFor: 4
   ValidityObjects:
-  - ObjectKey: Weapon Locker
+  - ObjectKey: Workbench
     OptionalKeys: []
     ValidityType: 1
     Quantity: 1

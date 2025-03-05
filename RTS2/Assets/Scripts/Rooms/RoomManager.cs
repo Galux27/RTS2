@@ -74,6 +74,7 @@ public class RoomManager : MonoBehaviour
 
     public void DeleteSelected()
     {
+        SelectedRoom.OnRoomDelete();
         roomList.Remove(SelectedRoom);
         RoomDrawrer.Instance.OnDestroyRoom(SelectedRoom);
         SelectedRoom = null;
@@ -82,10 +83,13 @@ public class RoomManager : MonoBehaviour
 
     public void OnConstructableCreated(Vector2Int coords, ConstructableObjectInstance Created)
     {
-        for(int x=0;x< roomList.Count;x++)
+        Debug.Log("trying to Constructable added to room at " + coords);
+
+        for (int x=0;x< roomList.Count;x++)
         {
             if (roomList[x].DoesRoomContainPosition(coords))
             {
+                Debug.Log("Constructable added to room at " + coords + "|" + roomList[x].roomType);
                 roomList[x].OnObjectAddedToRoom(Created);
                 roomList[x].RefreshRoom();
             }

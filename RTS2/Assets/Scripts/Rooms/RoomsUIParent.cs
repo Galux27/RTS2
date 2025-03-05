@@ -45,6 +45,7 @@ public class RoomsUIParent : MonoBehaviour
         TypeOptions.Add(RoomUseType.Barracks.ToString());
         TypeOptions.Add(RoomUseType.Warehouse.ToString());
         TypeOptions.Add(RoomUseType.Dwelling.ToString());
+        TypeOptions.Add(RoomUseType.Workshop.ToString());
 
         RoomType.AddOptions(TypeOptions);
         RoomType.onValueChanged.AddListener(OnRoomTypeChange);
@@ -101,7 +102,7 @@ public class RoomsUIParent : MonoBehaviour
         RoomDrawrer.Instance.RenderAllRooms();
         RefreshUI(r);
     }
-
+    //create room first then adding furniture doesn't update contents of room
     void RefreshUI(Room r)
     {
         if (r == RoomManager.Instance.SelectedRoom)
@@ -109,6 +110,7 @@ public class RoomsUIParent : MonoBehaviour
             RoomName.text = r.roomName;
             RoomDetails.text = r.GetDetailsForRoom();
             IsValid.text = r.GetValidityDetailsForRoom(r);
+            RoomType.SetValueWithoutNotify((int)r.roomType);
             RoomDrawrer.Instance.CleanupRoom(r);
             RoomDrawrer.Instance.RenderRoom(r);
         }

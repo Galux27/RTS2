@@ -31,6 +31,18 @@ public class UnitMoniter : MonoBehaviour
 
     }
 
+    public int GetTotalUnitCount()
+    {
+        int retVal = 0;
+
+        foreach(KeyValuePair<UnitType,UserUnitTypeCount> kvp in unitCounts)
+        {
+            retVal += kvp.Value.Count;
+        }
+
+        return retVal;
+    }
+
     void IncreaseUnitCount(Unit toAdd)
     {
         if(!unitCounts.ContainsKey(toAdd.MyType))
@@ -52,7 +64,7 @@ public class UnitMoniter : MonoBehaviour
         OnUnitCountsChanged();
     }
 
-    void OnUnitCountsChanged()
+    public void OnUnitCountsChanged()
     {
         foreach(KeyValuePair<UnitType, UserUnitTypeCount > KeyValuePair in unitCounts)
         {

@@ -8,7 +8,19 @@ public class Room
     public string roomName = "";
     public Color displayColour;
     public List<Vector2Int> tilesInRoom = new List<Vector2Int>();
-    public RoomUseType roomType;
+    RoomUseType roomUseType;
+    public RoomUseType roomType
+    {
+        get
+        {
+            return roomUseType;
+        }
+        set
+        {
+            roomUseType = value;
+            RefreshRoom();
+        }
+    }
     public List<Vector2Int> EdgeTiles,InvalidEdge;
     public static Action<Room> OnRoomChanged;
 
@@ -80,15 +92,27 @@ public class Room
 
     void CheckForConstructablesNoLongerInRoom(List<Vector2Int> tilesInRoom)
     {
+        Debug.Log("Checking for objects not in room pre" + tilesInRoom.Count+"|"+ObjectsInRoom.Count);
+        string coords = "";
+        for(int x=0;x<tilesInRoom.Count;x++)
+        {
+            coords += tilesInRoom[x].ToString() + ",";
+        }
+        Debug.Log("Checking for objects not in room coords " + coords);
+
         List<ConstructableObjectInstance> newObjectsInRoom = new List<ConstructableObjectInstance>();
         for (int y = 0; y < ObjectsInRoom.Count; y++)
         {
+            Debug.Log("Checking for objects not in room coords" + ObjectsInRoom[y].coords);
             if (tilesInRoom.Contains(ObjectsInRoom[y].coords)==false)
             {
                 newObjectsInRoom.Add(ObjectsInRoom[y] );
             }
         }
-       
+        ObjectsInRoom = newObjectsInRoom;
+        Debug.Log("Checking for objects not in room post" + tilesInRoom.Count + "|" + ObjectsInRoom.Count);
+
+
     }
 
     public string GetDetailsForRoom()
@@ -139,9 +163,16 @@ public class Room
     }
 
 
+    public void OnRoomDelete()
+    {
+        RemoveTiles(tilesInRoom);
+    }
+
+
     public void RefreshRoom()
     {
         SetCanUseRoom(DoesRoomHaveNeededObjects());
+        UnitCapacityManager.RefreshCapacities();
     }
 }
 
@@ -150,6 +181,7 @@ public enum RoomUseType
     None,
     Barracks,
     Warehouse,
-    Dwelling
+    Dwelling,
+    Workshop
 }
 
