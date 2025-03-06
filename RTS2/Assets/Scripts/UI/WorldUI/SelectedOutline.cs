@@ -46,6 +46,8 @@ public class SelectedOutline : MonoBehaviour
     {
         this.transform.parent = null;
         parent = null;
+       
         SelectedOutlineManager.Instance.OnDeselectObject(this.gameObject);
+       
     }
 }

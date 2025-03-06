@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// UI script for the inventory UI screen
 /// </summary>
-public class InventoryParentUI : MonoBehaviour
+public class InventoryParentUI :BaseUI
 {
     static InventoryParentUI instance;
     public static InventoryParentUI Instance
@@ -30,6 +30,14 @@ public class InventoryParentUI : MonoBehaviour
     {
         closeUI.onClick.AddListener(CloseUI);
         CombinedInventory.Instance.RefreshInventoriesSelected();
+    }
+
+    public override void RefreshUI()
+    {
+        if (SelectedParent.gameObject.activeInHierarchy)
+        {
+            PopulateSelectedInventoryUI();
+        }
     }
 
     public void PopulateUI(Inventory toDisplay)

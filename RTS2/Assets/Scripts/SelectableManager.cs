@@ -58,7 +58,7 @@ public class SelectableManager : MonoBehaviour
             CurrentlySelected.Remove(toRemove);
             toRemove.SetIsSelected(false);
         }
-
+        OnSelectionChanged?.Invoke();
     }
 
     public void SetToOnlySelected(Selectable toSet)

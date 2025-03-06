@@ -14,19 +14,24 @@ public class WorldChunk
     public List<Inventory> StaticContainersInChunk = new List<Inventory>();
     public List<Constructable> ToBuild=new List<Constructable>();
     public Color DebugColor;
-
-    public WorldChunk()
+    public int X, Y;
+    public WorldChunk(int x,int y)
     {
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
+        X = x;
+        Y = y;
     }
 
     public void AddUnitToChunk(Unit unit)
     {
         UnitsInChunk.Add(unit);
+        Debug.Log("Unit at " + unit.transform.position+"("+unit.gameObject.name+")" + " added to " + X + "," + Y);
     }
 
     public void RemoveUnitFromChunk(Unit unit)
     {
+        Debug.Log("Unit at " + unit.transform.position + "(" + unit.gameObject.name + ")" + " removed from " + X + "," + Y+"|"+UnitsInChunk.Contains(unit));
+
         UnitsInChunk.Remove(unit);
     }
 

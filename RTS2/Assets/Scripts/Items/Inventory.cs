@@ -50,13 +50,22 @@ public class Inventory : MonoBehaviour, Storage
                 return true;
             }
         }
-            return false;
+        return false;
     }
 
     public List<InventoryObject> ObjectsInInventory = new List<InventoryObject>();
     public float InventoryCapacity;
     float CurrentItemsWeight = 0;
     public ItemFilter Filter;
+
+    public void CopyItemsIntoOtherInventory(ref Inventory toAddTo)
+    {
+        for(int x=0;x<ObjectsInInventory.Count;x++)
+        {
+            toAddTo.AddItemToInventory(ObjectsInInventory[x]);
+        }
+    }
+
     public void AddItemToInventory(InventoryObject inventoryObject)
     {
         if (Filter != null && Filter.ItemCanPass(inventoryObject.Name()) == false)

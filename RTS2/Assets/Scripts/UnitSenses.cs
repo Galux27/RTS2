@@ -16,4 +16,12 @@ public class UnitSenses : MonoBehaviour
     {
         return Hearing;
     }
+
+    public void CopyToNewSenses(ref UnitSenses newSenses)
+    {
+        newSenses.Sight = Sight;
+        newSenses.Hearing = Hearing;
+        newSenses.Intelligence= Intelligence;
+        newSenses.Dexterity = Dexterity;
+    }
 }

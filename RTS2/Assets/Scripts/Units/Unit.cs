@@ -92,7 +92,8 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
     }
 
 
-    void OnDeath()
+
+    public void OnDeath()
     {
         OnObjectDeselected();
         UnitMoniter.Instance.RemoveUnit(this);
@@ -102,9 +103,17 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
 
     public void OnObjectDeselected()
     {
-        this.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
+
+        if (this!=null)
+        {
+            if (SelectableManager.Instance.CurrentlySelected.Contains(this))
+            {
+                SelectableManager.Instance.RemoveSelectable(this);
+            }
+            this.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
+        }
     }
-    public void OnObjectSelected()
+        public void OnObjectSelected()
     {
         SelectedOutlineManager.Instance.OnSelectObject(this.gameObject);
     }

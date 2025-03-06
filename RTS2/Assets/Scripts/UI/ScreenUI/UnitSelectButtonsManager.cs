@@ -67,6 +67,9 @@ public class UnitSelectButtonsManager : BaseUI
                 }
             }
         }
-
+        else
+        {
+            this.gameObject.SetActive(false);
+        }
     }
 }

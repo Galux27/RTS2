@@ -35,7 +35,7 @@ public class WorldChunkManager : MonoBehaviour
         {
             for (int y = 0; y< Chunks.GetLength(1); y++)
             {
-                Chunks[x,y] = new WorldChunk();
+                Chunks[x,y] = new WorldChunk(x,y);
             }
         }
         Height = Chunks.GetLength(1);
@@ -115,8 +115,14 @@ public class WorldChunkManager : MonoBehaviour
                 Vector3 Center = new Vector3(x * ChunkSize, y * ChunkSize, 0);
                 for(int z = 0; z < Chunks[x,y].UnitsInChunk.Count; z++)
                 {
-                    Debug.DrawLine(Center, Chunks[x, y].UnitsInChunk[z].transform.position, Chunks[x, y].DebugColor);
-
+                    try
+                    {
+                        Debug.DrawLine(Center, Chunks[x, y].UnitsInChunk[z].transform.position, Chunks[x, y].DebugColor);
+                    }
+                    catch
+                    {
+                        Debug.LogError("Error drawing chunk units in chunk " + x + "," + y);
+                    }
 
 
                 }
