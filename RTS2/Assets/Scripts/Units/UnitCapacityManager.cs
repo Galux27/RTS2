@@ -21,19 +21,36 @@ public static class UnitCapacityManager
     {
         switch (toUpdate.Type)
         {
-            case UnitType.Human: 
+            case UnitType.Civilian: 
                 return TotalCapacity - (EngineerCapacity + SoldierCapacity);
                 break;
             case UnitType.Rifleman:
                 return SoldierCapacity;
                 break;
-            case UnitType.Engineer: return EngineerCapacity;
+            case UnitType.Engineer: 
+                return EngineerCapacity;
                 break;
         
         }
         return 0;
     }
+    public static int GetMaxCapacityForUnitType(string toUpdate)
+    {
+        switch (toUpdate)
+        {
+            case "Civilian":
+                return TotalCapacity - (EngineerCapacity + SoldierCapacity);
+                break;
+            case "Rifleman":
+                return SoldierCapacity;
+                break;
+            case "Engineer":
+                return EngineerCapacity;
+                break;
 
+        }
+        return 0;
+    }
     static Dictionary<string, int> PopulationCapacityObjects = new Dictionary<string, int> {
         { "Bunk Bed", 2}
     };
@@ -84,6 +101,7 @@ public static class UnitCapacityManager
             }
         }
         EngineerCapacity = count;
+        Debug.Log("Convert: engineer " + EngineerCapacity);
     }
     public static void RefreshSoldierCapacity()
     {
@@ -104,6 +122,8 @@ public static class UnitCapacityManager
             }
         }
         SoldierCapacity = count;
+        Debug.Log("Convert: soldier " + SoldierCapacity);
+
     }
 
 

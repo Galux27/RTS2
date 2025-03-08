@@ -41,4 +41,16 @@ public static class UnitTrainingHelpers
 
         //copy behaviour?
     }
+
+    public static bool IsRoomRightToTrainUnit(string type,RoomUseType roomUse)
+    {
+        if (type == "Rifleman")
+        {
+            return roomUse == RoomUseType.Barracks;
+        }else if (type == "Engineer")
+        {
+            return roomUse == RoomUseType.Workshop;
+        }
+        return false;
+    }
 }

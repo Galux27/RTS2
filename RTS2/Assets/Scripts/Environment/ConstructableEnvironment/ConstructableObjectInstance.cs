@@ -10,6 +10,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     public ConstructableObjectInstance(int x,int y,string envObj):base(x,y,envObj)
     {
         EventManager.Instance.OnConstructableObjectCreated(coords, this);
+        UnitCapacityManager.RefreshCapacities();
     }
 
 

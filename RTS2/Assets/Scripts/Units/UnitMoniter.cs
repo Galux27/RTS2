@@ -22,6 +22,36 @@ public class UnitMoniter : MonoBehaviour
     public List<Unit> AllUnits=new List<Unit>();
     Dictionary<UnitType, UserUnitTypeCount> unitCounts=new Dictionary<UnitType, UserUnitTypeCount>();
 
+    public int GetUserUnitCount(string type)
+    {
+        if (type == "Rifleman")
+        {
+            if (unitCounts.ContainsKey(UnitType.Rifleman))
+            {
+                return unitCounts[UnitType.Rifleman].Count;
+            }
+            return 0;
+            }
+        else if (type == "Engineer")
+        {
+            if (unitCounts.ContainsKey(UnitType.Engineer))
+            {
+                return unitCounts[UnitType.Engineer].Count;
+            }
+            return 0;
+        }
+        else if (type == "Civilian")
+        {
+
+            if (unitCounts.ContainsKey(UnitType.Civilian))
+            {
+                return unitCounts[UnitType.Civilian].Count;
+            }
+            return 0;
+        }
+        return 99999999;
+    }
+
     public void AddUnit(Unit toAdd)
     {
         if (toAdd.MyFaction.MyFactionID == FactionController.USER_FACTION)
@@ -49,6 +79,7 @@ public class UnitMoniter : MonoBehaviour
         if(!unitCounts.ContainsKey(toAdd.MyType))
         {
             unitCounts.Add(toAdd.MyType, new UserUnitTypeCount(toAdd.MyType));
+            
         }
         unitCounts[toAdd.MyType].Count++;
         OnUnitCountsChanged();
@@ -75,7 +106,7 @@ public class UnitMoniter : MonoBehaviour
 
     public void RemoveUnit(Unit toRemove) 
     {
-        if (toRemove.MyFaction.MyFactionID == FactionController.USER_FACTION)
+        if (toRemove.MyFaction.MyFactionID == FactionController.USER_FACTION&&AllUnits.Contains(toRemove))
         {
             DecreaseUnitCount(toRemove);
         }

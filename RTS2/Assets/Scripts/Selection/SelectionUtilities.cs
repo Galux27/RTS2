@@ -215,6 +215,44 @@ public static class SelectionUtilities
         return constructableObjectCache;
     }
 
+    static List<ConstructableObjectInstance> constructableObjectInstances=new List<ConstructableObjectInstance>();
+    public static ConstructableObjectInstance GetConstructedObjectsInRange(Vector3 point,float maxDist)
+    {
+        constructableObjectInstances.Clear();
+        point.z = 0;
+        ConstructableObjectInstance retVal = null;
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
+
+        for (int x = 0; x < chunksToCheck.Count; x++)
+        {
+            for (int y = 0; y < chunksToCheck[x].EnvironmentObjectsInChunk.Count; y++)
+            {
+                if (chunksToCheck[x].EnvironmentObjectsInChunk[y].GetType() == typeof(ConstructableObjectInstance))
+                {
+                    constructableObjectInstances.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y] as ConstructableObjectInstance);
+                }
+            }
+        }
+
+
+        float closest = 99999f;
+        float curDist = -1f;
+        Vector3 objPosition = Vector3.zero;
+
+        for (int x = 0; x < constructableObjectCache.Count; x++)
+        {
+            objPosition = constructableObjectCache[x].GetPosition();
+            curDist = Vector3.Distance(point, objPosition);
+
+            if (curDist < maxDist && curDist < closest)
+            {
+                retVal = constructableObjectInstances[x];
+                closest = curDist;
+            }
+
+        }
+        return retVal;
+    }
 
 
     static List<EnvironmentObjectInstance> harvestableObjectCache = new List<EnvironmentObjectInstance>();

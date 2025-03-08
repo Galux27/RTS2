@@ -87,6 +87,32 @@ public class Units_SelectionMode : SelectionMode
                   //  DoneCommand = true;
                 }
 
+                if (OnHoverConstructable != null)
+                {
+                    string convertToType = "";
+                    if (UnitTypesController.Instance.CanConvertUnitsWithObject(OnHoverConstructable, ref convertToType))
+                    {
+                        List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                        Action Convert = () =>
+                        {
+                            for (int x = 0; x < currentlySelected.Count; x++)
+                            {
+                                Unit toPerfrom = (Unit)currentlySelected[x];
+                                BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                HumanBehaviour_ChangeUnitType change = new HumanBehaviour_ChangeUnitType();
+                                change.InitBehaviour(toPerfrom, OnHoverConstructable, convertToType);
+                                //CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                                // collect.InitBehaviour(toPerfrom, toHarvest);
+                                br.SetBehaviour(change);
+
+                            }
+                        };
+                        GameAction ga = new GameAction("Convert to " + convertToType, Convert);
+                        GameActionController.Instance.AddAction(ga);
+                    }
+                }
+
+
 
                 if (OnHoverBuildable != null)
                 {
@@ -157,7 +183,7 @@ public class Units_SelectionMode : SelectionMode
                     GameActionController.Instance.AddAction(ga);
                 }
 
-
+              
                 if (OnHoverInventory != null)
                 {
                     Action Gather = () =>
@@ -189,6 +215,8 @@ public class Units_SelectionMode : SelectionMode
                     GameAction tr = new GameAction("Transfer Items", transfer);
                     GameActionController.Instance.AddAction(tr);
                 }
+
+
 
                 {
                     hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.CursorLayermask);
@@ -258,7 +286,6 @@ public class Units_SelectionMode : SelectionMode
         if (OnHoverEnemyUnit != null)
         {
             CursorIcon.Instance.SetAttackIcon();
-            return;
         }
 
         OnHoverHarvestable = SelectionUtilities.GetHarvestableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
@@ -266,28 +293,29 @@ public class Units_SelectionMode : SelectionMode
         if (OnHoverHarvestable != null)
         {
             CursorIcon.Instance.SetBuildIcon();
-            return;
         }
 
         OnHoverResource = SelectionUtilities.GetResourceInstanceObjectInstanceWithinRangeOfPoint(r.origin, 1f);
         if (OnHoverResource != null)
         {
             CursorIcon.Instance.SetBuildIcon();
-            return;
         }
         OnHoverInventory = SelectionUtilities.GetInventoryObjectWithinRangeOfPoint(r.origin, 1f);
         if (OnHoverInventory != null)
         {
             CursorIcon.Instance.SetMoveIcon();
-            return;
         }
         OnHoverBuildable = SelectionUtilities.GetConstructableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
         if (OnHoverBuildable != null)
         {
             CursorIcon.Instance.SetMoveIcon();
-            return;
         }
-
+        OnHoverConstructable = SelectionUtilities.GetConstructedObjectInRangeOfPoint(r.origin, 1f);
+        if (OnHoverConstructable != null)
+        {
+            Debug.Log("Found constructed object " + OnHoverConstructable.Name());
+            CursorIcon.Instance.SetBuildIcon();
+        }
        
 
       

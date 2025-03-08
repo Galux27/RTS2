@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UnitTypesController : MonoBehaviour
@@ -36,6 +37,60 @@ public class UnitTypesController : MonoBehaviour
                 UnitKeys.Add(i.UnitType);
             }
         }
+    }
+
+
+    public bool CanConvertUnitsWithObject(ConstructableObjectInstance objectFound,ref string typeCanConvertTo)
+    {
+        bool isConversionType = false;
+        foreach(KeyValuePair<string,UnitTypeSO> kvp in Units)
+        {
+            if (kvp.Value.ObjectsToTrainFrom.Contains(objectFound.Name()))
+            {
+                typeCanConvertTo = kvp.Value.UnitType;
+                isConversionType = true;
+            }
+        }
+
+        if (!isConversionType)
+        {
+            Debug.Log("convert: wrong type");
+
+            return false;
+        }
+
+        bool hasCapacity = false;
+
+
+       int capacity = UnitCapacityManager.GetMaxCapacityForUnitType(typeCanConvertTo);
+        hasCapacity = capacity > UnitMoniter.Instance.GetUserUnitCount(typeCanConvertTo);
+
+        if (!hasCapacity)
+        {
+            Debug.Log("convert: no capacity");
+            return false;
+        }
+
+
+
+        bool isInRoom = false;
+
+        for(int x=0;x< RoomManager.Instance.roomList.Count; x++)
+        {
+            if (RoomManager.Instance.roomList[x].ObjectsInRoom.Contains(objectFound) && UnitTrainingHelpers.IsRoomRightToTrainUnit(typeCanConvertTo, RoomManager.Instance.roomList[x].roomType))
+            {
+                isInRoom = true;
+            }
+        }
+
+        if (!isInRoom)
+        {
+            Debug.Log("convert: not in room");
+
+            return false;
+        }
+
+        return true;
     }
 
     private void Update()
