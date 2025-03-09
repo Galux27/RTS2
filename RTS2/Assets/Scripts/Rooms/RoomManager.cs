@@ -89,7 +89,7 @@ public class RoomManager : MonoBehaviour
         {
             if (roomList[x].DoesRoomContainPosition(coords))
             {
-                Debug.Log("Constructable added to room at " + coords + "|" + roomList[x].roomType);
+                Debug.Log("invalid: Constructable added to room at " + coords + "|" + roomList[x].roomType);
                 roomList[x].OnObjectAddedToRoom(Created);
                 roomList[x].RefreshRoom();
             }

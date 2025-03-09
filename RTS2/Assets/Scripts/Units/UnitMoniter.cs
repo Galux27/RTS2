@@ -13,11 +13,21 @@ public class UnitMoniter : MonoBehaviour
             if(instance == null)
             {
                 instance = FindObjectOfType<UnitMoniter>();
+                instance.Init();
             }
             return instance; 
         }
 
     }
+
+    void Init()
+    {
+        unitCounts.Add(UnitType.Engineer,new UserUnitTypeCount(UnitType.Engineer));
+        unitCounts.Add(UnitType.Rifleman, new UserUnitTypeCount(UnitType.Rifleman));
+        unitCounts.Add(UnitType.Civilian, new UserUnitTypeCount(UnitType.Civilian));
+
+    }
+
 
     public List<Unit> AllUnits=new List<Unit>();
     Dictionary<UnitType, UserUnitTypeCount> unitCounts=new Dictionary<UnitType, UserUnitTypeCount>();
@@ -73,6 +83,8 @@ public class UnitMoniter : MonoBehaviour
 
         return retVal;
     }
+
+
 
     void IncreaseUnitCount(Unit toAdd)
     {

@@ -159,6 +159,7 @@ public class Room
 
     public void OnObjectAddedToRoom(ConstructableObjectInstance obj)
     {
+        Debug.Log("Invalid: added object to room"+obj.Name());
         ObjectsInRoom.Add(obj);
     }
 

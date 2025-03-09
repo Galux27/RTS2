@@ -198,27 +198,35 @@ public class RoomUtils
 
     public static bool DoesRoomContainObject(Room r,string objectToFind,out int quantity)
     {
-        
         quantity = 0;
-        Vector2Int coords = Vector2Int.zero;
-        List<EnvironmentObjectInstance> objects = new List<EnvironmentObjectInstance>();
-        EnvironmentObjectInstance instance = null;
-        for(int x = 0; x < r.tilesInRoom.Count; x++)
+        for(int x = 0; x < r.ObjectsInRoom.Count; x++)
         {
-           coords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(r.tilesInRoom[x]);
-            Debug.Log("Room: checking chunk " + coords + " for " + objectToFind);
-            WorldChunkManager.Instance.Chunks[coords.x, coords.y].DoesObjectExistAtCoords(r.tilesInRoom[x],objectToFind,out instance);
-            if (instance != null && objects.Contains(instance) == false)
+            if (r.ObjectsInRoom[x].Name() == objectToFind)
             {
-                objects.Add(instance);
+                quantity++;
             }
         }
-        if(objects.Count > 0)
-        {
-            quantity = objects.Count;
-            return true;
-        }
+        return quantity > 0;
+        //quantity = 0;
+        //Vector2Int coords = Vector2Int.zero;
+        //List<EnvironmentObjectInstance> objects = new List<EnvironmentObjectInstance>();
+        //EnvironmentObjectInstance instance = null;
+        //for(int x = 0; x < r.tilesInRoom.Count; x++)
+        //{
+        //   coords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(r.tilesInRoom[x]);
+        //    Debug.Log("Room: checking chunk " + coords + " for " + objectToFind);
+        //    WorldChunkManager.Instance.Chunks[coords.x, coords.y].DoesObjectExistAtCoords(r.tilesInRoom[x],objectToFind,out instance);
+        //    if (instance != null && objects.Contains(instance) == false)
+        //    {
+        //        objects.Add(instance);
+        //    }
+        //}
+        //if(objects.Count > 0)
+        //{
+        //    quantity = objects.Count;
+        //    return true;
+        //}
 
-        return false;
+        //return false;
     }
 }

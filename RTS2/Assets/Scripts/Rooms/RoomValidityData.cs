@@ -25,12 +25,15 @@ public class RoomValidityData : ScriptableObject
             {
                 if (quantity == 0)
                 {
+                    Debug.Log("Invalid: room invalid due to not having object " + ValidityObjects[x].ObjectKey+"|"+quantity+"|"+contains+"|"+r.ObjectsInRoom.Count);
                     return false;
                 }
 
             }
             else if (ValidityObjects[x].ValidityType == ValidityType.NeedObjectAndNeedsQuantity && quantity < ValidityObjects[x].Quantity)
             {
+                Debug.Log("Invalid: room invalid due to not having enough of object " + ValidityObjects[x].ObjectKey + "|"+quantity+"/"+ ValidityObjects[x].Quantity);
+
                 return false;
 
             }
@@ -48,6 +51,8 @@ public class RoomValidityData : ScriptableObject
                 }
                 if (hasOne == false)
                 {
+                    Debug.Log("Invalid: room invalid due to it not having any of one");
+
                     return false;
                 }
             }
