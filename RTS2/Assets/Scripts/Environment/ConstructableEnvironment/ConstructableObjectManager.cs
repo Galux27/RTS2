@@ -101,16 +101,13 @@ public class ConstructableObjectManager : MonoBehaviour
         }
         ConstructableObject selectedToConstruct = AllObjects[toConstruct];
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
-        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name));
+        ConstructableObjectInstance instance = new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name);
+        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(instance);
         Debug.Log("Room: creating object from construction at " + selectedToConstruct.name+" at " + coords.ToString()+" chunk " + chunk.ToString());
-        
-        for (int x = coords.x; x < coords.x + selectedToConstruct.Width; x++)
-        {
-            for (int y = coords.y; y < coords.y + selectedToConstruct.Height; y++)
-            {
-                WorldController.Instance.SetTraversible(x, y, !AllObjects[toConstruct].BlocksTile);
-            }
-        }
+
+        WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !AllObjects[toConstruct].BlocksTile);
+
+     
 
 
     }

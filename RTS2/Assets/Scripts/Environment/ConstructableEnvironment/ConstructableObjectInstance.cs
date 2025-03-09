@@ -59,6 +59,8 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
                 myBehaviour.OnUpdate();
             }
         }
+        DebugDrawing.Instance.DrawEnvironmentObjectInstance(this);
+
     }
 
 

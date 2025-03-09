@@ -17,8 +17,8 @@ MonoBehaviour:
   SideSprite: {fileID: 21300000, guid: df144bc0f4f75994ab67752666b8d95c, type: 3}
   BackwardsSprite: {fileID: 21300000, guid: df144bc0f4f75994ab67752666b8d95c, type: 3}
   BlocksTile: 1
-  Width: 2
-  Height: 2
+  Width: 4
+  Height: 3
   CanHarvest: 1
   Resources:
     resources:

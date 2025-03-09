@@ -54,7 +54,7 @@ public class WorldController : MonoBehaviour
 
     public Vector2Int ConvertWorldToTileCoords(Vector3 pos)
     {
-        return new Vector2Int(Mathf.RoundToInt(pos.x-.5f), Mathf.RoundToInt(pos.y-.5f));
+        return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
     }
 
     public Vector3Int ConvertWorldToTileCoordsVec3(Vector3 pos)
@@ -62,15 +62,35 @@ public class WorldController : MonoBehaviour
         return new Vector3Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z ));
     }
 
-
-    public void SetTraversible(int x,int y,bool traversable)
+    public void SetTilesAroundEnvrionmentObjectTraversable(EnvironmentObjectInstance toSet, bool traversable)
     {
-        WorldTiles[x, y].traversable = traversable;
-        Pathfinding.UpdateNodeData(x, y, traversable);
+        EnvironmentObject data = EnvironmentObjectManager.Instance.AllObjects[toSet.ObjectKey];
+        
+        Vector2Int coords = toSet.coords;//WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+        
+        Color c = Color.green;
 
+        for (int x = coords.x - data.HalfWidth; x < coords.x + data.HalfWidth; x++)
+        {
+            for (int y = coords.y - data.HalfHeight; y < coords.y + data.HalfHeight; y++)
+            {
+                SetTraversible(x, y, traversable);
+            }
+        }
     }
 
-    public void AddPathfindingModifier(int x,int y, PathNodeModifier toAdd)
+
+     public void SetTraversible(int x,int y,bool traversable)
+    {
+        if (CoordsValid(x, y))
+        {
+            WorldTiles[x, y].traversable = traversable;
+            Pathfinding.UpdateNodeData(x, y, traversable);
+        }
+
+   }
+
+        public void AddPathfindingModifier(int x,int y, PathNodeModifier toAdd)
     {
         Pathfinding.AddPathNodeModifier(x, y, toAdd);
 
@@ -89,7 +109,12 @@ public class WorldController : MonoBehaviour
         OnTileExitAction?.Invoke(coords,unit);
 
     }
-
+    bool CoordsValid(int x,int y)
+    {
+        if (x < 0 || y < 0) return false;
+        if (x > WorldWidth || y > WorldHeight) return false;
+        return true;
+    }
 
     public bool IsTraversible(int x,int y)
     {

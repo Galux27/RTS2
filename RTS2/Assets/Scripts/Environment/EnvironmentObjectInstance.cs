@@ -57,13 +57,18 @@ public class EnvironmentObjectInstance:ObjectInfo
         Object.GetComponent<SpriteRenderer>().sprite = obj.ForwardsSprite;     
         Object.SetActive(true);
         Drawn = true;
+        GameController.Instance.OnUpdate += OnUpdate;
+
     }
 
     public virtual void CleanupInstance()
     {
-        if(!Drawn) { return; }
+
+        if (!Drawn) { return; }
         GameObjectPoolManager.Instance.ReturnObjectToPool(Object,"EnvironmentObject");
         Drawn = false;
+        GameController.Instance.OnUpdate -= OnUpdate;
+
     }
 
     public virtual bool CanHarvest()
@@ -71,6 +76,13 @@ public class EnvironmentObjectInstance:ObjectInfo
         return EnvironmentObjectManager.Instance.AllObjects.ContainsKey(ObjectKey) &&
             EnvironmentObjectManager.Instance.AllObjects[ObjectKey].CanHarvest;
     }
+
+
+    void OnUpdate()
+    {
+        DebugDrawing.Instance.DrawEnvironmentObjectInstance(this);
+    }
+
 
     Timer Timer;
     float harvestTimer = 0;
