@@ -7,7 +7,6 @@ public class ConstructableContainer : ConstructableObject
 {
     public float WeightLimit;
     public ItemFilter Filter;
-
     public override void OnObjectConstructed(GameObject obj)
     {
         Inventory iv = obj.AddComponent<Inventory>();

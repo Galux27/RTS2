@@ -17,6 +17,14 @@ public static class UnitCapacityManager
 
     public static int TotalCapacity = 0, EngineerCapacity = 0, SoldierCapacity = 0;
 
+    public static int GetRemainingCapacityForType(string type)
+    {
+        int max = GetMaxCapacityForUnitType(type);
+        int userHas = UnitMoniter.Instance.GetUserUnitCount(type);
+        return (max - userHas);
+    }
+
+
     public static int GetMaxCapacityForUnitType(UserUnitTypeCount toUpdate)
     {
         Debug.Log("invalid: getting capacity for " + toUpdate.Type.ToString());

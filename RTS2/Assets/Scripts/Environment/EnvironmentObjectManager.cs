@@ -37,11 +37,15 @@ public class EnvironmentObjectManager : MonoBehaviour
         Object[] items = Resources.LoadAll(FilePath);
         for (int x = 0; x < items.Length; x++)
         {
-            EnvironmentObject i = (EnvironmentObject)items[x];
-            if (AllObjects.ContainsKey(i.Name) == false)
+            if ((items[x] as EnvironmentObject) != null)
             {
-                AllObjects.Add(i.Name, i);
-                EnvironmentObjectKeys.Add(i.Name);
+                Debug.Log("Loading env object " + items[x].name);
+                EnvironmentObject i = (EnvironmentObject)items[x];
+                if (AllObjects.ContainsKey(i.Name) == false)
+                {
+                    AllObjects.Add(i.Name, i);
+                    EnvironmentObjectKeys.Add(i.Name);
+                }
             }
         }
     }

@@ -25,6 +25,7 @@ MonoBehaviour:
     HarvestLength: 0
   Cost: 0
   TimeToBuild: 10
+  MyBehaviour: {fileID: 11400000, guid: 3b394cbda0579114cb33f23d267bf263, type: 2}
   WeightLimit: 30
   Filter:
     CheckForForbidden: 0

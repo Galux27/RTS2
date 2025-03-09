@@ -10,9 +10,16 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     public ConstructableObjectInstance(int x,int y,string envObj):base(x,y,envObj)
     {
         EventManager.Instance.OnConstructableObjectCreated(coords, this);
+        if (ConstructableObjectManager.Instance.AllObjects[ObjectKey].MyBehaviour != null)
+        {
+            myBehaviour = ScriptableObject.Instantiate(ConstructableObjectManager.Instance.AllObjects[ObjectKey].MyBehaviour);
+            myBehaviour.myPosition= new Vector3(x,y,0);
+        }
+        GameController.Instance.OnUpdate += OnUpdate;
         UnitCapacityManager.RefreshCapacities();
     }
 
+    EnvironmentObjectBehaviourBase myBehaviour;
 
     public override void RenderInstance()
     {
@@ -43,12 +50,27 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     }
 
+    void OnUpdate()
+    {
+        if(myBehaviour != null)
+        {
+            if (myBehaviour.HasUpdate())
+            {
+                myBehaviour.OnUpdate();
+            }
+        }
+    }
+
+
+
     public GameObject inventoryObject;
 
     public override void CleanupInstance()
     {
        Component.Destroy(Object.GetComponent<ConstructableObjectWorldReference>());
         OnObjectDeselected();
+        GameController.Instance.OnUpdate -= OnUpdate;
+
         base.CleanupInstance();
     }
 
