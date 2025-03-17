@@ -176,6 +176,20 @@ public class WallSegment:Selectable ,ObjectInfo
     {
         return new Vector3(x, y, 0);
     }
+
+   public void AdjustHealth(float value)
+    {
+        HealthVal += value;
+        if (value < 0)
+        {
+            OnDeath();
+        }
+    }
+
+   public void OnDeath()
+    {
+        DestroyWall();
+    }
 }
 
 public enum WallType 

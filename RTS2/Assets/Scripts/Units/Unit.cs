@@ -249,6 +249,18 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
     {
         return this.transform.position;
     }
+
+    void Health.AdjustHealth(float value)
+    {
+        if (value > 0)
+        {
+            MyHealth.IncreaseHealth(value);
+        }
+        else
+        {
+            MyHealth.DecreaseHealth(value);
+        }
+    }
 }
 
 public enum UnitType {

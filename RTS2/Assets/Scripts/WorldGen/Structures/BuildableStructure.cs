@@ -218,5 +218,15 @@ public class BuildableStructure : Constructable,ObjectInfo
     {
         return GetPosition();
     }
+
+    public void AdjustHealth(float value)
+    {
+       
+    }
+
+    public void OnDeath()
+    {
+        
+    }
 }
 

@@ -109,7 +109,7 @@ public class EnvironmentObjectInstance:ObjectInfo
         }
     }
 
-        public Vector3 GetPosition()
+    public Vector3 GetPosition()
     {
         return position;
     }
@@ -152,5 +152,15 @@ public class EnvironmentObjectInstance:ObjectInfo
     public Vector3 Position()
     {
         return position;
+    }
+
+    public void AdjustHealth(float value)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnDeath()
+    {
+        throw new System.NotImplementedException();
     }
 }
