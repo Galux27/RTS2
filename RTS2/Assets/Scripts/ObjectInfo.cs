@@ -9,5 +9,6 @@ public interface ObjectInfo
     public int Quantitiy();
     public float Health();
     public float MaxHealth();
+
     public Vector3 Position();
 }

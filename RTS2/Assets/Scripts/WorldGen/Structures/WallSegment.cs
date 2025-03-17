@@ -13,10 +13,18 @@ public class WallSegment:Selectable ,ObjectInfo
     public bool HasWallUnderConstruction=false;
     public WallType WallType=WallType.None;
     public GameObject Collider;
-    public WallSegment(int x, int y)
+    public float HealthVal, MaxHealthVal;
+    WallTile wallType;
+    public WallSegment(int x, int y,WallTile wallType)
     {
         this.x = x;
         this.y = y;
+        if (wallType != null)
+        {
+            this.HealthVal = wallType.Health;
+            this.MaxHealthVal = HealthVal;
+            this.wallType = wallType;
+        }
     }
 
     public bool HasWall
@@ -33,6 +41,17 @@ public class WallSegment:Selectable ,ObjectInfo
         {
             return WallType == WallType.Door && HasWallUnderConstruction == false;
 
+        }
+    }
+
+    public void SetWallType(WallTile wallType)
+    {
+        if (wallType != null)
+        {
+            this.HealthVal = wallType.Health;
+            this.MaxHealthVal = HealthVal;
+            this.wallType = wallType;
+            
         }
     }
 
@@ -135,7 +154,7 @@ public class WallSegment:Selectable ,ObjectInfo
 
     public string Description()
     {
-        return "";
+        return wallType.WallName + " " + Health() + "/" + MaxHealth() ;
     }
 
     public int Quantitiy()
@@ -145,12 +164,12 @@ public class WallSegment:Selectable ,ObjectInfo
 
     public float Health()
     {
-        return 1f;
+        return HealthVal;
     }
 
     public float MaxHealth()
     {
-        return 1f;
+        return MaxHealthVal;
     }
 
     public Vector3 Position()

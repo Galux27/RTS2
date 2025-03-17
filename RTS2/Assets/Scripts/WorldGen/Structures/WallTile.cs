@@ -19,7 +19,11 @@ public class WallTile :ScriptableObject
 
     //cross
     public Tile Cross;
-    
+
+
+    public string WallName;
+    public float Health;
+   
 }
 
 

@@ -5,6 +5,7 @@ using TMPro;
 using JetBrains.Annotations;
 using System.Xml.Serialization;
 using UnityEditor.Rendering;
+using System;
 
 public class SelectedObjectsUI : BaseUI
 {
@@ -101,6 +102,7 @@ public class SelectedObjectsUI : BaseUI
     {
         dataFromCurrent.Clear();
         ObjectInfo oi = null;
+        InfoDisplay.text = "";
         for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
         {
             oi = (ObjectInfo)SelectableManager.Instance.CurrentlySelected[x];
@@ -148,6 +150,8 @@ public class SelectedObjectsUI : BaseUI
         {
             GameObject instance = Instantiate(ButtonPrefab, ButtonParent);
             instance.GetComponent<SelectedObjectButton>().InitAsSelect(oi);
+
+            InfoDisplay.text += oi.Description() + Environment.NewLine ;
         }
 
 

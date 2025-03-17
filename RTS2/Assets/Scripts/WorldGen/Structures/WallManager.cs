@@ -17,7 +17,7 @@ public class WallManager
         {
             for(int y=0;y< height; y++)
             {
-                WallsInWorld[x,y] = new WallSegment(x,y);
+                WallsInWorld[x,y] = new WallSegment(x,y,null);
             }
         }
         WorldController.Instance.OnTileEnterAction += OnTileEnter;
@@ -68,9 +68,10 @@ public class WallManager
     }
 
 
-    public void SetWall(int x, int y, bool value = true)
+    public void SetWall(int x, int y, WallTile wallTile, bool value = true)
     {
         WallsInWorld[x, y].SetHasWall(value) ;
+        WallsInWorld[x, y].SetWallType(wallTile);
         GenerateWallCollider(x, y);
     }
 
@@ -80,9 +81,9 @@ public class WallManager
         WallsInWorld[x,y].Collider= col;
     }
 
-    public void SetDoor(int x,int y,Tilemap toPlaceOn)
+    public void SetDoor(int x,int y,Tilemap toPlaceOn,WallTile wallType)
     {
-        WallsInWorld[x,y]=new DoorSegment(x,y,toPlaceOn);
+        WallsInWorld[x,y]=new DoorSegment(x,y,toPlaceOn,wallType);
         GenerateWallCollider(x,y);
     }
 
@@ -130,7 +131,7 @@ public class WallManager
     public void RemoveSingleWall(int x, int y, Tilemap toDrawOn, WallTile toUse)
     {
         
-        SetWall(x, y,false);
+        SetWall(x, y,toUse,false);
         WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
 
         toDrawOn.SetTile(new Vector3Int(x, y, 0), null);
@@ -205,7 +206,7 @@ public class WallManager
 
     public void AddSingleDoor(int x,int y,Tilemap toDrawOn, WallTile toUse)
     {
-        SetDoor(x, y,toDrawOn);
+        SetDoor(x, y,toDrawOn,toUse);
         // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
 
         for (int x1 = 0; x1 < width; x1++)
@@ -243,7 +244,7 @@ public class WallManager
 
     public void AddSingleWall(int x,int y,Tilemap toDrawOn,WallTile toUse)
     {
-        SetWall(x, y);
+        SetWall(x, y,toUse);
        // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
 
 
