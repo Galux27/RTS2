@@ -23,8 +23,10 @@ MonoBehaviour:
   Resources:
     resources: []
     HarvestLength: 0
+  MaxHealth: 30
   Cost: 0
   TimeToBuild: 1
+  MyBehaviour: {fileID: 0}
   WeightLimit: 25
   Filter:
     CheckForForbidden: 1

@@ -28,7 +28,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
             return;
         }
 
-        EnvironmentObject obj = ConstructableObjectManager.Instance.AllObjects[ObjectKey];
+        EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey);
         Object = GameObjectPoolManager.Instance.GetObjectFromPool("EnvironmentObject");
         Object.transform.position = new Vector3(PosX, PosY, 0);
         Object.GetComponent<SpriteRenderer>().sprite = obj.ForwardsSprite;
@@ -115,7 +115,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     public Vector3 GetSize()
     {
-        return ConstructableObjectManager.Instance.AllObjects[ObjectKey].Size() ;
+        return EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey).Size() ;
     }
     public bool IsPointInBounds(Vector3 point)
     {
@@ -138,15 +138,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         return 1;
     }
 
-    new public float Health()
-    {
-        return 1f;
-    }
-
-    new public float MaxHealth()
-    {
-        return 1f;
-    }
+ 
 
     new public Vector3 Position()
     {

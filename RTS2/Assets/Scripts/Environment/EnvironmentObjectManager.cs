@@ -69,7 +69,7 @@ public class EnvironmentObjectManager : MonoBehaviour
                 objectToCreate = EnvironmentObjectKeys[Random.Range(0, EnvironmentObjectKeys.Count)];
                 EnvironmentObjectInstance instance = new EnvironmentObjectInstance(x, y, objectToCreate);
                 WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(instance);
-                WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !AllObjects[objectToCreate].BlocksTile);
+                WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !EnvironmentObjectHelpers.GetEnvironmentObject(objectToCreate).BlocksTile);
 
             }
         }
@@ -77,7 +77,7 @@ public class EnvironmentObjectManager : MonoBehaviour
 
     public void OnDestroyEnvironmentObject(EnvironmentObjectInstance obj)
     {
-        WorldController.Instance.SetTraversible(obj.PosX, obj.PosY ,AllObjects[obj.Name()].BlocksTile);
+        WorldController.Instance.SetTraversible(obj.PosX, obj.PosY , EnvironmentObjectHelpers.GetEnvironmentObject(obj.Name()).BlocksTile);
 
     }
 

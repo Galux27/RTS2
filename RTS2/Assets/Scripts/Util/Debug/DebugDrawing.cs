@@ -28,7 +28,11 @@ public class DebugDrawing : MonoBehaviour
 
     public void DrawEnvironmentObjectInstance(EnvironmentObjectInstance toDraw)
     {
-        EnvironmentObject data = EnvironmentObjectManager.Instance.AllObjects[toDraw.ObjectKey];
+        EnvironmentObject data = EnvironmentObjectHelpers.GetEnvironmentObject(toDraw.ObjectKey);
+
+
+      
+
         Vector3 cursorPos = toDraw.Position();
         Vector2Int coords = toDraw.coords;//WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
 

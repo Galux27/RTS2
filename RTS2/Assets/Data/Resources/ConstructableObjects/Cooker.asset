@@ -23,5 +23,7 @@ MonoBehaviour:
   Resources:
     resources: []
     HarvestLength: 0
+  MaxHealth: 30
   Cost: 100
   TimeToBuild: 5
+  MyBehaviour: {fileID: 0}

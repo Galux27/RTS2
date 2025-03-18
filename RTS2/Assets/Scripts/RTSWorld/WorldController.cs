@@ -64,8 +64,8 @@ public class WorldController : MonoBehaviour
 
     public void SetTilesAroundEnvrionmentObjectTraversable(EnvironmentObjectInstance toSet, bool traversable)
     {
-        EnvironmentObject data = EnvironmentObjectManager.Instance.AllObjects[toSet.ObjectKey];
-        
+        EnvironmentObject data = EnvironmentObjectHelpers.GetEnvironmentObject(toSet.ObjectKey);
+       
         Vector2Int coords = toSet.coords;//WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         
         Color c = Color.green;

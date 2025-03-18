@@ -29,3 +29,4 @@ MonoBehaviour:
       QuantityToSpawn: 2
       RangeToSpawn: {x: 2, y: 2, z: 0}
     HarvestLength: 10
+  MaxHealth: 5

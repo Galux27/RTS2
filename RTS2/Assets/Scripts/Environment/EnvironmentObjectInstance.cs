@@ -41,6 +41,8 @@ public class EnvironmentObjectInstance:ObjectInfo
         ObjectKey = envObj;
         position = new Vector3(x, y);
         coords = new Vector2Int(x, y);
+        HealthVal = EnvironmentObjectHelpers.GetEnvironmentObject(envObj).MaxHealth;
+        MaxHealthVal = HealthVal;
     }
 
 
@@ -51,7 +53,7 @@ public class EnvironmentObjectInstance:ObjectInfo
             return;
         }
 
-        EnvironmentObject obj = EnvironmentObjectManager.Instance.AllObjects[ObjectKey];
+        EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey);
         Object = GameObjectPoolManager.Instance.GetObjectFromPool("EnvironmentObject");
         Object.transform.position = new Vector3(PosX, PosY, 0);
         Object.GetComponent<SpriteRenderer>().sprite = obj.ForwardsSprite;     
@@ -95,7 +97,7 @@ public class EnvironmentObjectInstance:ObjectInfo
         }
         if (Timer == null)
         {
-            Timer = new Timer(EnvironmentObjectManager.Instance.AllObjects[ObjectKey].Resources.HarvestLength);
+            Timer = new Timer(EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey).Resources.HarvestLength);
             Timer.CreateProgressBarFromTimer(GetPosition());
             
         }
@@ -103,7 +105,7 @@ public class EnvironmentObjectInstance:ObjectInfo
         
         if (Timer.IsTimerFinished())
         {
-            EnvironmentObjectManager.Instance.AllObjects[ObjectKey].Resources.GenerateResoruces(new Vector3(PosX, PosY, 0));
+            EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey).Resources.GenerateResoruces(new Vector3(PosX, PosY, 0));
             DestroyInstance();
             isHarvested = true;
         }
@@ -120,6 +122,7 @@ public class EnvironmentObjectInstance:ObjectInfo
         {
             CleanupInstance();
         }
+        GameObject.Destroy(healthUI.gameObject);
         myChunk.RemoveEnvironmentObject(this);
         EnvironmentObjectManager.Instance.OnDestroyEnvironmentObject(this);
     }
@@ -138,15 +141,15 @@ public class EnvironmentObjectInstance:ObjectInfo
     {
         return 1;
     }
-
+    float HealthVal,MaxHealthVal;
     public float Health()
     {
-        return 1f;
+        return HealthVal;
     }
 
     public float MaxHealth()
     {
-        return 1f;
+        return MaxHealthVal;
     }
 
     public Vector3 Position()
@@ -156,11 +159,43 @@ public class EnvironmentObjectInstance:ObjectInfo
 
     public void AdjustHealth(float value)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("Updating env health " + value + " cur health " + Health()+"/"+MaxHealth());
+        HealthVal += value;
+        if (HealthVal > MaxHealth())
+        {
+            HealthVal = MaxHealth();
+        }
+        else if (HealthVal < 0)
+        {
+            OnDeath();
+        }
+
+      
+      if (healthUI == null)
+      {
+           DrawHealthUI();
+      }
+      UpdateHealthUI();
+        
     }
+        HealthUI healthUI;
+    void DrawHealthUI()
+    {
+            if (!Drawn)
+            {
+                return;
+            }
+        healthUI = GameObject.Instantiate(WorldspaceUIManager.Instance.WorldspaceHealthBar,Object.transform).GetComponent<HealthUI>();
+       healthUI.LinkToObjectInfo(this);
+    }
+
+        void UpdateHealthUI()
+        {
+            healthUI.UpdateHealth();
+        }
 
     public void OnDeath()
     {
-        throw new System.NotImplementedException();
+        DestroyInstance();
     }
 }
