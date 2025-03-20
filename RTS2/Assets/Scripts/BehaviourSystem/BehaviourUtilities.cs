@@ -34,21 +34,29 @@ public static class BehaviourUtilities
         GetUnitCache.Clear();
         return result;
     }
-    const float MaxDistForNearbyObject = 3f;
+    const float MaxDistForNearbyObject =7f,ObjectCheckDist=20f;
+    static List<EnvironmentObjectInstance> EnvironmentObjectCache=new List<EnvironmentObjectInstance>();
     public static ObjectInfo GetNearbyObjectToAttack(Unit searching,out bool foundSomething)
     {
+        EnvironmentObjectCache.Clear();
         foundSomething = false;
+        List<WorldChunk> chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(ObjectCheckDist, searching.transform.position);
+        List<EnvironmentObjectInstance> allObjects = new List<EnvironmentObjectInstance>();
+        for(int x = 0; x < chunksToCheck.Count; x++)
+        {
+            allObjects.AddRange(chunksToCheck[x].EnvironmentObjectsInChunk);
+        }
+
         Vector2Int chunkImNear = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(searching.transform.position);
-        WorldChunk toCheck= WorldChunkManager.Instance.Chunks[chunkImNear.x, chunkImNear.y];
 
 
         ObjectInfo retVal = null;
         ConstructableObjectInstance constructedObject;
         float dist = 99999999f;
         float dist2 = 0f;
-        for(int x = 0; x < toCheck.EnvironmentObjectsInChunk.Count; x++)
+        for(int x = 0; x < allObjects.Count; x++)
         {
-            constructedObject = toCheck.EnvironmentObjectsInChunk[x] as ConstructableObjectInstance;
+            constructedObject = allObjects[x] as ConstructableObjectInstance;
             if (constructedObject != null)
             {
                 dist2=Vector3.Distance(constructedObject.Position(), searching.transform.position);

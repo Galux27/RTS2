@@ -161,8 +161,8 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
         OnUnitMove();
     }
 
-    Vector2Int lastCoords = new Vector2Int();
- 
+    public Vector2Int lastCoords = new Vector2Int();
+    public Action<Vector2Int> OnEnterNewTile;
     void OnUnitMove()
     {
         Vector2Int coordsCurrent=Pathfinding.GetCoordsFromPosition(this.transform.position);
@@ -172,6 +172,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
             WorldController.Instance.OnTileExit(lastCoords, this);
 
             lastCoords = coordsCurrent;
+            OnEnterNewTile?.Invoke(coordsCurrent);
             WorldController.Instance.OnTileEnter(coordsCurrent, this);
 
         }

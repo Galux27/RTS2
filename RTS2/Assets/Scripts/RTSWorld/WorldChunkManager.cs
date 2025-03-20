@@ -72,7 +72,7 @@ public class WorldChunkManager : MonoBehaviour
 
     private void Update()
     {
-        DebugDrawChunks();
+       // DebugDrawChunks();
     }
 
 

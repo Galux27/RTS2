@@ -122,7 +122,10 @@ public class EnvironmentObjectInstance:ObjectInfo
         {
             CleanupInstance();
         }
-        GameObject.Destroy(healthUI.gameObject);
+        if (healthUI != null)
+        {
+            GameObject.Destroy(healthUI.gameObject);
+        }
         myChunk.RemoveEnvironmentObject(this);
         EnvironmentObjectManager.Instance.OnDestroyEnvironmentObject(this);
     }
@@ -191,7 +194,10 @@ public class EnvironmentObjectInstance:ObjectInfo
 
         void UpdateHealthUI()
         {
+        if (healthUI != null)
+        {
             healthUI.UpdateHealth();
+        }
         }
 
     public void OnDeath()

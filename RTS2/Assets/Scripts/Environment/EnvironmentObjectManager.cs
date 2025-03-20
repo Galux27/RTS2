@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 
@@ -77,8 +78,19 @@ public class EnvironmentObjectManager : MonoBehaviour
 
     public void OnDestroyEnvironmentObject(EnvironmentObjectInstance obj)
     {
-        WorldController.Instance.SetTraversible(obj.PosX, obj.PosY , EnvironmentObjectHelpers.GetEnvironmentObject(obj.Name()).BlocksTile);
+        EnvironmentObject data = EnvironmentObjectHelpers.GetEnvironmentObject(obj.ObjectKey);
 
+        Vector2Int coords = obj.coords;//WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+
+
+
+        for (int x = coords.x - data.HalfWidth; x < coords.x + data.HalfWidth; x++)
+        {
+            for (int y = coords.y - data.HalfHeight; y < coords.y + data.HalfHeight; y++)
+            {
+                WorldController.Instance.SetTraversible(x, y, true);
+            }
+        }
     }
 
     const float DrawEnvironmentObjectRadius = 20f;

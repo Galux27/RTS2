@@ -97,26 +97,30 @@ public class UnitAttackController : MonoBehaviour
         return DirectionToTarget(target.transform.position);
     }
 
-    public void AttemptAttack(ObjectInfo attacking)
+    public void AttemptAttack(ObjectInfo attacking,Vector3 positionOverride = default)
     {
+        if (positionOverride==default)
+        {
+            positionOverride = attacking.Position();
+        }
         if (HasRanged)
         {
             rangedTimer -= DeltaTimeWrapper.GameplayDelta;
-            if (CanRangedAttack(attacking.Position()) && rangedTimer <= 0)
+            if (CanRangedAttack(positionOverride) && rangedTimer <= 0)
             {
                 GameObject g = GameObjectPoolManager.Instance.GetObjectFromPool("Projectile");//Instantiate(RangedProjectile, this.transform.position, Quaternion.identity);
                 g.transform.position = this.transform.position;
                 g.transform.rotation = Quaternion.identity;
                 Projectile p = g.GetComponent<Projectile>();
                 g.SetActive(true);
-                p.SetMomentum(DirectionToTarget(attacking.Position()), 20f, this.GetComponent<Unit>(), 5f);
+                p.SetMomentum(DirectionToTarget(positionOverride), 20f, this.GetComponent<Unit>(), 5f);
                 p.SetCreator(this.GetComponent<Unit>());
 
                 rangedTimer = RangedFireRate;
             }
         }
 
-        if (!CanMeleeAttack(attacking.Position()))
+        if (!CanMeleeAttack(positionOverride))
         {
             attackTimer = AttackRate;
             return;

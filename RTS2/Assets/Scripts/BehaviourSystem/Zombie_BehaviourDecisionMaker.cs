@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
@@ -17,10 +19,35 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
             UnitThatAttacked = attackingUnit;
         }
     }
+    public void OnNewTile(Vector2Int coords)
+    {
+        if (ObjectAttacking == null)
+        {
+            PathfindingNode node = Pathfinding.GetNodeFromCoords(coords);
+            if (node != null)
+            {
+                currentBehaviour = null;
+            }
+        }
+    }
 
 
     void PerformPassiveZombieBehaviour(Unit toCheck)
     {
+        PathfindingNode nodeAtPosition = Pathfinding.GetNodeFromPosition(toCheck.transform.position);
+        if(nodeAtPosition != null)
+        {
+            if (nodeAtPosition.GetPassable(toCheck) == false)
+            {
+                MoveTo_Behaviour moveTo = new MoveTo_Behaviour();
+                moveTo.InitBehaviour(toCheck, Pathfinding.GetNodeFromCoords(toCheck.lastCoords).worldPos);
+                currentBehaviour = moveTo;
+
+            }
+        }
+
+
+
         Unit UnitNearMe = BehaviourUtilities.GetClosestTargetThatsHostile(toCheck, 5f);
        
         if (UnitNearMe != null)
@@ -77,9 +104,18 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
 
     }
 
+    public override void InitBehaviourMaker(Unit performing)
+    {
+        base.InitBehaviourMaker(performing);
+        performing.OnEnterNewTile += OnNewTile;
+    }
 
     public override void PerformBehaivourUpdate(Unit toCheck)
     {
+        if (!init)
+        {
+            InitBehaviourMaker(toCheck);
+        }
         if (UnitThatAttacked == null)
         {
             PerformPassiveZombieBehaviour(toCheck);

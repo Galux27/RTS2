@@ -89,6 +89,16 @@ public static class Pathfinding
         return x>=0&&y>=0&&x<worldWidth&&y<worldHeight;
     }
 
+
+    public static PathfindingNode GetNodeFromCoords(Vector2Int coords)
+    {
+        if (ValidCoords(coords.x, coords.y))
+        {
+            return pathfindingNodes[coords.x,coords.y];
+        }
+        return null;
+    }
+
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null)
     {
         int x= Mathf.RoundToInt(Position.x);
