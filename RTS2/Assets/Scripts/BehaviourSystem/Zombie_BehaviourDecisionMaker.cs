@@ -62,23 +62,32 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
         }
         else
         {
-            ObjectAttacking = BehaviourUtilities.GetNearbyObjectToAttack(toCheck, out gotObjectToAttack);
+            ObjectAttacking = BehaviourUtilities.GetNearbyWallSegmentToAttack(toCheck, out gotObjectToAttack);
             if (gotObjectToAttack)
             {
                 ZombieAttackObject_Behaviour zombieAttackObject_Behaviour = new ZombieAttackObject_Behaviour();
-                zombieAttackObject_Behaviour.InitBehaviour(ObjectAttacking,toCheck);
-                currentBehaviour= zombieAttackObject_Behaviour;
+                zombieAttackObject_Behaviour.InitBehaviour(ObjectAttacking, toCheck);
+                currentBehaviour = zombieAttackObject_Behaviour;
             }
             else
             {
-                if (currentBehaviour == null || currentBehaviour.GetType() != typeof(ZombieRoam_Behaviour))
+                ObjectAttacking = BehaviourUtilities.GetNearbyObjectToAttack(toCheck, out gotObjectToAttack);
+                if (gotObjectToAttack)
                 {
-                    ZombieRoam_Behaviour zombieRoam_Behaviour = new ZombieRoam_Behaviour();
-                    zombieRoam_Behaviour.InitRoamBehaviour((Zombie)toCheck);
-                    currentBehaviour = zombieRoam_Behaviour;
+                    ZombieAttackObject_Behaviour zombieAttackObject_Behaviour = new ZombieAttackObject_Behaviour();
+                    zombieAttackObject_Behaviour.InitBehaviour(ObjectAttacking, toCheck);
+                    currentBehaviour = zombieAttackObject_Behaviour;
+                }
+                else
+                {
+                    if (currentBehaviour == null || currentBehaviour.GetType() != typeof(ZombieRoam_Behaviour))
+                    {
+                        ZombieRoam_Behaviour zombieRoam_Behaviour = new ZombieRoam_Behaviour();
+                        zombieRoam_Behaviour.InitRoamBehaviour((Zombie)toCheck);
+                        currentBehaviour = zombieRoam_Behaviour;
+                    }
                 }
             }
-            
         }
     }
 

@@ -82,7 +82,7 @@ public class EnvironmentObjectInstance:ObjectInfo
 
     void OnUpdate()
     {
-        DebugDrawing.Instance.DrawEnvironmentObjectInstance(this);
+        //DebugDrawing.Instance.DrawEnvironmentObjectInstance(this);
     }
 
 
@@ -192,13 +192,13 @@ public class EnvironmentObjectInstance:ObjectInfo
        healthUI.LinkToObjectInfo(this);
     }
 
-        void UpdateHealthUI()
-        {
+    void UpdateHealthUI()
+    {
         if (healthUI != null)
         {
             healthUI.UpdateHealth();
         }
-        }
+    }
 
     public void OnDeath()
     {

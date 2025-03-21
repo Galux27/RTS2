@@ -60,6 +60,7 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
     public override void PerformBehaviour()
     {
       Debug.DrawLine(unitToMove.transform.position,TargetPosition,Color.red);
+        Debug.Log("Target object health " + targetObject.Health()+"|"+targetObject.MaxHealth()+")");
             if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectionToTarget(),unitToMove))
             {
                 unitToMove.MoveUnit(DirectionToTarget());

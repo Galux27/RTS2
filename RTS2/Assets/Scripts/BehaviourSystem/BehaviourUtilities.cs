@@ -34,6 +34,42 @@ public static class BehaviourUtilities
         GetUnitCache.Clear();
         return result;
     }
+    static List<WallSegment> WallSectionCache = new List<WallSegment>();
+    const int WallCheckRadius = 3;
+    public static WallSegment GetNearbyWallSegmentToAttack(Unit searching,out bool foundSomething)
+    {
+        WallSectionCache.Clear();
+        foundSomething = false;
+        Vector2Int center = WorldController.Instance.ConvertWorldToTileCoords(searching.transform.position);
+        for(int x = center.x - WallCheckRadius; x < center.x + WallCheckRadius; x++)
+        {
+            for (int y = center.y - WallCheckRadius; y< center.y + WallCheckRadius; y++)
+            {
+                if (WorldController.Instance.WallManager.CoordsValid(x, y))
+                {
+                    if (WorldController.Instance.WallManager.WallsInWorld[x,y].WallType!=WallType.None)
+                    {
+                        WallSectionCache.Add(WorldController.Instance.WallManager.WallsInWorld[x, y]);
+                    }
+                }
+            }
+        }
+        WallSegment retVal = null;
+        float dist = 9999999f, dist2 = 0f ;
+        for(int x=0;x<WallSectionCache.Count;x++)
+        {
+            dist2 = Vector3.Distance(WallSectionCache[x].Position(),searching.Position());
+            if(dist2 < dist)
+            {
+                retVal = WallSectionCache[x];
+                dist=dist2;
+                foundSomething = true;
+            }
+        }
+        return retVal;
+    }
+
+
     const float MaxDistForNearbyObject =7f,ObjectCheckDist=20f;
     static List<EnvironmentObjectInstance> EnvironmentObjectCache=new List<EnvironmentObjectInstance>();
     public static ObjectInfo GetNearbyObjectToAttack(Unit searching,out bool foundSomething)

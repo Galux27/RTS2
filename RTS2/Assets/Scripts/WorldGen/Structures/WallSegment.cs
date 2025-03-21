@@ -174,13 +174,14 @@ public class WallSegment:Selectable ,ObjectInfo
 
     public Vector3 Position()
     {
-        return new Vector3(x, y, 0);
+        return new Vector3(x+.5f, y+.5f, 0);
     }
 
    public void AdjustHealth(float value)
     {
         HealthVal += value;
-        if (value < 0)
+        Debug.Log("Wall damage,health at " + HealthVal);
+        if (HealthVal < 0 &&WallType!=WallType.None)
         {
             OnDeath();
         }
@@ -188,7 +189,7 @@ public class WallSegment:Selectable ,ObjectInfo
 
    public void OnDeath()
     {
-        DestroyWall();
+        WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest);
     }
 }
 

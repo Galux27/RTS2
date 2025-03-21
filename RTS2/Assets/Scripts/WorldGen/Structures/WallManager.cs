@@ -132,6 +132,7 @@ public class WallManager
     {
         
         SetWall(x, y,toUse,false);
+        WallsInWorld[x, y].AdjustHealth(-9999);
         WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
 
         toDrawOn.SetTile(new Vector3Int(x, y, 0), null);
@@ -199,7 +200,7 @@ public class WallManager
         return retVal;
     }
 
-    bool CoordsValid(int x,int y)
+   public bool CoordsValid(int x,int y)
     {
         return x>0&&y>0 &&x<width&&y<height;
     }
