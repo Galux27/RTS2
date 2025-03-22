@@ -16,10 +16,15 @@ public class BuildableStructure : Constructable,ObjectInfo
         this.offset = offset;
         this.myType = myType;
         constructOnComplete = toConstruct;
+        Vector2Int coords= WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(new Vector2Int(x,y));
+        WorldChunkManager.Instance.Chunks[coords.x, coords.y].AddConstructable(this);
         if (forceComplete||DebugCheats.Instance.InstantConstruct())
         {
-            Render();
             OnObjectConstructed();
+        }
+        else
+        {
+            Render();
         }
     }
     string constructOnComplete;

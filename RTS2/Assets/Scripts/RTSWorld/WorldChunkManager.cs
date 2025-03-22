@@ -72,7 +72,7 @@ public class WorldChunkManager : MonoBehaviour
 
     private void Update()
     {
-       // DebugDrawChunks();
+        DebugDrawChunks();
     }
 
 
@@ -113,25 +113,49 @@ public class WorldChunkManager : MonoBehaviour
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
                 Vector3 Center = new Vector3(x * ChunkSize, y * ChunkSize, 0);
-                for(int z = 0; z < Chunks[x,y].UnitsInChunk.Count; z++)
-                {
-                    try
-                    {
-                        Debug.DrawLine(Center, Chunks[x, y].UnitsInChunk[z].transform.position, Chunks[x, y].DebugColor);
-                    }
-                    catch
-                    {
-                        Debug.LogError("Error drawing chunk units in chunk " + x + "," + y);
-                    }
+                //for(int z = 0; z < Chunks[x,y].UnitsInChunk.Count; z++)
+                //{
+                //    try
+                //    {
+                //        Debug.DrawLine(Center, Chunks[x, y].UnitsInChunk[z].transform.position, Chunks[x, y].DebugColor);
+                //    }
+                //    catch
+                //    {
+                //        Debug.LogError("Error drawing chunk units in chunk " + x + "," + y);
+                //    }
 
 
-                }
+                //}
 
                 Debug.DrawLine(Center+tl, Center+tr, Chunks[x, y].DebugColor);
                 Debug.DrawLine(Center + tr, Center + br, Chunks[x, y].DebugColor);
                 Debug.DrawLine(Center + br, Center + bl, Chunks[x, y].DebugColor);
                 Debug.DrawLine(Center + tl, Center + bl, Chunks[x, y].DebugColor);
 
+
+                
+            }
+        }
+
+
+
+
+
+        Vector3 pos = Vector3.zero;
+        for(int x = 0; x < Pathfinding.pathfindingNodes.GetLength(0); x++)
+        {
+            for(int y = 0; y < Pathfinding.pathfindingNodes.GetLength(1); y++)
+            {
+                pos = Pathfinding.pathfindingNodes[x, y].worldPos;
+                if (Pathfinding.pathfindingNodes[x,y].IsPassable)
+                {
+                    Debug.DrawLine(pos, pos + (Vector3.up*.5f), Color.green);
+                }
+                else
+                {
+                    Debug.DrawLine(pos, pos + (Vector3.up * .5f), Color.red);
+
+                }
             }
         }
     }

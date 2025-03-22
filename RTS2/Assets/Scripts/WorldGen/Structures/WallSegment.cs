@@ -89,6 +89,7 @@ public class WallSegment:Selectable ,ObjectInfo
     {
         ToDraw = null;
         WallType = WallType.None;
+        Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(Position());
         Pathfinding.UpdateNodeData(x, y, true);
     }
 

@@ -377,8 +377,8 @@ public static class WallHelpers
         Action OnBuilt = () => { WallHelpers.CreateWallObject(x, y, toDrawOn, toUse); };
         WallHelpers.GetWallAtCoords(x, y).SetWallUnderConstruction(true);
         Debug.Log("Adding constructable to " + coords.ToString());
-
-        WorldChunkManager.Instance.Chunks[coords.x,coords.y].AddConstructable(new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Wall, "Wall"));
+        new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Wall, "Wall");
+        //WorldChunkManager.Instance.Chunks[coords.x,coords.y].AddConstructable(bs);
     }
     public static void CreateDoorBuildableStructure(int x, int y, Tilemap toDrawOn, WallTile toUse, Vector3 worldPos, Vector3 offset = default)
     {
@@ -386,7 +386,7 @@ public static class WallHelpers
 
         Action OnBuilt = () => { WallHelpers.CreateDoorObject(x, y, toDrawOn, toUse); };
         WallHelpers.GetWallAtCoords(x, y).SetWallUnderConstruction(true,WallType.Door);
-        WorldChunkManager.Instance.Chunks[coords.x, coords.y].AddConstructable(new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Wall, "Door"));
+        new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Wall, "Door");
     }
     public static void CreateWallObject(int x, int y, Tilemap toDrawOn, WallTile toUse)
     {
