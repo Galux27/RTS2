@@ -36,14 +36,29 @@ public class RadioTower_EnvironemtnObjectBehaviour : EnvironmentObjectBehaviourB
         int yCoord = 0;
         if (Random.Range(0, 100) < 50)
         {
-            xCoord = WorldController.Instance.WorldWidth - 1;
-           
+            if (Random.Range(0, 100) < 50)
+            {
+                xCoord = WorldController.Instance.WorldWidth - 1;
+                yCoord = Random.Range(0, WorldController.Instance.WorldHeight - 1);
+            }
+            else
+            {
+                xCoord = 0;
+                yCoord = Random.Range(0, WorldController.Instance.WorldHeight - 1);
+            }
         }
-
-        if (Random.Range(0, 100) < 50)
+        else
         {
-            yCoord = WorldController.Instance.WorldHeight - 1;
-
+            if (Random.Range(0, 100) < 50)
+            {
+                yCoord = WorldController.Instance.WorldHeight - 1;
+                xCoord = Random.Range(0, WorldController.Instance.WorldWidth - 1);
+            }
+            else
+            {
+                yCoord = 0;
+                xCoord = Random.Range(0, WorldController.Instance.WorldWidth - 1);
+            }
         }
 
         UnitTypeSO civ= UnitTypesController.Instance.Units["Civilian"];

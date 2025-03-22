@@ -64,12 +64,17 @@ public class UnitMoniter : MonoBehaviour
 
     public void AddUnit(Unit toAdd)
     {
-        if (toAdd.MyFaction.MyFactionID == FactionController.USER_FACTION)
-        {
-            IncreaseUnitCount(toAdd);
-        }
+    
+       if (toAdd.MyFaction.MyFactionID == FactionController.USER_FACTION)
+       {
+           IncreaseUnitCount(toAdd);
+       }
+       else if(toAdd.MyFaction.MyFactionID == FactionController.ZOMBIE_FACTION)
+       {
+            ZombieController.Instance.AddZombieToMoniter(toAdd);
+       }
+        
         AllUnits.Add(toAdd);
-
     }
 
     public int GetTotalUnitCount()
