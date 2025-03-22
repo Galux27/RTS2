@@ -170,7 +170,7 @@ public class FurnitureSelectionMode : SelectionMode
             Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
 
             Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
-            WorldController.Instance.WallManager.WallsInWorld[coords.x, coords.y].HasWallUnderConstruction = false;
+           WallHelpers.GetWallAtCoords(coords.x, coords.y).HasWallUnderConstruction = false;
             WorldChunkManager.Instance.Chunks[v.x, v.y].RemoveConstructable(ConstructableHoveringOver);
         }
     }

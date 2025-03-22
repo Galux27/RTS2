@@ -15,23 +15,44 @@ public class WorldChunk
     public List<Constructable> ToBuild=new List<Constructable>();
     public Color DebugColor;
     public int X, Y;
+    public WallSegment[,] WallSegments;
+    public Vector2Int WorldCoords;
     public WorldChunk(int x,int y)
     {
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
         X = x;
         Y = y;
+        WorldCoords=new Vector2Int(x* WorldChunkManager.ChunkSize, y* WorldChunkManager.ChunkSize);
+        GenerateWallsForChunk();
+    }
+
+
+    void GenerateWallsForChunk()
+    {
+        WallSegments = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        int xStart = WorldChunkManager.ChunkSize *X;
+        int yStart = WorldChunkManager.ChunkSize*Y;
+        int localx = 0, localy = 0;
+        for(int x=xStart; x<xStart+WorldChunkManager.ChunkSize; x++)
+        {
+           
+            for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
+            {
+                WallSegments[localx, localy] = new WallSegment(x, y, null);
+                localy++;
+            }
+            localx++;
+            localy = 0;
+        }
     }
 
     public void AddUnitToChunk(Unit unit)
     {
         UnitsInChunk.Add(unit);
-        Debug.Log("Unit at " + unit.transform.position+"("+unit.gameObject.name+")" + " added to " + X + "," + Y);
     }
 
     public void RemoveUnitFromChunk(Unit unit)
     {
-        Debug.Log("Unit at " + unit.transform.position + "(" + unit.gameObject.name + ")" + " removed from " + X + "," + Y+"|"+UnitsInChunk.Contains(unit));
-
         UnitsInChunk.Remove(unit);
     }
 
@@ -109,7 +130,6 @@ public class WorldChunk
 
     public bool DoesObjectExistAtCoords(Vector2Int coords,string toCheckFor, out EnvironmentObjectInstance objFound)
     {
-        Debug.Log("Room: check at " + coords+" for "+  toCheckFor);
         List<EnvironmentObjectInstance> objects = GetAllObjectsAtCoords(coords);
         if (objects.Count == 0)
         {
@@ -119,12 +139,7 @@ public class WorldChunk
      
 
         for(int x = 0; x < objects.Count; x++)
-        {
-            if (objects[x] != null)
-            {
-                Debug.Log("Room: object found " + objects[x].ObjectKey + " at " + coords.ToString());
-            }
-
+        { 
             if (objects[x] != null && objects[x].ObjectKey == toCheckFor)
             {
                 objFound = objects[x];

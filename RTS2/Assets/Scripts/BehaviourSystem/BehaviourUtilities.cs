@@ -36,20 +36,24 @@ public static class BehaviourUtilities
     }
     static List<WallSegment> WallSectionCache = new List<WallSegment>();
     const int WallCheckRadius = 3;
+    static WallSegment wallChecking;
     public static WallSegment GetNearbyWallSegmentToAttack(Unit searching,out bool foundSomething)
     {
+        wallChecking = null;
         WallSectionCache.Clear();
         foundSomething = false;
         Vector2Int center = WorldController.Instance.ConvertWorldToTileCoords(searching.transform.position);
+        
         for(int x = center.x - WallCheckRadius; x < center.x + WallCheckRadius; x++)
         {
             for (int y = center.y - WallCheckRadius; y< center.y + WallCheckRadius; y++)
             {
                 if (WorldController.Instance.WallManager.CoordsValid(x, y))
                 {
-                    if (WorldController.Instance.WallManager.WallsInWorld[x,y].WallType!=WallType.None)
+                    wallChecking=WallHelpers.GetWallAtCoords(x, y);
+                    if (wallChecking.WallType!=WallType.None)
                     {
-                        WallSectionCache.Add(WorldController.Instance.WallManager.WallsInWorld[x, y]);
+                        WallSectionCache.Add(wallChecking);
                     }
                 }
             }

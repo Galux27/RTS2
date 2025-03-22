@@ -15,15 +15,15 @@ public static class WallHelpers
 
         if (segment.x > 0)
         {
-            if (wallManager.WallsInWorld[segment.x - 1, segment.y].HasWall)
+            if (WallHelpers.GetWallAtCoords( segment.x - 1, segment.y).HasWall)
             {
                 left = true;
             }
         }
 
-        if (segment.x < wallManager.WallsInWorld.GetLength(0) - 1)
+        if (segment.x < wallManager.width - 1)
         {
-            if (wallManager.WallsInWorld[segment.x + 1, segment.y].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x + 1, segment.y).HasWall)
             {
                 right = true;
             }
@@ -31,15 +31,15 @@ public static class WallHelpers
 
         if (segment.y > 0)
         {
-            if (wallManager.WallsInWorld[segment.x, segment.y - 1].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x, segment.y - 1).HasWall)
             {
                 down = true;
             }
         }
 
-        if (segment.y < wallManager.WallsInWorld.GetLength(1) - 1)
+        if (segment.y < wallManager.height - 1)
         {
-            if (wallManager.WallsInWorld[segment.x, segment.y + 1].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x, segment.y + 1).HasWall)
             {
                 up = true;
             }
@@ -69,15 +69,15 @@ public static class WallHelpers
 
         if (segment.x > 0)
         {
-            if (wallManager.WallsInWorld[segment.x - 1, segment.y].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x - 1, segment.y).HasWall)
             {
                 left = true;
             }
         }
 
-        if (segment.x < wallManager.WallsInWorld.GetLength(0) - 1)
+        if (segment.x < wallManager.width - 1)
         {
-            if (wallManager.WallsInWorld[segment.x + 1, segment.y].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x + 1, segment.y).HasWall)
             {
                 right = true;
             }
@@ -85,15 +85,15 @@ public static class WallHelpers
 
         if (segment.y > 0)
         {
-            if (wallManager.WallsInWorld[segment.x, segment.y - 1].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x, segment.y - 1).HasWall)
             {
                 down = true;
             }
         }
 
-        if (segment.y < wallManager.WallsInWorld.GetLength(1) - 1)
+        if (segment.y < wallManager.height - 1)
         {
-            if (wallManager.WallsInWorld[segment.x, segment.y + 1].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x, segment.y + 1).HasWall)
             {
                 up = true;
             }
@@ -182,15 +182,15 @@ public static class WallHelpers
 
         if (segment.x > 0)
         {
-            if (wallManager.WallsInWorld[segment.x - 1, segment.y].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x - 1, segment.y).HasWall)
             {
                 left = true;
             }
         }
 
-        if (segment.x < wallManager.WallsInWorld.GetLength(0) - 1)
+        if (segment.x < wallManager.width - 1)
         {
-            if (wallManager.WallsInWorld[segment.x + 1, segment.y].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x + 1, segment.y).HasWall)
             {
                 right = true;
             }
@@ -198,15 +198,15 @@ public static class WallHelpers
 
         if (segment.y > 0)
         {
-            if (wallManager.WallsInWorld[segment.x , segment.y - 1].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x , segment.y - 1).HasWall)
             {
                 down = true;
             }
         }
 
-        if (segment.y < wallManager.WallsInWorld.GetLength(1) - 1)
+        if (segment.y < wallManager.height - 1)
         {
-            if (wallManager.WallsInWorld[segment.x , segment.y + 1].HasWall)
+            if (WallHelpers.GetWallAtCoords(segment.x, segment.y + 1).HasWall)
             {
                 up = true;
             }
@@ -349,24 +349,24 @@ public static class WallHelpers
 
     public static bool DoesUnderConstructionWallExistAtPosition(int x,int y)
     {
-        return WorldController.Instance.WallManager.WallsInWorld[x, y].HasWallUnderConstruction;
+        return WallHelpers.GetWallAtCoords(x, y).HasWallUnderConstruction;
     }
 
     public static bool DoesConstructedWallExistAtPosition(int x,int y)
     {
-        return WorldController.Instance.WallManager.WallsInWorld[x, y].HasWall;
+        return WallHelpers.GetWallAtCoords(x, y).HasWall;
     }
 
     public static bool DoesConstructedDoorExistAtPosition(int x,int y)
     {
-        return WorldController.Instance.WallManager.WallsInWorld[x, y].HasWallUnderConstruction==false
-             && WorldController.Instance.WallManager.WallsInWorld[x, y].WallType == WallType.Door;
+        return WallHelpers.GetWallAtCoords(x, y).HasWallUnderConstruction==false
+             && WallHelpers.GetWallAtCoords(x, y).WallType == WallType.Door;
     }
 
     public static bool DoesUnderConstructionDoorExistAtPosition(int x, int y)
     {
-        return WorldController.Instance.WallManager.WallsInWorld[x, y].HasWallUnderConstruction 
-            && WorldController.Instance.WallManager.WallsInWorld[x, y].WallType == WallType.Door;
+        return WallHelpers.GetWallAtCoords(x, y).HasWallUnderConstruction 
+            && WallHelpers.GetWallAtCoords(x, y).WallType == WallType.Door;
 
     }
 
@@ -375,7 +375,7 @@ public static class WallHelpers
         Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos+offset);
 
         Action OnBuilt = () => { WallHelpers.CreateWallObject(x, y, toDrawOn, toUse); };
-        WorldController.Instance.WallManager.WallsInWorld[x, y].SetWallUnderConstruction(true);
+        WallHelpers.GetWallAtCoords(x, y).SetWallUnderConstruction(true);
         Debug.Log("Adding constructable to " + coords.ToString());
 
         WorldChunkManager.Instance.Chunks[coords.x,coords.y].AddConstructable(new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Wall, "Wall"));
@@ -385,8 +385,7 @@ public static class WallHelpers
         Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos + offset);
 
         Action OnBuilt = () => { WallHelpers.CreateDoorObject(x, y, toDrawOn, toUse); };
-        WorldController.Instance.WallManager.WallsInWorld[x, y].SetWallUnderConstruction(true,WallType.Door);
-        Debug.Log("Adding constructable to " + coords.ToString());
+        WallHelpers.GetWallAtCoords(x, y).SetWallUnderConstruction(true,WallType.Door);
         WorldChunkManager.Instance.Chunks[coords.x, coords.y].AddConstructable(new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Wall, "Door"));
     }
     public static void CreateWallObject(int x, int y, Tilemap toDrawOn, WallTile toUse)
@@ -398,6 +397,32 @@ public static class WallHelpers
     {
         WorldController.Instance.WallManager.AddSingleDoor(x, y, toDrawOn, toUse);
 
+    }
+
+    static Vector2Int coordsCache;
+
+    public static WallSegment GetWallAtCoords(int x,int y)
+    {
+        coordsCache = new Vector2Int(x, y);
+        return GetWallAtCoords(coordsCache);
+    }
+
+    public static WallSegment GetWallAtCoords(Vector2Int coords)
+    {
+        Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForWall.x, chunkForWall.y];
+        coordsCache = coords - toGetFrom.WorldCoords;
+        return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
+    }
+
+    public static WallSegment ChangeWallAtCoords(int x, int y, Tilemap toPlaceOn, WallTile wallType)
+    {
+        coordsCache=new Vector2Int(x,y);
+         Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coordsCache);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForWall.x, chunkForWall.y];
+        coordsCache = coordsCache - toGetFrom.WorldCoords;
+        toGetFrom.WallSegments[coordsCache.x, coordsCache.y] = new DoorSegment(x, y, toPlaceOn, wallType);
+        return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
     }
 
 }
