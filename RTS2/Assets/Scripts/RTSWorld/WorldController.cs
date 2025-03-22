@@ -19,7 +19,24 @@ public class WorldController : MonoBehaviour
         }
     }
 
-    public int WorldWidth=100, WorldHeight=100;
+
+    public int WorldWidthInChunks = 10, WorldHeightInChunks = 10;
+
+    public int WorldWidth
+    {
+        get
+        {
+            return WorldWidthInChunks * WorldChunkManager.ChunkSize;
+        }
+
+    }
+        
+    public int WorldHeight{
+        get
+        {
+            return WorldHeightInChunks * WorldChunkManager.ChunkSize;
+        }
+    }
 
     public WorldTile[,] WorldTiles;
 

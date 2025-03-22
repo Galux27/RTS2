@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WorldChunkManager : MonoBehaviour
 {
-    public const int ChunkSize = 5;
+    public const int ChunkSize = 16;
 
     static WorldChunkManager instance;
 
