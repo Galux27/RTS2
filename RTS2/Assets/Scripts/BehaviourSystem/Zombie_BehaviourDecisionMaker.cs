@@ -37,10 +37,10 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
         PathfindingNode nodeAtPosition = Pathfinding.GetNodeFromPosition(toCheck.transform.position);
         if(nodeAtPosition != null)
         {
-            if (nodeAtPosition.GetPassable(toCheck) == false)
+            if (nodeAtPosition.GetPassable(toCheck) == false && toCheck.lastCoords!=Vector2Int.zero)
             {
                 MoveTo_Behaviour moveTo = new MoveTo_Behaviour();
-                moveTo.InitBehaviour(toCheck, Pathfinding.GetNodeFromCoords(toCheck.lastCoords).worldPos);
+                moveTo.InitBehaviour(toCheck, Pathfinding.GetNodeFromCoords(toCheck.lastCoords).worldPos,false);
                 currentBehaviour = moveTo;
 
             }

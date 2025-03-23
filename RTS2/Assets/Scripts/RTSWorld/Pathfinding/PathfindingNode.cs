@@ -14,7 +14,7 @@ public class PathfindingNode
     public PathfindingNode parent;
     public bool IsPassable = true;
 
-    public List<PathfindingNode> neighbours;
+    public List<PathfindingNode> neighbours=new List<PathfindingNode>();
     public Vector3 worldPos;
 
 

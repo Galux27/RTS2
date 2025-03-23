@@ -39,6 +39,8 @@ public class BehaviourRunner : MonoBehaviour
     public string behaviourName;
     private void Update()
     {
+       
+
         IsBehaviourNull = CurrentBehaviour == null;
         if (!IsBehaviourNull)
         {

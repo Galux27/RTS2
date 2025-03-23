@@ -16,6 +16,7 @@ public class WorldChunk
     public Color DebugColor;
     public int X, Y;
     public WallSegment[,] WallSegments;
+    public PathfindingNode[,] PathfindingNodes;
     public Vector2Int WorldCoords;
     public WorldChunk(int x,int y)
     {
@@ -24,8 +25,27 @@ public class WorldChunk
         Y = y;
         WorldCoords=new Vector2Int(x* WorldChunkManager.ChunkSize, y* WorldChunkManager.ChunkSize);
         GenerateWallsForChunk();
+        GeneratePathfindingNodes();
     }
 
+    void GeneratePathfindingNodes()
+    {
+        PathfindingNodes=new PathfindingNode[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        int xStart = WorldChunkManager.ChunkSize * X;
+        int yStart = WorldChunkManager.ChunkSize * Y;
+        int localx = 0, localy = 0;
+        for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
+        {
+
+            for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[localx, localy] = new PathfindingNode(x,y,true);
+                localy++;
+            }
+            localx++;
+            localy = 0;
+        }
+    }
 
     void GenerateWallsForChunk()
     {

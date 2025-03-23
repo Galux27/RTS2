@@ -95,9 +95,13 @@ public class ZombieController : MonoBehaviour
                 xCoord = Random.Range(0, WorldController.Instance.WorldWidth - 1);
             }
         }
-        
-
-        GameObject g = Instantiate(ZombiePrefab, new Vector3(xCoord, yCoord, 0), Quaternion.identity);
+        Vector3 posToSpawnAt = new Vector3(xCoord, yCoord, 0);
+        PathfindingNode node = Pathfinding.GetNodeFromPosition(posToSpawnAt);
+        if (node == null || node.IsPassable == false)
+        {
+            return;
+        }
+        GameObject g = Instantiate(ZombiePrefab,node.worldPos , Quaternion.identity);
 
     }
 }

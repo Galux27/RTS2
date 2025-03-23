@@ -6,13 +6,17 @@ public class MoveTo_Behaviour : BehaviourBase
 {
     public Vector3 TargetPosition;
     PathFollower follower;
-
-    public void InitBehaviour(Unit toPerform,Vector3 targetPos)
+    bool usePath = true;
+    public void InitBehaviour(Unit toPerform, Vector3 targetPos, bool UsePath = true)
     {
         base.InitBehaviour(toPerform);
         TargetPosition = targetPos;
-        follower = new PathFollower(toPerform);
-        follower.GetPath(toPerform.transform.position, targetPos);
+        usePath= UsePath;
+        if (usePath)
+        {
+            follower = new PathFollower(toPerform);
+            follower.GetPath(toPerform.transform.position, targetPos);
+        }
     }
 
     public override bool CanPerformBehaviour()
@@ -27,7 +31,7 @@ public class MoveTo_Behaviour : BehaviourBase
 
     Vector3 DirectionToTarget()
     {
-        if (follower.HasPath())
+        if (usePath &&follower.HasPath() )
         {
             return follower.GetDirToNode(unitToMove.transform.position);
         }

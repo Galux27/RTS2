@@ -1,22 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public static class Pathfinding
 {
-    public static PathfindingNode[,] pathfindingNodes;
     static int worldWidth, worldHeight;
     public static void CreateNodesFromWorld(WorldTile[,] world)
     {
         worldWidth = world.GetLength(0);
         worldHeight = world.GetLength(1);
-        pathfindingNodes = new PathfindingNode[worldWidth, worldHeight];
-
         for(int x = 0; x < worldWidth; x++)
         {
             for(int y = 0; y < worldHeight; y++)
             {
-                pathfindingNodes[x, y] = new PathfindingNode(x, y, world[x, y].traversable);
+                GetNodeFromCoords(x, y).UpdatePassable(world[x, y].traversable);
             }
         }
 
@@ -24,49 +23,70 @@ public static class Pathfinding
         {
             for (int y = 0; y < worldHeight; y++)
             {
-                pathfindingNodes[x, y].InitData();
+                GetNodeFromCoords(x, y).InitData();
             }
         }
     }
 
     public static void UpdateNodeData(int x,int y,bool traversable)
     {
-        pathfindingNodes[x, y].UpdatePassable(traversable);
+       GetNodeFromCoords(x,y).UpdatePassable(traversable);
     }
     public static void AddPathNodeModifier(int x,int y,PathNodeModifier toAdd)
     {
-        pathfindingNodes[x, y].AddModifier(toAdd);
+        GetNodeFromCoords(x, y).AddModifier(toAdd);
     }
 
     public static void RemovePathModifier(int x,int y,string key)
     {
-        pathfindingNodes[x, y].RemoveModifier(key);
+        GetNodeFromCoords(x, y).RemoveModifier(key);
 
     }
 
     public static List<PathfindingNode> GetNeighbours(PathfindingNode node)
     {
         List<PathfindingNode> retVal = new List<PathfindingNode>();
-        if (node.x > 0)
+        PathfindingNode toAdd = null;
+        toAdd = GetNodeFromCoords(node.x - 1, node.y);
+        if (toAdd != null)
         {
-            retVal.Add(pathfindingNodes[node.x-1,node.y]);
-        }
-
-        if (node.x < pathfindingNodes.GetLength(0)-1)
-        {
-            retVal.Add(pathfindingNodes[node.x + 1, node.y]);
-        }
-        if (node.y > 0)
-        {
-            retVal.Add(pathfindingNodes[node.x , node.y - 1]);
-        }
-
-        if (node.y < pathfindingNodes.GetLength(1) - 1)
-        {
-            retVal.Add(pathfindingNodes[node.x , node.y + 1]);
+            retVal.Add(toAdd);
+            if (!toAdd.neighbours.Contains(node))
+            {
+                toAdd.neighbours.Add(node);
+            }
         }
 
 
+        toAdd = GetNodeFromCoords(node.x + 1, node.y);
+        if (toAdd != null)
+        {
+            retVal.Add(toAdd);
+            if (!toAdd.neighbours.Contains(node))
+            {
+                toAdd.neighbours.Add(node);
+            }
+        }
+
+
+        toAdd = GetNodeFromCoords(node.x, node.y - 1);
+        if (toAdd != null)
+        {
+            retVal.Add(toAdd);
+            if (!toAdd.neighbours.Contains(node))
+            {
+                toAdd.neighbours.Add(node);
+            }
+        }
+        toAdd = GetNodeFromCoords(node.x, node.y + 1);
+        if (toAdd != null)
+        {
+            retVal.Add(toAdd);
+            if (!toAdd.neighbours.Contains(node))
+            {
+                toAdd.neighbours.Add(node);
+            }
+        }
         return retVal;
     }
 
@@ -90,50 +110,53 @@ public static class Pathfinding
     }
 
 
+    static Vector2Int coordsCache;
+
+    public static PathfindingNode GetNodeFromCoords(int x, int y)
+    {
+        coordsCache = new Vector2Int(x, y);
+        return GetNodeFromCoords(coordsCache);
+    }
+
     public static PathfindingNode GetNodeFromCoords(Vector2Int coords)
     {
-        if (ValidCoords(coords.x, coords.y))
-        {
-            return pathfindingNodes[coords.x,coords.y];
-        }
-        return null;
+        Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForNode.x, chunkForNode.y];
+        coordsCache = coords - toGetFrom.WorldCoords;
+        if (coordsCache.x < 0 || coordsCache.y < 0||coordsCache.x >=WorldChunkManager.ChunkSize||coordsCache.y>=WorldChunkManager.ChunkSize) { return null; }
+        return toGetFrom.PathfindingNodes[coordsCache.x, coordsCache.y];
     }
+
 
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null)
     {
-        int x= Mathf.RoundToInt(Position.x);
-        x = Mathf.Max(0, x);
-        x = Mathf.Min(worldWidth-1, x);
+        Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(Position);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForNode.x, chunkForNode.y];
 
-        int y = Mathf.RoundToInt(Position.y);
-        y = Mathf.Max(0, y);
-        y = Mathf.Min(worldHeight-1, y);
-
-        int retX=x,retY=y;
-        float closestDist = 999999f, distCheck = 0f ;
-        Vector3 cache = Vector3.zero;
-
-        for(int x1 = x - 1; x1 <= x + 1; x1++)
+        int xC = 0, yC = 0;
+        for(int x = 0; x < toGetFrom.PathfindingNodes.GetLength(0); x++)
         {
-            for (int y1 = y - 1; y1 <= y + 1; y1++)
+            if (toGetFrom.PathfindingNodes[x,0].worldPos.x > Position.x)
             {
-                if (ValidCoords(x1, y1) && pathfindingNodes[x1, y1].GetPassable(performing))
-                {
-                    cache.x = x1;
-                    cache.y = y1;
-                    distCheck = Vector3.Distance(cache, Position);
-                    if (distCheck < closestDist)
-                    {
-                        closestDist = distCheck;
-                        retX = x1;
-                        retY = y1;
-                    }
-                }
+                xC = Mathf.Max( x-1,0);
+
+                break;
+            }
+            
+        }
+        for (int y = 0; y < toGetFrom.PathfindingNodes.GetLength(1); y++)
+        {
+            if (toGetFrom.PathfindingNodes[0, y].worldPos.y > Position.y)
+            {
+                yC = Mathf.Max(y -1,0);
+                break;
             }
         }
 
+      
+        return toGetFrom.PathfindingNodes[xC, yC];
 
-        return pathfindingNodes[retX,retY];
+     
     }
 
     /// <summary>
@@ -148,9 +171,9 @@ public static class Pathfinding
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos);
+        openSet.Clear();
+        closedSet.Clear();
 
-        List<PathfindingNode> openSet = new List<PathfindingNode>();
-        HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
         openSet.Add(seekerNode);
 
         //calculates path for pathfinding
@@ -202,15 +225,20 @@ public static class Pathfinding
     }
 
 
-
+    static HashSet<PathfindingNode> closedSet=new HashSet<PathfindingNode>();
+    static List<PathfindingNode> openSet=new List<PathfindingNode>();
     public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,Unit performing)
     {
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos,performing);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos,performing);
-
-        List<PathfindingNode> openSet = new List<PathfindingNode>();
-        HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
+        if (seekerNode.IsPassable == false || targetNode.IsPassable == false)
+        {
+            return null;
+        }
+        Debug.Log("Getting path " + seekerNode.worldPos+"|"+targetNode.worldPos+"|"+seekerNode.neighbours.Contains(targetNode)+"|"+seekerNode.neighbours.Count+"|"+targetNode.neighbours.Count);
+        openSet.Clear();
+        closedSet.Clear();
         openSet.Add(seekerNode);
 
         //calculates path for pathfinding

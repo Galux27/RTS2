@@ -56,8 +56,8 @@ public class WorldChunkManager : MonoBehaviour
     Vector2Int getCoordsCache=new Vector2Int();
     public Vector2Int GetChunkCoordsFromWorldPos(Vector3 worldPos)
     {
-        getCoordsCache.x = Mathf.Min(Mathf.RoundToInt(worldPos.x/ChunkSize), Chunks.GetLength(0) - 1);
-        getCoordsCache.y = Mathf.Min( Mathf.RoundToInt(worldPos.y / ChunkSize),Chunks.GetLength(1)-1);
+        getCoordsCache.x = Mathf.Min(Mathf.FloorToInt(worldPos.x/ChunkSize), Chunks.GetLength(0) - 1);
+        getCoordsCache.y = Mathf.Min( Mathf.FloorToInt(worldPos.y / ChunkSize),Chunks.GetLength(1)-1);
 
         return getCoordsCache;
     }
@@ -101,13 +101,14 @@ public class WorldChunkManager : MonoBehaviour
         return retVal;
     }
 
-
+    const bool DrawNodeWalkable = true, DrawNodeNeighbours = false;
     void DebugDrawChunks()
     {
-        Vector3 tl = new Vector3(-ChunkSize / 2f, ChunkSize / 2f, 0f);
-        Vector3 tr = new Vector3(ChunkSize / 2f, ChunkSize / 2f, 0f);
-        Vector3 bl = new Vector3(-ChunkSize / 2f, -ChunkSize / 2f, 0f);
-        Vector3 br = new Vector3(ChunkSize / 2f, -ChunkSize / 2f, 0f);
+    
+        Vector3 tl = new Vector3(0 , ChunkSize , 0f);
+        Vector3 tr = new Vector3(ChunkSize , ChunkSize , 0f);
+        Vector3 bl = new Vector3(0 , 0 , 0f);
+        Vector3 br = new Vector3(ChunkSize , 0 , 0f);
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
@@ -133,7 +134,36 @@ public class WorldChunkManager : MonoBehaviour
                 Debug.DrawLine(Center + tl, Center + bl, Chunks[x, y].DebugColor);
 
 
-                
+                Vector3 pos = Vector3.zero;
+                for (int x1 = 0; x1 < Chunks[x,y].PathfindingNodes.GetLength(0); x1++)
+                {
+                    for (int y1 = 0; y1 < Chunks[x, y].PathfindingNodes.GetLength(1); y1++)
+                    {
+                        if (DrawNodeWalkable)
+                        {
+                            pos = Chunks[x, y].PathfindingNodes[x1, y1].worldPos;
+                            if (Chunks[x, y].PathfindingNodes[x1, y1].IsPassable)
+                            {
+                                Debug.DrawLine(pos, pos + (Vector3.up * (x1+y1)/32f), Color.green);
+                            }
+                            else
+                            {
+                                Debug.DrawLine(pos, pos + (Vector3.up * (x1 + y1) / 32f), Color.red);
+
+                            }
+                        }
+
+                        if (DrawNodeNeighbours)
+                        {
+                            pos = Chunks[x, y].PathfindingNodes[x1, y1].worldPos;
+                            for (int i=0;i< Chunks[x, y].PathfindingNodes[x1, y1].neighbours.Count; i++) {
+                                Debug.DrawLine(pos, Chunks[x, y].PathfindingNodes[x1, y1].neighbours[i].worldPos);
+                            }
+                        }
+                        Debug.DrawLine(Chunks[x, y].PathfindingNodes[0, 0].worldPos, Chunks[x, y].PathfindingNodes[1, 1].worldPos, Color.magenta);
+                    }
+                }
+
             }
         }
 
@@ -141,23 +171,6 @@ public class WorldChunkManager : MonoBehaviour
 
 
 
-        Vector3 pos = Vector3.zero;
-        for(int x = 0; x < Pathfinding.pathfindingNodes.GetLength(0); x++)
-        {
-            for(int y = 0; y < Pathfinding.pathfindingNodes.GetLength(1); y++)
-            {
-                pos = Pathfinding.pathfindingNodes[x, y].worldPos;
-                if (Pathfinding.pathfindingNodes[x,y].IsPassable)
-                {
-                    Debug.DrawLine(pos, pos + (Vector3.up*.5f), Color.green);
-                }
-                else
-                {
-                    Debug.DrawLine(pos, pos + (Vector3.up * .5f), Color.red);
-
-                }
-            }
-        }
     }
 
 
