@@ -224,4 +224,15 @@ public class Inventory : MonoBehaviour, Storage
         return CurrentItemsWeight < InventoryCapacity;
     }
 
+    public void ContainsItem(string name, out int quantity)
+    {
+        quantity = 0;
+        for(int x = 0; x < ObjectsInInventory.Count; x++)
+        {
+            if (ObjectsInInventory[x].Name() == name)
+            {
+                quantity += ObjectsInInventory[x].Quantity();
+            }
+        }
+    }
 }

@@ -23,10 +23,10 @@ MonoBehaviour:
   Resources:
     resources:
     - ResourceToSpawn: Fuel
-      QuantityToSpawn: 4
+      QuantityToSpawn: 200
       RangeToSpawn: {x: 1, y: 1, z: 0}
     - ResourceToSpawn: Construction Supplies
-      QuantityToSpawn: 2
+      QuantityToSpawn: 400
       RangeToSpawn: {x: 2, y: 2, z: 0}
     HarvestLength: 10
   MaxHealth: 5

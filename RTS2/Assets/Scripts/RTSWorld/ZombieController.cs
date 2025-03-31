@@ -21,7 +21,7 @@ public class ZombieController : MonoBehaviour
     public int ZombieSpawnCount = 5;
     float spawnTimer = 0f;
     public GameObject ZombiePrefab;
-
+    public bool Spawn = false;
     public int GetMaxNumberOfZombies()
     {
         return 100;
@@ -41,7 +41,8 @@ public class ZombieController : MonoBehaviour
 
     bool ShouldSpawnMoreZombies()
     {
-        return Zombies.Count < GetMaxNumberOfZombies();
+        
+        return Zombies.Count < GetMaxNumberOfZombies()&&Spawn;
     }
 
     private void Update()

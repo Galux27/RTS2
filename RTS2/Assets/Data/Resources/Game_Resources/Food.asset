@@ -17,4 +17,4 @@ MonoBehaviour:
   ContainersICanBeStoredIn:
   - Box
   - Shelf
-  WeightPerUnit: 1
+  WeightPerUnit: 0.1

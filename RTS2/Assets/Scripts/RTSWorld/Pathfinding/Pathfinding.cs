@@ -130,7 +130,7 @@ public static class Pathfinding
 
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null)
     {
-        Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(Position);
+        Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(Position+new Vector3(.5f,.5f,0f));
         WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForNode.x, chunkForNode.y];
 
         int xC = 0, yC = 0;
@@ -293,12 +293,13 @@ public static class Pathfinding
     {
         List<PathfindingNode> path = new List<PathfindingNode>();
         PathfindingNode currentNode = endNode;
-
+        
         while (currentNode != startNode)
         {
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
+        path.Add(startNode);
         path.Reverse();
 
         return path;

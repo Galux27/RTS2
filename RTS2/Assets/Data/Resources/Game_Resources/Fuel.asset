@@ -16,4 +16,4 @@ MonoBehaviour:
   Item: {fileID: 138853884, guid: d5bad1d0399fd85408a0566b60be470f, type: 3}
   ContainersICanBeStoredIn:
   - Tank
-  WeightPerUnit: 1
+  WeightPerUnit: 0.1

@@ -101,7 +101,7 @@ public class WorldChunkManager : MonoBehaviour
         return retVal;
     }
 
-    const bool DrawNodeWalkable = true, DrawNodeNeighbours = false;
+    const bool DrawNodeWalkable = false, DrawNodeNeighbours = false;
     void DebugDrawChunks()
     {
     
