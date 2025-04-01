@@ -30,3 +30,6 @@ MonoBehaviour:
   Cross: {fileID: 11400000, guid: 3715015645ec8b645b2d3a56a81cc833, type: 2}
   WallName: Concrete Wall
   Health: 100
+  RequirementsToBuild:
+  - ResourceName: Construction Supplies
+    QuantityRequired: 25

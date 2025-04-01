@@ -23,7 +23,7 @@ public class WallTile :ScriptableObject
 
     public string WallName;
     public float Health;
-   
+    public List<ResourceRequirement> RequirementsToBuild;
 }
 
 

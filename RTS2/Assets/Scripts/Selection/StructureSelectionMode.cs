@@ -23,7 +23,7 @@ public class StructureSelectionMode: SelectionMode
                 break;
         }
 
-       
+        CheckForRequiredResources();
     }
 
     public override void OnLeftMouseUp()
@@ -58,6 +58,15 @@ public class StructureSelectionMode: SelectionMode
                 Doors_OnRightClick();
                 break;
         }
+
+    }
+
+    bool hasEnoughResources = false;
+    Dictionary<string, List<FoundResourceData>> resourcesForConstruction = null;
+    void CheckForRequiredResources()
+    {
+        ResourceHelpers.CanMeetResourceRequirements(WorldController.Instance.WallTest.RequirementsToBuild,
+            CursorSelect.Instance.GetMousePosition(), 200f, out hasEnoughResources, ref resourcesForConstruction);
 
     }
 
@@ -105,9 +114,10 @@ public class StructureSelectionMode: SelectionMode
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        if (WallHelpers.CanIPlaceWallAtPosition(coords.x, coords.y))
+        if (WallHelpers.CanIPlaceWallAtPosition(coords.x, coords.y) && hasEnoughResources)
         {
             WallHelpers.CreateWallBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest, cursorPos, new Vector3(.5f, .5f, 0f));
+            ResourceHelpers.ConsumeResources(resourcesForConstruction);
         }
     }
 
@@ -167,9 +177,11 @@ public class StructureSelectionMode: SelectionMode
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y))
+        if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y) && hasEnoughResources)
         {
             WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest, cursorPos, new Vector3(.5f, .5f, 0f));
+            ResourceHelpers.ConsumeResources(resourcesForConstruction);
+
         }
     }
 
