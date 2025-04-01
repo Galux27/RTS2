@@ -93,7 +93,7 @@ public class EnvironmentObjectManager : MonoBehaviour
         }
     }
 
-    const float DrawEnvironmentObjectRadius = 20f;
+    const float DrawEnvironmentObjectRadius = 80f;
     List<WorldChunk> UpdatedLastFrame = new List<WorldChunk>();
     private void Update()
     {

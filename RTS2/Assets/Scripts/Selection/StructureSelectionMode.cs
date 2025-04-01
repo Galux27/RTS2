@@ -94,6 +94,14 @@ public class StructureSelectionMode: SelectionMode
         Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
 
 
+        if (ValidToPlaceStructure(v))
+        {
+            CursorIcon.Instance.SetColor(Color.white);
+        }
+        else
+        {
+            CursorIcon.Instance.SetColor(Color.red);
+        }
 
         if (ConstructableHoveringOver != ConstructableHoveringOverThisFrame)
         {
@@ -120,6 +128,12 @@ public class StructureSelectionMode: SelectionMode
             ResourceHelpers.ConsumeResources(resourcesForConstruction);
         }
     }
+
+    bool ValidToPlaceStructure(Vector2Int coords)
+    {
+        return WallHelpers.CanIPlaceWallAtPosition(coords.x, coords.y) && hasEnoughResources;
+    }
+
 
     void Walls_OnRightClick()
     {
@@ -156,7 +170,14 @@ public class StructureSelectionMode: SelectionMode
 
         Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
 
-
+        if (ValidToPlaceStructure(v))
+        {
+            CursorIcon.Instance.SetColor(Color.white);
+        }
+        else
+        {
+            CursorIcon.Instance.SetColor(Color.red);
+        }
 
         if (ConstructableHoveringOver != ConstructableHoveringOverThisFrame)
         {
