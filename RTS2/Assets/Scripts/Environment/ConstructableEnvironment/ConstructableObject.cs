@@ -7,6 +7,7 @@ public class ConstructableObject : EnvironmentObject
 {
     public int Cost;
     public float TimeToBuild;
+    public List<ResourceRequirement> RequirementsToBuild;
     public EnvironmentObjectBehaviourBase MyBehaviour;
 
     public virtual void OnObjectConstructed(GameObject obj)

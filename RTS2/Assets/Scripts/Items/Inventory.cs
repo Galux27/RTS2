@@ -235,4 +235,53 @@ public class Inventory : MonoBehaviour, Storage
             }
         }
     }
+
+    public void RemoveQuantityOfObject(string name,int quantity)
+    {
+        int remainingToRemove = quantity;
+        InventoryObject checking = null;
+        int index = 0;
+        bool finished = false;
+        while (!finished)
+        {
+            bool progressIndex = true;
+
+            if (ObjectsInInventory[index].Name() == name)
+            {
+                checking = ObjectsInInventory[index];
+
+                if (checking.Quantity() >= remainingToRemove)
+                {
+                   
+                    if (checking.Quantity() > remainingToRemove)
+                    {
+                        RemoveItemFromInventory(checking);
+                        object[] split = checking.SplitStack(remainingToRemove);
+
+                       // AddOrMergeWithExisting(split[0] as InventoryObject);
+                        InventoryObject remainder = split[1] as InventoryObject;
+                        AddItemToInventory(remainder);
+                    }
+                    else
+                    {
+                        remainingToRemove -= checking.Quantity();
+                        RemoveItemFromInventory(checking);
+                        progressIndex = false;
+                    }
+                    ResourceManager.Instance.RefreshResourceData();
+
+                }
+            }
+            if (progressIndex)
+            {
+                index++;
+            }
+            if (index >= ObjectsInInventory.Count)
+            {
+                finished = true;
+            }
+        }
+
+       
+    }
 }

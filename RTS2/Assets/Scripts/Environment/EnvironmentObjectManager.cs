@@ -50,7 +50,7 @@ public class EnvironmentObjectManager : MonoBehaviour
             }
         }
     }
-    const int ObjectsToGenerate = 500;
+    const int ObjectsToGenerate =3000;
 
     public void GenerateEnvironmentObjects()
     {

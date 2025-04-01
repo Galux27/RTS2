@@ -82,15 +82,17 @@ public class ConstructableObjectManager : MonoBehaviour
     }
 
 
-    public void CreateBuildableForObject(Vector2Int coords, Vector3 pos)
+    public void CreateBuildableForObject(Vector2Int coords, Vector3 pos,Dictionary<string,List<FoundResourceData>> resourcesToConsume)
     {
         string toBuild = selectedToConstruct.Name;
+
+        
         Action OnBuilt = () => {  CreateObject(coords, pos, toBuild); };
         ConstructableObject buildingData = AllObjects[toBuild];
 
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(pos);
         new BuildableStructure(coords.x, coords.y, buildingData.TimeToBuild, false, OnBuilt, buildingData.Size(),default,ConstructableType.Furniture,buildingData.Name);
-
+        ResourceHelpers.ConsumeResources(resourcesToConsume);
     }
 
     public void CreateObject(Vector2Int coords, Vector3 pos, string toConstruct)
@@ -103,7 +105,6 @@ public class ConstructableObjectManager : MonoBehaviour
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         ConstructableObjectInstance instance = new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name);
         WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(instance);
-        Debug.Log("Room: creating object from construction at " + selectedToConstruct.name+" at " + coords.ToString()+" chunk " + chunk.ToString());
 
         WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !AllObjects[toConstruct].BlocksTile);
 

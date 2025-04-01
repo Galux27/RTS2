@@ -26,4 +26,7 @@ MonoBehaviour:
   MaxHealth: 30
   Cost: 100
   TimeToBuild: 5
+  RequirementsToBuild:
+  - ResourceName: Construction Supplies
+    QuantityRequired: 100
   MyBehaviour: {fileID: 0}

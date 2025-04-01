@@ -26,4 +26,9 @@ MonoBehaviour:
   MaxHealth: 30
   Cost: 100
   TimeToBuild: 5
+  RequirementsToBuild:
+  - ResourceName: Construction Supplies
+    QuantityRequired: 50
+  - ResourceName: Munitions
+    QuantityRequired: 10
   MyBehaviour: {fileID: 0}

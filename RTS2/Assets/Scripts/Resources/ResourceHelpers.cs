@@ -4,6 +4,29 @@ using UnityEngine;
 
 public static class ResourceHelpers
 {
+
+    public static void CanMeetResourceRequirements(List<ResourceRequirement> resourceRequirements,Vector3 pos,float radius,out bool foundEnough,ref Dictionary<string,List<FoundResourceData>> data)
+    {
+        foundEnough = true;
+        data = new Dictionary<string, List<FoundResourceData>>();
+        List<FoundResourceData> foundResources = null;
+        for(int x=0;x<resourceRequirements.Count;x++)
+        {
+            foundResources = new List<FoundResourceData>();
+            bool localEnough = false;
+            CanMeetResourceRequirement(resourceRequirements[x], pos, radius, out localEnough, out foundResources);
+            if(localEnough==false)
+            {
+                foundEnough = false;
+            }
+            if (!data.ContainsKey(resourceRequirements[x].ResourceName))
+            {
+                data.Add(resourceRequirements[x].ResourceName, new List<FoundResourceData>());
+                
+            }
+            data[resourceRequirements[x].ResourceName].AddRange(foundResources);
+        }
+    }
     public static void CanMeetResourceRequirement(ResourceRequirement requirement,Vector3 position,float radius,out bool foundEnough,out List<FoundResourceData> getFrom)
     {
         foundEnough = false;
@@ -35,6 +58,18 @@ public static class ResourceHelpers
         }
         foundEnough = quantity >= requirement.QuantityRequired;
 
+    }
+
+
+    public static void ConsumeResources(Dictionary<string,List<FoundResourceData>> data)
+    {
+        foreach(KeyValuePair<string,List<FoundResourceData>> kvp in data)
+        {
+            for(int x = 0; x < kvp.Value.Count; x++)
+            {
+                kvp.Value[x].toGetFrom.RemoveQuantityOfObject(kvp.Value[x].itemToGet, kvp.Value[x].QuantityToTake);
+            }
+        }
     }
 }
 
