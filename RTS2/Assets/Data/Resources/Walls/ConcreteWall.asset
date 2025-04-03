@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76ae18e6de6743a4a8a6a3da359e62e6, type: 3}
-  m_Name: WallsTall
+  m_Name: ConcreteWall
   m_EditorClassIdentifier: 
   NoNeighbours: {fileID: 11400000, guid: 51529dcb6cdc86d4289b4fb509ac5c1b, type: 2}
   Left: {fileID: 11400000, guid: afbdbc26e3fbb704a92d23370acda643, type: 2}
