@@ -190,7 +190,7 @@ public class WallSegment:Selectable ,ObjectInfo
 
    public void OnDeath()
     {
-        WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest);
+        WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
     }
 }
 

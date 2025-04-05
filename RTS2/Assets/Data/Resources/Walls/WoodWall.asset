@@ -32,4 +32,4 @@ MonoBehaviour:
   Health: 50
   RequirementsToBuild:
   - ResourceName: Construction Supplies
-    QuantityRequired: 12
+    QuantityRequired: 3

@@ -25,5 +25,14 @@ public class DebugCheats : MonoBehaviour
 #endif
         return false;
     }
+
+    public bool CareAboutResources = false;
+    public bool CareAboutResourcesNeeded()
+    {
+#if UNITY_EDITOR
+        return CareAboutResources;
+#endif
+        return true;
+    }
 }
 

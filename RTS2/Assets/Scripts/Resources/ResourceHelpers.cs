@@ -26,6 +26,11 @@ public static class ResourceHelpers
             }
             data[resourceRequirements[x].ResourceName].AddRange(foundResources);
         }
+
+        if(DebugCheats.Instance.CareAboutResourcesNeeded()==false)
+        {
+            foundEnough = true;
+        }
     }
     public static void CanMeetResourceRequirement(ResourceRequirement requirement,Vector3 position,float radius,out bool foundEnough,out List<FoundResourceData> getFrom)
     {
@@ -63,7 +68,11 @@ public static class ResourceHelpers
 
     public static void ConsumeResources(Dictionary<string,List<FoundResourceData>> data)
     {
-        foreach(KeyValuePair<string,List<FoundResourceData>> kvp in data)
+        if (DebugCheats.Instance.CareAboutResourcesNeeded() == false)
+        {
+            return;
+        }
+        foreach (KeyValuePair<string,List<FoundResourceData>> kvp in data)
         {
             for(int x = 0; x < kvp.Value.Count; x++)
             {

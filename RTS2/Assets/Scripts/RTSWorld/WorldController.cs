@@ -64,7 +64,7 @@ public class WorldController : MonoBehaviour
 
         WallManager = new WallManager(WorldWidth, WorldHeight);
         WorldRenderer.Instance.RenderWorld(WorldTiles);
-        WallManager.RenderWalls(BuildingTilemap, WallTest);
+        WallManager.RenderWalls(BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
 
         EnvironmentObjectManager.Instance.GenerateEnvironmentObjects();
     }

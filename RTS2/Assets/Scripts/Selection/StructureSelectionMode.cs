@@ -65,7 +65,7 @@ public class StructureSelectionMode: SelectionMode
     Dictionary<string, List<FoundResourceData>> resourcesForConstruction = null;
     void CheckForRequiredResources()
     {
-        ResourceHelpers.CanMeetResourceRequirements(WorldController.Instance.WallTest.RequirementsToBuild,
+        ResourceHelpers.CanMeetResourceRequirements(WallTypeManager.Instance.SelectedWallTile.RequirementsToBuild,
             CursorSelect.Instance.GetMousePosition(), 200f, out hasEnoughResources, ref resourcesForConstruction);
 
     }
@@ -85,7 +85,7 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         Sprite icon = WallHelpers.GetSpriteForWallType(
             WallHelpers.GetWallAtCoords(coords), WorldController.Instance.WallManager,
-        WorldController.Instance.WallTest);
+        WallTypeManager.Instance.SelectedWallTile);
         CursorIcon.Instance.SetPosition(new Vector3(coords.x + .5f, coords.y + .5f, 0f));
         CursorIcon.Instance.SetCustomIcon(icon);
 
@@ -124,7 +124,7 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         if (WallHelpers.CanIPlaceWallAtPosition(coords.x, coords.y) && hasEnoughResources)
         {
-            WallHelpers.CreateWallBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest, cursorPos, new Vector3(.5f, .5f, 0f));
+            WallHelpers.CreateWallBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
             ResourceHelpers.ConsumeResources(resourcesForConstruction);
         }
     }
@@ -141,7 +141,7 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         if (WallHelpers.DoesConstructedWallExistAtPosition(coords.x, coords.y))
         {
-            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest);
+            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
 
         }
 
@@ -162,7 +162,7 @@ public class StructureSelectionMode: SelectionMode
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         Sprite icon = WallHelpers.GetSpriteForWallType(WallHelpers.GetWallAtCoords(coords), WorldController.Instance.WallManager,
-        WorldController.Instance.WallTest);
+        WallTypeManager.Instance.SelectedWallTile);
         CursorIcon.Instance.SetPosition(new Vector3(coords.x + .5f, coords.y + .5f, 0f));
         CursorIcon.Instance.SetCustomIcon(icon);
 
@@ -200,7 +200,7 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y) && hasEnoughResources)
         {
-            WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest, cursorPos, new Vector3(.5f, .5f, 0f));
+            WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
             ResourceHelpers.ConsumeResources(resourcesForConstruction);
 
         }
@@ -212,7 +212,7 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         if (WallHelpers.DoesConstructedDoorExistAtPosition(coords.x, coords.y))
         {
-            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest);
+            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
 
         }
 
