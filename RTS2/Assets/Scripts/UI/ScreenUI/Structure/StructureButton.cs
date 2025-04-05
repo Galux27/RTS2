@@ -9,12 +9,7 @@ public class StructureButton : MonoBehaviour
 {
     public GameObject TypeScrollView,ScrollViewContent;
 
-    private void Awake()
-    {
-        this.GetComponent<Button>().onClick.AddListener(() => TypeScrollView.SetActive(true));
-    }
-
-
+    bool HasTypes = false;
     public void InitButton(string text)
     {
         this.GetComponentInChildren<TextMeshProUGUI>().text = text;
@@ -22,6 +17,11 @@ public class StructureButton : MonoBehaviour
 
     public void AddType(string name,Action onClick)
     {
+        if(!HasTypes)
+        {
+            this.GetComponent<Button>().onClick.AddListener(() => TypeScrollView.SetActive(true));
+            this.HasTypes = true;
+        }
         GameObject button = GameObject.Instantiate(ScrollViewContent.transform.GetChild(0).gameObject,ScrollViewContent.transform);
         Button b = button.GetComponent<Button>();
         b.GetComponentInChildren<TextMeshProUGUI>().text = name;

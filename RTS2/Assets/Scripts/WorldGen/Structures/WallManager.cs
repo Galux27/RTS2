@@ -104,7 +104,7 @@ public class WallManager
                 if (wall.HasWall)
                 {
 
-                    WallHelpers.CalculateTileType(ref wall, this, toUse);
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
                     WorldController.Instance.SetTraversible(x, y, false);
                 }
             }
@@ -127,7 +127,7 @@ public class WallManager
         SetWall(x, y,toUse,false);
         WallSegment toRemove = WallHelpers.GetWallAtCoords(x, y);
         toRemove.AdjustHealth(-9999);
-        WallHelpers.CalculateTileType(ref toRemove, this, toUse);
+        WallHelpers.CalculateTileType(ref toRemove, this, toRemove.baseWallType);
 
         toDrawOn.SetTile(new Vector3Int(x, y, 0), null);
         WallSegment wall = null;
@@ -138,7 +138,7 @@ public class WallManager
                 wall = WallHelpers.GetWallAtCoords(x1, y1);
                 if (wall.HasWall)
                 {
-                    WallHelpers.CalculateTileType(ref wall, this, toUse);
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
                     WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
                 }
             }
@@ -218,7 +218,7 @@ public class WallManager
                 wall = WallHelpers.GetWallAtCoords(x1, y1);
                 if (wall.HasWall)
                 {
-                    WallHelpers.CalculateTileType(ref wall, this, toUse);
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
                     WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
                 }
             }
@@ -261,7 +261,7 @@ public class WallManager
 
                 if (wall.HasWall)
                 {
-                    WallHelpers.CalculateTileType(ref wall, this, toUse);
+                    WallHelpers.CalculateTileType(ref wall, this,wall.baseWallType);
                     WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
                 }
             }

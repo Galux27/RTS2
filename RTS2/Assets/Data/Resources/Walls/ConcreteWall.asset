@@ -28,7 +28,7 @@ MonoBehaviour:
   TopBottomLeft: {fileID: 11400000, guid: c20c7a1d86ddf66409f2bfcb38d48ddc, type: 2}
   TopBottomRight: {fileID: 11400000, guid: 388d7e888e5dae1448d77ba477cf108b, type: 2}
   Cross: {fileID: 11400000, guid: 3715015645ec8b645b2d3a56a81cc833, type: 2}
-  WallName: Concrete Wall
+  WallName: Concrete
   Health: 100
   RequirementsToBuild:
   - ResourceName: Construction Supplies

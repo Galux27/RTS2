@@ -28,7 +28,7 @@ MonoBehaviour:
   TopBottomLeft: {fileID: 11400000, guid: 05cebf6f8dc2f0c4aa48eae7aa2cb404, type: 2}
   TopBottomRight: {fileID: 11400000, guid: 65fab0518c3ac30428637bda289b6583, type: 2}
   Cross: {fileID: 11400000, guid: 059aabff542d2c44c8896e03e212e9c7, type: 2}
-  WallName: Wood Wall
+  WallName: Wood
   Health: 50
   RequirementsToBuild:
   - ResourceName: Construction Supplies

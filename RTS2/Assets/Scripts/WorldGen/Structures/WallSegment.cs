@@ -14,7 +14,7 @@ public class WallSegment:Selectable ,ObjectInfo
     public WallType WallType=WallType.None;
     public GameObject Collider;
     public float HealthVal, MaxHealthVal;
-    WallTile wallType;
+   public WallTile baseWallType;
     public WallSegment(int x, int y,WallTile wallType)
     {
         this.x = x;
@@ -23,7 +23,7 @@ public class WallSegment:Selectable ,ObjectInfo
         {
             this.HealthVal = wallType.Health;
             this.MaxHealthVal = HealthVal;
-            this.wallType = wallType;
+            this.baseWallType = wallType;
         }
     }
 
@@ -50,7 +50,7 @@ public class WallSegment:Selectable ,ObjectInfo
         {
             this.HealthVal = wallType.Health;
             this.MaxHealthVal = HealthVal;
-            this.wallType = wallType;
+            this.baseWallType = wallType;
             
         }
     }
@@ -155,7 +155,7 @@ public class WallSegment:Selectable ,ObjectInfo
 
     public string Description()
     {
-        return wallType.WallName + " " + Health() + "/" + MaxHealth() ;
+        return baseWallType.WallName + " " + Health() + "/" + MaxHealth() ;
     }
 
     public int Quantitiy()
