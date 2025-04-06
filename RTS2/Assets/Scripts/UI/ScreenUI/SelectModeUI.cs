@@ -36,7 +36,7 @@ public class SelectModeUI : MonoBehaviour
                 break;
             case CurrentSelectionMode.Furniture:
                 FurnitureSelectButtonManager.Instance.RefreshUI();
-              BuildingUI.SetActive(true);
+                BuildingUI.SetActive(true);
 
                 break;
             case CurrentSelectionMode.Structures:
@@ -60,6 +60,8 @@ public class SelectModeUI : MonoBehaviour
         ConstructionUI.SetActive(false);
         RoomsUI.SetActive(false);
         CursorIcon.Instance.SetCustomIcon(null);
+        CursorIcon.Instance.SetColor(Color.white);
+        ConstructableObjectManager.Instance.GetCursor().SetActive(false);
 
     }
 
