@@ -84,9 +84,9 @@ public class EnvironmentObjectManager : MonoBehaviour
 
 
 
-        for (int x = coords.x - data.HalfWidth; x < coords.x + data.HalfWidth; x++)
+        for (int x = coords.x; x < coords.x + data.GetWidth; x++)
         {
-            for (int y = coords.y - data.HalfHeight; y < coords.y + data.HalfHeight; y++)
+            for (int y = coords.y; y < coords.y + data.GetHeight; y++)
             {
                 WorldController.Instance.SetTraversible(x, y, true);
             }

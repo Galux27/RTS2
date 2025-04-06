@@ -250,7 +250,15 @@ public class WallManager
     {
         SetWall(x, y,toUse);
         // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
-
+        Vector2Int asCoords = new Vector2Int(x, y);
+        Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        EnvironmentObjectInstance objAtWall = null;
+        if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
+        {
+            Debug.Log("Destroying object " + objAtWall.Name() + " at " + asCoords);
+            objAtWall.AdjustHealth(-9999999f);
+        }
         WallSegment wall = null;
 
         for (int x1 = 0; x1 < width; x1++)

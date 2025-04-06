@@ -312,7 +312,7 @@ public static class WallHelpers
     static Bounds boundsCheck;
     public static bool CanIPlaceWallAtPosition(int x, int y)
     {
-         if(DoesUnderConstructionWallExistAtPosition (x,y)|| DoesConstructedWallExistAtPosition(x,y))
+         if(DoesUnderConstructionWallExistAtPosition (x,y)|| DoesConstructedWallExistAtPosition(x,y)||Pathfinding.GetNodeFromCoords(x,y).IsPassable==false)
         {
             return false;
         }
@@ -412,6 +412,7 @@ public static class WallHelpers
         Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForWall.x, chunkForWall.y];
         coordsCache = coords - toGetFrom.WorldCoords;
+       
         return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
     }
 

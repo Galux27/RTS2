@@ -22,19 +22,19 @@ public class EnvironmentObject : ScriptableObject
         return new Vector3(Width, Height);
     }
 
-    public int HalfWidth
+    public int GetWidth
     {
         get
         {
-            return Mathf.Max(Width / 2, 1);
+            return Width;
         }
     }
 
-    public int HalfHeight
+    public int GetHeight
     {
         get
         {
-            return Mathf.Max(Height / 2, 1);
+            return Height;
         }
     }
 

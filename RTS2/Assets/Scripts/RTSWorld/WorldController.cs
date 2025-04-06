@@ -87,9 +87,9 @@ public class WorldController : MonoBehaviour
         
         Color c = Color.green;
 
-        for (int x = coords.x - data.HalfWidth; x < coords.x + data.HalfWidth; x++)
+        for (int x = coords.x; x < coords.x + data.GetWidth; x++)
         {
-            for (int y = coords.y - data.HalfHeight; y < coords.y + data.HalfHeight; y++)
+            for (int y = coords.y ; y < coords.y + data.GetHeight; y++)
             {
                 SetTraversible(x, y, traversable);
             }
@@ -129,7 +129,7 @@ public class WorldController : MonoBehaviour
     bool CoordsValid(int x,int y)
     {
         if (x < 0 || y < 0) return false;
-        if (x > WorldWidth || y > WorldHeight) return false;
+        if (x > WorldWidth-1 || y > WorldHeight-1) return false;
         return true;
     }
 

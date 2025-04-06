@@ -38,16 +38,16 @@ public class DebugDrawing : MonoBehaviour
 
         Color c = Color.green;
 
-        for (int x = coords.x - data.HalfWidth; x < coords.x + data.HalfWidth; x++)
+        for (int x = coords.x; x < coords.x + data.GetWidth; x++)
         {
-            for (int y = coords.y - data.HalfHeight; y < coords.y + data.HalfHeight; y++)
+            for (int y = coords.y; y < coords.y + data.GetHeight; y++)
             {
               
                 if (WorldController.Instance.IsTraversible(x, y) == false)
                 {
                     c = Color.red;
                 }
-                else if (FurnitureSelectionMode.AreAllTilesWalkable(coords,data.HalfWidth,data.HalfHeight) == false)
+                else if (FurnitureSelectionMode.AreAllTilesWalkable(coords,data.GetWidth,data.GetHeight) == false)
                 {
                     c = Color.blue;
                 }
@@ -71,16 +71,16 @@ public class DebugDrawing : MonoBehaviour
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x < coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
+        for (int x = coords.x; x < coords.x + ConstructableObjectManager.Instance.selectedToConstruct.GetWidth; x++)
         {
-            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y < coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
+            for (int y = coords.y ; y < coords.y + ConstructableObjectManager.Instance.selectedToConstruct.GetHeight; y++)
             {
                 Color c = Color.green;
                 if (WorldController.Instance.IsTraversible(x, y) == false)
                 {
                     c = Color.red;
                 }
-                else if (FurnitureSelectionMode.AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth, ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight) == false)
+                else if (FurnitureSelectionMode.AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) == false)
                 {
                     c = Color.blue;
                 }else if (FurnitureSelectionMode.DoBoundsIntersectExisting(coords, ConstructableObjectManager.Instance.selectedToConstruct.Size()))

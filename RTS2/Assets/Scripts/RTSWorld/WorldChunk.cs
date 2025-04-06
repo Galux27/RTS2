@@ -148,6 +148,22 @@ public class WorldChunk
         return retVal;
     }
 
+    public bool DoesAnyObjectExistAtCoords(Vector2Int coords, out EnvironmentObjectInstance objFound)
+    {
+        List<EnvironmentObjectInstance> objects = GetAllObjectsAtCoords(coords);
+        if (objects.Count == 0)
+        {
+            objFound = null;
+            return false;
+        }
+        else
+        {
+            objFound = objects[0];
+            return true;
+        }
+    }
+
+
     public bool DoesObjectExistAtCoords(Vector2Int coords,string toCheckFor, out EnvironmentObjectInstance objFound)
     {
         List<EnvironmentObjectInstance> objects = GetAllObjectsAtCoords(coords);

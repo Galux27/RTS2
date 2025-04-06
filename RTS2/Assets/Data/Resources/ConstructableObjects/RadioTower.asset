@@ -18,7 +18,7 @@ MonoBehaviour:
   BackwardsSprite: {fileID: 0}
   BlocksTile: 1
   Width: 2
-  Height: 2
+  Height: 4
   CanHarvest: 0
   Resources:
     resources: []

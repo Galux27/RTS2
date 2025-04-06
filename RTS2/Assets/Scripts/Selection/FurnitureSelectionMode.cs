@@ -17,8 +17,8 @@ public class FurnitureSelectionMode : SelectionMode
             CheckForRequiredResources();
             ConstructableObjectManager.Instance.GetCursor().SetActive(true);
 
-            if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth,
-                ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight) 
+            if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth,
+                ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
                 && DoBoundsIntersectExisting(coords, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false && hasEnoughResources)
             {
                 ConstructableObjectManager.Instance.SetCursorColour(new Color(0, 1, 0, .5f));
@@ -60,9 +60,9 @@ public class FurnitureSelectionMode : SelectionMode
     public static bool AreAllTilesWalkable(Vector2Int coords,int halfWidth,int halfHeight)
     {
       
-        for (int x = coords.x - halfWidth; x < coords.x + halfWidth; x++)
+        for (int x = coords.x; x < coords.x + halfWidth; x++)
         {
-            for (int y = coords.y - halfHeight; y < coords.y + halfHeight; y++)
+            for (int y = coords.y; y < coords.y + halfHeight; y++)
             {
                 if (WorldController.Instance.IsTraversible(x, y) == false)
                 {
@@ -94,7 +94,7 @@ public class FurnitureSelectionMode : SelectionMode
          
 
 
-            if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth, ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight) 
+            if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
                 && DoBoundsIntersectExisting(coords, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false
                 )
             {
@@ -105,6 +105,9 @@ public class FurnitureSelectionMode : SelectionMode
 
     public static bool DoBoundsIntersectExisting(Vector2Int coords,Vector3 size)
     {
+        return false;
+
+
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
 
         Bounds toBuild = new Bounds(new Vector3(coords.x, coords.y),size*.9f);

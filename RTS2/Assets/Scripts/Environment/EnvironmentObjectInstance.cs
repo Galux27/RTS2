@@ -162,7 +162,6 @@ public class EnvironmentObjectInstance:ObjectInfo
 
     public void AdjustHealth(float value)
     {
-        Debug.Log("Updating env health " + value + " cur health " + Health()+"/"+MaxHealth());
         HealthVal += value;
         if (HealthVal > MaxHealth())
         {
