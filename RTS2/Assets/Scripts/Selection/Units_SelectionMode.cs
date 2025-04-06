@@ -216,7 +216,56 @@ public class Units_SelectionMode : SelectionMode
                     GameActionController.Instance.AddAction(tr);
                 }
 
+                if (OnHoverEnvironmentObject != null)
+                {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
 
+                    Action Convert = () =>
+                    {
+                       
+                            for (int x = 0; x < currentlySelected.Count; x++)
+                            {
+                                Unit toPerfrom = (Unit)currentlySelected[x];
+                                BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
+                                deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject);
+                                //CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                                // collect.InitBehaviour(toPerfrom, toHarvest);
+                                br.SetBehaviour(deconstruct);
+
+                            }
+                       
+
+                    };
+                    GameAction ga = new GameAction("Deconstruct: " + OnHoverEnvironmentObject.Name(), Convert);
+                    GameActionController.Instance.AddAction(ga);
+                }
+
+
+                if (OnHoverWallSegment != null)
+                {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+
+                    Action Convert = () =>
+                    {
+
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)currentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
+                            deconstruct.InitBehaviour(toPerfrom,OnHoverWallSegment);
+                            //CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                            // collect.InitBehaviour(toPerfrom, toHarvest);
+                            br.SetBehaviour(deconstruct);
+
+                        }
+
+
+                    };
+                    GameAction ga = new GameAction("Deconstruct: " + OnHoverWallSegment.Name(), Convert);
+                    GameActionController.Instance.AddAction(ga);
+                }
 
                 {
                     hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.CursorLayermask);
@@ -256,6 +305,8 @@ public class Units_SelectionMode : SelectionMode
     ConstructableObjectInstance OnHoverConstructable;
     Constructable OnHoverBuildable;
     EnvironmentObjectInstance OnHoverHarvestable;
+    EnvironmentObjectInstance OnHoverEnvironmentObject;
+    WallSegment OnHoverWallSegment;
     ResourceInstance OnHoverResource;
     Inventory OnHoverInventory;
     public override void OnHover()
@@ -294,6 +345,12 @@ public class Units_SelectionMode : SelectionMode
         {
             CursorIcon.Instance.SetBuildIcon();
         }
+
+
+        OnHoverEnvironmentObject = SelectionUtilities.GetEnvironmentObjectInstanceWithinRangeOfPoint(r.origin, 1f);
+
+        OnHoverWallSegment = SelectionUtilities.GetWallTilesWithinRangeOfPoint(r.origin, 1f);
+
 
         OnHoverResource = SelectionUtilities.GetResourceInstanceObjectInstanceWithinRangeOfPoint(r.origin, 1f);
         if (OnHoverResource != null)

@@ -254,11 +254,91 @@ public static class SelectionUtilities
         return retVal;
     }
 
+    static List<WallSegment> WallTileCache = new List<WallSegment>();
+    public static WallSegment GetWallTilesWithinRangeOfPoint(Vector3 point, float maxDist)
+    {
+        WallTileCache.Clear();
+        point.z = 0;
+        WallSegment retVal = null;
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
 
-    static List<EnvironmentObjectInstance> harvestableObjectCache = new List<EnvironmentObjectInstance>();
+        for (int q = 0; q < chunksToCheck.Count; q++)
+        {
+           for(int x = 0; x < chunksToCheck[q].WallSegments.GetLength(0); x++)
+            {
+                for(int y=0;y< chunksToCheck[q].WallSegments.GetLength(1); y++)
+                {
+                    if (chunksToCheck[q].WallSegments[x, y].WallType != WallType.None)
+                    {
+                        WallTileCache.Add(chunksToCheck[q].WallSegments[x, y]);
+                    }
+                }
+           }
+        }
+
+        float closest = 99999f;
+        float curDist = -1f;
+        Vector3 objPosition = Vector3.zero;
+
+        for (int x = 0; x < WallTileCache.Count; x++)
+        {
+            objPosition = WallTileCache[x].Position();
+            curDist = Vector3.Distance(point, objPosition);
+
+            if (curDist < maxDist && curDist < closest)
+            {
+                retVal = WallTileCache[x];
+                closest = curDist;
+            }
+
+        }
+        return retVal;
+    }
+
+
+
+    public static EnvironmentObjectInstance GetEnvironmentObjectInstanceWithinRangeOfPoint(Vector3 point, float maxDist)
+    {
+        environmentObjectInstance.Clear();
+        point.z = 0;
+        EnvironmentObjectInstance retVal = null;
+        chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
+
+        for (int x = 0; x < chunksToCheck.Count; x++)
+        {
+            for (int y = 0; y < chunksToCheck[x].EnvironmentObjectsInChunk.Count; y++)
+            {
+
+                if (chunksToCheck[x].EnvironmentObjectsInChunk[y] as ConstructableObjectInstance != null)
+                {
+                    environmentObjectInstance.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y]);
+                }
+            }
+        }
+
+        float closest = 99999f;
+        float curDist = -1f;
+        Vector3 objPosition = Vector3.zero;
+
+        for (int x = 0; x < environmentObjectInstance.Count; x++)
+        {
+            objPosition = environmentObjectInstance[x].GetPosition();
+            curDist = Vector3.Distance(point, objPosition);
+
+            if (curDist < maxDist && curDist < closest)
+            {
+                retVal = environmentObjectInstance[x];
+                closest = curDist;
+            }
+
+        }
+        return retVal;
+    }
+
+    static List<EnvironmentObjectInstance> environmentObjectInstance = new List<EnvironmentObjectInstance>();
     public static EnvironmentObjectInstance GetHarvestableObjectInstanceWithinRangeOfPoint(Vector3 point, float maxDist)
     {
-        harvestableObjectCache.Clear();
+        environmentObjectInstance.Clear();
         point.z = 0;
         EnvironmentObjectInstance retVal = null;
         chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
@@ -269,7 +349,7 @@ public static class SelectionUtilities
             {
 
                 if (chunksToCheck[x].EnvironmentObjectsInChunk[y].CanHarvest()) {
-                    harvestableObjectCache.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y]);
+                    environmentObjectInstance.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y]);
                 }
             }
         }
@@ -278,14 +358,14 @@ public static class SelectionUtilities
         float curDist = -1f;
         Vector3 objPosition = Vector3.zero;
 
-        for (int x = 0; x < harvestableObjectCache.Count; x++)
+        for (int x = 0; x < environmentObjectInstance.Count; x++)
         {
-            objPosition = harvestableObjectCache[x].GetPosition();
+            objPosition = environmentObjectInstance[x].GetPosition();
             curDist = Vector3.Distance(point, objPosition);
 
             if (curDist < maxDist && curDist < closest)
             {
-                retVal = harvestableObjectCache[x];
+                retVal = environmentObjectInstance[x];
                 closest = curDist;
             }
 

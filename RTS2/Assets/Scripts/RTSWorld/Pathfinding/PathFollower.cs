@@ -21,7 +21,7 @@ public class PathFollower
 
 
     public bool debugDrawPath = true;
-    const float MinDistToPoint = .015f;
+    const float MinDistToPoint = .15f;
     List<PathfindingNode> pathfindingNodes;
     int currentIndex = 0;
     bool isPathDone = false;
@@ -40,7 +40,6 @@ public class PathFollower
         {
             count = pathfindingNodes.Count;
         }
-        Debug.Log("Getting path from " + myPos + " to " + targetPos+" took " +EasyStopwatch.GetStopwatchElapsedTime()+" path lenght " + count);
     }
 
     Vector3 GetCurrentNode()

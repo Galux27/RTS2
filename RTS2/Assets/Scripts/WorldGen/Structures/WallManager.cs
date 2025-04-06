@@ -209,7 +209,18 @@ public class WallManager
     public void AddSingleDoor(int x,int y,Tilemap toDrawOn, WallTile toUse)
     {
         SetDoor(x, y,toDrawOn,toUse);
-        // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+        Vector2Int asCoords = new Vector2Int(x, y);
+        Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        EnvironmentObjectInstance objAtWall = null;
+        if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
+        {
+            if (EnvironmentObjectHelpers.GetEnvironmentObject(objAtWall.ObjectKey).IsDecoration)
+            {
+                objAtWall.AdjustHealth(-9999999f);
+
+            }
+        }
         WallSegment wall = null;
         for (int x1 = 0; x1 < width; x1++)
         {
@@ -256,8 +267,10 @@ public class WallManager
         EnvironmentObjectInstance objAtWall = null;
         if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
         {
-            Debug.Log("Destroying object " + objAtWall.Name() + " at " + asCoords);
-            objAtWall.AdjustHealth(-9999999f);
+            if (EnvironmentObjectHelpers.GetEnvironmentObject(objAtWall.ObjectKey).IsDecoration)
+            {
+                objAtWall.AdjustHealth(-9999999f);
+            }
         }
         WallSegment wall = null;
 
