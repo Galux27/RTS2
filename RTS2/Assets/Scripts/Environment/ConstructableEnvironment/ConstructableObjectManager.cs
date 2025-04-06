@@ -46,6 +46,7 @@ public class ConstructableObjectManager : MonoBehaviour
             Cursor = new GameObject();
             Cursor.name = "Building Construction Cursor";
             spriteRenderer = Cursor.AddComponent<SpriteRenderer>();
+            this.Cursor.AddComponent<SortingOrderController>();
             Cursor.SetActive(false);
         }
         return Cursor;

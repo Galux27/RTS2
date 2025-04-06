@@ -16,6 +16,8 @@ public class SortingOrderController : MonoBehaviour
     float lastY;
     private void Update()
     {
+        return;
+
         if (IsStatic)
         {
             return;
@@ -30,8 +32,9 @@ public class SortingOrderController : MonoBehaviour
 
     public void OnPositionChange()
     {
+        return;
         int sortingOrder = Mathf.RoundToInt(this.transform.position.y * SortingLayersPerMeter);
-        sr.sortingOrder= MaxLayer - sortingOrder;
+        sr.sortingOrder=  -sortingOrder;
     }
 
     private void OnEnable()
