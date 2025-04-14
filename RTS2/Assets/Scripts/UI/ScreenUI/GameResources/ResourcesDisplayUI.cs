@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class ResourcesDisplayUI : BaseUI
+public class ResourcesDisplayUI : BaseUIElement
 {
     static ResourcesDisplayUI instance;
     public static ResourcesDisplayUI Instance

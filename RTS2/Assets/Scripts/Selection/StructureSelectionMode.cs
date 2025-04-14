@@ -161,14 +161,14 @@ public class StructureSelectionMode: SelectionMode
         CursorIcon.Instance.SetWallPlaceIcon();
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        Sprite icon = WallHelpers.GetSpriteForWallType(WallHelpers.GetWallAtCoords(coords), WorldController.Instance.WallManager,
-        WallTypeManager.Instance.SelectedWallTile);
+        Sprite icon = WallTypeManager.Instance.WallIcon;
         CursorIcon.Instance.SetPosition(new Vector3(coords.x + .5f, coords.y + .5f, 0f));
         CursorIcon.Instance.SetCustomIcon(icon);
 
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
 
-        Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
+        Constructable ConstructableHoveringOverThisFrame =
+            WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
 
         if (ValidToPlaceStructure(v))
         {

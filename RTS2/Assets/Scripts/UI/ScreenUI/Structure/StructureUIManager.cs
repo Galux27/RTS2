@@ -39,6 +39,7 @@ public class StructureUIManager : MonoBehaviour
 
     }
 
+  
     public Button CreateButton(string text)
     {
         GameObject button = Instantiate(ButtonPrefab, ButtonParent.transform);

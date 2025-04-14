@@ -17,7 +17,7 @@ public class WallTypeManager : MonoBehaviour
         }
     }
     const string FilePath = "Walls";
-
+    public Sprite WallIcon;
     private void Awake()
     {
         LoadItemsFromResources();

@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 public class ResourceUI : MonoBehaviour
 {
-    public TextMeshProUGUI Name, Quantitiy;
+    public TextMeshProUGUI Quantitiy;
     public Image Icon;
     public void Init(string name,int quantity,Sprite icon)
     {

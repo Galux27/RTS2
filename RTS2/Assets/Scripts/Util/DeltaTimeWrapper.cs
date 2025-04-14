@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class DeltaTimeWrapper
 {
-    static float GameplayDeltaMultiplier = 1f;
+   public static float GameplayDeltaMultiplier = 1f;
    public static float GameplayDelta
    {
         get

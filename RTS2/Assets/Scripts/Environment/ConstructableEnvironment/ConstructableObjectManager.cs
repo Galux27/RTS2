@@ -26,6 +26,14 @@ public class ConstructableObjectManager : MonoBehaviour
         LoadItemsFromResources();
     }
 
+    public void OverrideCursor(Sprite toOverrideWith)
+    {
+        GetCursor();
+        spriteRenderer.sprite = toOverrideWith;
+    }
+
+
+
     public void SetCursorObject(string key)
     {
         if(AllObjects.ContainsKey(key)) {
