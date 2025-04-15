@@ -43,7 +43,7 @@ public class CombinedInventory
             else
             {
                 selectedObject = SelectableManager.Instance.CurrentlySelected[x] as ConstructableObjectInstance;
-                if (selectedObject != null)
+                if (selectedObject != null&&selectedObject.inventoryObject!=null)
                 {
                     AddCombinedInventory(selectedObject.inventoryObject.GetComponent<Inventory>());
                   

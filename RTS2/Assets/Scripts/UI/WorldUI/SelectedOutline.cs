@@ -12,7 +12,7 @@ public class SelectedOutline : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    public void ApplyToObject(GameObject obj,Vector3 size=default)
+    public void ApplyToObject(GameObject obj,Vector3 size=default,Vector3 offset=default)
     {
         parent = obj;
 
@@ -38,7 +38,7 @@ public class SelectedOutline : MonoBehaviour
         this.transform.localScale = scale;
 
         this.transform.parent = obj.transform;
-        this.transform.localPosition = Vector3.zero;
+        this.transform.localPosition = Vector3.zero+offset;
       
     }
 

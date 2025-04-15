@@ -2,27 +2,43 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class SelectionUIElement :BaseUIElement
 {
     public GameObject SelectedObjectsParent, SelectedObjectsInfoParent,SelectedObjectButtonPrefab,InfoPrefab;
     bool init = false;
+    CanvasGroup CG;
     public override void DrawUI()
     {
         base.DrawUI();
+        Init();
         SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.None);
         RefreshUI();
+
     }
-    private void Start()
+  
+    void Init()
     {
         if (!init)
         {
             SelectableManager.OnSelectionChanged += RefreshUI;
+            CG = this.GetComponentInChildren<CanvasGroup>();
+            init = true;
         }
     }
-
     public override void RefreshUI()
     {
+
+        if (SelectableManager.Instance.CurrentlySelected.Count == 0)
+        {
+            CG.alpha = 0f;
+        }
+        else
+        {
+            CG.alpha = 1f;
+        }
+
         if (this.gameObject.activeInHierarchy == false) { return; }
         SelectedObjectsParent.SetActive(true);
         for(int x=0;x<SelectedObjectsParent.transform.childCount;x++)
@@ -46,14 +62,11 @@ public class SelectionUIElement :BaseUIElement
                 DrawSelectedUnits();
                 break;
             case SelectableType.Structure:
-                break;
             case SelectableType.ConstructableObject:
-                break;
             case SelectableType.Item:
-                break;
             case SelectableType.UnderConstructionObject:
-                break;
             case SelectableType.Resource:
+                DrawSelectedObjects();
                 break;
             default:
                 break;
@@ -106,4 +119,61 @@ public class SelectionUIElement :BaseUIElement
             }
         }
     }
+
+    void DrawSelectedObjects()
+    {
+        Dictionary<string, SelectedObjectCategory> dataFromCurrent = new Dictionary<string, SelectedObjectCategory>();
+        dataFromCurrent.Clear();
+        ObjectInfo oi = null;
+        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+        {
+            oi = (ObjectInfo)SelectableManager.Instance.CurrentlySelected[x];
+            if (oi != null)
+            {
+                if (dataFromCurrent.ContainsKey(oi.Name()) == false)
+                {
+                    dataFromCurrent.Add(oi.Name(), new SelectedObjectCategory(oi.Name()));
+                }
+                dataFromCurrent[oi.Name()].Increment(oi.Quantitiy());
+            }
+        }
+
+        if (dataFromCurrent.Count == 0)
+        {
+            return;
+        }
+        if (dataFromCurrent.Count > 1)
+        {
+            foreach (KeyValuePair<string, SelectedObjectCategory> kvp in dataFromCurrent)
+            {
+                //GenerateFilterSelectedButton(kvp.Value);
+                GameObject button = Instantiate(SelectedObjectButtonPrefab, SelectedObjectsParent.transform);
+                Action onClick = () => {
+
+                    SelectableManager.Instance.SetToOnlyNameSelected(kvp.Key);
+                       SelectionController.Instance.blockInputTimer = .2f;
+
+                };
+                button.GetComponent<SelectedObjectUIElement>().SetupButton(kvp.Key, kvp.Value.Quantity, onClick);
+            }
+        }
+        else
+        {
+            for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+            {
+                GameObject button = Instantiate(SelectedObjectButtonPrefab, SelectedObjectsParent.transform);
+                Selectable toSelect = SelectableManager.Instance.CurrentlySelected[x];
+                Action onClick = () => {
+
+                    SelectableManager.Instance.SetToOnlySelected(toSelect);
+                    SelectionController.Instance.blockInputTimer = .2f;
+
+                };
+                button.GetComponent<SelectedObjectUIElement>().SetupButton(toSelect as ObjectInfo,
+                    1, onClick);
+            }
+        }
+
+    }
+
 }

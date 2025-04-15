@@ -29,6 +29,28 @@ public class SelectedObjectUIElement : MonoBehaviour
             GoToObject.onClick.AddListener(() => AutoMoveToUnit(selected));
         }
     }
+
+    public void SetupButton(string name, int quantity, Action onSelect, Sprite icon = null)
+    {
+        GetComponentInChildren<ButtonManagerBasic>().buttonText = name;
+
+        this.icon.sprite = icon;
+        Name.text = name;
+        Quantitiy.text = quantity.ToString();
+        SelectObject.onClick.AddListener(() => onSelect.Invoke());
+
+        if (quantity > 1)
+        {
+            GoToObject.gameObject.SetActive(false);
+        }
+        else if (quantity == 1)
+        {
+            GoToObject.gameObject.SetActive(true);
+           // GoToObject.onClick.AddListener(() => AutoMoveToUnit(selected));
+        }
+    }
+
+
     void AutoMoveToUnit(ObjectInfo selected)
     {
         CameraController.Instance.SetToAutoMove(selected.Position());

@@ -150,7 +150,7 @@ public class BuildableStructure : Constructable,ObjectInfo
     }
     public void OnObjectSelected()
     {
-        SelectedOutlineManager.Instance.OnSelectObject(Object,  GetSize());
+        SelectedOutlineManager.Instance.OnSelectObject(Object,  GetSize(),GetSize()/2f);
     }
 
     SelectableType Selectable.GetSelectableType()
