@@ -63,7 +63,7 @@ public class Hybrid_SelectionMode : SelectionMode
         {
             case SelectableType.Unit:        
                 currentSubSelectionMode = SelectionController.Instance.Units;
-                SelectionController.OnSwitchSelectionMode.Invoke(CurrentSelectionMode.Units);  
+                SelectionController.OnSwitchSelectionMode?.Invoke(CurrentSelectionMode.Units);  
                 break;
             default:
                 break;

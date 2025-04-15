@@ -32,7 +32,8 @@ public class UnitSelectButtonsManager : BaseUI
         }
 
         if (SelectableManager.Instance.CurrentSelectedType != SelectableType.Unit
-            ||SelectionController.Instance.selectionMode!=CurrentSelectionMode.Units && SelectionController.Instance.selectionMode != CurrentSelectionMode.None)
+            ||SelectionController.Instance.selectionMode!=CurrentSelectionMode.Units 
+            && SelectionController.Instance.selectionMode != CurrentSelectionMode.None)
         {
             this.gameObject.SetActive(false);
             return;
