@@ -127,7 +127,7 @@ namespace Michsky.UI.ModernUIPack
                 if (windows[i].windowName == newPanel)
                     newWindowIndex = i;
             }
-
+            Debug.Log("Opening Panel: " + newPanel + "|" + newWindowIndex+"|"+currentWindowIndex);
             if (newWindowIndex != currentWindowIndex)
             {
                 currentWindow = windows[currentWindowIndex].windowObject;

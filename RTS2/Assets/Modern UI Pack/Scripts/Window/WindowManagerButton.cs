@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Michsky.UI.ModernUIPack
 {
@@ -8,11 +9,15 @@ namespace Michsky.UI.ModernUIPack
     {
         public bool enableMobileMode = false;
         [HideInInspector] public Animator buttonAnimator;
-
+        public string PageToOpen;
         void OnEnable()
         {
             if (buttonAnimator == null)
+            {
                 buttonAnimator = gameObject.GetComponent<Animator>();
+              //  this.GetComponent<Button>().onClick.AddListener(()=>this.GetComponentInParent<WindowManager>().OpenPanel(PageToOpen));
+
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)

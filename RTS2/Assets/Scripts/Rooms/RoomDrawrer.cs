@@ -182,7 +182,7 @@ public class RoomDrawrer : MonoBehaviour
         
     }
 
-        public void CleanupAllRooms()
+    public void CleanupAllRooms()
     {
         CleanupRoom(DrawingParent);
         foreach(KeyValuePair<Room,GameObject> kvp in parentsOfRooms)

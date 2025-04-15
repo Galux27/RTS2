@@ -97,7 +97,7 @@ public class RoomsUIParent : MonoBehaviour
 
     void SelectRoom(Room r)
     {
-        RoomManager.Instance.SelectedRoom = r;
+        RoomManager.Instance.SetSelectedRoom( r);
         RoomDrawrer.Instance.CleanupAllRooms();
         RoomDrawrer.Instance.RenderAllRooms();
         RefreshUI(r);
