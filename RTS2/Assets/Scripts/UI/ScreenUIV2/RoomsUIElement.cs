@@ -9,10 +9,7 @@ public class RoomsUIElement : BaseUIElement
     public CreateNewRoomUIElement CreateNewRoomUI;
     public Transform RoomDisplayParent;
     public GameObject RoomButtonPrefab;
-    private void Awake()
-    {
-        DrawUI();
-    }
+   
 
 
     public override void DrawUI()
@@ -20,8 +17,11 @@ public class RoomsUIElement : BaseUIElement
         Init();
         base.DrawUI();
         RoomControls.DrawUI();
-        SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Rooms);
-        RefreshUI();
+        if (SelectionController.Instance.selectionMode != CurrentSelectionMode.Rooms)
+        {
+            SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Rooms);
+        }
+            RefreshUI();
     }
     bool init = false;
     void Init()
@@ -32,7 +32,17 @@ public class RoomsUIElement : BaseUIElement
         }
         RoomManager.Instance.OnRoomAdded += RefreshDueToRoomChanges;
         RoomManager.Instance.OnRoomRemoved += RefreshDueToRoomChanges;
+        RoomControls.OnSwitch += OnWindowSwitch;
         init = true;
+    }
+
+
+    void OnWindowSwitch(WindowButtonPair switchedTo)
+    {
+        if(switchedTo.window.GetComponent<BaseUIElement>() != null)
+        {
+            switchedTo.window.GetComponent<BaseUIElement>().DrawUI();
+        }
     }
 
     void RefreshDueToRoomChanges(Room r)
@@ -44,6 +54,8 @@ public class RoomsUIElement : BaseUIElement
     public override void HideUI()
     {
         RoomControls.HideUI();
+        EditRoomUI.HideUI();
+        SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.None);
         base.HideUI();
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-public class UnitPopDisplay :BaseUI
+public class UnitPopDisplay :BaseUIElement
 {
     public TextMeshProUGUI numberDisplay;
     public Image icon;

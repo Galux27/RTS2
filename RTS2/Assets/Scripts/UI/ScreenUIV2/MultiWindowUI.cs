@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,18 +30,25 @@ public class MultiWindowUI :  BaseUIElement
 
         init = true;
     }
-
+    public Action<WindowButtonPair> OnSwitch;
     void OnButtonClick(WindowButtonPair window)
     {
         foreach (WindowButtonPair pair in buttons)
         {
+            if (pair.window.GetComponent<BaseUIElement>() != null)
+            {
+                pair.window.GetComponent<BaseUIElement>().HideUI() ;
+            }
             pair.window.SetActive(false);
             pair.OnIcon.SetActive(false);
             pair.OffIcon.SetActive(true);
+            
         }
+
         window.window.SetActive(true);
         window.OffIcon.SetActive(false);
         window.OnIcon.SetActive(true);
+        OnSwitch?.Invoke(window);
     }
 }
 

@@ -47,7 +47,7 @@ public class CreateNewRoomUIElement : BaseUIElement
     {
         Room r = new Room();
         r.tilesInRoom = new List<Vector2Int>();
-        r.roomName = NameInput.inputText.ToString();
+        r.roomName = NameInput.inputText.text.ToString();
         r.roomType = (RoomUseType)TypeDropDown.index;
         if (RoomManager.Instance != null)
         {

@@ -117,7 +117,7 @@ public class UnitMoniter : MonoBehaviour
     {
         foreach(KeyValuePair<UnitType, UserUnitTypeCount > KeyValuePair in unitCounts)
         {
-            UnitPopulationUI.Instance.UpdateDisplay(KeyValuePair.Value);
+            UnitCapacityUIElement.Instance.UpdateDisplay(KeyValuePair.Value);
         }
     }
 

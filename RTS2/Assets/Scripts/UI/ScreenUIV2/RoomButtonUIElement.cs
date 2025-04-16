@@ -1,3 +1,4 @@
+using Michsky.UI.ModernUIPack;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,9 +14,10 @@ public class RoomButtonUIElement : BaseUIElement
     public void InitButton(Room r)
     {
         Room = r;
-        RoomName.text = r.roomName;
+        SelectRoom.GetComponent<ButtonManagerBasic>().buttonText = r.roomName;
         SelectRoom.onClick.AddListener(OnSelectRoomClick);
         ZoomTo.onClick.AddListener(OnZoomToClick);
+        RoomManager.Instance.OnRoomSelected += OnRoomSelected;
     }
 
     void OnSelectRoomClick()
@@ -24,6 +26,18 @@ public class RoomButtonUIElement : BaseUIElement
 
         RoomDrawrer.Instance.CleanupAllRooms();
         RoomDrawrer.Instance.RenderAllRooms();
+    }
+
+    void OnRoomSelected(Room r)
+    {
+        if (r == Room)
+        {
+            RoomName.color = Color.green;
+        }
+        else
+        {
+            RoomName.color = Color.white;
+        }
     }
 
     void OnZoomToClick()

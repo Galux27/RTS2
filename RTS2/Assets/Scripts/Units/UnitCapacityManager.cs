@@ -12,7 +12,7 @@ public static class UnitCapacityManager
         RefreshTotalCapacity();
         RefreshEngineerCapacity();
         RefreshSoldierCapacity();
-        UnitPopulationUI.Instance.RefreshUI();
+        UnitCapacityUIElement.Instance.RefreshUI();
     }
 
     public static int TotalCapacity = 0, EngineerCapacity = 0, SoldierCapacity = 0;

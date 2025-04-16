@@ -8,7 +8,7 @@ using UnityEditor.Searcher;
 public class EditRoomUIElement : BaseUIElement
 {
     public Button ExpandRoom, ReduceRoom, DeleteRoom;
-    public TextMeshProUGUI ValidityDetails;
+    public TextMeshProUGUI ValidityDetails,SelectedRoom;
     private void OnEnable()
     {
         DrawUI();
@@ -34,7 +34,15 @@ public class EditRoomUIElement : BaseUIElement
         ReduceRoom.onClick.AddListener(() => RoomsSelectionMode.CurrentMode = RoomMode.Remove);
         ReduceRoom.onClick.AddListener(() => SetButtonVisuals(ReduceRoom));
         DeleteRoom.onClick.AddListener(RoomManager.Instance.DeleteSelected);
+        RoomManager.Instance.OnRoomRemoved += RefreshOnRoomChange;
+        RoomManager.Instance.OnRoomAdded += RefreshOnRoomChange;
+        RoomManager.Instance.OnRoomSelected += RefreshOnRoomChange;
         init = true;
+    }
+
+    void RefreshOnRoomChange(Room r)
+    {
+        RefreshUI();
     }
 
     void SetButtonVisuals(Button selected)
@@ -55,13 +63,20 @@ public class EditRoomUIElement : BaseUIElement
         base.RefreshUI();
         if(RoomManager.Instance.SelectedRoom == null)
         {
-            ValidityDetails.text = "No room selected";
+            SelectedRoom.text = "No room selected";
+            ValidityDetails.text = "";
         }
         else
         {
+            SelectedRoom.text = "Editing: " + RoomManager.Instance.SelectedRoom.roomName;
             ValidityDetails.text= RoomManager.Instance.SelectedRoom.GetValidityDetailsForRoom(RoomManager.Instance.SelectedRoom);
         }
+    }
 
-        
+    public override void HideUI()
+    {
+        base.HideUI();
+        RoomsSelectionMode.CurrentMode = RoomMode.None;
+        SetButtonVisuals(null);
     }
 }
