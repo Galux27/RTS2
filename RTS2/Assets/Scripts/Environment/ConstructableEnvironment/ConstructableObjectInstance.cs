@@ -15,7 +15,11 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
             myBehaviour = ScriptableObject.Instantiate(ConstructableObjectManager.Instance.AllObjects[ObjectKey].MyBehaviour);
             myBehaviour.myPosition= new Vector3(x,y,0);
         }
-        GameController.Instance.OnUpdate += OnUpdate;
+        if (ConstructableObjectManager.Instance.AllObjects[ObjectKey].RequiresUpdate)
+        {
+            Debug.Log("Added to on update");
+            GameController.Instance.OnUpdate += OnUpdate;
+        }
         UnitCapacityManager.RefreshCapacities();
     }
 
@@ -52,8 +56,9 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     void OnUpdate()
     {
-        if(myBehaviour != null)
+        if (myBehaviour != null)
         {
+
             if (myBehaviour.HasUpdate())
             {
                 myBehaviour.OnUpdate();
@@ -71,8 +76,10 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     {
        Component.Destroy(Object.GetComponent<ConstructableObjectWorldReference>());
         OnObjectDeselected();
-        GameController.Instance.OnUpdate -= OnUpdate;
-
+        if (ConstructableObjectManager.Instance.AllObjects[ObjectKey].RequiresUpdate)
+        {
+            GameController.Instance.OnUpdate -= OnUpdate;
+        }
         base.CleanupInstance();
     }
 

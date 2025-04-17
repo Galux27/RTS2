@@ -20,8 +20,6 @@ public class RadioTower_EnvironemtnObjectBehaviour : EnvironmentObjectBehaviourB
         checkCount++;
         if (checkCount >= CheckRate)
         {
-            Debug.Log("radio tower: civilian capacity = "+UnitCapacityManager.GetMaxCapacityForUnitType("Civilian"));
-
             if (UnitCapacityManager.GetRemainingCapacityForType("Civilian") > 0)
             {
                 CreateCivilian();

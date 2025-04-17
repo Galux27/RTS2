@@ -27,13 +27,11 @@ public class GameObjectPoolManager : MonoBehaviour
 
     public GameObject GetObjectFromPool(string name)
     {
-        Debug.Log("Getting Object from pool " + name);
         return AllPools[name].GetObjectFromPool();
     }
 
     public void ReturnObjectToPool(GameObject inst,string poolName)
     {
-        Debug.Log("Returning Object from to " + name);
         if (inst == null)
         {
             return;

@@ -14,7 +14,7 @@ public class EnvironmentObject : ScriptableObject
     public Sprite ForwardsSprite,SideSprite,BackwardsSprite;
     public bool BlocksTile;
     public int Width, Height;
-    public bool CanHarvest,IsDecoration;
+    public bool CanHarvest,IsDecoration,RequiresUpdate;
     public HarvestableResourceData Resources;
     public float MaxHealth;
     public Vector3 Size()

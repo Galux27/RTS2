@@ -48,11 +48,16 @@ public class WorldController : MonoBehaviour
     public GameObject WallCollider;
     private void Start()
     {
+        WallManager = new WallManager(WorldWidth, WorldHeight);
+        
         InitWorld();
     }
 
     public void InitWorld()
     {
+        MapGenerator.Instance.GenerateMap();
+
+
         for(int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
         {
             for(int y = 0; y < WorldChunkManager.Instance.Chunks.GetLength(1); y++)
@@ -60,11 +65,9 @@ public class WorldController : MonoBehaviour
                 WorldRenderer.Instance.RenderWorld(WorldChunkManager.Instance.Chunks[x, y].ChunkTiles);
             }
         }
-        WallManager = new WallManager(WorldWidth, WorldHeight);
 
         WallManager.RenderWalls(BuildingTilemap);
 
-        EnvironmentObjectManager.Instance.GenerateEnvironmentObjects();
     }
 
     public Vector2Int ConvertWorldToTileCoords(Vector3 pos)

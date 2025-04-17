@@ -30,7 +30,7 @@ public class EnvironmentObjectInstance:ObjectInfo
     WorldChunk myChunk;
     Vector3 position;
     public Vector2Int coords;
-
+    bool needsUpdate = false;
     public void SetChunk(WorldChunk chunk)
     {
         myChunk= chunk;
@@ -38,12 +38,21 @@ public class EnvironmentObjectInstance:ObjectInfo
 
     public EnvironmentObjectInstance(int x,int y,string envObj)
     {
-        ObjectKey = envObj;
-        position = new Vector3(x, y);
-        coords = new Vector2Int(x, y);
-        HealthVal = EnvironmentObjectHelpers.GetEnvironmentObject(envObj).MaxHealth;
-        MaxHealthVal = HealthVal;
-    }
+        try
+        {
+            ObjectKey = envObj;
+            position = new Vector3(x, y);
+            coords = new Vector2Int(x, y);
+            EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(envObj);
+            HealthVal = obj.MaxHealth;
+            needsUpdate = obj.RequiresUpdate;
+            MaxHealthVal = HealthVal;
+        }
+        catch
+        {
+            Debug.LogError("Error creating environment object instance " + envObj);
+        }
+        }
 
 
     public virtual void RenderInstance()

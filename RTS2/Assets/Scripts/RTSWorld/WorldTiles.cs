@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -29,6 +30,23 @@ public class WorldTilesManager
         {
             WaterTiles.Add(toUse.WaterTiles[x].WaterHeight, toUse.WaterTiles[x]);
         }
+    }
+
+    public TileBase GetTileForWaterLevel(float level)
+    {
+        float difference = 9999999f;
+        float diffComp = 0f;
+        WaterTile retVal = null;
+        foreach(KeyValuePair<float,WaterTile> waterTile in WaterTiles)
+        {
+            diffComp = Mathf.Abs(level - waterTile.Key);
+            if (diffComp < difference)
+            {
+                difference = diffComp;
+                retVal = waterTile.Value;
+            }
+        }
+        return retVal.Tiles[Random.Range(0, retVal.Tiles.Length)] ;
     }
 
     public TileBase GetTileBase(string type)

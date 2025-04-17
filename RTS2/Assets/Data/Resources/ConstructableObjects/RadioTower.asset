@@ -20,6 +20,8 @@ MonoBehaviour:
   Width: 2
   Height: 4
   CanHarvest: 0
+  IsDecoration: 0
+  RequiresUpdate: 1
   Resources:
     resources: []
     HarvestLength: 0

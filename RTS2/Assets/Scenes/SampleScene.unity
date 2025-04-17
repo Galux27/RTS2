@@ -1658,6 +1658,7 @@ GameObject:
   - component: {fileID: 247636654}
   - component: {fileID: 247636655}
   - component: {fileID: 247636656}
+  - component: {fileID: 247636657}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -1695,6 +1696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WorldTilemap: {fileID: 1063618433}
+  WaterTilemap: {fileID: 1721579405}
   WorldTiles: {fileID: 11400000, guid: fb375e3e1746cb049bd517b4a63fd84f, type: 2}
 --- !u!4 &247636642
 Transform:
@@ -1906,6 +1908,23 @@ MonoBehaviour:
   WallIcon: {fileID: -2002845798, guid: 42144dd4509bde747aef674f6c187046, type: 3}
   WallTileObjectKeys: []
   SelectedWallTile: {fileID: 0}
+--- !u!114 &247636657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 247636639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0b3534725866044487293b7d639dd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  features:
+  - {fileID: 11400000, guid: 78c7732265362a9438197807f58d9360, type: 2}
+  - {fileID: 11400000, guid: d5bc94e3ecb71814ab2f0d9b2c37154b, type: 2}
+  - {fileID: 11400000, guid: 2516cede25602904fba4da26388db422, type: 2}
+  FeaturesToGenerate: 100
 --- !u!1 &250306141
 GameObject:
   m_ObjectHideFlags: 0
@@ -8145,7 +8164,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -10917,7 +10936,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1601566059
   m_SortingLayer: -2
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
