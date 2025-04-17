@@ -54,26 +54,26 @@ public class EnvironmentObjectManager : MonoBehaviour
 
     public void GenerateEnvironmentObjects()
     {
-        Vector3 posCache = Vector3.zero;
-        Vector2Int chunk = Vector2Int.zero;
-        string objectToCreate = "";
-        for (int q=0; q < ObjectsToGenerate; q++)
-        {
-            int x = Random.Range(0, WorldController.Instance.WorldWidth-1);
-            int y = Random.Range(0,WorldController.Instance.WorldHeight-1);
+        //Vector3 posCache = Vector3.zero;
+        //Vector2Int chunk = Vector2Int.zero;
+        //string objectToCreate = "";
+        //for (int q=0; q < ObjectsToGenerate; q++)
+        //{
+        //    int x = Random.Range(0, WorldController.Instance.WorldWidth-1);
+        //    int y = Random.Range(0,WorldController.Instance.WorldHeight-1);
 
-            if (WorldController.Instance.WorldTiles[x, y].traversable)
-            {
-                posCache.x = x;
-                posCache.y = y;
-                chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(posCache);
-                objectToCreate = EnvironmentObjectKeys[Random.Range(0, EnvironmentObjectKeys.Count)];
-                EnvironmentObjectInstance instance = new EnvironmentObjectInstance(x, y, objectToCreate);
-                WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(instance);
-                WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !EnvironmentObjectHelpers.GetEnvironmentObject(objectToCreate).BlocksTile);
+        //    if (WorldController.Instance.WorldTiles[x, y].traversable)
+        //    {
+        //        posCache.x = x;
+        //        posCache.y = y;
+        //        chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(posCache);
+        //        objectToCreate = EnvironmentObjectKeys[Random.Range(0, EnvironmentObjectKeys.Count)];
+        //        EnvironmentObjectInstance instance = new EnvironmentObjectInstance(x, y, objectToCreate);
+        //        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(instance);
+        //        WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !EnvironmentObjectHelpers.GetEnvironmentObject(objectToCreate).BlocksTile);
 
-            }
-        }
+        //    }
+        //}
     }
 
     public void OnDestroyEnvironmentObject(EnvironmentObjectInstance obj)

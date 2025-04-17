@@ -30,7 +30,7 @@ public class WorldRenderer : MonoBehaviour
     bool init = false;
     private void Init()
     {
-        WorldTilesManager = new WorldTilesManager(WorldTiles.tileTypes);
+        WorldTilesManager = new WorldTilesManager(WorldTiles);
 
 
 

@@ -92,7 +92,7 @@ public class WallManager
 
    
 
-    public void RenderWalls(Tilemap toDrawOn, WallTile toUse)
+    public void RenderWalls(Tilemap toDrawOn)
     {
         WallSegment wall = null;
         for (int x = 0; x < width; x++)

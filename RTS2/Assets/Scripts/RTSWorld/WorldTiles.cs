@@ -8,21 +8,30 @@ using UnityEngine.Tilemaps;
 public class WorldTiles : ScriptableObject
 {
     public List<WorldTileType> tileTypes;
+    public List<WaterTile> WaterTiles;
 }
 
 public class WorldTilesManager
 {
-    Dictionary<TileType, WorldTileType> WorldTiles;
-    public WorldTilesManager(List<WorldTileType> tileTypes)
+    Dictionary<string, WorldTileType> WorldTiles;
+    Dictionary<float, WaterTile> WaterTiles;
+    public WorldTilesManager(WorldTiles toUse)
     {
-        WorldTiles = new Dictionary<TileType, WorldTileType>();
+        List<WorldTileType> tileTypes = toUse.tileTypes;
+        WorldTiles = new Dictionary<string, WorldTileType>();
         for(int x=0; x<tileTypes.Count; x++)
         {
             WorldTiles.Add(tileTypes[x].tileType, tileTypes[x]);
         }
+
+        WaterTiles = new Dictionary<float, WaterTile>();
+        for(int x = 0; x < toUse.WaterTiles.Count; x++)
+        {
+            WaterTiles.Add(toUse.WaterTiles[x].WaterHeight, toUse.WaterTiles[x]);
+        }
     }
 
-    public TileBase GetTileBase(TileType type)
+    public TileBase GetTileBase(string type)
     {
         if (WorldTiles.ContainsKey(type))
         {
@@ -37,8 +46,14 @@ public class WorldTilesManager
 [System.Serializable]
 public class WorldTileType 
 {
-    public TileType tileType;
+    public string tileType;
     public TileBase tileBase;
 
+}
+[System.Serializable]
+public class WaterTile
+{
+    public float WaterHeight;
+    public TileBase[] Tiles;
 }
 

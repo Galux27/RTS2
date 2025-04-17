@@ -40,6 +40,13 @@ public class WorldChunkManager : MonoBehaviour
         }
         Height = Chunks.GetLength(1);
         Width = Chunks.GetLength(0);
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].InitPathfindingNodes();
+            }
+        }
     }
 
     public void OnBuildableFinished(BuildableStructure bs)

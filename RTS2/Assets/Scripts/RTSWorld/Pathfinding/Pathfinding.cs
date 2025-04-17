@@ -122,6 +122,10 @@ public static class Pathfinding
     {
         Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForNode.x, chunkForNode.y];
+        if (toGetFrom == null)
+        {
+            return null;
+        }
         coordsCache = coords - toGetFrom.WorldCoords;
         if (coordsCache.x < 0 || coordsCache.y < 0||coordsCache.x >=WorldChunkManager.ChunkSize||coordsCache.y>=WorldChunkManager.ChunkSize) { return null; }
         return toGetFrom.PathfindingNodes[coordsCache.x, coordsCache.y];
@@ -232,6 +236,7 @@ public static class Pathfinding
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos,performing);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos,performing);
+        Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "+seekerNode.worldPos.ToString()+" dest node " + targetNode.worldPos.ToString());
         if (seekerNode.IsPassable == false || targetNode.IsPassable == false)
         {
             return null;

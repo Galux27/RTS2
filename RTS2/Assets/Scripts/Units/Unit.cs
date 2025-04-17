@@ -162,11 +162,16 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
     }
 
     public Vector2Int lastCoords = new Vector2Int();
+    bool GotLastCoords = false;
     public Action<Vector2Int> OnEnterNewTile;
     void OnUnitMove()
     {
         Vector2Int coordsCurrent=Pathfinding.GetCoordsFromPosition(this.transform.position);
-
+        if (!GotLastCoords)
+        {
+            lastCoords = coordsCurrent;
+            GotLastCoords = true;
+        }
         if (coordsCurrent != lastCoords)
         {
             WorldController.Instance.OnTileExit(lastCoords, this);

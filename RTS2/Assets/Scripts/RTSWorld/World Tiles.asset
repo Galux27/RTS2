@@ -13,7 +13,104 @@ MonoBehaviour:
   m_Name: World Tiles
   m_EditorClassIdentifier: 
   tileTypes:
-  - tileType: 1
-    tileBase: {fileID: 11400000, guid: ae497f4a02b7d5c46a9c5b1aecd6f4c9, type: 2}
-  - tileType: 0
-    tileBase: {fileID: 11400000, guid: ed80e75a3c193844c9dc60b20f7f8fbe, type: 2}
+  - tileType: Ground
+    tileBase: {fileID: 11400000, guid: ed4259f1813cad549b82fc17541f0857, type: 2}
+  - tileType: Sand
+    tileBase: {fileID: 11400000, guid: 72ebf425211f1b746be1a36c612ad2fb, type: 2}
+  - tileType: Mud
+    tileBase: {fileID: 11400000, guid: 99619f5f6373ef645852b4c7a5d1c78b, type: 2}
+  - tileType: Road
+    tileBase: {fileID: 11400000, guid: 944b52bd8b941ef41826bb181cd35d47, type: 2}
+  - tileType: Tiled
+    tileBase: {fileID: 11400000, guid: 847edd4de049a814a98cc7e5a32881c9, type: 2}
+  WaterTiles:
+  - WaterHeight: 1
+    Tiles:
+    - {fileID: 11400000, guid: 4ca4b8673a124a24586bc0416547baa6, type: 2}
+    - {fileID: 11400000, guid: 8d6c3da46b414cc449994fa6b6c28c50, type: 2}
+    - {fileID: 11400000, guid: 4f5f0d3a9f0df80458596ef8a444ce09, type: 2}
+    - {fileID: 11400000, guid: 2dbbfd0034216bc488343ac83ffc3ec7, type: 2}
+    - {fileID: 11400000, guid: 20494f994a270f54e84c4b9e0a7a3643, type: 2}
+    - {fileID: 11400000, guid: f9a028d5c41cba643a877ddf16712dcb, type: 2}
+    - {fileID: 11400000, guid: a7054510895aa2848a4385754ee63062, type: 2}
+    - {fileID: 11400000, guid: 49c8bfb493d8d2140ad46b0fb14129a6, type: 2}
+  - WaterHeight: 0.8
+    Tiles:
+    - {fileID: 11400000, guid: eefef2ab49e9b33469fe7f080e084733, type: 2}
+    - {fileID: 11400000, guid: 5d0b8e935b81e8d45a8a5cbfd3f73ad5, type: 2}
+    - {fileID: 11400000, guid: d97001ca41aa24143ba4b9b8428985e5, type: 2}
+    - {fileID: 11400000, guid: c8fd0f131867ebd4bb56b4f94ed96759, type: 2}
+    - {fileID: 11400000, guid: 6dc0a2ac3c8e16b418aef2b64b6095ea, type: 2}
+    - {fileID: 11400000, guid: dde5a03fc63a91d41888d8a6f5a81f56, type: 2}
+    - {fileID: 11400000, guid: 68d3cc6865e683141b7e4ee1683300a3, type: 2}
+    - {fileID: 11400000, guid: eb766ff1b9fc4dc4299dccb18ae78434, type: 2}
+  - WaterHeight: 0.6
+    Tiles:
+    - {fileID: 11400000, guid: 8695d777f44e843438c037372d5e4c68, type: 2}
+    - {fileID: 11400000, guid: 53a4a3c673dbfcd4ca779e52d59f0309, type: 2}
+    - {fileID: 11400000, guid: 23edf8163944d9241860aeea81e14683, type: 2}
+    - {fileID: 11400000, guid: 1580f3b37a0f581419f5dca05ceb4dbf, type: 2}
+    - {fileID: 11400000, guid: 232d6fae4ddceba43a885152ac353008, type: 2}
+    - {fileID: 11400000, guid: 1dea09cdb8f6f2446ab7453c204a0790, type: 2}
+    - {fileID: 11400000, guid: accbbc0afc9f0ac468ffdbfeeaea5278, type: 2}
+    - {fileID: 11400000, guid: fc5e2572bceed44438b3ef41a918186c, type: 2}
+  - WaterHeight: 0.4
+    Tiles:
+    - {fileID: 11400000, guid: 2fb1455b4d1831e4297e12102b2ad7d4, type: 2}
+    - {fileID: 11400000, guid: 69ab68f46ec78fe43a0fe87fb50fb239, type: 2}
+    - {fileID: 11400000, guid: a77bca989a2a277489972fa883b19f86, type: 2}
+    - {fileID: 11400000, guid: 549ebbb3b09dd54419d85f7fb8a16ff3, type: 2}
+    - {fileID: 11400000, guid: 9ad7abd32a473444394e1a10a62c176f, type: 2}
+    - {fileID: 11400000, guid: 30ad27bf0dc0f214eaace3d15cece473, type: 2}
+    - {fileID: 11400000, guid: 6d1b13b9bd75fb44499ca42eda72d496, type: 2}
+    - {fileID: 11400000, guid: f42500ca7a1c0bd4a8aaefb6e6808e37, type: 2}
+  - WaterHeight: 0.2
+    Tiles:
+    - {fileID: 11400000, guid: 6c0600dc07afe164caad91758188e17d, type: 2}
+    - {fileID: 11400000, guid: 60b2a662590b6174ba3e527f36c77e52, type: 2}
+    - {fileID: 11400000, guid: 632a9e7d71b78114787e0941eaaaef5d, type: 2}
+    - {fileID: 11400000, guid: 58f14695456aa3545b2102fdacd5ce37, type: 2}
+    - {fileID: 11400000, guid: 9a74c3b7b40621747a19b2b4b9a3a67d, type: 2}
+    - {fileID: 11400000, guid: 45a37117fd4a04f44a3b400b5c1f1bd0, type: 2}
+    - {fileID: 11400000, guid: 484545331a9794643b34712286585e08, type: 2}
+    - {fileID: 11400000, guid: fd06f6a68a655d54ea25ba0c1a984038, type: 2}
+  - WaterHeight: 1.25
+    Tiles:
+    - {fileID: 11400000, guid: e28fadac9c81fd84f8cb42ec445c36a5, type: 2}
+    - {fileID: 11400000, guid: 4f065a8d621ae5c4b9b6c0ef30aa8ca7, type: 2}
+    - {fileID: 11400000, guid: 512696c4d53616f41b9a511d76762a2c, type: 2}
+    - {fileID: 11400000, guid: 43555ee4601c9d64f9ca9251fd22f3a7, type: 2}
+    - {fileID: 11400000, guid: 201e5989b3ccc6b4b8f643b45622992d, type: 2}
+    - {fileID: 11400000, guid: 1f39a40284280cd45b8be6b19d9846dc, type: 2}
+    - {fileID: 11400000, guid: 56fa27bb6a5bf374ca04a260dd56ea78, type: 2}
+    - {fileID: 11400000, guid: ecdfac69a3481f14384242ef360efd94, type: 2}
+  - WaterHeight: 1.5
+    Tiles:
+    - {fileID: 11400000, guid: 6357001e0574c454890698a5433b5877, type: 2}
+    - {fileID: 11400000, guid: c242ea7a6b281794088cafe76cb1c9c1, type: 2}
+    - {fileID: 11400000, guid: 77ad2908671b6424b990a80037f352b7, type: 2}
+    - {fileID: 11400000, guid: 3356a96a614daf848b2e637cbb10cd31, type: 2}
+    - {fileID: 11400000, guid: 30aa53444ec345444affa4835394a3bf, type: 2}
+    - {fileID: 11400000, guid: edcb9f29fff7d6249b3db64ba71cf51a, type: 2}
+    - {fileID: 11400000, guid: 7e15b7422ea31a64294bcbe31b8d0774, type: 2}
+    - {fileID: 11400000, guid: c0197618f77f17e43abac6716a4f7811, type: 2}
+  - WaterHeight: 1.75
+    Tiles:
+    - {fileID: 11400000, guid: 93ffa2f5420ae7343996f989c2c6229f, type: 2}
+    - {fileID: 11400000, guid: f116a99460224fe448c3d2864fcf23d5, type: 2}
+    - {fileID: 11400000, guid: 38d918cad0916ba43aff2d7cc2b99274, type: 2}
+    - {fileID: 11400000, guid: 7f6947a222396a944bd18e6e92edbd4c, type: 2}
+    - {fileID: 11400000, guid: 3e4145786cd554a49951ee9b69d553d7, type: 2}
+    - {fileID: 11400000, guid: 4baa513d41812384db551897ce9b8ebd, type: 2}
+    - {fileID: 11400000, guid: 1a33c0c46a7f7cd4aa64a9789e8d28be, type: 2}
+    - {fileID: 11400000, guid: 1e49ce4ea3308434b885e4adee2d44cc, type: 2}
+  - WaterHeight: 2
+    Tiles:
+    - {fileID: 11400000, guid: dace2465eda1aa54f890645d1e2cd39a, type: 2}
+    - {fileID: 11400000, guid: 28ef64fbf6f02e645a4c33dcf6a52044, type: 2}
+    - {fileID: 11400000, guid: 83163d8d47a9e334693e73d57867dbed, type: 2}
+    - {fileID: 11400000, guid: 17b16766a189ae141ab3c80adaf54ae7, type: 2}
+    - {fileID: 11400000, guid: 60cf0c39516f5fb4eb8539d75c95e0e5, type: 2}
+    - {fileID: 11400000, guid: fc2ba7dd392e7834bbf9ab72bc6a36ec, type: 2}
+    - {fileID: 11400000, guid: a14d7b09e548196419f71c3d90f332af, type: 2}
+    - {fileID: 11400000, guid: 56f2470026fd27d4b8135a7e3d366580, type: 2}
