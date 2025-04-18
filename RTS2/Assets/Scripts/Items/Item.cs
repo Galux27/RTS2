@@ -13,6 +13,7 @@ public class Item:ScriptableObject
     public string Description;
     public Sprite Sprite;
     public ItemEquipSlot Slot;
+    public float Weight;
     public List<ItemTags> Tags;
 }
 

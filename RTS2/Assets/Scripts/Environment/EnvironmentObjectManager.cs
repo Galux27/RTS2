@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 
@@ -29,7 +30,7 @@ public class EnvironmentObjectManager : MonoBehaviour
     }
 
     public Dictionary<string, EnvironmentObject> AllObjects;
-    List<string> EnvironmentObjectKeys;
+    public List<string> EnvironmentObjectKeys;
     void LoadItemsFromResources()
     {
         AllObjects = new Dictionary<string, EnvironmentObject>();
@@ -37,39 +38,39 @@ public class EnvironmentObjectManager : MonoBehaviour
         Object[] items = Resources.LoadAll(FilePath);
         for (int x = 0; x < items.Length; x++)
         {
-            EnvironmentObject i = (EnvironmentObject)items[x];
-            if (AllObjects.ContainsKey(i.Name) == false)
+            if ((items[x] as EnvironmentObject) != null)
             {
-                AllObjects.Add(i.Name, i);
-                EnvironmentObjectKeys.Add(i.Name);
+                EnvironmentObject i = (EnvironmentObject)items[x];
+                if (AllObjects.ContainsKey(i.Name) == false)
+                {
+                    AllObjects.Add(i.Name, i);
+                    EnvironmentObjectKeys.Add(i.Name);
+                }
             }
         }
     }
-    const int ObjectsToGenerate = 5000;
+    const int ObjectsToGenerate =3000;
 
-    public void GenerateEnvironmentObjects()
+    
+
+    public void OnDestroyEnvironmentObject(EnvironmentObjectInstance obj)
     {
-        Vector3 posCache = Vector3.zero;
-        Vector2Int chunk = Vector2Int.zero;
-        string objectToCreate = "";
-        for (int q=0; q < ObjectsToGenerate; q++)
-        {
-            int x = Random.Range(0, WorldController.Instance.WorldWidth-1);
-            int y = Random.Range(0,WorldController.Instance.WorldHeight-1);
+        EnvironmentObject data = EnvironmentObjectHelpers.GetEnvironmentObject(obj.ObjectKey);
 
-            if (WorldController.Instance.WorldTiles[x, y].traversable)
+        Vector2Int coords = obj.coords;//WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+
+
+
+        for (int x = coords.x; x < coords.x + data.GetWidth; x++)
+        {
+            for (int y = coords.y; y < coords.y + data.GetHeight; y++)
             {
-                posCache.x = x;
-                posCache.y = y;
-                chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(posCache);
-                objectToCreate = EnvironmentObjectKeys[Random.Range(0, EnvironmentObjectKeys.Count-1)];
-                WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(new EnvironmentObjectInstance(x, y,objectToCreate ));
-                WorldController.Instance.SetTraversible(x, y, !AllObjects[objectToCreate].BlocksTile);
+                WorldController.Instance.SetTraversible(x, y, true);
             }
         }
     }
 
-    const float DrawEnvironmentObjectRadius = 20f;
+    const float DrawEnvironmentObjectRadius = 80f;
     List<WorldChunk> UpdatedLastFrame = new List<WorldChunk>();
     private void Update()
     {

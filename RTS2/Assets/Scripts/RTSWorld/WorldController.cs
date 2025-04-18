@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -19,9 +20,26 @@ public class WorldController : MonoBehaviour
         }
     }
 
-    public int WorldWidth=100, WorldHeight=100;
 
-    public WorldTile[,] WorldTiles;
+    public int WorldWidthInChunks = 10, WorldHeightInChunks = 10;
+
+    public int WorldWidth
+    {
+        get
+        {
+            return WorldWidthInChunks * WorldChunkManager.ChunkSize;
+        }
+
+    }
+        
+    public int WorldHeight{
+        get
+        {
+            return WorldHeightInChunks * WorldChunkManager.ChunkSize;
+        }
+    }
+
+    //public WorldTile[,] WorldTiles;
 
 
     public WallManager WallManager;
@@ -30,31 +48,31 @@ public class WorldController : MonoBehaviour
     public GameObject WallCollider;
     private void Start()
     {
+        WallManager = new WallManager(WorldWidth, WorldHeight);
+        
         InitWorld();
     }
 
     public void InitWorld()
     {
-        WorldTiles = new WorldTile[WorldWidth, WorldHeight];
-        for(int x=0; x < WorldWidth; x++)
+        MapGenerator.Instance.GenerateMap();
+
+
+        for(int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
         {
-            for(int y=0; y < WorldHeight; y++)
+            for(int y = 0; y < WorldChunkManager.Instance.Chunks.GetLength(1); y++)
             {
-                WorldTiles[x, y] = new WorldTile(x, y);
+                WorldRenderer.Instance.RenderWorld(WorldChunkManager.Instance.Chunks[x, y].ChunkTiles);
             }
         }
-        Pathfinding.CreateNodesFromWorld(WorldTiles);
 
-        WallManager = new WallManager(WorldWidth, WorldHeight);
-        WorldRenderer.Instance.RenderWorld(WorldTiles);
-        WallManager.RenderWalls(BuildingTilemap, WallTest);
+        WallManager.RenderWalls(BuildingTilemap);
 
-        EnvironmentObjectManager.Instance.GenerateEnvironmentObjects();
     }
 
     public Vector2Int ConvertWorldToTileCoords(Vector3 pos)
     {
-        return new Vector2Int(Mathf.RoundToInt(pos.x-.5f), Mathf.RoundToInt(pos.y-.5f));
+        return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
     }
 
     public Vector3Int ConvertWorldToTileCoordsVec3(Vector3 pos)
@@ -62,13 +80,33 @@ public class WorldController : MonoBehaviour
         return new Vector3Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z ));
     }
 
-
-    public void SetTraversible(int x,int y,bool traversable)
+    public void SetTilesAroundEnvrionmentObjectTraversable(EnvironmentObjectInstance toSet, bool traversable)
     {
-        WorldTiles[x, y].traversable = traversable;
-        Pathfinding.UpdateNodeData(x, y, traversable);
+        EnvironmentObject data = EnvironmentObjectHelpers.GetEnvironmentObject(toSet.ObjectKey);
+       
+        Vector2Int coords = toSet.coords;//WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+        
+        Color c = Color.green;
 
+        for (int x = coords.x; x < coords.x + data.GetWidth; x++)
+        {
+            for (int y = coords.y ; y < coords.y + data.GetHeight; y++)
+            {
+                SetTraversible(x, y, traversable);
+            }
+        }
     }
+
+
+     public void SetTraversible(int x,int y,bool traversable)
+    {
+        if (CoordsValid(x, y))
+        {
+            WorldTileHelpers.UpdateTileTraversible(x, y, traversable);
+            Pathfinding.UpdateNodeData(x, y, traversable);
+        }
+
+   }
 
     public void AddPathfindingModifier(int x,int y, PathNodeModifier toAdd)
     {
@@ -79,23 +117,42 @@ public class WorldController : MonoBehaviour
     public Action<Vector2Int, Unit> OnTileEnterAction, OnTileExitAction;
     public void OnTileEnter(Vector2Int coords, Unit unit)
     {
-        WorldTiles[coords.x, coords.y].OnTileEntered(coords);
-        OnTileEnterAction?.Invoke(coords, unit);
+        try
+        {
+            WorldTileHelpers.GetTileFromCoords(coords.x, coords.y).OnTileEntered(coords);
+            OnTileEnterAction?.Invoke(coords, unit);
+        }
+        catch
+        {
+            Debug.LogError("Error entering tile at " + coords.ToString());
+        }
     }
 
     public void OnTileExit(Vector2Int coords, Unit unit)
     {
-        WorldTiles[coords.x, coords.y].OnTileExit(coords);
-        OnTileExitAction?.Invoke(coords,unit);
+        try
+        {
+            WorldTileHelpers.GetTileFromCoords(coords.x, coords.y).OnTileExit(coords);
+            OnTileExitAction?.Invoke(coords, unit);
+        }
+        catch
+        {
+            Debug.LogError("Error exiting tile at " + coords.ToString());
 
+        }
     }
-
+    bool CoordsValid(int x,int y)
+    {
+        if (x < 0 || y < 0) return false;
+        if (x > WorldWidth-1 || y > WorldHeight-1) return false;
+        return true;
+    }
 
     public bool IsTraversible(int x,int y)
     {
         if(x<0 || y<0) return false;
         if(x>WorldWidth || y>WorldHeight) return false;
-        return WorldTiles[x, y].traversable;
+        return WorldTileHelpers.GetTileFromCoords(x,y).traversable;
 
     }
 }
@@ -104,13 +161,17 @@ public class WorldTile
 {
     public int x,y;
     public bool traversable = true;
-    public TileType tileType;
-
+    public string tileType;
+    public WaterData WaterData;
+    
     public WorldTile(int x,int y)
     {
         this.x = x;
         this.y = y;
+        tileType = "Ground";
+        WaterData = new WaterData(0f);
     }
+
 
     public void OnTileEntered(Vector2Int vector2Int)
     {
@@ -126,7 +187,11 @@ public class WorldTile
 public enum TileType 
 { 
     Ground,
-    Water
+    Sand,
+    Mud,
+    Gravel,
+    Road,
+    Paved
 }
 
 

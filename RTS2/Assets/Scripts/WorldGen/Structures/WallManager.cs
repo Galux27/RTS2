@@ -6,29 +6,23 @@ using UnityEngine.Tilemaps;
 
 public class WallManager
 {
-    public WallSegment[,] WallsInWorld;
-    int width, height;
+    public int width, height;
    public WallManager(int width,int height)
    {
         this.width = width;
         this.height = height;
-        WallsInWorld = new WallSegment[width, height];
-        for(int x=0;x< width; x++)
-        {
-            for(int y=0;y< height; y++)
-            {
-                WallsInWorld[x,y] = new WallSegment(x,y);
-            }
-        }
+       
         WorldController.Instance.OnTileEnterAction += OnTileEnter;
         WorldController.Instance.OnTileExitAction += OnTileExit;
     }
 
     public void OnTileEnter(Vector2Int coords,Unit unit)
     {
-        if (WallsInWorld[coords.x, coords.y].WallType == WallType.Door) 
+        WallSegment wall = WallHelpers.GetWallAtCoords(coords);
+
+        if (wall.WallType == WallType.Door) 
         {
-            DoorSegment ds = WallsInWorld[coords.x, coords.y] as DoorSegment;
+            DoorSegment ds = wall as DoorSegment;
             if (ds==null)
             {
                 return;
@@ -40,7 +34,10 @@ public class WallManager
 
     public bool DoesSomethingExistAtCoords(Vector2Int coords)
     {
-        if (WallsInWorld[coords.x,coords.y].WallType == WallType.Door|| WallsInWorld[coords.x, coords.y].WallType == WallType.Wall)
+        WallSegment wall = WallHelpers.GetWallAtCoords(coords);
+
+
+        if (wall.WallType == WallType.Door|| wall.WallType == WallType.Wall)
         {
             return true;
         }
@@ -49,16 +46,20 @@ public class WallManager
 
     public DoorSegment IsThereADoorAtCoords(int x, int y)
     {
-        if (WallsInWorld[x, y].WallType == WallType.Door)
+        WallSegment wall = WallHelpers.GetWallAtCoords(x,y);
+
+        if (wall.WallType == WallType.Door)
         {
-           return WallsInWorld[x, y] as DoorSegment; 
+           return wall as DoorSegment; 
         }
         return null;
     }
-        public void OnTileExit(Vector2Int coords, Unit unit)
+    public void OnTileExit(Vector2Int coords, Unit unit)
     {
-        if (WallsInWorld[coords.x,coords.y].WallType==WallType.Door) {
-            DoorSegment ds = WallsInWorld[coords.x, coords.y] as DoorSegment;
+        WallSegment wall = WallHelpers.GetWallAtCoords(coords);
+        if (wall.WallType == WallType.Door) {
+
+            DoorSegment ds =wall as DoorSegment;
             if (ds == null)
             {
                 return;
@@ -68,50 +69,42 @@ public class WallManager
     }
 
 
-    public void SetWall(int x, int y, bool value = true)
+    public void SetWall(int x, int y, WallTile wallTile, bool value = true)
     {
-        WallsInWorld[x, y].SetHasWall(value) ;
-        GenerateWallCollider(x, y);
+        WallSegment wall= WallHelpers.GetWallAtCoords(x, y);
+
+        wall.SetHasWall(value) ;
+        wall.SetWallType(wallTile);
+        GenerateWallCollider(wall);
     }
 
-    public void GenerateWallCollider(int x,int y)
+    public void GenerateWallCollider(WallSegment wall)
     {
-        GameObject col = GameObject.Instantiate(WorldController.Instance.WallCollider, new Vector3(x+.5f, y+.5f, 0), Quaternion.identity);
-        WallsInWorld[x,y].Collider= col;
+        GameObject col = GameObject.Instantiate(WorldController.Instance.WallCollider, new Vector3(wall.x + .5f, wall.y + .5f, 0), Quaternion.identity);
+        wall.Collider = col;
     }
 
-    public void SetDoor(int x,int y,Tilemap toPlaceOn)
+    public void SetDoor(int x,int y,Tilemap toPlaceOn,WallTile wallType)
     {
-        WallsInWorld[x,y]=new DoorSegment(x,y,toPlaceOn);
-        GenerateWallCollider(x,y);
+        WallSegment newWall = WallHelpers.ChangeWallAtCoords(x,y,toPlaceOn,wallType);
+        GenerateWallCollider(newWall);
     }
 
-    public void DrawSomeRandomWalls()
-    {
-        for(int q = 0; q < 10; q++)
-        {
-            int x = Random.Range(5, width - 5);
-            int y=Random.Range(5, height - 5);
+   
 
-            for(int x1=x; x1 < x + 5; x1++)
-            {
-                for( int y1=y; y1 < y + 5; y1++)
-                {
-                    WallsInWorld[x1, y1].SetHasWall(true);
-                }
-            }
-        }
-    }
-
-    public void RenderWalls(Tilemap toDrawOn, WallTile toUse)
+    public void RenderWalls(Tilemap toDrawOn)
     {
+        WallSegment wall = null;
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                if (WallsInWorld[x, y].HasWall)
+                wall = WallHelpers.GetWallAtCoords(x, y);
+
+                if (wall.HasWall)
                 {
-                    WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
                     WorldController.Instance.SetTraversible(x, y, false);
                 }
             }
@@ -122,7 +115,8 @@ public class WallManager
         {
             for (int y = 0; y < height; y++)
             {
-                toDrawOn.SetTile(new Vector3Int(x, y, 0), WallsInWorld[x, y].ToDraw);
+                wall = WallHelpers.GetWallAtCoords(x, y);
+                toDrawOn.SetTile(new Vector3Int(x, y, 0), wall.ToDraw);
             }
         }
     }
@@ -130,19 +124,22 @@ public class WallManager
     public void RemoveSingleWall(int x, int y, Tilemap toDrawOn, WallTile toUse)
     {
         
-        SetWall(x, y,false);
-        WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+        SetWall(x, y,toUse,false);
+        WallSegment toRemove = WallHelpers.GetWallAtCoords(x, y);
+        toRemove.AdjustHealth(-9999);
+        WallHelpers.CalculateTileType(ref toRemove, this, toRemove.baseWallType);
 
         toDrawOn.SetTile(new Vector3Int(x, y, 0), null);
-
+        WallSegment wall = null;
         for (int x1 = 0; x1 < width; x1++)
         {
             for (int y1 = 0; y1 < height; y1++)
             {
-                if (WallsInWorld[x1, y1].HasWall)
+                wall = WallHelpers.GetWallAtCoords(x1, y1);
+                if (wall.HasWall)
                 {
-                    WallHelpers.CalculateTileType(ref WallsInWorld[x1, y1], this, toUse);
-                    WorldController.Instance.SetTraversible(x1, y1, !WallsInWorld[x1, y1].HasWall);
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
                 }
             }
         }
@@ -155,34 +152,85 @@ public class WallManager
                 {
                     continue;
                 }
+                wall = WallHelpers.GetWallAtCoords(x1, y1);
 
-                if (WallsInWorld[x1, y1].HasWall)
+                if (wall.HasWall)
                 {
-                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), WallsInWorld[x1, y1].ToDraw);
+                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
                 }
 
             }
         }
     }
 
-    bool CoordsValid(int x,int y)
+    public List<WallSegment> GetWallSegments(Vector3 low,Vector3 high)
+    {
+        Vector3 l = low, h = high;
+        SelectionUtilities.SetHighAndLowPoints(low, high,ref l,ref h);
+
+        List<WallSegment> retVal = new List<WallSegment>();
+        Vector2Int coords = Vector2Int.zero;
+        WallSegment wall = null;
+        if (Vector3.Distance(l, h) > 1f) 
+        { 
+            for (float x = l.x; x < h.x; x += 1f)
+            {
+                for(float y=l.y;y < h.y; y += 1f)
+                {
+                    coords = WorldController.Instance.ConvertWorldToTileCoords(new Vector3(x,y,0));
+                    wall = WallHelpers.GetWallAtCoords(coords);
+                    if (wall.HasWall || wall.HasDoor)
+                    {
+                        retVal.Add(wall);
+                    }
+                }
+            }
+        }
+        else
+        {
+            coords = WorldController.Instance.ConvertWorldToTileCoords(Vector3.Lerp(l,h,.5f));
+            wall = WallHelpers.GetWallAtCoords(coords);
+
+            if (wall.HasWall || wall.HasDoor)
+            {
+                retVal.Add(wall);
+            }
+        }
+
+
+        return retVal;
+    }
+
+   public bool CoordsValid(int x,int y)
     {
         return x>0&&y>0 &&x<width&&y<height;
     }
 
     public void AddSingleDoor(int x,int y,Tilemap toDrawOn, WallTile toUse)
     {
-        SetDoor(x, y,toDrawOn);
-        // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+        SetDoor(x, y,toDrawOn,toUse);
+        Vector2Int asCoords = new Vector2Int(x, y);
+        Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        EnvironmentObjectInstance objAtWall = null;
+        if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
+        {
+            if (EnvironmentObjectHelpers.GetEnvironmentObject(objAtWall.ObjectKey).IsDecoration)
+            {
+                objAtWall.AdjustHealth(-9999999f);
 
+            }
+        }
+        WallSegment wall = null;
         for (int x1 = 0; x1 < width; x1++)
         {
             for (int y1 = 0; y1 < height; y1++)
             {
-                if (WallsInWorld[x1, y1].HasWall)
+                wall = WallHelpers.GetWallAtCoords(x1, y1);
+                if (wall.HasWall)
                 {
-                    WallHelpers.CalculateTileType(ref WallsInWorld[x1, y1], this, toUse);
-                    WorldController.Instance.SetTraversible(x1, y1, !WallsInWorld[x1, y1].HasWall);
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
                 }
             }
         }
@@ -196,11 +244,12 @@ public class WallManager
                 {
                     continue;
                 }
+                wall = WallHelpers.GetWallAtCoords(x1, y1);
 
-                if (WallsInWorld[x1, y1].HasWall)
+                if (wall.HasWall)
                 {
 
-                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), WallsInWorld[x1, y1].ToDraw);
+                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
                 }
             }
         }
@@ -210,18 +259,31 @@ public class WallManager
 
     public void AddSingleWall(int x,int y,Tilemap toDrawOn,WallTile toUse)
     {
-        SetWall(x, y);
-       // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
-
+        SetWall(x, y,toUse);
+        // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
+        Vector2Int asCoords = new Vector2Int(x, y);
+        Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        EnvironmentObjectInstance objAtWall = null;
+        if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
+        {
+            if (EnvironmentObjectHelpers.GetEnvironmentObject(objAtWall.ObjectKey).IsDecoration)
+            {
+                objAtWall.AdjustHealth(-9999999f);
+            }
+        }
+        WallSegment wall = null;
 
         for (int x1 = 0; x1 < width; x1++)
         {
             for (int y1 = 0; y1 < height; y1++)
             {
-                if (WallsInWorld[x1, y1].HasWall)
+                wall = WallHelpers.GetWallAtCoords(x1, y1);
+
+                if (wall.HasWall)
                 {
-                    WallHelpers.CalculateTileType(ref WallsInWorld[x1, y1], this, toUse);
-                    WorldController.Instance.SetTraversible(x1, y1, !WallsInWorld[x1, y1].HasWall);
+                    WallHelpers.CalculateTileType(ref wall, this,wall.baseWallType);
+                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
                 }
             }
         }
@@ -235,11 +297,12 @@ public class WallManager
                 {
                     continue;
                 }
+                wall = WallHelpers.GetWallAtCoords(x1, y1);
 
-                if (WallsInWorld[x1, y1].HasWall)
+                if (wall.HasWall)
                 {
 
-                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), WallsInWorld[x1, y1].ToDraw);
+                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
                 }
             }
         }

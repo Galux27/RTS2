@@ -26,4 +26,12 @@ public class BehaviourDecisionMaker
         currentBehaviour = toOverrideWith;
         behaviourOverridden = true;
     }
+
+    public bool init = false;
+
+    public virtual void InitBehaviourMaker(Unit performing)
+    {
+        init = true;
+    }
+
 }

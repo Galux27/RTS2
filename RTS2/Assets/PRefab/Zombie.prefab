@@ -10,19 +10,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1662534888133837659, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalPosition.x
@@ -30,7 +30,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 27.8
+      value: 32.77
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalPosition.z
@@ -64,17 +64,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1766871266672776138, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 978468654, guid: 578b91435e94490499bb4f43844e012a, type: 3}
+      objectReference: {fileID: 21300000, guid: 9b0b3c99526df324d924c9b8eaa0eaae, type: 3}
+    - target: {fileID: 1766871266672776138, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: m_Color.b
+      value: 0.3816706
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766871266672776138, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9339623
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766871266672776138, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: m_Color.r
+      value: 0.3480331
+      objectReference: {fileID: 0}
     - target: {fileID: 1874797377567117355, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: MyFactionID
       value: Zombies
       objectReference: {fileID: 0}
     - target: {fileID: 2522048626213712614, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2671481711700667218, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: AttackRate
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2671481711700667218, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: AttackRange
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2671481711700667218, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: AttackDamage
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3589492439018105632, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Name
@@ -82,15 +110,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3589492439018105632, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3625423641063902942, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4757511351116469798, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: Sight
@@ -110,7 +138,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5234928227469654220, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5320751917793463815, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: itemsToAdd.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5409879721580648943, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: Size.x
@@ -127,14 +159,14 @@ PrefabInstance:
     - target: {fileID: 6054107152344473633, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 978468654, guid: 578b91435e94490499bb4f43844e012a, type: 3}
+      objectReference: {fileID: 21300000, guid: 86aa6efab63528b47b8d83869090575f, type: 3}
     - target: {fileID: 8323228731574227215, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 978468654, guid: 578b91435e94490499bb4f43844e012a, type: 3}
+      objectReference: {fileID: 21300000, guid: 86aa6efab63528b47b8d83869090575f, type: 3}
     - target: {fileID: 9202118205438252388, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4554519955264691689, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
@@ -173,6 +205,9 @@ MonoBehaviour:
   MyOrders: {fileID: 0}
   MyCurrentChunk: {x: 0, y: 0}
   MyFaction: {fileID: 0}
+  MySenses: {fileID: 0}
+  HasBeenSwapped: 0
+  HasMovedThisFrame: 0
 --- !u!114 &-7279718248699524055
 MonoBehaviour:
   m_ObjectHideFlags: 0

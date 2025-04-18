@@ -73,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 32767
   m_Sprite: {fileID: -1522814725, guid: 04440dbc4d146ed4aa64fbacb49b488d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -101,3 +101,4 @@ MonoBehaviour:
   Move: {fileID: -1522814725, guid: 04440dbc4d146ed4aa64fbacb49b488d, type: 3}
   Attack: {fileID: -493896113, guid: 04440dbc4d146ed4aa64fbacb49b488d, type: 3}
   Build: {fileID: 991682967, guid: 04440dbc4d146ed4aa64fbacb49b488d, type: 3}
+  WallPlace: {fileID: 0}

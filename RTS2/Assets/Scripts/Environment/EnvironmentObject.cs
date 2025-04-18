@@ -14,25 +14,28 @@ public class EnvironmentObject : ScriptableObject
     public Sprite ForwardsSprite,SideSprite,BackwardsSprite;
     public bool BlocksTile;
     public int Width, Height;
-
+    public bool CanHarvest,IsDecoration,RequiresUpdate;
+    public HarvestableResourceData Resources;
+    public float MaxHealth;
     public Vector3 Size()
     {
         return new Vector3(Width, Height);
     }
 
-    public int HalfWidth
+    public int GetWidth
     {
         get
         {
-            return Mathf.Max(Width / 2, 1);
+            return Width;
         }
     }
 
-    public int HalfHeight
+    public int GetHeight
     {
         get
         {
-            return Mathf.Max(Height / 2, 1);
+            return Height;
         }
     }
+
 }

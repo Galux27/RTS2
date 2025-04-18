@@ -38,4 +38,9 @@ public class ProgressBarUI : MonoBehaviour
     {
         GameObjectPoolManager.Instance.ReturnObjectToPool(this.gameObject, "ProgressBar");
     }
+
+    public bool IsDone()
+    {
+        return CurrentValue >= MaxValue;
+    }
 }

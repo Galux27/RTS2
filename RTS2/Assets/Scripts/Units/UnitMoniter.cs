@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 
 public class UnitMoniter : MonoBehaviour
@@ -12,22 +13,121 @@ public class UnitMoniter : MonoBehaviour
             if(instance == null)
             {
                 instance = FindObjectOfType<UnitMoniter>();
+                instance.Init();
             }
             return instance; 
         }
 
     }
 
+    void Init()
+    {
+        unitCounts.Add(UnitType.Engineer,new UserUnitTypeCount(UnitType.Engineer));
+        unitCounts.Add(UnitType.Rifleman, new UserUnitTypeCount(UnitType.Rifleman));
+        unitCounts.Add(UnitType.Civilian, new UserUnitTypeCount(UnitType.Civilian));
+
+    }
+
+
     public List<Unit> AllUnits=new List<Unit>();
+    Dictionary<UnitType, UserUnitTypeCount> unitCounts=new Dictionary<UnitType, UserUnitTypeCount>();
+
+    public int GetUserUnitCount(string type)
+    {
+        if (type == "Rifleman")
+        {
+            if (unitCounts.ContainsKey(UnitType.Rifleman))
+            {
+                return unitCounts[UnitType.Rifleman].Count;
+            }
+            return 0;
+            }
+        else if (type == "Engineer")
+        {
+            if (unitCounts.ContainsKey(UnitType.Engineer))
+            {
+                return unitCounts[UnitType.Engineer].Count;
+            }
+            return 0;
+        }
+        else if (type == "Civilian")
+        {
+
+            if (unitCounts.ContainsKey(UnitType.Civilian))
+            {
+                return unitCounts[UnitType.Civilian].Count;
+            }
+            return 0;
+        }
+        return 99999999;
+    }
 
     public void AddUnit(Unit toAdd)
     {
+    
+       if (toAdd.MyFaction.MyFactionID == FactionController.USER_FACTION)
+       {
+           IncreaseUnitCount(toAdd);
+       }
+       else if(toAdd.MyFaction.MyFactionID == FactionController.ZOMBIE_FACTION)
+       {
+            ZombieController.Instance.AddZombieToMoniter(toAdd);
+       }
+        
         AllUnits.Add(toAdd);
+    }
 
+    public int GetTotalUnitCount()
+    {
+        int retVal = 0;
+
+        foreach(KeyValuePair<UnitType,UserUnitTypeCount> kvp in unitCounts)
+        {
+            retVal += kvp.Value.Count;
+        }
+
+        return retVal;
+    }
+
+
+
+    void IncreaseUnitCount(Unit toAdd)
+    {
+        if(!unitCounts.ContainsKey(toAdd.MyType))
+        {
+            unitCounts.Add(toAdd.MyType, new UserUnitTypeCount(toAdd.MyType));
+            
+        }
+        unitCounts[toAdd.MyType].Count++;
+        OnUnitCountsChanged();
+
+    }
+
+    void DecreaseUnitCount(Unit toRemove)
+    {
+        if (!unitCounts.ContainsKey(toRemove.MyType))
+        {
+            unitCounts.Add(toRemove.MyType, new UserUnitTypeCount(toRemove.MyType));
+        }
+        unitCounts[toRemove.MyType].Count--;
+        OnUnitCountsChanged();
+    }
+
+    public void OnUnitCountsChanged()
+    {
+        foreach(KeyValuePair<UnitType, UserUnitTypeCount > KeyValuePair in unitCounts)
+        {
+            UnitCapacityUIElement.Instance.UpdateDisplay(KeyValuePair.Value);
+        }
     }
 
     public void RemoveUnit(Unit toRemove) 
     {
+        if (toRemove.MyFaction.MyFactionID == FactionController.USER_FACTION&&AllUnits.Contains(toRemove))
+        {
+            DecreaseUnitCount(toRemove);
+        }
+        
         AllUnits.Remove(toRemove);
     }
 
@@ -81,5 +181,17 @@ public class UnitMoniter : MonoBehaviour
         }
 
         return units;
+    }
+}
+
+public class UserUnitTypeCount
+{
+    public UnitType Type;
+    public int Count;
+
+    public UserUnitTypeCount(UnitType type)
+    {
+        Type = type;
+        Count = 0;
     }
 }

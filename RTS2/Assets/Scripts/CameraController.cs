@@ -5,8 +5,19 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-
-    public float HorizontalMoveSpeed = 5f, VerticalMoveSpeed = 5f, ZoomSpeed = 5f;
+    static CameraController instance;
+    public static CameraController Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance=FindObjectOfType<CameraController>(true);
+            }
+            return instance;
+        }
+    }
+    public float HorizontalMoveSpeed = 5f, VerticalMoveSpeed = 5f, ZoomSpeed = 5f,AutoMoveSpeed=20f;
 
     const float ZoomInLimit = 5f, ZoomOutLimit = 15f;
     Camera GameCamera;
@@ -18,7 +29,23 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        this.transform.position += new Vector3(GetHorizontalMovement() * HorizontalMoveSpeed * Time.deltaTime, GetVerticalMovement() * VerticalMoveSpeed * Time.deltaTime);
+
+        if (isAutoMoving)
+        {
+            Vector3 dir = (autoMoveTarget - this.transform.position).normalized * AutoMoveSpeed * DeltaTimeWrapper.GameplayDelta;
+            dir.z = 0;
+
+            if (Vector2.Distance(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(autoMoveTarget.x, autoMoveTarget.y)) < 1f)
+            {
+                isAutoMoving = false;
+            }
+
+           this.transform.position+=dir;
+        }
+        else
+        {
+            this.transform.position += new Vector3(GetHorizontalMovement() * HorizontalMoveSpeed * DeltaTimeWrapper.GameplayDelta, GetVerticalMovement() * VerticalMoveSpeed * DeltaTimeWrapper.GameplayDelta);
+        }
 
         GameCamera.orthographicSize += GetScrollAdjustment();
 
@@ -27,7 +54,15 @@ public class CameraController : MonoBehaviour
 
     float GetScrollAdjustment()
     {
-        return Input.mouseScrollDelta.y * -ZoomSpeed * Time.deltaTime;
+        return Input.mouseScrollDelta.y * -ZoomSpeed * DeltaTimeWrapper.GameplayDelta;
+    }
+
+    bool isAutoMoving = false;
+    public Vector3 autoMoveTarget= Vector3.zero;
+    public void SetToAutoMove(Vector3 target)
+    {
+        autoMoveTarget = target;
+        isAutoMoving = true;
     }
 
     float GetVerticalMovement()
@@ -36,12 +71,17 @@ public class CameraController : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             retVal += 1f;
+            isAutoMoving = false;
         }
 
         if (Input.GetKey(KeyCode.S))
         {
             retVal -= 1f;
+            isAutoMoving = false;
+
         }
+
+        
 
         return retVal;
     }
@@ -52,13 +92,17 @@ public class CameraController : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
         {
             retVal += 1f;
+            isAutoMoving = false;
+
         }
 
         if (Input.GetKey(KeyCode.A))
         {
             retVal -= 1f;
-        }
+            isAutoMoving = false;
 
+        }
+       
         return retVal;
     }
 }

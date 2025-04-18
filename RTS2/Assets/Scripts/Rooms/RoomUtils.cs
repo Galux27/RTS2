@@ -98,32 +98,135 @@ public class RoomUtils
         {
             return true;
         }
-        return RoomManager.Instance.ValidityData[room.roomType].IsValid(room);
+        return RoomManager.Instance.ValidityData[room.roomType].IsValid(room) && IsRoomEnclosed(room);
+    }
+
+
+    public static string GetValiditiyIssues(Room r)
+    {
+        if (r.roomType == RoomUseType.None)
+        {
+            return "";
+        }
+        string retVal = "";
+
+        if (IsRoomEnclosed(r) == false)
+        {
+            retVal += "Not Enclosed, ";
+        }
+
+        retVal += RoomManager.Instance.ValidityData[r.roomType].GetIssuesWithRoom(r);
+        return retVal ;
+    }
+
+    public static bool IsRoomEnclosed(Room r)
+    {
+        List<Vector2Int> tilesOnEdge = new List<Vector2Int>();
+        List<Vector2Int> neighbours = null;
+        int count = 0;
+        for (int x = 0; x < r.tilesInRoom.Count; x++)
+        {
+            count = 0;
+            neighbours = GridUtils.GetNeighbouringCoords(r.tilesInRoom[x]);
+
+            for (int q = 0; q < neighbours.Count; q++)
+            {
+                if (r.tilesInRoom.Contains(neighbours[q])){
+                    count++;
+                }
+            }
+
+            if (count < 4)
+            {
+                tilesOnEdge.Add(r.tilesInRoom[x]);
+            }
+        }
+        r.EdgeTiles = tilesOnEdge;
+        List<Vector2Int> invalidEdge = new List<Vector2Int>();
+        for(int x = 0; x < tilesOnEdge.Count; x++)
+        {
+            if (WallHelpers.DoesConstructedWallExistAtPosition(tilesOnEdge[x].x, tilesOnEdge[x].y)==false &&
+                WallHelpers.DoesConstructedDoorExistAtPosition(tilesOnEdge[x].x, tilesOnEdge[x].y)==false)
+            {
+                
+       
+                neighbours = GridUtils.GetNeighbouringCoords(tilesOnEdge[x]);
+                count = 0;
+                int roomNeighbours = 0, WallNeighbours = 0, doorNeighbours = 0;
+                for (int q = 0; q < neighbours.Count; q++)
+                {
+                    if (r.tilesInRoom.Contains(neighbours[q]))
+                    {
+                        roomNeighbours++;
+                    }
+                    if (WallHelpers.DoesConstructedWallExistAtPosition(neighbours[q].x, neighbours[q].y))
+                    {
+                        WallNeighbours++;
+                    }
+                    if (WallHelpers.DoesConstructedDoorExistAtPosition(neighbours[q].x, neighbours[q].y))
+                    {
+                        doorNeighbours++;
+                    }
+                    if (r.tilesInRoom.Contains(neighbours[q]) ||
+                        WallHelpers.DoesConstructedWallExistAtPosition(neighbours[q].x, neighbours[q].y) ||
+                        WallHelpers.DoesConstructedDoorExistAtPosition(neighbours[q].x, neighbours[q].y))
+                    {
+                        count++;
+                    }
+
+                }
+                if (count < 4)
+                {
+                    invalidEdge.Add(tilesOnEdge[x]);
+                    //return false;
+                }
+            }
+
+
+           
+        }
+        r.InvalidEdge = invalidEdge;
+        if (invalidEdge.Count > 0)
+        {
+            return false;
+        }
+
+
+        return true;
     }
 
 
     public static bool DoesRoomContainObject(Room r,string objectToFind,out int quantity)
     {
         quantity = 0;
-        Vector2Int coords = Vector2Int.zero;
-        List<EnvironmentObjectInstance> objects = new List<EnvironmentObjectInstance>();
-        EnvironmentObjectInstance instance = null;
-        for(int x = 0; x < r.tilesInRoom.Count; x++)
+        for(int x = 0; x < r.ObjectsInRoom.Count; x++)
         {
-           coords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(r.tilesInRoom[x]);
-            Debug.Log("Room: checking chunk " + coords + " for " + objectToFind);
-            WorldChunkManager.Instance.Chunks[coords.x, coords.y].DoesObjectExistAtCoords(r.tilesInRoom[x],objectToFind,out instance);
-            if (instance != null && objects.Contains(instance) == false)
+            if (r.ObjectsInRoom[x].Name() == objectToFind)
             {
-                objects.Add(instance);
+                quantity++;
             }
         }
-        if(objects.Count > 0)
-        {
-            quantity = objects.Count;
-            return true;
-        }
+        return quantity > 0;
+        //quantity = 0;
+        //Vector2Int coords = Vector2Int.zero;
+        //List<EnvironmentObjectInstance> objects = new List<EnvironmentObjectInstance>();
+        //EnvironmentObjectInstance instance = null;
+        //for(int x = 0; x < r.tilesInRoom.Count; x++)
+        //{
+        //   coords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(r.tilesInRoom[x]);
+        //    Debug.Log("Room: checking chunk " + coords + " for " + objectToFind);
+        //    WorldChunkManager.Instance.Chunks[coords.x, coords.y].DoesObjectExistAtCoords(r.tilesInRoom[x],objectToFind,out instance);
+        //    if (instance != null && objects.Contains(instance) == false)
+        //    {
+        //        objects.Add(instance);
+        //    }
+        //}
+        //if(objects.Count > 0)
+        //{
+        //    quantity = objects.Count;
+        //    return true;
+        //}
 
-        return false;
+        //return false;
     }
 }

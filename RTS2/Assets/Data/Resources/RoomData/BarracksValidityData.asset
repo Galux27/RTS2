@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TypeToCheckFor: 1
   ValidityObjects:
-  - ObjectKey: Bunk Bed
-    NeedsObject: 1
-    NeedsQuantity: 0
-    Quantity: 0
+  - ObjectKey: Weapon Locker
+    OptionalKeys: []
+    ValidityType: 1
+    Quantity: 1

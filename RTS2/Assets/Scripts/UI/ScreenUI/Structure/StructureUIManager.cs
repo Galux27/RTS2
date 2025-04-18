@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,14 +21,25 @@ public class StructureUIManager : MonoBehaviour
     public GameObject ButtonPrefab, ButtonParent;
 
 
-    private void Awake()
+    private void Start()
     {
         CreateButton("None").onClick.AddListener(()=>StructureSelectionMode.Mode=StructureSelectionType.None);
-        CreateButton("Walls").onClick.AddListener(() => StructureSelectionMode.Mode = StructureSelectionType.Walls);
+
+        Button wallButton = CreateButton("Walls");
+        StructureButton sb = wallButton.GetComponent<StructureButton>();
+        foreach(KeyValuePair<string,WallTile> walls in WallTypeManager.Instance.AllObjects)
+        {
+            Action OnButtonClick = new Action(() => StructureSelectionMode.Mode = StructureSelectionType.Walls);
+            OnButtonClick += () => WallTypeManager.Instance.SelectedWallTile = walls.Value;
+            sb.AddType(walls.Key,OnButtonClick);
+        }
+
+
         CreateButton("Doors").onClick.AddListener(() => StructureSelectionMode.Mode = StructureSelectionType.Door);
 
     }
 
+  
     public Button CreateButton(string text)
     {
         GameObject button = Instantiate(ButtonPrefab, ButtonParent.transform);

@@ -14,7 +14,7 @@ public class PathfindingNode
     public PathfindingNode parent;
     public bool IsPassable = true;
 
-    public List<PathfindingNode> neighbours;
+    public List<PathfindingNode> neighbours=new List<PathfindingNode>();
     public Vector3 worldPos;
 
 
@@ -69,7 +69,7 @@ public class PathfindingNode
         }
     }
 
-    public bool GetPassable(Unit performing)
+    public bool GetPassable(Unit performing,bool useModifiers=true)
     {
         
         bool Cache = IsPassable;
@@ -77,18 +77,21 @@ public class PathfindingNode
         {
             return Cache;
         }
-        foreach (KeyValuePair<string,PathNodeModifier> kvp in modifiers)
+        if (useModifiers)
         {
-            if (kvp.Value.IsValid(performing))
+            foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
             {
-                Cache = kvp.Value.ModifyWalkable(Cache,performing);
-                if (Cache == false)
+                if (kvp.Value.IsValid(performing))
                 {
-                    return Cache;
+                    Cache = kvp.Value.ModifyWalkable(Cache, performing);
+                    if (Cache == false)
+                    {
+                        return Cache;
+                    }
                 }
             }
         }
-        return Cache;
+            return Cache;
     }
 
     public int GetFCost(Unit performing)

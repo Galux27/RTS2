@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ff855f45c09324185613678e6d20f7, type: 3}
+  m_Name: Box
+  m_EditorClassIdentifier: 
+  Name: Box
+  ForwardsSprite: {fileID: 21300000, guid: 08e0b2f1174dc9f4ba52a1043d4b6cbd, type: 3}
+  SideSprite: {fileID: 0}
+  BackwardsSprite: {fileID: 0}
+  BlocksTile: 0
+  Width: 1
+  Height: 1
+  CanHarvest: 0
+  Resources:
+    resources: []
+    HarvestLength: 0
+  MaxHealth: 30
+  Cost: 0
+  TimeToBuild: 1
+  MyBehaviour: {fileID: 0}
+  WeightLimit: 9999
+  Filter:
+    CheckForForbidden: 1
+    CheckForAllowed: 0
+    ForbiddenItems:
+    - Fuel
+    AllowedItems: []

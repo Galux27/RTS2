@@ -35,21 +35,31 @@ public class BehaviourRunner : MonoBehaviour
             myDecisionMaker.OverrideBehaviour(value);
         }
     }
-
+    public bool IsBehaviourNull = true;
+    public string behaviourName;
     private void Update()
     {
-        if (myDecisionMaker == null) { return; }
+       
 
-        myDecisionMaker.PerformBehaivourUpdate(UnitPerforming);
+        IsBehaviourNull = CurrentBehaviour == null;
+        if (!IsBehaviourNull)
+        {
+            behaviourName = CurrentBehaviour.GetType().ToString();
+        }
+        if (myDecisionMaker == null) { return; }
+        if (CurrentBehaviour == null)
+        {
+            myDecisionMaker.PerformBehaivourUpdate(UnitPerforming);
+        }
         if ( CurrentBehaviour != null)
         {
-            if(CurrentBehaviour.CanPerformBehaviour())
+            if(CurrentBehaviour!=null && CurrentBehaviour.CanPerformBehaviour())
             {
 
                 CurrentBehaviour.PerformBehaviour();
             }
 
-            if (CurrentBehaviour.IsBehaviourComplete())
+            if (CurrentBehaviour!=null && CurrentBehaviour.IsBehaviourComplete())
             {
 
                 OnBehaviourComplete();
@@ -60,7 +70,11 @@ public class BehaviourRunner : MonoBehaviour
 
     void OnBehaviourComplete()
     {
+
         CurrentBehaviour.OnComplete?.Invoke();
-       
+        if (CurrentBehaviour.DoWeNullBehaviourOnComplete())
+        {
+            CurrentBehaviour = null;
+        }
     }
 }

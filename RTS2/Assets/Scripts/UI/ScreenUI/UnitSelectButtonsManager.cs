@@ -21,24 +21,56 @@ public class UnitSelectButtonsManager : BaseUI
     private void Awake()
     {
         SelectableManager.OnSelectionChanged += RefreshUI;
+        this.gameObject.SetActive(false);
     }
 
     public override void RefreshUI()
     {
-        for(int x=0;x<ButtonParent.transform.childCount;x++)
+        for (int x = 0; x < ButtonParent.transform.childCount; x++)
         {
             Destroy(ButtonParent.transform.GetChild(x).gameObject);
         }
+
+        if (SelectableManager.Instance.CurrentSelectedType != SelectableType.Unit
+            ||SelectionController.Instance.selectionMode!=CurrentSelectionMode.Units 
+            && SelectionController.Instance.selectionMode != CurrentSelectionMode.None)
+        {
+            this.gameObject.SetActive(false);
+            return;
+        }
+       
         if (SelectableManager.Instance.CurrentlySelected.Count > 0)
         {
+            this.gameObject.SetActive(true);
+
             Dictionary<UnitType, List<Unit>> units = SelectableManager.Instance.FilterUnitsByType();
-            foreach (var item in units)
+
+            if (units.Count > 1)
             {
-                GameObject button = Instantiate(ButtonPrefab, ButtonParent);
-                UnitSelectButton usb = button.GetComponent<UnitSelectButton>();
-                usb.SetUnit(item.Key, item.Value.Count);
+
+                foreach (var item in units)
+                {
+                    GameObject button = Instantiate(ButtonPrefab, ButtonParent);
+                    UnitSelectButton usb = button.GetComponent<UnitSelectButton>();
+                    usb.SetUnitType(item.Key, item.Value.Count);
+                }
+            }else if (units.Count == 1)
+            {
+                foreach (var item in units)
+                {
+                    for(int x = 0; x < item.Value.Count; x++)
+                    {
+                        GameObject button = Instantiate(ButtonPrefab, ButtonParent);
+                        UnitSelectButton usb = button.GetComponent<UnitSelectButton>();
+                        usb.SetUnit(item.Value[x]);
+                    }
+                   
+                }
             }
         }
-
+        else
+        {
+            this.gameObject.SetActive(false);
+        }
     }
 }

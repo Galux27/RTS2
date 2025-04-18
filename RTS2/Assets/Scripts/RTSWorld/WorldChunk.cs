@@ -10,12 +10,100 @@ public class WorldChunk
 {
     public List<Unit> UnitsInChunk=new List<Unit>();
     public List<EnvironmentObjectInstance> EnvironmentObjectsInChunk = new List<EnvironmentObjectInstance>();
+    public List<ResourceInstance> ResourceObjectsInChunk = new List<ResourceInstance>();
+    public List<Inventory> StaticContainersInChunk = new List<Inventory>();
     public List<Constructable> ToBuild=new List<Constructable>();
     public Color DebugColor;
+    public int X, Y;
 
-    public WorldChunk()
+    public WallSegment[,] WallSegments;
+    public PathfindingNode[,] PathfindingNodes;
+    public WorldTile[,] ChunkTiles;
+    public Vector2Int WorldCoords;
+    public WorldChunk(int x,int y)
     {
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
+        X = x;
+        Y = y;
+        WorldCoords=new Vector2Int(x* WorldChunkManager.ChunkSize, y* WorldChunkManager.ChunkSize);
+        GenerateTilesForChunk();
+        GenerateWallsForChunk();
+        GeneratePathfindingNodes();
+    }
+
+    void GenerateTilesForChunk()
+    {
+        ChunkTiles = new WorldTile[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        int xStart = WorldChunkManager.ChunkSize * X;
+        int yStart = WorldChunkManager.ChunkSize * Y;
+        int localx = 0, localy = 0;
+        for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
+        {
+
+            for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
+            {
+                ChunkTiles[localx, localy] = new WorldTile(x,y);
+                localy++;
+            }
+            localx++;
+            localy = 0;
+        }
+    }
+
+    void GeneratePathfindingNodes()
+    {
+        PathfindingNodes=new PathfindingNode[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        int xStart = WorldChunkManager.ChunkSize * X;
+        int yStart = WorldChunkManager.ChunkSize * Y;
+        int localx = 0, localy = 0;
+        for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
+        {
+
+            for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[localx, localy] = new PathfindingNode(x,y,true);
+                localy++;
+            }
+            localx++;
+            localy = 0;
+        }
+    }
+
+    public void InitPathfindingNodes()
+    {
+        int xStart = WorldChunkManager.ChunkSize * X;
+        int yStart = WorldChunkManager.ChunkSize * Y;
+        int localx = 0, localy = 0;
+        for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
+        {
+
+            for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[localx, localy].InitData();
+                localy++;
+            }
+            localx++;
+            localy = 0;
+        }
+    }
+
+    void GenerateWallsForChunk()
+    {
+        WallSegments = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        int xStart = WorldChunkManager.ChunkSize *X;
+        int yStart = WorldChunkManager.ChunkSize*Y;
+        int localx = 0, localy = 0;
+        for(int x=xStart; x<xStart+WorldChunkManager.ChunkSize; x++)
+        {
+           
+            for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
+            {
+                WallSegments[localx, localy] = new WallSegment(x, y, null);
+                localy++;
+            }
+            localx++;
+            localy = 0;
+        }
     }
 
     public void AddUnitToChunk(Unit unit)
@@ -28,13 +116,45 @@ public class WorldChunk
         UnitsInChunk.Remove(unit);
     }
 
+    public void AddResourceObject(ResourceInstance resourceInstance)
+    {
+        ResourceObjectsInChunk.Add(resourceInstance);
+    }
+
+    public void RemoveResourceObject(ResourceInstance resourceInstance)
+    {
+        ResourceObjectsInChunk.Remove(resourceInstance);
+    }
+
+
+    public void AddContainerObject(Inventory container)
+    {
+        StaticContainersInChunk.Add(container);
+    }
+
+    public void RemoveContainerObject(Inventory container)
+    {
+        StaticContainersInChunk.Remove(container);
+    }
+
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
     {
         EnvironmentObjectsInChunk.Add(environmentObject);
+        environmentObject.SetChunk(this);
         if (ShouldDrawEnvironmentObjects() && environmentObject.Drawn == false)
         {
             environmentObject.RenderInstance();
         }
+    }
+
+    public void RemoveEnvironmentObject(EnvironmentObjectInstance instance)
+    {
+        if (instance.Drawn)
+        {
+            instance.CleanupInstance();
+        }
+        
+        EnvironmentObjectsInChunk.Remove(instance);
     }
 
     List<EnvironmentObjectInstance> GetAllObjectsAtCoords(Vector2Int coords)
@@ -68,28 +188,34 @@ public class WorldChunk
         return retVal;
     }
 
-    public bool DoesObjectExistAtCoords(Vector2Int coords,string toCheckFor, out EnvironmentObjectInstance objFound)
+    public bool DoesAnyObjectExistAtCoords(Vector2Int coords, out EnvironmentObjectInstance objFound)
     {
-        Debug.Log("Room: check at " + coords+" for "+  toCheckFor);
         List<EnvironmentObjectInstance> objects = GetAllObjectsAtCoords(coords);
         if (objects.Count == 0)
         {
             objFound = null;
             return false;
         }
-        //for(int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
-        //{
-        //    Debug.Log("Room: Obj in chunk " + EnvironmentObjectsInChunk[x].ObjectKey + " x " + EnvironmentObjectsInChunk[x].PosX + " y " + EnvironmentObjectsInChunk[x].PosY);
-        //}
+        else
+        {
+            objFound = objects[0];
+            return true;
+        }
+    }
 
+
+    public bool DoesObjectExistAtCoords(Vector2Int coords,string toCheckFor, out EnvironmentObjectInstance objFound)
+    {
+        List<EnvironmentObjectInstance> objects = GetAllObjectsAtCoords(coords);
+        if (objects.Count == 0)
+        {
+            objFound = null;
+            return false;
+        }
+     
 
         for(int x = 0; x < objects.Count; x++)
-        {
-            if (objects[x] != null)
-            {
-                Debug.Log("Room: object found " + objects[x].ObjectKey + " at " + coords.ToString());
-            }
-
+        { 
             if (objects[x] != null && objects[x].ObjectKey == toCheckFor)
             {
                 objFound = objects[x];
@@ -133,15 +259,19 @@ public class WorldChunk
         }
     }
 
-    public void RemoveConstructable(Constructable toRemove)
+    public void RemoveConstructable(Constructable toRemove, bool needsCleanup = true)
     {
         if (toRemove == null)
         {
             return;
         }
-        if(ToBuild.Contains(toRemove))
+        if (ToBuild.Contains(toRemove))
         {
-            toRemove.Cleanup();
+            Debug.Log("Removed Constructable");
+            if (needsCleanup)
+            {
+                toRemove.Cleanup();
+            }
             ToBuild.Remove(toRemove);
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class RoomDrawrer : MonoBehaviour
@@ -33,6 +34,84 @@ public class RoomDrawrer : MonoBehaviour
         }
     }
     Dictionary<Room, GameObject> parentsOfRooms=new Dictionary<Room, GameObject>();
+    public void RenderPoints(Transform parent,Room room, Color c = default)
+    {
+        CleanupRoom(parent);
+        GameObject cur = null;
+        if (room == RoomManager.Instance.SelectedRoom) { 
+        for (int x = 0; x < room.tilesInRoom.Count; x++)
+        {
+            cur = GameObjectPoolManager.Instance.GetObjectFromPool(BaseTileKey);
+            cur.transform.parent = parent;
+            cur.SetActive(true);
+
+          
+            if (room.EdgeTiles != null && room.EdgeTiles.Contains(room.tilesInRoom[x]) )
+            {
+                cur.transform.position = new Vector3(room.tilesInRoom[x].x + .5f, room.tilesInRoom[x].y + .5f, 0f);
+
+                if (room.InvalidEdge.Contains(room.tilesInRoom[x]))
+                {
+                    cur.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, .5f);
+
+                }
+                else
+                {
+                    cur.GetComponent<SpriteRenderer>().color = new Color(c.r, c.g, c.b, .5f);
+
+                }
+                cur.GetComponent<SpriteRenderer>().sortingOrder = 98;
+            }
+            else
+            {
+                if (c != default)
+                {
+                    cur.transform.position = new Vector3(room.tilesInRoom[x].x + .5f, room.tilesInRoom[x].y + .5f, 0f);
+
+                    cur.GetComponent<SpriteRenderer>().color = c;
+                    cur.GetComponent<SpriteRenderer>().sortingOrder = 98;
+                }
+                else
+                {
+                    cur.transform.position = new Vector3(room.tilesInRoom[x].x + .5f, room.tilesInRoom[x].y + .5f, .1f);
+
+                    cur.GetComponent<SpriteRenderer>().color = new Color(0, 1, 1, .3f);
+                }
+            }
+
+            }
+        }
+        else
+        {
+            for (int x = 0; x < room.tilesInRoom.Count; x++)
+            {
+                cur = GameObjectPoolManager.Instance.GetObjectFromPool(BaseTileKey);
+                cur.transform.parent = parent;
+                cur.SetActive(true);
+
+
+              
+                    if (c != default)
+                    {
+                        cur.transform.position = new Vector3(room.tilesInRoom[x].x + .5f, room.tilesInRoom[x].y + .5f, 0f);
+
+                        cur.GetComponent<SpriteRenderer>().color = new Color(c.r,c.g,c.b,c.a/2f);
+                        cur.GetComponent<SpriteRenderer>().sortingOrder = 98;
+                    }
+                    else
+                    {
+                        cur.transform.position = new Vector3(room.tilesInRoom[x].x + .5f, room.tilesInRoom[x].y + .5f, .1f);
+
+                        cur.GetComponent<SpriteRenderer>().color = new Color(0, 1, 1, .3f);
+                    }
+                
+
+            }
+        }
+    }
+
+
+
     public void RenderPoints(Transform parent, List<Vector2Int> coords, Color c =default)
     {
         CleanupRoom(parent);
@@ -98,8 +177,9 @@ public class RoomDrawrer : MonoBehaviour
         {
             return;
         }
-        Debug.Log("Rendering room " + r.displayColour.ToString()+" tiles "+ r.tilesInRoom.Count);
-        RenderPoints(parentsOfRooms[r].transform,r.tilesInRoom,r.displayColour);
+        Debug.Log("Rendering room " + r.displayColour.ToString() + " tiles " + r.tilesInRoom.Count);
+        RenderPoints(parentsOfRooms[r].transform, r, r.displayColour);
+        
     }
 
     public void CleanupAllRooms()

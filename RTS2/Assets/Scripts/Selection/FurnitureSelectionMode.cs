@@ -14,10 +14,12 @@ public class FurnitureSelectionMode : SelectionMode
 
         if (ConstructableObjectManager.Instance.selectedToConstruct != null)
         {
-
+            CheckForRequiredResources();
             ConstructableObjectManager.Instance.GetCursor().SetActive(true);
 
-            if (AreAllTilesWalkable(coords) && DoBoundsIntersectExisting(coords)==false)
+            if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth,
+                ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
+                && DoBoundsIntersectExisting(coords, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false && hasEnoughResources)
             {
                 ConstructableObjectManager.Instance.SetCursorColour(new Color(0, 1, 0, .5f));
             }
@@ -55,26 +57,12 @@ public class FurnitureSelectionMode : SelectionMode
         }
     }
 
-    bool AreAllTilesWalkable(Vector2Int coords)
+    public static bool AreAllTilesWalkable(Vector2Int coords,int halfWidth,int halfHeight)
     {
-        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x <= coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
+      
+        for (int x = coords.x; x < coords.x + halfWidth; x++)
         {
-            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y <= coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
-            {
-                Color c = Color.green;
-                if (WorldController.Instance.IsTraversible(x, y) == false)
-                {
-                    c = Color.red;
-                }
-                    Debug.DrawLine(CursorSelect.Instance.GetMousePosition(), new Vector3(x, y),c);
-            }
-
-        }
-
-
-        for (int x = coords.x - ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x <= coords.x + ConstructableObjectManager.Instance.selectedToConstruct.HalfWidth; x++)
-        {
-            for (int y = coords.y - ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y <= coords.y + ConstructableObjectManager.Instance.selectedToConstruct.HalfHeight; y++)
+            for (int y = coords.y; y < coords.y + halfHeight; y++)
             {
                 if (WorldController.Instance.IsTraversible(x, y) == false)
                 {
@@ -85,31 +73,44 @@ public class FurnitureSelectionMode : SelectionMode
         }
         return true;
     }
+    bool hasEnoughResources = false;
+    Dictionary<string, List<FoundResourceData>> resourcesForConstruction=null;
+    void CheckForRequiredResources()
+    {
+        ResourceHelpers.CanMeetResourceRequirements(ConstructableObjectManager.Instance.selectedToConstruct.RequirementsToBuild,
+            CursorSelect.Instance.GetMousePosition(), 200f, out hasEnoughResources, ref resourcesForConstruction);
+
+    }
 
     public override void OnLeftMouseUp()
     {
-        if (ConstructableObjectManager.Instance.selectedToConstruct != null)
+        if (ConstructableObjectManager.Instance.selectedToConstruct != null && hasEnoughResources)
         {
             Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
 
             ConstructableObjectManager.Instance.GetCursor().SetActive(true);
             Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
             
-            
-            
-            if (AreAllTilesWalkable(coords)&& DoBoundsIntersectExisting(coords)==false)
+         
+
+
+            if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
+                && DoBoundsIntersectExisting(coords, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false
+                )
             {
-                ConstructableObjectManager.Instance.CreateBuildableForObject(coords, cursorPos);
-               // ConstructableObjectManager.Instance.CreateObject(coords,cursorPos,constructable);
+                ConstructableObjectManager.Instance.CreateBuildableForObject(coords, cursorPos,resourcesForConstruction);
             }
         }
     }
 
-    bool DoBoundsIntersectExisting(Vector2Int coords)
+    public static bool DoBoundsIntersectExisting(Vector2Int coords,Vector3 size)
     {
+        return false;
+
+
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
 
-        Bounds toBuild = new Bounds(new Vector3(coords.x, coords.y), ConstructableObjectManager.Instance.selectedToConstruct.Size()*.9f);
+        Bounds toBuild = new Bounds(new Vector3(coords.x, coords.y),size*.9f);
 
         List<Constructable> selectables= SelectionUtilities.GetAllConstructablesInRangeOfObject(cursorPos, 20);
         Bounds comparison = new Bounds();
@@ -127,7 +128,7 @@ public class FurnitureSelectionMode : SelectionMode
         return false;
     }
 
-    void DrawBounds(Bounds b,Color c )
+    public static void DrawBounds(Bounds b,Color c )
     {
         
         // bottom
@@ -167,7 +168,7 @@ public class FurnitureSelectionMode : SelectionMode
             Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
 
             Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
-            WorldController.Instance.WallManager.WallsInWorld[coords.x, coords.y].HasWallUnderConstruction = false;
+           WallHelpers.GetWallAtCoords(coords.x, coords.y).HasWallUnderConstruction = false;
             WorldChunkManager.Instance.Chunks[v.x, v.y].RemoveConstructable(ConstructableHoveringOver);
         }
     }

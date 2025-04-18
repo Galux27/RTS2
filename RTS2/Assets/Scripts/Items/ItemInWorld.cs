@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class ItemInWorld : MonoBehaviour
+public class ItemInWorld : MonoBehaviour,InventoryObject
 {
     public static ItemInWorld CreateItemInstanceInWorld(Item toCreate)
     {
@@ -16,7 +16,7 @@ public class ItemInWorld : MonoBehaviour
         iw.sr = sr;
         return iw;
     }
-    private void Awake()
+    private void Start()
     {
         ItemController.Instance.AllItemsInWorld.Add(this);
     }
@@ -24,6 +24,88 @@ public class ItemInWorld : MonoBehaviour
     public void SetItem(Item item)
     {
         MyItem = item;
+    }
+
+    public string Name()
+    {
+        return MyItem.Name;
+    }
+
+    public float Weight()
+    {
+        return MyItem.Weight;
+    }
+    public int QuantityVal = 1;
+    public int Quantity()
+    {
+        return QuantityVal ;
+    }
+
+    public bool CanSplitStack()
+    {
+        return false;
+    }
+
+    public object[] SplitStack(int quantityWanted)
+    {
+        //ResourceInstanceData[] retVal = new ResourceInstanceData[2];
+        //retVal[0] = new ResourceInstanceData(Resource, quantityWanted);
+        //this.Quantity -= quantityWanted;
+        //retVal[1] = this;
+        //return retVal;
+        return null;
+    }
+
+    public object[] SplitStack(float weightWanted)
+    {
+
+        //int quantity = 0;
+        //float currentWeight = 0f;
+        //float weightPer = ResourceController.Instance.AllResources[Name()].WeightPerUnit;
+        //while (currentWeight < weightWanted)
+        //{
+        //    quantity++;
+        //    currentWeight += weightPer;
+        //}
+
+        //ResourceInstanceData[] retVal = new ResourceInstanceData[2];
+
+        //retVal[0] = new ResourceInstanceData(Resource, quantity);
+        //this.Quantity -= quantity;
+        //retVal[1] = this;
+
+        //return retVal;
+        return null;
+    }
+    public void RepopulateData(InventoryObject toRepopulateWith)
+    {
+        
+    }
+
+    public void OnAddedToInventory()
+    {
+        
+    }
+
+    public void OnRemovedFromInventory()
+    {
+        this.transform.parent = null;
+    }
+
+    public bool CanObjectBeEquiped()
+    {
+        return MyItem.Slot == ItemEquipSlot.Hands;
+    }
+
+    public void EquipObject(Unit toEquipTo)
+    {
+        toEquipTo.GetComponentInChildren<ItemHolder>().SetHolding(this);
+
+    }
+
+    public void MergeWith(InventoryObject obj)
+    {
+        
     }
 
     public Item MyItem;

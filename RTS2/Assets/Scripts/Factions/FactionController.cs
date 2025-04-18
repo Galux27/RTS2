@@ -24,7 +24,7 @@ public class FactionController : MonoBehaviour
 
     Dictionary<string, Faction> FactionLookup;
     const string FactionLocation = "Factions";
-    public const string USER_FACTION = "User";
+    public const string USER_FACTION = "User",ZOMBIE_FACTION= "Zombies";
     void LoadFactions()
     {
         FactionLookup = new Dictionary<string, Faction>();

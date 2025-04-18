@@ -14,7 +14,7 @@ TagManager:
   - Cursor
   - World
   - Pawns
-  - 
+  - PawnsSwap
   - 
   - 
   - 
@@ -38,6 +38,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Floor
+    uniqueID: 1601566059
+    locked: 0
+  - name: Walls
+    uniqueID: 79846717
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

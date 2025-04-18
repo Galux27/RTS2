@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76ae18e6de6743a4a8a6a3da359e62e6, type: 3}
+  m_Name: WoodWall
+  m_EditorClassIdentifier: 
+  NoNeighbours: {fileID: 11400000, guid: 30c8a9b838ac2e84babf4ab7af3a3916, type: 2}
+  Left: {fileID: 11400000, guid: 636ba2c72232b114d9ec312d36b11551, type: 2}
+  Right: {fileID: 11400000, guid: a8d44ccd3b80dc040a94b644d26f0108, type: 2}
+  Above: {fileID: 11400000, guid: 9da8a0756dffa0442b57b6f91b880f5c, type: 2}
+  Below: {fileID: 11400000, guid: 19d7edf51618dcf478e907d6a5b00361, type: 2}
+  LeftBelow: {fileID: 11400000, guid: 2506a8561330d244a95b08b65b3a56f9, type: 2}
+  LeftAbove: {fileID: 11400000, guid: 4ed45da9a236e0a4889b7f3b42e02bc0, type: 2}
+  RightBelow: {fileID: 11400000, guid: bc3b58a857f71f54493fda2b6935f1fe, type: 2}
+  RightAbove: {fileID: 11400000, guid: 3f7af2478c9334740b461a49eef858c1, type: 2}
+  LeftRight: {fileID: 11400000, guid: ec6b9383768d81942a21c32c6359aa13, type: 2}
+  UpDown: {fileID: 11400000, guid: 1bfbe3ef8747691478b506ef826bf6b6, type: 2}
+  LeftRightBelow: {fileID: 11400000, guid: 5156724e41c358241b8e663cd66858c2, type: 2}
+  LeftRightAbove: {fileID: 11400000, guid: f8eddbd69bf36ec47ab3a39b1b8c4913, type: 2}
+  TopBottomLeft: {fileID: 11400000, guid: 05cebf6f8dc2f0c4aa48eae7aa2cb404, type: 2}
+  TopBottomRight: {fileID: 11400000, guid: 65fab0518c3ac30428637bda289b6583, type: 2}
+  Cross: {fileID: 11400000, guid: 059aabff542d2c44c8896e03e212e9c7, type: 2}
+  WallName: Wood
+  Health: 50
+  RequirementsToBuild:
+  - ResourceName: Construction Supplies
+    QuantityRequired: 3

@@ -7,16 +7,13 @@ using UnityEngine.UI;
 public class SelectModeUI : MonoBehaviour
 {
 
-    public Button None, Units, Buildings,Construction,Rooms;
+    public Button None, Buildings,Construction,Rooms;
 
 
     public GameObject NoneUI, UnitsUI, BuildingUI, ConstructionUI,RoomsUI;
     private void Awake()
     {
         SelectionController.OnSwitchSelectionMode += OnChangeCursorMode;
-
-        None.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.None); });
-        Units.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Units); });
         Buildings.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Furniture); });
         Construction.onClick.AddListener(()=> { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Structures); });
         Rooms.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode (CurrentSelectionMode.Rooms); });
@@ -24,19 +21,22 @@ public class SelectModeUI : MonoBehaviour
 
     public void OnChangeCursorMode(CurrentSelectionMode switchedTo)
     {
+        Debug.Log("On Change Cursor Mode " + switchedTo.ToString());
+        SelectableManager.Instance.ClearSelectables();
         DisableUI();
         switch (switchedTo)
         {
             case CurrentSelectionMode.None:
                 NoneUI.SetActive(true);
+                RoomDrawrer.Instance.CleanupAllRooms();
                 break;
             case CurrentSelectionMode.Units:
                 UnitsUI.SetActive(true);
-
+                RoomDrawrer.Instance.CleanupAllRooms();
                 break;
             case CurrentSelectionMode.Furniture:
                 FurnitureSelectButtonManager.Instance.RefreshUI();
-              BuildingUI.SetActive(true);
+                BuildingUI.SetActive(true);
 
                 break;
             case CurrentSelectionMode.Structures:
@@ -53,12 +53,15 @@ public class SelectModeUI : MonoBehaviour
 
     void DisableUI()
     {
-        RoomDrawrer.Instance.CleanupAllRooms();
+        ActionSelectMenu.Instance.CloseMenu();
         NoneUI.SetActive(false);
         UnitsUI.SetActive(false);
         BuildingUI.SetActive(false);
         ConstructionUI.SetActive(false);
         RoomsUI.SetActive(false);
+        CursorIcon.Instance.SetCustomIcon(null);
+        CursorIcon.Instance.SetColor(Color.white);
+        ConstructableObjectManager.Instance.GetCursor().SetActive(false);
 
     }
 

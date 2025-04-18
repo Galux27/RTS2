@@ -1,24 +1,58 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 
 /// <summary>
 /// Stores information about an instance of an EnvironmentObject in the world (Does not mean that the object is being drawn)
 /// </summary>
-public class EnvironmentObjectInstance
+public class EnvironmentObjectInstance:ObjectInfo
 {
     public string ObjectKey;
-    public int PosX, PosY;
+    public int PosX
+    {
+        get
+        {
+            return coords.x;
+        }
+    }
+        
+     public int PosY
+    {
+        get
+        {
+            return coords.y;
+        }
+    }
     public bool Drawn = false;
     public GameObject Object;
-
+    WorldChunk myChunk;
+    Vector3 position;
+    public Vector2Int coords;
+    bool needsUpdate = false;
+    public void SetChunk(WorldChunk chunk)
+    {
+        myChunk= chunk;
+    }
 
     public EnvironmentObjectInstance(int x,int y,string envObj)
     {
-        ObjectKey = envObj;
-        PosX= x; PosY = y;
-    }
+        try
+        {
+            ObjectKey = envObj;
+            position = new Vector3(x, y);
+            coords = new Vector2Int(x, y);
+            EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(envObj);
+            HealthVal = obj.MaxHealth;
+            needsUpdate = obj.RequiresUpdate;
+            MaxHealthVal = HealthVal;
+        }
+        catch
+        {
+            Debug.LogError("Error creating environment object instance " + envObj);
+        }
+        }
 
 
     public virtual void RenderInstance()
@@ -28,18 +62,154 @@ public class EnvironmentObjectInstance
             return;
         }
 
-        EnvironmentObject obj = EnvironmentObjectManager.Instance.AllObjects[ObjectKey];
+        EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey);
         Object = GameObjectPoolManager.Instance.GetObjectFromPool("EnvironmentObject");
         Object.transform.position = new Vector3(PosX, PosY, 0);
         Object.GetComponent<SpriteRenderer>().sprite = obj.ForwardsSprite;     
         Object.SetActive(true);
         Drawn = true;
+        GameController.Instance.OnUpdate += OnUpdate;
+
     }
 
     public virtual void CleanupInstance()
     {
-        if(!Drawn) { return; }
+
+        if (!Drawn) { return; }
         GameObjectPoolManager.Instance.ReturnObjectToPool(Object,"EnvironmentObject");
         Drawn = false;
+        GameController.Instance.OnUpdate -= OnUpdate;
+
+    }
+
+    public virtual bool CanHarvest()
+    {
+        return EnvironmentObjectManager.Instance.AllObjects.ContainsKey(ObjectKey) &&
+            EnvironmentObjectManager.Instance.AllObjects[ObjectKey].CanHarvest;
+    }
+
+
+    void OnUpdate()
+    {
+        //DebugDrawing.Instance.DrawEnvironmentObjectInstance(this);
+    }
+
+
+    Timer Timer;
+    float harvestTimer = 0;
+   public bool isHarvested = false;
+    public virtual void Harvest()
+    {
+        if (CanHarvest() == false|| isHarvested)
+        {
+            return;
+        }
+        if (Timer == null)
+        {
+            Timer = new Timer(EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey).Resources.HarvestLength);
+            Timer.CreateProgressBarFromTimer(GetPosition());
+            
+        }
+        Timer.ProgressTime(DeltaTimeWrapper.GameplayDelta);
+        
+        if (Timer.IsTimerFinished())
+        {
+            EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey).Resources.GenerateResoruces(new Vector3(PosX, PosY, 0));
+            DestroyInstance();
+            isHarvested = true;
+        }
+    }
+
+    public Vector3 GetPosition()
+    {
+        return position;
+    }
+
+    void DestroyInstance()
+    {
+        if (Drawn)
+        {
+            CleanupInstance();
+        }
+        if (healthUI != null)
+        {
+            GameObject.Destroy(healthUI.gameObject);
+        }
+        myChunk.RemoveEnvironmentObject(this);
+        EnvironmentObjectManager.Instance.OnDestroyEnvironmentObject(this);
+    }
+
+    public string Name()
+    {
+        return ObjectKey;
+    }
+
+    public string Description()
+    {
+        return "";
+    }
+
+    public int Quantitiy()
+    {
+        return 1;
+    }
+    float HealthVal,MaxHealthVal;
+    public float Health()
+    {
+        return HealthVal;
+    }
+
+    public float MaxHealth()
+    {
+        return MaxHealthVal;
+    }
+
+    public Vector3 Position()
+    {
+        return position;
+    }
+
+    public void AdjustHealth(float value)
+    {
+        HealthVal += value;
+        if (HealthVal > MaxHealth())
+        {
+            HealthVal = MaxHealth();
+        }
+        else if (HealthVal < 0)
+        {
+            OnDeath();
+        }
+
+      
+      if (healthUI == null)
+      {
+           DrawHealthUI();
+      }
+      UpdateHealthUI();
+        
+    }
+        HealthUI healthUI;
+    void DrawHealthUI()
+    {
+            if (!Drawn)
+            {
+                return;
+            }
+        healthUI = GameObject.Instantiate(WorldspaceUIManager.Instance.WorldspaceHealthBar,Object.transform).GetComponent<HealthUI>();
+       healthUI.LinkToObjectInfo(this);
+    }
+
+    void UpdateHealthUI()
+    {
+        if (healthUI != null)
+        {
+            healthUI.UpdateHealth();
+        }
+    }
+
+    public void OnDeath()
+    {
+        DestroyInstance();
     }
 }

@@ -22,21 +22,22 @@ public class SelectionController : MonoBehaviour
     }
     public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
     public CurrentSelectionMode selectionMode;
-    public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj,Rooms;
-
+    public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj,Rooms,Hybrid;
+    public float LastLeftClick=-1,LastRightClick=-1;
 
     public void SetCursorSelectionMode(CurrentSelectionMode mode)
     {
         if (selectionMode == mode)
         {
-            return;
+            mode = CurrentSelectionMode.None;
         }
         OnCloseSelectionMode();
         selectionMode = mode;
 
         if (mode == CurrentSelectionMode.None)
         {
-            CurrentSelectionModeObj = None;
+            CurrentSelectionModeObj = Hybrid;
+           ((Hybrid_SelectionMode) Hybrid).ResetSelected();
         }
         else if (mode == CurrentSelectionMode.Units)
         {
@@ -45,14 +46,19 @@ public class SelectionController : MonoBehaviour
         else if (mode == CurrentSelectionMode.Furniture)
         {
             CurrentSelectionModeObj = Buildings;
+            RoomDrawrer.Instance.RenderAllRooms();
+
         }
         else if (mode == CurrentSelectionMode.Structures)
         {
             CurrentSelectionModeObj = Construction;
+            RoomDrawrer.Instance.RenderAllRooms();
+
         }
         else if (mode == CurrentSelectionMode.Rooms)
         {
             CurrentSelectionModeObj= Rooms;
+            RoomDrawrer.Instance.RenderAllRooms();
         }
         SelectableManager.Instance.ClearSelectables();
         OnSwitchSelectionMode?.Invoke(mode);
@@ -66,12 +72,18 @@ public class SelectionController : MonoBehaviour
     {
         None = new SelectionMode();
         Units=new Units_SelectionMode();
-        CurrentSelectionModeObj = Units;
         Construction = new StructureSelectionMode();
         Buildings = new FurnitureSelectionMode();
         Rooms = new RoomsSelectionMode();
+        Hybrid = new Hybrid_SelectionMode();
+
+        CurrentSelectionModeObj = Hybrid;
+
         selectionMode = CurrentSelectionMode.None;
     }
+
+
+   public float blockInputTimer = 0f;
    
     private void Update()
     {
@@ -87,17 +99,33 @@ public class SelectionController : MonoBehaviour
             return;
         }
 
+
+
+
         CurrentSelectionModeObj.OnHover();
 
+        
+        if(blockInputTimer > 0f) {
+            blockInputTimer -= DeltaTimeWrapper.GameplayDelta;
+            return;
+        }
+        
         if (Input.GetMouseButtonUp(0))
         {
             CurrentSelectionModeObj.OnLeftMouseUp();
+            LastLeftClick = Time.time;
         }
 
         if (Input.GetMouseButtonUp(1))
         {
             CurrentSelectionModeObj.OnRightMouseUp();
+            LastRightClick = Time.time;
         }
+    }
+
+    public float GetTimeSinceLastLeftClick()
+    {
+        return Time.time - LastLeftClick;
     }
 }
 

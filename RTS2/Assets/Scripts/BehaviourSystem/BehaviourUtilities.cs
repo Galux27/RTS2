@@ -34,6 +34,90 @@ public static class BehaviourUtilities
         GetUnitCache.Clear();
         return result;
     }
+    static List<WallSegment> WallSectionCache = new List<WallSegment>();
+    const int WallCheckRadius = 3;
+    static WallSegment wallChecking;
+    public static WallSegment GetNearbyWallSegmentToAttack(Unit searching,out bool foundSomething)
+    {
+        wallChecking = null;
+        WallSectionCache.Clear();
+        foundSomething = false;
+        Vector2Int center = WorldController.Instance.ConvertWorldToTileCoords(searching.transform.position);
+        
+        for(int x = center.x - WallCheckRadius; x < center.x + WallCheckRadius; x++)
+        {
+            for (int y = center.y - WallCheckRadius; y< center.y + WallCheckRadius; y++)
+            {
+                if (WorldController.Instance.WallManager.CoordsValid(x, y))
+                {
+                    wallChecking=WallHelpers.GetWallAtCoords(x, y);
+                    if (wallChecking.WallType!=WallType.None)
+                    {
+                        WallSectionCache.Add(wallChecking);
+                    }
+                }
+            }
+        }
+        WallSegment retVal = null;
+        float dist = 9999999f, dist2 = 0f ;
+        for(int x=0;x<WallSectionCache.Count;x++)
+        {
+            dist2 = Vector3.Distance(WallSectionCache[x].Position(),searching.Position());
+            if(dist2 < dist)
+            {
+                retVal = WallSectionCache[x];
+                dist=dist2;
+                foundSomething = true;
+            }
+        }
+        return retVal;
+    }
+
+
+    const float MaxDistForNearbyObject =7f,ObjectCheckDist=20f;
+    static List<EnvironmentObjectInstance> EnvironmentObjectCache=new List<EnvironmentObjectInstance>();
+    public static ObjectInfo GetNearbyObjectToAttack(Unit searching,out bool foundSomething)
+    {
+        EnvironmentObjectCache.Clear();
+        foundSomething = false;
+        List<WorldChunk> chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(ObjectCheckDist, searching.transform.position);
+        List<EnvironmentObjectInstance> allObjects = new List<EnvironmentObjectInstance>();
+        for(int x = 0; x < chunksToCheck.Count; x++)
+        {
+            allObjects.AddRange(chunksToCheck[x].EnvironmentObjectsInChunk);
+        }
+
+        Vector2Int chunkImNear = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(searching.transform.position);
+
+
+        ObjectInfo retVal = null;
+        ConstructableObjectInstance constructedObject;
+        float dist = 99999999f;
+        float dist2 = 0f;
+        for(int x = 0; x < allObjects.Count; x++)
+        {
+            constructedObject = allObjects[x] as ConstructableObjectInstance;
+            if (constructedObject != null)
+            {
+                dist2=Vector3.Distance(constructedObject.Position(), searching.transform.position);
+                if (dist2 < dist && dist2<MaxDistForNearbyObject)
+                {
+                    dist=dist2;
+                    retVal = constructedObject;
+                    foundSomething = true;
+                }
+            }
+        }
+
+        
+
+
+
+       
+
+
+        return retVal;
+    }
 
     
     public static Unit GetClosestTargetThatsHostile(Unit searching,float range)

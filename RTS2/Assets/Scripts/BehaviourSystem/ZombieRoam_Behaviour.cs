@@ -12,7 +12,9 @@ public class ZombieRoam_Behaviour :BehaviourBase
     public void InitRoamBehaviour( Zombie me)
     {
         InitBehaviour(me);
-        direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+
+
+        GenerateDirectionToRoam();
     }
 
 
@@ -39,14 +41,34 @@ public class ZombieRoam_Behaviour :BehaviourBase
         if (!IsBehaviourComplete())
         {
             unitToMove.MoveUnit(DirectionToTarget());
-            directionChangeTimer += Mathf.Max(Time.deltaTime,0.01f);
+            directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta,0.01f);
             if (directionChangeTimer > directionChangeTimerLength)
             {
-                direction=new Vector3(Random.Range(-1f,1f),Random.Range(-1f,1f), Random.Range(-1f, 1f));
+               
                 directionChangeTimer = 0f;
             }
         }
+    }
 
+    void GenerateDirectionToRoam()
+    {
+        direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+        if(unitToMove.transform.position.x<1f && direction.x < 0f)
+        {
+            direction.x = 1;
+        }else if(unitToMove.transform.position.x > WorldController.Instance.WorldWidth - 2 && direction.x>0f)
+        {
+            direction.x = -1f;
+        }
 
+        if (unitToMove.transform.position.y < 1f && direction.y < 0f)
+        {
+            direction.y = 1;
+        }
+        else if (unitToMove.transform.position.y > WorldController.Instance.WorldHeight - 2 && direction.y > 0f)
+        {
+            direction.y = -1f;
+        }
+        direction = direction.normalized;
     }
 }

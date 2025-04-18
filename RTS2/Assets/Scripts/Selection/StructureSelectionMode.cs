@@ -23,7 +23,7 @@ public class StructureSelectionMode: SelectionMode
                 break;
         }
 
-       
+        CheckForRequiredResources();
     }
 
     public override void OnLeftMouseUp()
@@ -61,6 +61,15 @@ public class StructureSelectionMode: SelectionMode
 
     }
 
+    bool hasEnoughResources = false;
+    Dictionary<string, List<FoundResourceData>> resourcesForConstruction = null;
+    void CheckForRequiredResources()
+    {
+        ResourceHelpers.CanMeetResourceRequirements(WallTypeManager.Instance.SelectedWallTile.RequirementsToBuild,
+            CursorSelect.Instance.GetMousePosition(), 200f, out hasEnoughResources, ref resourcesForConstruction);
+
+    }
+
 
     void None()
     {
@@ -74,8 +83,9 @@ public class StructureSelectionMode: SelectionMode
         CursorIcon.Instance.SetWallPlaceIcon();
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        Sprite icon = WallHelpers.GetSpriteForWallType(WorldController.Instance.WallManager.WallsInWorld[coords.x, coords.y], WorldController.Instance.WallManager,
-        WorldController.Instance.WallTest);
+        Sprite icon = WallHelpers.GetSpriteForWallType(
+            WallHelpers.GetWallAtCoords(coords), WorldController.Instance.WallManager,
+        WallTypeManager.Instance.SelectedWallTile);
         CursorIcon.Instance.SetPosition(new Vector3(coords.x + .5f, coords.y + .5f, 0f));
         CursorIcon.Instance.SetCustomIcon(icon);
 
@@ -84,6 +94,14 @@ public class StructureSelectionMode: SelectionMode
         Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
 
 
+        if (ValidToPlaceStructure(v))
+        {
+            CursorIcon.Instance.SetColor(Color.white);
+        }
+        else
+        {
+            CursorIcon.Instance.SetColor(Color.red);
+        }
 
         if (ConstructableHoveringOver != ConstructableHoveringOverThisFrame)
         {
@@ -104,11 +122,18 @@ public class StructureSelectionMode: SelectionMode
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        if (WallHelpers.CanIPlaceWallAtPosition(coords.x, coords.y))
+        if (WallHelpers.CanIPlaceWallAtPosition(coords.x, coords.y) && hasEnoughResources)
         {
-            WallHelpers.CreateWallBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest, cursorPos, new Vector3(.5f, .5f, 0f));
+            WallHelpers.CreateWallBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
+            ResourceHelpers.ConsumeResources(resourcesForConstruction);
         }
     }
+
+    bool ValidToPlaceStructure(Vector2Int coords)
+    {
+        return WallHelpers.CanIPlaceWallAtPosition(coords.x, coords.y) && hasEnoughResources;
+    }
+
 
     void Walls_OnRightClick()
     {
@@ -116,14 +141,14 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         if (WallHelpers.DoesConstructedWallExistAtPosition(coords.x, coords.y))
         {
-            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest);
+            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
 
         }
 
         if (WallHelpers.DoesUnderConstructionWallExistAtPosition(coords.x, coords.y) && ConstructableHoveringOver != null)
         {
             Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
-            WorldController.Instance.WallManager.WallsInWorld[coords.x, coords.y].HasWallUnderConstruction = false;
+           WallHelpers.GetWallAtCoords(coords).HasWallUnderConstruction = false;
             WorldChunkManager.Instance.Chunks[v.x, v.y].RemoveConstructable(ConstructableHoveringOver);
         }
     }
@@ -136,16 +161,23 @@ public class StructureSelectionMode: SelectionMode
         CursorIcon.Instance.SetWallPlaceIcon();
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        Sprite icon = WallHelpers.GetSpriteForWallType(WorldController.Instance.WallManager.WallsInWorld[coords.x, coords.y], WorldController.Instance.WallManager,
-        WorldController.Instance.WallTest);
+        Sprite icon = WallTypeManager.Instance.WallIcon;
         CursorIcon.Instance.SetPosition(new Vector3(coords.x + .5f, coords.y + .5f, 0f));
         CursorIcon.Instance.SetCustomIcon(icon);
 
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
 
-        Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
+        Constructable ConstructableHoveringOverThisFrame =
+            WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
 
-
+        if (ValidToPlaceStructure(v))
+        {
+            CursorIcon.Instance.SetColor(Color.white);
+        }
+        else
+        {
+            CursorIcon.Instance.SetColor(Color.red);
+        }
 
         if (ConstructableHoveringOver != ConstructableHoveringOverThisFrame)
         {
@@ -166,9 +198,11 @@ public class StructureSelectionMode: SelectionMode
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y))
+        if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y) && hasEnoughResources)
         {
-            WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest, cursorPos, new Vector3(.5f, .5f, 0f));
+            WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
+            ResourceHelpers.ConsumeResources(resourcesForConstruction);
+
         }
     }
 
@@ -178,14 +212,14 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         if (WallHelpers.DoesConstructedDoorExistAtPosition(coords.x, coords.y))
         {
-            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WorldController.Instance.WallTest);
+            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
 
         }
 
         if (WallHelpers.DoesUnderConstructionDoorExistAtPosition(coords.x, coords.y) && ConstructableHoveringOver != null)
         {
             Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
-            WorldController.Instance.WallManager.WallsInWorld[coords.x, coords.y].HasWallUnderConstruction = false;
+            WallHelpers.GetWallAtCoords(coords).HasWallUnderConstruction = false;
             WorldChunkManager.Instance.Chunks[v.x, v.y].RemoveConstructable(ConstructableHoveringOver);
         }
     }

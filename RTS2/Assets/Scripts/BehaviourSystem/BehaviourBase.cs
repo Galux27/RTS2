@@ -34,4 +34,9 @@ public class BehaviourBase
     {
         return false;
     }
+
+    public virtual bool DoWeNullBehaviourOnComplete()
+    {
+        return false;
+    }
 }

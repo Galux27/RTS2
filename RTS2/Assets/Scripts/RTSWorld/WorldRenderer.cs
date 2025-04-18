@@ -20,7 +20,7 @@ public class WorldRenderer : MonoBehaviour
         } 
     }
 
-    public Tilemap WorldTilemap;
+    public Tilemap WorldTilemap,WaterTilemap;
     public WorldTiles WorldTiles;
     WorldTilesManager WorldTilesManager;
 
@@ -30,7 +30,7 @@ public class WorldRenderer : MonoBehaviour
     bool init = false;
     private void Init()
     {
-        WorldTilesManager = new WorldTilesManager(WorldTiles.tileTypes);
+        WorldTilesManager = new WorldTilesManager(WorldTiles);
 
 
 
@@ -51,6 +51,12 @@ public class WorldRenderer : MonoBehaviour
 
     void RenderTile(WorldTile tile)
     {
-        WorldTilemap.SetTile(new Vector3Int(tile.x, tile.y,0), WorldTilesManager.GetTileBase(tile.tileType));
+        Vector3Int coords = new Vector3Int(tile.x, tile.y, 0);
+        WorldTilemap.SetTile(coords, WorldTilesManager.GetTileBase(tile.tileType));
+        if (tile.WaterData.WaterLevel > 0f)
+        {
+            WaterTilemap.SetTile(coords, WorldTilesManager.GetTileForWaterLevel(tile.WaterData.WaterLevel));
+
+        }
     }
 }

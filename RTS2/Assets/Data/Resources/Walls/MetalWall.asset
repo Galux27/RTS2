@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76ae18e6de6743a4a8a6a3da359e62e6, type: 3}
+  m_Name: MetalWall
+  m_EditorClassIdentifier: 
+  NoNeighbours: {fileID: 11400000, guid: c3e00e82345ac9c4a88c2b21c67bb65f, type: 2}
+  Left: {fileID: 11400000, guid: 4a976f7187654784885d7271069267e9, type: 2}
+  Right: {fileID: 11400000, guid: e81f5489e60c41548b6f84a306346798, type: 2}
+  Above: {fileID: 11400000, guid: be3f59d63984cf04680cdc7c9c9655a2, type: 2}
+  Below: {fileID: 11400000, guid: bdb666e430aeb5f4aa15f000d9105157, type: 2}
+  LeftBelow: {fileID: 11400000, guid: 8a74d1d7ebacea24dbbd1616f8d663fe, type: 2}
+  LeftAbove: {fileID: 11400000, guid: 226fb4c059778ee44a168d50da3e2197, type: 2}
+  RightBelow: {fileID: 11400000, guid: 4a3236df657bf1b41bd9a104baa30486, type: 2}
+  RightAbove: {fileID: 11400000, guid: 8bcdc419f66ec824a94c35db118e71f6, type: 2}
+  LeftRight: {fileID: 11400000, guid: c3baa5683edc7f14cbf17ec62c12e0cd, type: 2}
+  UpDown: {fileID: 11400000, guid: e6bec1943a8ef0643a0f2de982480615, type: 2}
+  LeftRightBelow: {fileID: 11400000, guid: 29848921b56b87f42a9e99b457780d04, type: 2}
+  LeftRightAbove: {fileID: 11400000, guid: 728542f4c917eba4c933ca628bc75fcb, type: 2}
+  TopBottomLeft: {fileID: 11400000, guid: 03d5b6c564734944492a82a8c7d499c2, type: 2}
+  TopBottomRight: {fileID: 11400000, guid: 74ce3a480937a2241936b424eb70f7b7, type: 2}
+  Cross: {fileID: 11400000, guid: c29af95e8db07904b9feb949f0f812d8, type: 2}
+  WallName: Metal
+  Health: 50
+  RequirementsToBuild:
+  - ResourceName: Construction Supplies
+    QuantityRequired: 12
