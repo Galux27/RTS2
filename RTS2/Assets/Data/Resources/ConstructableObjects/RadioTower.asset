@@ -37,5 +37,4 @@ MonoBehaviour:
     CheckForForbidden: 0
     CheckForAllowed: 0
     ForbiddenItems: []
-    AllowedItems:
-    - Fuel
+    AllowedItems: []

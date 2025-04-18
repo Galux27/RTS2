@@ -10,4 +10,9 @@ public class MapFeatureBase:ScriptableObject
     {
 
     }  
+
+    public virtual void OnStartGenerate()
+    {
+
+    }
 }

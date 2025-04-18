@@ -17,20 +17,24 @@ public class Forest_MapFeature :MapFeatureBase
         WorldTile tileChecking = null;
         WorldChunk tileChunk = null;
         Vector2Int chunkCoords=new Vector2Int(0,0);
-        EnvironmentObjectInstance toAdd = null;
+        EnvironmentObjectInstance toAdd = null, existing = null ;
         for(int q = 0; q < quantitiyToSpawn; q++)
         {
             x=Random.Range(center.x-width,center.x+width);
             y = Random.Range(center.y-height,center.y+height);
             tileChecking = WorldTileHelpers.GetTileFromCoords(x, y);
-            if (tileChecking != null && tileChecking.traversable)
+            if (tileChecking != null && tileChecking.traversable && tileChecking.WaterData.WaterLevel == 0f)
             {
                 objectToCreate = Random.Range(0, ValidObjectsForFeature.Count);
-                chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(new Vector3(x,y));
-                tileChunk = WorldChunkManager.Instance.Chunks[chunkCoords.x,chunkCoords.y];
-                toAdd = new EnvironmentObjectInstance(x, y, ValidObjectsForFeature[objectToCreate]);
-                tileChunk.AddEnvironmentObject(toAdd);
-                WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(toAdd, !EnvironmentObjectHelpers.GetEnvironmentObject(ValidObjectsForFeature[objectToCreate]).BlocksTile);
+                chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(new Vector3(x, y));
+                tileChunk = WorldChunkManager.Instance.Chunks[chunkCoords.x, chunkCoords.y];
+
+                if (tileChunk.DoesAnyObjectExistAtCoords(new Vector2Int(x, y), out existing) == false)
+                {
+                    toAdd = new EnvironmentObjectInstance(x, y, ValidObjectsForFeature[objectToCreate]);
+                    tileChunk.AddEnvironmentObject(toAdd);
+                    WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(toAdd, !EnvironmentObjectHelpers.GetEnvironmentObject(ValidObjectsForFeature[objectToCreate]).BlocksTile);
+                }
             }
         }
 

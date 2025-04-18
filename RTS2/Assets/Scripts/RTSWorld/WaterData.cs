@@ -10,4 +10,10 @@ public struct WaterData
     {
         WaterLevel = level;
     }
+
+    public void UpdateWaterLevel(float val)
+    {
+        Debug.Log("Updating water level by " + val);
+        WaterLevel += val;
+    }
 }
