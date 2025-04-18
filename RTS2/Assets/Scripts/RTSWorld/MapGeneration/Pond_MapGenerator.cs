@@ -8,7 +8,7 @@ using System.Linq;
 public class Pond_MapGenerator : MapFeatureBase
 {
     public int Iterations = 6;
-
+    public int MaxDistForWater = 5;
     
     List<Vector2Int> GetNeighboursOfPoint(Vector2Int vector2Int)
     {
@@ -42,45 +42,78 @@ public class Pond_MapGenerator : MapFeatureBase
     public override void GenerateFeature()
     {
         OnStartGenerate();
-        Vector2Int startCoords = new Vector2Int(Random.Range(0, WorldController.Instance.WorldWidth), Random.Range(0, WorldController.Instance.WorldHeight));
-
-        for (int r = 0; r < Iterations; r++)
+        Vector2Int startCoords = new Vector2Int(Random.Range(5, WorldController.Instance.WorldWidth-5), Random.Range(5, WorldController.Instance.WorldHeight-5));
+        float dist = 0f;
+        Vector2Int curCoords = new Vector2Int();
+        WorldTile tileChecking = null;
+        Vector2Int chunkCoords = new Vector2Int(0, 0);
+        EnvironmentObjectInstance objectToClear = null;
+        
+        for (int q = 0; q < Iterations; q++)
         {
-            Vector2Int center = startCoords + new Vector2Int(Random.Range(MinWidth, MaxWidth), Random.Range(MinHeight, MaxHeight));
-            List<Vector2Int> pointsToCheck = new List<Vector2Int>();
-            pointsToCheck.Add(center);
-            List<Vector2Int> neighbours = null;
-            WorldTile tileChecking = null;
-            Vector2Int chunkCoords = new Vector2Int(0, 0);
-            EnvironmentObjectInstance objectToClear = null;
-
-            for (int x = 0; x < Iterations; x++)
+            for(int x = startCoords.x - MaxDistForWater; x < startCoords.x + MaxDistForWater; x++)
             {
-                for (int q = 0; q < pointsToCheck.Count; q++)
+                for (int y = startCoords.y - MaxDistForWater;y < startCoords.y + MaxDistForWater; y++)
                 {
-                    tileChecking = WorldTileHelpers.GetTileFromCoords(pointsToCheck[q].x, pointsToCheck[q].y);
-                    if (tileChecking != null)
+                    curCoords.x = x;
+                    curCoords.y = y;
+                    dist = Vector2Int.Distance(curCoords, startCoords);
+                    if (dist <= MaxDistForWater)
                     {
-                        chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(pointsToCheck[q]);
-                        if (WorldChunkManager.Instance.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(pointsToCheck[q],out objectToClear))
+                        tileChecking = WorldTileHelpers.GetTileFromCoords(x, y);
+                        if (tileChecking != null )
                         {
-                            objectToClear.AdjustHealth(-99999999f);
+                            chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(curCoords);
+                            if (WorldChunkManager.Instance.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(curCoords, out objectToClear))
+                            {
+                                objectToClear.AdjustHealth(-99999999f);
+                            }
+                            tileChecking.tileType = "Mud";
+                            tileChecking.WaterData.UpdateWaterLevel(MaxDistForWater-dist);
+                            PointsUsed.Add(curCoords);
                         }
-
-                        tileChecking.tileType = "Mud";
-                        tileChecking.WaterData.UpdateWaterLevel(2f - (2f / (Iterations / (x + 1))));
-                    }
-                    neighbours = GetNeighboursOfPoint(pointsToCheck[q]);
-                    PointsUsed.Add(pointsToCheck[q]);
-                    for (int y = 0; y < neighbours.Count; y++)
-                    {
-                        AddPointToNextIteration(neighbours[y]);
                     }
                 }
-                pointsToCheck = PointsToUseNextIteration;
-                PointsToUseNextIteration = new List<Vector2Int>();
             }
+            startCoords = PointsUsed[Random.Range(0,PointsUsed.Count)];
+
         }
+
+        //for (int r = 0; r < Iterations; r++)
+        //{
+        //    Vector2Int center = startCoords + new Vector2Int(Random.Range(MinWidth, MaxWidth), Random.Range(MinHeight, MaxHeight));
+        //    List<Vector2Int> pointsToCheck = new List<Vector2Int>();
+        //    pointsToCheck.Add(center);
+        //    List<Vector2Int> neighbours = null;
+    
+
+        //    for (int x = 0; x < Iterations; x++)
+        //    {
+        //        for (int q = 0; q < pointsToCheck.Count; q++)
+        //        {
+        //            tileChecking = WorldTileHelpers.GetTileFromCoords(pointsToCheck[q].x, pointsToCheck[q].y);
+        //            if (tileChecking != null)
+        //            {
+        //                chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(pointsToCheck[q]);
+        //                if (WorldChunkManager.Instance.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(pointsToCheck[q],out objectToClear))
+        //                {
+        //                    objectToClear.AdjustHealth(-99999999f);
+        //                }
+
+        //                tileChecking.tileType = "Mud";
+        //                tileChecking.WaterData.UpdateWaterLevel(2f - (2f / (Iterations / (x + 1))));
+        //            }
+        //            neighbours = GetNeighboursOfPoint(pointsToCheck[q]);
+        //            PointsUsed.Add(pointsToCheck[q]);
+        //            for (int y = 0; y < neighbours.Count; y++)
+        //            {
+        //                AddPointToNextIteration(neighbours[y]);
+        //            }
+        //        }
+        //        pointsToCheck = PointsToUseNextIteration;
+        //        PointsToUseNextIteration = new List<Vector2Int>();
+        //    }
+        //}
       
     }
     
