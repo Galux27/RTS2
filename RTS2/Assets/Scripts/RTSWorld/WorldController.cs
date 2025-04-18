@@ -172,6 +172,23 @@ public class WorldTile
         WaterData = new WaterData(0f);
     }
 
+    public void UpdateWaterLevel(float val)
+    {
+        WaterData.UpdateWaterLevel(val);
+        if (traversable)
+        {
+            if (WaterData.WaterLevel > 1f)
+            {
+                traversable = false;
+            }
+            else
+            {
+                traversable = true;
+            }
+        }
+            Pathfinding.GetNodeFromCoords(x, y).UpdatePassable(traversable);
+    }
+
 
     public void OnTileEntered(Vector2Int vector2Int)
     {

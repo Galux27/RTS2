@@ -69,7 +69,7 @@ public class Pond_MapGenerator : MapFeatureBase
                                 objectToClear.AdjustHealth(-99999999f);
                             }
                             tileChecking.tileType = "Mud";
-                            tileChecking.WaterData.UpdateWaterLevel(MaxDistForWater-dist);
+                            tileChecking.UpdateWaterLevel(MaxDistForWater-dist);
                             PointsUsed.Add(curCoords);
                         }
                     }

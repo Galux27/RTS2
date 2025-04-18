@@ -25,7 +25,7 @@ public static class WorldTileHelpers
         return null;
     }
 
-        public static void UpdateTileTraversible(int x,int y,bool val)
+    public static void UpdateTileTraversible(int x,int y,bool val)
     {
         GetTileFromCoords(x,y).traversable = val;
     }
