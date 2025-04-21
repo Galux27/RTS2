@@ -44,7 +44,7 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            this.transform.position += new Vector3(GetHorizontalMovement() * HorizontalMoveSpeed * DeltaTimeWrapper.CameraDelta, GetVerticalMovement() * VerticalMoveSpeed * DeltaTimeWrapper.GameplayDelta);
+            this.transform.position += new Vector3(GetHorizontalMovement() * HorizontalMoveSpeed * DeltaTimeWrapper.CameraDelta, GetVerticalMovement() * VerticalMoveSpeed * DeltaTimeWrapper.CameraDelta);
         }
 
         GameCamera.orthographicSize += GetScrollAdjustment();
