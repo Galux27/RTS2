@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
 /// Class to store data of objects within a given area (units, props, items etc...)
 /// </summary>
-public class WorldChunk
+public class WorldChunk:ISerialize
 {
     public List<Unit> UnitsInChunk=new List<Unit>();
     public List<EnvironmentObjectInstance> EnvironmentObjectsInChunk = new List<EnvironmentObjectInstance>();
@@ -310,5 +311,89 @@ public class WorldChunk
         {
             ToBuild[x].Cleanup();
         }
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.Coords, new Vector2Int(X, Y));
+        retVal.AddDataToSerialize(DataKeys.ChunkTiles, GetTileData());
+        retVal.AddDataToSerialize(DataKeys.WallTiles, WallData());
+        retVal.AddDataToSerialize(DataKeys.EnvironmentObjects, GetEnvObjectData());
+        retVal.AddDataToSerialize(DataKeys.Resources, ResourceData());
+
+        return retVal;
+    }
+
+
+
+
+    List<DataToSerialize> ResourceData()
+    {
+        List<DataToSerialize> retVal = new List<DataToSerialize>();
+        for(int x=0;x< ResourceObjectsInChunk.Count; x++) {
+            retVal.Add(ResourceObjectsInChunk[x].GetDataToSerialize());
+        }
+
+        return retVal;
+    }
+
+    List<DataToSerialize> WallData()
+    {
+        List<DataToSerialize> wallData = new List<DataToSerialize>();
+        for(int x = 0; x < WallSegments.GetLength(0); x++)
+        {
+            for(int y=0;y< WallSegments.GetLength(1); y++)
+            {
+                if (WallSegments[x, y] != null && WallSegments[x,y].WallType!=WallType.None)
+                {
+                    wallData.Add(WallSegments[x, y].GetDataToSerialize());
+                }
+            }
+        }
+
+        return wallData;
+    }
+
+    DataToSerialize[,] GetTileData()
+    {
+        DataToSerialize[,] retVal = new DataToSerialize[ChunkTiles.GetLength(0), ChunkTiles.GetLength(1)];
+        for(int x = 0; x < ChunkTiles.GetLength(0); x++)
+        {
+            for(int y = 0; y < ChunkTiles.GetLength(1); y++)
+            {
+                retVal[x, y] = ChunkTiles[x, y].GetDataToSerialize();
+            }
+        }
+
+        return retVal;
+    }
+
+    List<DataToSerialize> GetEnvObjectData()
+    {
+        List<DataToSerialize> retVal = new List<DataToSerialize>();
+        for(int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
+        {
+            retVal.Add(EnvironmentObjectsInChunk[x].GetDataToSerialize());
+        }
+        return retVal;
+    }
+    public SerializedData Serialize()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new System.NotImplementedException();
+    }
+    UID myUid;
+    public UID GetMyUID()
+    {
+        if (myUid.Value==0)
+        {
+            myUid = IDManager.GetUIDForObject();
+        }
+        return myUid;
     }
 }

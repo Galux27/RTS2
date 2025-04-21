@@ -157,7 +157,7 @@ public class WorldController : MonoBehaviour
     }
 }
 
-public class WorldTile 
+public class WorldTile:ISerialize
 {
     public int x,y;
     public bool traversable = true;
@@ -198,6 +198,35 @@ public class WorldTile
     public void OnTileExit(Vector2Int vector2Int)
     {
 
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize data = new DataToSerialize();
+
+        data.AddDataToSerialize(DataKeys.Coords, new Vector2Int(x, y));
+        data.AddDataToSerialize(DataKeys.TileType, tileType);
+        data.AddDataToSerialize(DataKeys.WaterLevel, WaterData.WaterLevel);
+
+        return data;
+    }
+
+
+
+
+    public SerializedData Serialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new NotImplementedException();
+    }
+
+    public UID GetMyUID()
+    {
+        throw new NotImplementedException();
     }
 }
 

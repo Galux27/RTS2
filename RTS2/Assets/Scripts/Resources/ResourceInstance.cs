@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceInstance : MonoBehaviour
+public class ResourceInstance : MonoBehaviour,ISerialize
 {
 
     ResourceInstanceData data;
@@ -29,6 +29,38 @@ public class ResourceInstance : MonoBehaviour
     {
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
         WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveResourceObject(this);
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.ObjectKey, data.Name());
+        retVal.AddDataToSerialize(DataKeys.Quantitiy, data.Quantity);
+        retVal.AddDataToSerialize(DataKeys.Coords, this.transform.position);
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+
+
+        return retVal;
+    }
+
+    public SerializedData Serialize()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    UID myUID;
+    public UID GetMyUID()
+    {
+        if (myUID.Value == 0)
+        {
+            myUID = IDManager.GetUIDForObject();
+        }
+        return myUID;
     }
 }
 
@@ -134,5 +166,25 @@ public class ResourceInstanceData:InventoryObject
     public void MergeWith(InventoryObject obj)
     {
         Quantity += obj.Quantity();
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public SerializedData Serialize()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public UID GetMyUID()
+    {
+        throw new System.NotImplementedException();
     }
 }

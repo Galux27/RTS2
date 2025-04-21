@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// Stores information about an instance of an EnvironmentObject in the world (Does not mean that the object is being drawn)
 /// </summary>
-public class EnvironmentObjectInstance:ObjectInfo
+public class EnvironmentObjectInstance:ObjectInfo,ISerialize
 {
     public string ObjectKey;
     public int PosX
@@ -211,5 +211,35 @@ public class EnvironmentObjectInstance:ObjectInfo
     public void OnDeath()
     {
         DestroyInstance();
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.Coords, coords);
+        data.AddDataToSerialize(DataKeys.ObjectKey, ObjectKey);
+        data.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        data.AddDataToSerialize(DataKeys.Health, Health());
+        data.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
+        return data;
+    }
+
+    public SerializedData Serialize()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new System.NotImplementedException();
+    }
+    UID myUID;
+    public UID GetMyUID()
+    {
+        if (myUID.Value == 0)
+        {
+            myUID = IDManager.GetUIDForObject();
+        }
+        return myUID;
     }
 }

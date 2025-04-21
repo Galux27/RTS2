@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour, Storage
+public class Inventory : MonoBehaviour, Storage, ISerialize
 {
 
 
@@ -283,5 +283,44 @@ public class Inventory : MonoBehaviour, Storage
         }
 
        
+    }
+
+    List<DataToSerialize> GetItemsData()
+    {
+        List<DataToSerialize> retVal = new List<DataToSerialize>();
+        DataToSerialize cur = new DataToSerialize();
+        for (int x = 0; x < ObjectsInInventory.Count; x++)
+        {
+            cur.AddDataToSerialize(DataKeys.UID, ObjectsInInventory[x].GetMyUID());
+
+            cur.AddDataToSerialize(DataKeys.ObjectKey, ObjectsInInventory[x].Name());
+            cur.AddDataToSerialize(DataKeys.Quantitiy, ObjectsInInventory[x].Quantity());
+            retVal.Add( cur);
+            cur = new DataToSerialize();
+        }
+        return retVal;
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.ItemsInContainer, GetItemsData());
+        return retVal;
+    }
+
+    public SerializedData Serialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new NotImplementedException();
+    }
+
+    public UID GetMyUID()
+    {
+        throw new NotImplementedException();
     }
 }

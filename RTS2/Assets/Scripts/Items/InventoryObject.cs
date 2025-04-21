@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface InventoryObject
+public interface InventoryObject:ISerialize
 {
     public string Name();
     public float Weight();

@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 /// Class to represent a tile of wall within the world
 /// used to know the location to then identify what tiles are going to be used
 /// </summary>
-public class WallSegment:Selectable ,ObjectInfo
+public class WallSegment:Selectable ,ObjectInfo,ISerialize
 {
     public int x, y;
     public bool HasWallUnderConstruction=false;
@@ -191,6 +191,37 @@ public class WallSegment:Selectable ,ObjectInfo
    public void OnDeath()
     {
         WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.Coords, new Vector2Int(x, y));
+        retVal.AddDataToSerialize(DataKeys.WallType, WallType.ToString());
+        retVal.AddDataToSerialize(DataKeys.WallVisual, baseWallType.WallName);
+        retVal.AddDataToSerialize(DataKeys.Health, Health());
+        retVal.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
+        return retVal;
+    }
+
+    public SerializedData Serialize()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new System.NotImplementedException();
+    }
+    UID myUID;
+    public UID GetMyUID()
+    {
+        if (myUID.Value == 0)
+        {
+            myUID = IDManager.GetUIDForObject();
+        }
+        return myUID;
     }
 }
 
