@@ -25,6 +25,10 @@ public class DataKeys
     public const string Resources = "RESOURCE_OBJECTS";
     public const string ItemUID = "ITEM_UID";
     public const string ItemsInContainer = "CONTAINER_CONTENTS";
+    public const string CurrentProgress = "CURRENT_PROGRESS";
+    public const string MaxProgress = "MAX_PROGRESS";
+    public const string ConstructableType = "CONSTRUCTABLE_TYPE";
+    public const string Constructables = "CONSTRUCTABLES";
 }
 
 public enum DataType

@@ -321,11 +321,19 @@ public class WorldChunk:ISerialize
         retVal.AddDataToSerialize(DataKeys.WallTiles, WallData());
         retVal.AddDataToSerialize(DataKeys.EnvironmentObjects, GetEnvObjectData());
         retVal.AddDataToSerialize(DataKeys.Resources, ResourceData());
-
+        retVal.AddDataToSerialize(DataKeys.Constructables, ConstructableData());
         return retVal;
     }
 
-
+    List<DataToSerialize> ConstructableData()
+    {
+        List<DataToSerialize> retVal = new List<DataToSerialize>();
+        for(int x = 0; x < ToBuild.Count; x++)
+        {
+            retVal.Add(ToBuild[x].GetDataToSerialize());
+        }
+        return retVal;
+    }
 
 
     List<DataToSerialize> ResourceData()

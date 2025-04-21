@@ -108,6 +108,34 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
         
     }
 
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.ObjectKey, MyItem.Name);
+        retVal.AddDataToSerialize(DataKeys.Coords, this.transform.position);
+        return retVal;
+    }
+
+    public SerializedData Serialize()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new System.NotImplementedException();
+    }
+    UID MyUID;
+    public UID GetMyUID()
+    {
+        if (MyUID.Value == 0)
+        {
+            MyUID = IDManager.GetUIDForObject();
+        }
+        return MyUID;
+    }
+
     public Item MyItem;
     public SpriteRenderer sr;
 }

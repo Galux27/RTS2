@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour
 
         if (isAutoMoving)
         {
-            Vector3 dir = (autoMoveTarget - this.transform.position).normalized * AutoMoveSpeed * DeltaTimeWrapper.GameplayDelta;
+            Vector3 dir = (autoMoveTarget - this.transform.position).normalized * AutoMoveSpeed * DeltaTimeWrapper.CameraDelta;
             dir.z = 0;
 
             if (Vector2.Distance(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(autoMoveTarget.x, autoMoveTarget.y)) < 1f)
@@ -44,7 +44,7 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            this.transform.position += new Vector3(GetHorizontalMovement() * HorizontalMoveSpeed * DeltaTimeWrapper.GameplayDelta, GetVerticalMovement() * VerticalMoveSpeed * DeltaTimeWrapper.GameplayDelta);
+            this.transform.position += new Vector3(GetHorizontalMovement() * HorizontalMoveSpeed * DeltaTimeWrapper.CameraDelta, GetVerticalMovement() * VerticalMoveSpeed * DeltaTimeWrapper.GameplayDelta);
         }
 
         GameCamera.orthographicSize += GetScrollAdjustment();
@@ -54,7 +54,7 @@ public class CameraController : MonoBehaviour
 
     float GetScrollAdjustment()
     {
-        return Input.mouseScrollDelta.y * -ZoomSpeed * DeltaTimeWrapper.GameplayDelta;
+        return Input.mouseScrollDelta.y * -ZoomSpeed * DeltaTimeWrapper.CameraDelta;
     }
 
     bool isAutoMoving = false;

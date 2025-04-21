@@ -12,4 +12,14 @@ public static class DeltaTimeWrapper
             return Time.deltaTime * GameplayDeltaMultiplier;
         }
     }
+
+    public static float CameraDeltaMultiplier = 1f;
+
+    public static float CameraDelta
+    {
+        get
+        {
+            return Time.deltaTime * CameraDeltaMultiplier;
+        }
+    }
 }

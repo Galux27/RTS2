@@ -6,7 +6,8 @@ using UnityEngine;
 public class BuildableStructure : Constructable,ObjectInfo
 {
 
-    public BuildableStructure(int x, int y, float maxProgress, bool forceComplete, Action onComplete, Vector3 size, Vector3 offset,ConstructableType myType,string toConstruct)
+    public BuildableStructure(int x, int y, float maxProgress, bool forceComplete, 
+        Action onComplete, Vector3 size, Vector3 offset,ConstructableType myType,string toConstruct)
     {
         this.x = x; this.y = y;
         this.maxProgress = maxProgress;
@@ -232,6 +233,40 @@ public class BuildableStructure : Constructable,ObjectInfo
     public void OnDeath()
     {
         
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.Coords, new Vector2Int(x, y));
+        retVal.AddDataToSerialize(DataKeys.Health, Health());
+        retVal.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
+        retVal.AddDataToSerialize(DataKeys.CurrentProgress, Timer.GetCurrentTime);
+        retVal.AddDataToSerialize(DataKeys.MaxProgress, Timer.TimeLimit);
+        retVal.AddDataToSerialize(DataKeys.ObjectKey, constructOnComplete);
+
+        return retVal;
+    }
+
+    public SerializedData Serialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new NotImplementedException();
+    }
+    UID MyUID;
+    public UID GetMyUID()
+    {
+        if (MyUID.Value == 0)
+        {
+            MyUID = IDManager.GetUIDForObject();
+        }
+        return MyUID;
     }
 }
 
