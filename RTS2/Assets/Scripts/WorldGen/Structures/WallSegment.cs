@@ -196,7 +196,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     public DataToSerialize GetDataToSerialize()
     {
         DataToSerialize retVal = new DataToSerialize();
-        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
         retVal.AddDataToSerialize(DataKeys.Coords, new Vector2Int(x, y));
         retVal.AddDataToSerialize(DataKeys.WallType, WallType.ToString());
         retVal.AddDataToSerialize(DataKeys.WallVisual, baseWallType.WallName);

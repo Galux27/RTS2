@@ -218,7 +218,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         DataToSerialize data = new DataToSerialize();
         data.AddDataToSerialize(DataKeys.Coords, coords);
         data.AddDataToSerialize(DataKeys.ObjectKey, ObjectKey);
-        data.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        data.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
         data.AddDataToSerialize(DataKeys.Health, Health());
         data.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
         return data;

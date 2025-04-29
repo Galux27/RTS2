@@ -291,7 +291,7 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
         DataToSerialize cur = new DataToSerialize();
         for (int x = 0; x < ObjectsInInventory.Count; x++)
         {
-            cur.AddDataToSerialize(DataKeys.UID, ObjectsInInventory[x].GetMyUID());
+            cur.AddDataToSerialize(DataKeys.UID, ObjectsInInventory[x].GetMyUID().Value);
 
             cur.AddDataToSerialize(DataKeys.ObjectKey, ObjectsInInventory[x].Name());
             cur.AddDataToSerialize(DataKeys.Quantitiy, ObjectsInInventory[x].Quantity());
@@ -304,7 +304,7 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
     public DataToSerialize GetDataToSerialize()
     {
         DataToSerialize retVal = new DataToSerialize();
-        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
         retVal.AddDataToSerialize(DataKeys.ItemsInContainer, GetItemsData());
         return retVal;
     }

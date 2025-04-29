@@ -111,9 +111,9 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
     public DataToSerialize GetDataToSerialize()
     {
         DataToSerialize retVal = new DataToSerialize();
-        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
         retVal.AddDataToSerialize(DataKeys.ObjectKey, MyItem.Name);
-        retVal.AddDataToSerialize(DataKeys.Coords, this.transform.position);
+        retVal.AddDataToSerialize(DataKeys.Pos, this.transform.position);
         return retVal;
     }
 

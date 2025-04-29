@@ -50,6 +50,8 @@ public class CameraController : MonoBehaviour
         GameCamera.orthographicSize += GetScrollAdjustment();
 
         GameCamera.orthographicSize = Mathf.Clamp(GameCamera.orthographicSize, ZoomInLimit, ZoomOutLimit);
+
+        
     }
 
     float GetScrollAdjustment()

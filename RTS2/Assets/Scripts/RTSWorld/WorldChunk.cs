@@ -388,7 +388,7 @@ public class WorldChunk:ISerialize
     }
     public SerializedData Serialize()
     {
-        throw new System.NotImplementedException();
+        return new SerializedData(GetDataToSerialize());
     }
 
     public void Deserialize(SerializedData data)

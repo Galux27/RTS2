@@ -11,7 +11,7 @@ public class PauseMenuUIElement : BaseUIElement
     private void Start()
     {
         Resume.gameObject.GetComponent<Button>().onClick.AddListener(HideUI);
-        
+        SaveLoad.gameObject.GetComponent<Button>().onClick.AddListener(SaveTest);
     }
     float SpeedGameAtWhenOpened = 0f;
     public override void HideUI()
@@ -24,5 +24,19 @@ public class PauseMenuUIElement : BaseUIElement
         SpeedGameAtWhenOpened=DeltaTimeWrapper.GameplayDeltaMultiplier;
         DeltaTimeWrapper.GameplayDeltaMultiplier = 0f;
         base.DrawUI();
+    }
+
+    void SaveTest()
+    {
+        EasyStopwatch.StartStopwatch();
+        for(int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
+        {
+            for(int y= 0;y< WorldChunkManager.Instance.Chunks.GetLength(1); y++)
+            {
+                Debug.Log("Saving Chunk " + x + "," + y + " serialized " + WorldChunkManager.Instance.Chunks[x, y].Serialize().Data);
+            }
+        }
+        EasyStopwatch.StopStopwatch();
+        Debug.Log("Saving took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
     }
 }

@@ -36,8 +36,8 @@ public class ResourceInstance : MonoBehaviour,ISerialize
         DataToSerialize retVal = new DataToSerialize();
         retVal.AddDataToSerialize(DataKeys.ObjectKey, data.Name());
         retVal.AddDataToSerialize(DataKeys.Quantitiy, data.Quantity);
-        retVal.AddDataToSerialize(DataKeys.Coords, this.transform.position);
-        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.Pos, this.transform.position);
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
 
 
         return retVal;

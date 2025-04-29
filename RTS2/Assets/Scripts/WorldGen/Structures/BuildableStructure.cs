@@ -239,7 +239,7 @@ public class BuildableStructure : Constructable,ObjectInfo
     {
         DataToSerialize retVal = new DataToSerialize();
 
-        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID());
+        retVal.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
         retVal.AddDataToSerialize(DataKeys.Coords, new Vector2Int(x, y));
         retVal.AddDataToSerialize(DataKeys.Health, Health());
         retVal.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
