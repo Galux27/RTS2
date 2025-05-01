@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public static class SerializationHelpers
@@ -21,6 +22,12 @@ public static class SerializationHelpers
             Directory.CreateDirectory(path);
         }
     }
+
+    public static string GetWorldFilePath(string saveName)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory,saveName, "CHUNK_TEST" + WorldSectionExtension);
+    }
+
 
     public static void SaveGame(string saveName)
     {
@@ -49,6 +56,27 @@ public static class SerializationHelpers
         EasyStopwatch.StopStopwatch();
         WriteToFile(path,name,dataWriting);
     }
+
+    public static List<string> ReadFile(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+        List<string> retVal = new List<string>();
+        StreamReader sr = new StreamReader(path);
+        string line=sr.ReadLine();
+        while(line != null)
+        {
+            retVal.Add(line);
+            line = sr.ReadLine();
+        }
+        sr.Close();
+        sr.Dispose();
+        return retVal;
+    }
+
+
 
    public static void WriteToFile(string path,string fileName,List<string> dataToWrite)
     {
@@ -135,8 +163,9 @@ public class SerializedData
         foreach(KeyValuePair<string,object> pair in data.data)
         {
             dataToWrite.Add(SerializeDataHelpers.SerializeData(pair.Key, pair.Value));
-            dataToWrite.Add(SerializeDataHelpers.DATA_ELEMENT_SPLIT);
+            dataToWrite.Add(SerializeDataHelpers.DATA_OBJECT_SPLIT);
         }
+       
         Data = SerializeDataHelpers.CombineStrings(dataToWrite);
     }
 }
@@ -151,21 +180,23 @@ public static class SerializeDataHelpers
     public const string DATA_ELEMENT_SPLIT = ":";
     //splits data that is stored in the same list
     public const string LIST_ELEMENT_SPLIT = "`";
+    //splits data on different objects in the same file
+    public const string DATA_OBJECT_SPLIT = "^";
     public static string SerializeData(string key,object value)
     {
         if (key== DataKeys.Coords)
         {
-            return CombineStrings(key , KEY_OBJECT_SPLIT,SerializeVector2Int(value));
+            return CombineStrings(key , KEY_OBJECT_SPLIT,SerializeVector2Int(value),DATA_ELEMENT_SPLIT);
         }
         else if (key == DataKeys.Pos)
         {
-            return CombineStrings(key, KEY_OBJECT_SPLIT, SerializeVector3(value));
+            return CombineStrings(key, KEY_OBJECT_SPLIT, SerializeVector3(value),DATA_ELEMENT_SPLIT);
         }
         else if (key == DataKeys.TileType|| key == DataKeys.WaterLevel|| key == DataKeys.WallType
             ||key==DataKeys.WallVisual||key==DataKeys.Health||key==DataKeys.MaxHealth||key==DataKeys.UID||
             key==DataKeys.ObjectKey||key==DataKeys.Quantitiy||key==DataKeys.ItemUID||key==DataKeys.CurrentProgress||key==DataKeys.MaxProgress)
         {
-            return CombineStrings(key, KEY_OBJECT_SPLIT, value.ToString());
+            return CombineStrings(key, KEY_OBJECT_SPLIT, value.ToString(),DATA_ELEMENT_SPLIT);
         }
         else if(key==DataKeys.ChunkTiles)
         {
@@ -185,8 +216,13 @@ public static class SerializeDataHelpers
                     stored.Add(LIST_ELEMENT_SPLIT);
                 }
             }
+            stored.Add(DATA_OBJECT_SPLIT);
             return CombineStrings(key,KEY_OBJECT_SPLIT,stored);
-        }else if (key == DataKeys.WallTiles|| key == DataKeys.EnvironmentObjects||key==DataKeys.Resources||key==DataKeys.ItemsInContainer||key==DataKeys.Constructables)
+        }else if (key == DataKeys.WallTiles
+            || key == DataKeys.EnvironmentObjects
+            ||key==DataKeys.Resources
+            ||key==DataKeys.ItemsInContainer
+            ||key==DataKeys.Constructables)
         {
             List<DataToSerialize> data = (List<DataToSerialize>)value;
             List<string> stored = new List<string>();

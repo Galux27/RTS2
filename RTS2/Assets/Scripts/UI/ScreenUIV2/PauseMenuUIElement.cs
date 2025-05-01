@@ -29,5 +29,21 @@ public class PauseMenuUIElement : BaseUIElement
     void SaveTest()
     {
         SerializationHelpers.SaveGame("TestWorld");
+        EasyStopwatch.StartStopwatch();
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath("TestWorld"));
+        string[] splitObjects = null;
+        for (int x = 0; x < dataFromFile.Count; x++)
+        {
+            Debug.Log("Data From File Line:" + x + " contents||" + dataFromFile[x]);
+
+            splitObjects = dataFromFile[x].Split(SerializeDataHelpers.DATA_OBJECT_SPLIT);
+            for(int y=0; y < splitObjects.Length; y++)
+            {
+                Debug.Log("Data Loaded:" + splitObjects[y]);
+                DataReaders.ReadData(splitObjects[y]);
+            }
+        }
+        Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
+
     }
 }
