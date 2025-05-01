@@ -28,15 +28,6 @@ public class PauseMenuUIElement : BaseUIElement
 
     void SaveTest()
     {
-        EasyStopwatch.StartStopwatch();
-        for(int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
-        {
-            for(int y= 0;y< WorldChunkManager.Instance.Chunks.GetLength(1); y++)
-            {
-                Debug.Log("Saving Chunk " + x + "," + y + " serialized " + WorldChunkManager.Instance.Chunks[x, y].Serialize().Data);
-            }
-        }
-        EasyStopwatch.StopStopwatch();
-        Debug.Log("Saving took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
+        SerializationHelpers.SaveGame("TestWorld");
     }
 }

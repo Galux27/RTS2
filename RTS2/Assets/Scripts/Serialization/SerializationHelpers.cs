@@ -1,12 +1,71 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public static class SerializationHelpers
 {
-   
+    const string SaveDirectory = "ReclemationCorpSaves";
+    const string WorldSectionExtension = ".RCWRLD";
+    static string GetSaveFolderParentLocation()
+    {
+        return System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+    }
+
+   static void EnsureDirectoryExists(string path)
+    {
+        if(!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+    }
+
+    public static void SaveGame(string saveName)
+    {
+        EasyStopwatch.StartStopwatch();
+
+        string path = Path.Combine(GetSaveFolderParentLocation(), SaveDirectory);
+        EnsureDirectoryExists(path);
+        path=Path.Combine(path,saveName);
+        EnsureDirectoryExists(path);
+        SaveLoadedWorld(path);
+        Debug.Log("Saving took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
+
+    }
+
+    public static void SaveLoadedWorld(string path)
+    {
+        string name = "CHUNK_TEST" + WorldSectionExtension ;
+        List<string> dataWriting = new List<string>();
+        for (int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < WorldChunkManager.Instance.Chunks.GetLength(1); y++)
+            {
+                dataWriting.Add(WorldChunkManager.Instance.Chunks[x, y].Serialize().Data);
+            }
+        }
+        EasyStopwatch.StopStopwatch();
+        WriteToFile(path,name,dataWriting);
+    }
+
+   public static void WriteToFile(string path,string fileName,List<string> dataToWrite)
+    {
+        string fullPath = Path.Combine(path, fileName);
+        if(File.Exists(fullPath))
+        {
+            File.Delete(fullPath);
+        }
+
+
+        StreamWriter sw = new StreamWriter(fullPath);
+        for(int x=0;x<dataToWrite.Count;x++)
+        {
+            sw.WriteLine(dataToWrite[x]);
+        }
+        sw.Dispose();
+    }
 }
 
 public class DataKeys
