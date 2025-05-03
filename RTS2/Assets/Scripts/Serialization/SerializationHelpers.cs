@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
+
 using UnityEngine;
 
 public static class SerializationHelpers
@@ -163,7 +162,7 @@ public class SerializedData
         foreach(KeyValuePair<string,object> pair in data.data)
         {
             dataToWrite.Add(SerializeDataHelpers.SerializeData(pair.Key, pair.Value));
-            dataToWrite.Add(SerializeDataHelpers.DATA_OBJECT_SPLIT);
+            dataToWrite.Add(SerializeDataHelpers.DATA_OBJECT_SPLIT.ToString());
         }
        
         Data = SerializeDataHelpers.CombineStrings(dataToWrite);
@@ -173,30 +172,30 @@ public class SerializedData
 public static class SerializeDataHelpers 
 {
     //splits data from the key
-    public const string KEY_OBJECT_SPLIT = ";";
+    public const char KEY_OBJECT_SPLIT = ';';
     //splits data that forms part of the same element
-    public const string DATA_SPLIT = ",";
+    public const char DATA_SPLIT = ',';
     //splits data from the next in the DataToSerialize instance
-    public const string DATA_ELEMENT_SPLIT = ":";
+    public const char DATA_ELEMENT_SPLIT = ':';
     //splits data that is stored in the same list
-    public const string LIST_ELEMENT_SPLIT = "`";
+    public const char LIST_ELEMENT_SPLIT = '`';
     //splits data on different objects in the same file
-    public const string DATA_OBJECT_SPLIT = "^";
+    public const char DATA_OBJECT_SPLIT = '^';
     public static string SerializeData(string key,object value)
     {
         if (key== DataKeys.Coords)
         {
-            return CombineStrings(key , KEY_OBJECT_SPLIT,SerializeVector2Int(value),DATA_ELEMENT_SPLIT);
+            return CombineStrings(key , KEY_OBJECT_SPLIT.ToString() ,SerializeVector2Int(value),DATA_ELEMENT_SPLIT.ToString());
         }
         else if (key == DataKeys.Pos)
         {
-            return CombineStrings(key, KEY_OBJECT_SPLIT, SerializeVector3(value),DATA_ELEMENT_SPLIT);
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector3(value),DATA_ELEMENT_SPLIT.ToString());
         }
         else if (key == DataKeys.TileType|| key == DataKeys.WaterLevel|| key == DataKeys.WallType
             ||key==DataKeys.WallVisual||key==DataKeys.Health||key==DataKeys.MaxHealth||key==DataKeys.UID||
             key==DataKeys.ObjectKey||key==DataKeys.Quantitiy||key==DataKeys.ItemUID||key==DataKeys.CurrentProgress||key==DataKeys.MaxProgress)
         {
-            return CombineStrings(key, KEY_OBJECT_SPLIT, value.ToString(),DATA_ELEMENT_SPLIT);
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(),DATA_ELEMENT_SPLIT.ToString());
         }
         else if(key==DataKeys.ChunkTiles)
         {
@@ -211,13 +210,13 @@ public static class SerializeDataHelpers
                     foreach(KeyValuePair<string,object> kvp in element.data)
                     {
                         stored.Add(SerializeData(kvp.Key,kvp.Value));
-                        stored.Add(DATA_ELEMENT_SPLIT);
+                        stored.Add(DATA_ELEMENT_SPLIT.ToString());
                     }
-                    stored.Add(LIST_ELEMENT_SPLIT);
+                    stored.Add(LIST_ELEMENT_SPLIT.ToString());
                 }
             }
-            stored.Add(DATA_OBJECT_SPLIT);
-            return CombineStrings(key,KEY_OBJECT_SPLIT,stored);
+            stored.Add(DATA_OBJECT_SPLIT.ToString());
+            return CombineStrings(key,KEY_OBJECT_SPLIT.ToString(), stored);
         }else if (key == DataKeys.WallTiles
             || key == DataKeys.EnvironmentObjects
             ||key==DataKeys.Resources
@@ -231,14 +230,14 @@ public static class SerializeDataHelpers
                 foreach (KeyValuePair<string, object> kvp in data[x].data)
                 {
                     stored.Add(SerializeData(kvp.Key, kvp.Value));
-                    stored.Add(DATA_ELEMENT_SPLIT);
+                    stored.Add(DATA_ELEMENT_SPLIT.ToString());
 
                 }
-                stored.Add(LIST_ELEMENT_SPLIT);
+                stored.Add(LIST_ELEMENT_SPLIT.ToString());
 
             }
 
-            return CombineStrings(key, KEY_OBJECT_SPLIT, stored);
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), stored);
         }
         Debug.LogError("Could not serialize " + key + " as its been assigned a serializer");
         return "";
@@ -247,12 +246,12 @@ public static class SerializeDataHelpers
     static string SerializeVector2Int(object value)
     {
         Vector2Int val =(Vector2Int)value;
-        return CombineStrings( val.x.ToString() , DATA_SPLIT, val.y.ToString());
+        return CombineStrings( val.x.ToString() , DATA_SPLIT.ToString(), val.y.ToString());
     }
     static string SerializeVector3(object value)
     {
         Vector3 val = (Vector3)value;
-        return CombineStrings(val.x.ToString(), DATA_SPLIT, val.y.ToString());
+        return CombineStrings(val.x.ToString(), DATA_SPLIT.ToString(), val.y.ToString());
     }
     static StringBuilder builder = new StringBuilder();
     public static string CombineStrings( List<string> data)

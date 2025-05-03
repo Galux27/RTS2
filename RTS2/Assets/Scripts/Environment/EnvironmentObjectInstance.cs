@@ -168,6 +168,12 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
     {
         return position;
     }
+    public void OverrideHealth(float val,float max)
+    {
+        HealthVal = val;
+        MaxHealthVal = max;
+    }
+
 
     public void AdjustHealth(float value)
     {
