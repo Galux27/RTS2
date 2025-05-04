@@ -187,14 +187,51 @@ public static class DataReaders
         string[] objects = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         WorldTile[,] tiles = new WorldTile[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
         WorldTile currentTile = null;
-       // Debug.Log("Parsing chunk tiles from " + data);
-        for (int x = 0; x < objects.Length; x++)
+        int x = 0, y = 0;
+        bool gotCorner = false;
+        int xc = 0, yc = 0;
+        for (int q = 0; q < objects.Length; q++)
         {
-            currentTile = ParseChunkTile(objects[x]);
+            currentTile = ParseChunkTile(objects[q]);
+            if (!gotCorner)
+            {
+                xc = RoundToMultiple(currentTile.x, WorldChunkManager.ChunkSize);
+                yc=RoundToMultiple(currentTile.y, WorldChunkManager.ChunkSize);
+                gotCorner = true;
+            }
+            if (xc == 0)
+            {
+                x = currentTile.x;
+
+            }
+            else
+            {
+                x = currentTile.x - (( xc));
+
+            }
+            if(yc == 0)
+            {
+                y = currentTile.y;
+
+            }
+            else
+            {
+                y = currentTile.y - (( yc));
+
+            }
+           
+            //Debug.Log("Getting origin coords from " + currentTile.x + "," + currentTile.y
+            // + " calculated "
+            // + x + "," + y+" corner " + xc+","+yc);
+
+            tiles[x, y] = currentTile;
         }
         return tiles;
     }
-
+    public static int RoundToMultiple(int value, int roundTo)
+    {
+        return Mathf.CeilToInt(value / roundTo) * roundTo;
+    }
     static WorldTile ParseChunkTile(string data)
     {
         string[] objects = data.Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT,System.StringSplitOptions.RemoveEmptyEntries);
