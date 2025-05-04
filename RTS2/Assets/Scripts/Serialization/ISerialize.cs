@@ -11,4 +11,5 @@ public interface ISerialize
 
     public UID GetMyUID();
     
+    public void SetMyUID(ulong uid);
 }

@@ -62,6 +62,11 @@ public class ResourceInstance : MonoBehaviour,ISerialize
         }
         return myUID;
     }
+
+    public void SetMyUID(ulong uid)
+    {
+        myUID = new UID(uid);
+    }
 }
 
 [System.Serializable]
@@ -186,5 +191,10 @@ public class ResourceInstanceData:InventoryObject
     public UID GetMyUID()
     {
         throw new System.NotImplementedException();
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+        //myUID = new UID(uid);
     }
 }

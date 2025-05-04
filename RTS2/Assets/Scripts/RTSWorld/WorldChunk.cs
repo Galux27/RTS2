@@ -404,4 +404,9 @@ public class WorldChunk:ISerialize
         }
         return myUid;
     }
+
+    public void SetMyUID(ulong uid)
+    {
+        myUid = new UID(uid);
+    }
 }

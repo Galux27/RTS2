@@ -248,4 +248,9 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         }
         return myUID;
     }
+
+    public void SetMyUID(ulong uid)
+    {
+        myUID = new UID(uid);
+    }
 }

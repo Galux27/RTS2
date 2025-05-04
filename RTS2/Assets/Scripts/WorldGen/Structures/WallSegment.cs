@@ -163,6 +163,12 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         return 1;
     }
 
+    public void OverrideHealthValues(float health,float maxHealth)
+    {
+        HealthVal = health;
+        MaxHealthVal=maxHealth;
+    }
+
     public float Health()
     {
         return HealthVal;
@@ -198,7 +204,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         DataToSerialize retVal = new DataToSerialize();
         retVal.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
         retVal.AddDataToSerialize(DataKeys.Coords, new Vector2Int(x, y));
-        retVal.AddDataToSerialize(DataKeys.WallType, WallType.ToString());
+        retVal.AddDataToSerialize(DataKeys.WallType, (int)WallType);
         retVal.AddDataToSerialize(DataKeys.WallVisual, baseWallType.WallName);
         retVal.AddDataToSerialize(DataKeys.Health, Health());
         retVal.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
@@ -222,6 +228,11 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
             myUID = IDManager.GetUIDForObject();
         }
         return myUID;
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+        myUID = new UID(uid);
     }
 }
 

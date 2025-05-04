@@ -193,7 +193,7 @@ public static class SerializeDataHelpers
         }
         else if (key == DataKeys.TileType|| key == DataKeys.WaterLevel|| key == DataKeys.WallType
             ||key==DataKeys.WallVisual||key==DataKeys.Health||key==DataKeys.MaxHealth||key==DataKeys.UID||
-            key==DataKeys.ObjectKey||key==DataKeys.Quantitiy||key==DataKeys.ItemUID||key==DataKeys.CurrentProgress||key==DataKeys.MaxProgress)
+            key==DataKeys.ObjectKey||key==DataKeys.Quantitiy||key==DataKeys.ItemUID||key==DataKeys.CurrentProgress||key==DataKeys.MaxProgress||key==DataKeys.ConstructableType)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(),DATA_ELEMENT_SPLIT.ToString());
         }

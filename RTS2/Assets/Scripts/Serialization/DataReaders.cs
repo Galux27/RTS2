@@ -22,8 +22,8 @@ public static class DataReaders
 
         ParseData(key,data);
     }
-
-    public static void ParseWorldChunks(string data)
+    static Vector2Int currentLoadingChunkCoords;
+    public static WorldChunk ParseWorldChunk(string data)
     {
         string[] splitListFromData = data.Split(SerializeDataHelpers.DATA_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         for(int x=0;x<splitListFromData.Length;x++)
@@ -40,15 +40,41 @@ public static class DataReaders
         //5 constructables
         string[] keyValueSplit = splitListFromData[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         Vector2Int coords = (Vector2Int)ParseDataObject(keyValueSplit[0], keyValueSplit[1]);
+        currentLoadingChunkCoords = coords;
         WorldChunk chunk = new WorldChunk(coords.x, coords.y);
         keyValueSplit = splitListFromData[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
        chunk.ChunkTiles = (WorldTile[,])ParseDataObject(keyValueSplit[0], splitListFromData[1].Substring(keyValueSplit[0].Length));
+
+        keyValueSplit = splitListFromData[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        if (keyValueSplit.Length > 1)
+        {
+            chunk.WallSegments = (WallSegment[,])ParseDataObject(keyValueSplit[0], splitListFromData[2].Substring(keyValueSplit[0].Length));
+           
+        }
 
         keyValueSplit = splitListFromData[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         if (keyValueSplit.Length > 1)
         {
             chunk.EnvironmentObjectsInChunk = (List<EnvironmentObjectInstance>)ParseDataObject(keyValueSplit[0], splitListFromData[3].Substring(keyValueSplit[0].Length));
+            for(int x = 0; x < chunk.EnvironmentObjectsInChunk.Count; x++)
+            {
+                chunk.EnvironmentObjectsInChunk[x].SetChunk(chunk);
+            }
+        
         }
+
+        keyValueSplit = splitListFromData[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        if (keyValueSplit.Length > 1)
+        { 
+            List<BuildableStructure> buildableStructures = (List<BuildableStructure>)ParseDataObject(keyValueSplit[0], splitListFromData[5].Substring(keyValueSplit[0].Length));
+            chunk.ToBuild = new List<Constructable>();
+            for(int x = 0; x < buildableStructures.Count; x++)
+            {
+                
+                chunk.ToBuild.Add(buildableStructures[x]);
+            }
+        }
+        return chunk;
     }
 
     public static void ParseData(string key,string remainder)
@@ -82,31 +108,36 @@ public static class DataReaders
             case DataKeys.Pos:
                 return ParseVector3(data);
                 break;
-            case DataKeys.TileType:
             case DataKeys.WallTiles:
-            case DataKeys.WallType:
+                return ParseWallSegments(data);
+            case DataKeys.TileType:    
             case DataKeys.WallVisual:
             case DataKeys.ObjectKey:
                 return data;
             case DataKeys.UID:
-                return ParseLong(data);
+                return ParseULong(data);
                 break;
             case DataKeys.Quantitiy:
+            case DataKeys.WallType:
+            case DataKeys.ConstructableType:
                 return ParseInt(data);
                 break;
             case DataKeys.EnvironmentObjects:
                 return ParseEnvironmentObjects(data);
                 break;
+            case DataKeys.Constructables: 
+                return ParseConstructableObjects(data);
+                break;
             case DataKeys.Resources:
             case DataKeys.ItemUID:
             case DataKeys.ItemsInContainer:
-            case DataKeys.ConstructableType:
-            case DataKeys.Constructables:          
             default:
                 break;
         }
         return null;
     }
+
+
 
     static Vector3 ParseVector3(string val)
     {
@@ -114,9 +145,9 @@ public static class DataReaders
         return new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));    
     }
 
-    static float ParseLong(string val)
+    static ulong ParseULong(string val)
     {
-        return long.Parse(val);
+        return ulong.Parse(val);
     }
 
     static int ParseInt(string val)
@@ -143,6 +174,66 @@ public static class DataReaders
        // Debug.Log("vec2int parse " + data[0] + "," + data[1]);
         
         return new Vector2Int(int.Parse(data[0]), int.Parse(data[1]));
+    }
+
+    public static List<BuildableStructure> ParseConstructableObjects(string data)
+    {
+        List<BuildableStructure> retVal = new List<BuildableStructure>();
+        string[] objects = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+
+
+        for (int x = 0; x < objects.Length; x++)
+        {
+            BuildableStructure toAdd = ParseConstructableObject(objects[x]);
+            if (toAdd != null)
+            {
+                retVal.Add(toAdd);
+            }
+        }
+
+        return retVal;
+    }
+
+    static BuildableStructure ParseConstructableObject(string data)
+    {
+        Debug.Log("Constructable object data " + data);
+        //;UID;62::COORDS;8,14::HEALTH;1::MAX_HEALTH;1::CURRENT_PROGRESS;0::MAX_PROGRESS;10::OBJECT_KEY;Fuel Tank::
+        string[] objects = data.Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] parsing = objects[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        ulong uid = (ulong)ParseDataObject(parsing[0], parsing[1]);
+        parsing = objects[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+       Vector2Int coords = (Vector2Int)ParseDataObject(parsing[0], parsing[1]);
+        float health = 0f, maxHealth = 0f;
+        parsing = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        health = (float)ParseDataObject(parsing[0], parsing[1]);
+        parsing = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        maxHealth = (float)ParseDataObject(parsing[0], parsing[1]);
+        float progress = 0f, maxProgress = 0f;
+        parsing = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        progress = (float)ParseDataObject(parsing[0], parsing[1]);
+        parsing = objects[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        maxProgress = (float)ParseDataObject(parsing[0], parsing[1]);
+        parsing = objects[6].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        string key = (string)ParseDataObject(parsing[0], parsing[1]);
+        parsing = objects[7].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        ConstructableType myType = (ConstructableType)ParseDataObject(parsing[0], parsing[1]);
+
+        if (myType == ConstructableType.Furniture)
+        {
+            System.Action OnBuilt = ConstructableObjectManager.Instance.GetActionForConstructableOnBuilt(coords, new Vector3(coords.x, coords.y, 0), key);
+            ConstructableObject buildingData = ConstructableObjectManager.Instance.GetData(key);
+            BuildableStructure retVal = new BuildableStructure(coords.x, coords.y, maxProgress, false, OnBuilt, buildingData.Size(), default, myType, key);
+            return retVal;
+
+        }
+        else if (myType == ConstructableType.Wall || myType == ConstructableType.Door)
+        {
+            System.Action OnBuilt = WallHelpers.GetOnBuilt(coords, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.AllObjects[key]);
+            BuildableStructure retVal = new BuildableStructure(coords.x, coords.y, maxProgress, false, OnBuilt, Vector3.one, default, myType, key);
+            return retVal;
+
+        }
+        return null;
     }
 
     public static List<EnvironmentObjectInstance> ParseEnvironmentObjects(string data)
@@ -173,12 +264,14 @@ public static class DataReaders
         EnvironmentObjectInstance obj = new EnvironmentObjectInstance(coords.x,coords.y,key);
         float health = 0f, maxHealth = 0f;
         parsing = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-
-        health = (float)ParseDataObject(parsing[0], parsing[1]);
+        ulong uid = (ulong)ParseDataObject(parsing[0], parsing[1]);
         parsing = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+
+        health =  (float)ParseDataObject(parsing[0], parsing[1]);
+        parsing = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         maxHealth = (float)ParseDataObject(parsing[0], parsing[1]);
         obj.OverrideHealth(health, maxHealth);
-
+        obj.SetMyUID(uid);
         return obj;
     }
 
@@ -220,14 +313,101 @@ public static class DataReaders
 
             }
            
-            //Debug.Log("Getting origin coords from " + currentTile.x + "," + currentTile.y
-            // + " calculated "
-            // + x + "," + y+" corner " + xc+","+yc);
+          
 
             tiles[x, y] = currentTile;
         }
         return tiles;
     }
+
+    public static WallSegment[,] ParseWallSegments(string data)
+    {
+        WallSegment[,] retVal = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        string[] objects = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        WallSegment currentTile = null;
+        for(int x1 = 0; x1 < retVal.GetLength(0); x1++)
+        {
+            for(int y1 = 0; y1 < retVal.GetLength(1); y1++)
+            {
+                retVal[x1, y1] = new WallSegment(x1+currentLoadingChunkCoords.x, y1+currentLoadingChunkCoords.y, null);
+            }
+        }
+
+
+        int x = 0, y = 0;
+        bool gotCorner = false;
+        int xc = 0, yc = 0;
+        
+        for (int q = 0; q < objects.Length; q++)
+        {
+            currentTile = ParseWallSegment(objects[q]);
+            if (currentTile != null)
+            {
+                if (!gotCorner)
+                {
+                    xc = RoundToMultiple(currentTile.x, WorldChunkManager.ChunkSize);
+                    yc = RoundToMultiple(currentTile.y, WorldChunkManager.ChunkSize);
+                    gotCorner = true;
+                }
+                if (xc == 0)
+                {
+                    x = currentTile.x;
+
+                }
+                else
+                {
+                    x = currentTile.x - ((xc));
+
+                }
+                if (yc == 0)
+                {
+                    y = currentTile.y;
+
+                }
+                else
+                {
+                    y = currentTile.y - ((yc));
+
+                }
+
+
+
+                retVal[x, y] = currentTile;
+            }
+        }
+
+        return retVal;
+    }
+
+    static WallSegment ParseWallSegment(string data)
+    {
+        Debug.Log("Wall segement data " + data);
+        // ; UID; 5::COORDS; 7,17::WALL_TYPE; Wall::WALL_VISUAL; Concrete::HEALTH; 100::MAX_HEALTH; 100::
+        string[] objects = data.Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] split = null;
+
+        split = objects[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        ulong uid = (ulong)ParseDataObject(split[0], split[1]);
+        split = objects[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+
+        Vector2Int coords = (Vector2Int)ParseDataObject(split[0], split[1]);
+        split = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        WallType wallType = (WallType)ParseDataObject(split[0], split[1]);
+        split = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        string wallVisualType = (string)ParseDataObject(split[0], split[1]);
+        WallSegment retVal = new WallSegment(coords.x, coords.y, WallTypeManager.Instance.AllObjects[wallVisualType]);
+        retVal.SetMyUID(uid);
+        retVal.WallType = wallType;
+        
+        split = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        float health = (float)ParseDataObject(split[0], split[1]);
+        split = objects[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        float maxHealth = (float)ParseDataObject(split[0], split[1]);
+        retVal.OverrideHealthValues(health, maxHealth);
+        return retVal;
+    }
+
+
     public static int RoundToMultiple(int value, int roundTo)
     {
         return Mathf.CeilToInt(value / roundTo) * roundTo;

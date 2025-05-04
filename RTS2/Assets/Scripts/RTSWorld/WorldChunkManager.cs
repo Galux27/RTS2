@@ -30,14 +30,16 @@ public class WorldChunkManager : MonoBehaviour
     public void InitWorldChunks()
     {
         Chunks=new WorldChunk[WorldController.Instance.WorldWidth/ChunkSize, WorldController.Instance.WorldHeight / ChunkSize];
-
-        for(int x = 0; x < Chunks.GetLength(0); x++)
-        {
-            for (int y = 0; y< Chunks.GetLength(1); y++)
+       
+            for (int x = 0; x < Chunks.GetLength(0); x++)
             {
-                Chunks[x,y] = new WorldChunk(x,y);
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y] = new WorldChunk(x, y);
+                }
             }
-        }
+        
+       
         Height = Chunks.GetLength(1);
         Width = Chunks.GetLength(0);
         for (int x = 0; x < Chunks.GetLength(0); x++)
@@ -48,6 +50,47 @@ public class WorldChunkManager : MonoBehaviour
             }
         }
     }
+
+    public void LoadChunksFromFile()
+    {
+        EasyStopwatch.StartStopwatch();
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath("TestWorld"));
+        //  string[] splitObjects = null;
+        for (int q = 0; q < dataFromFile.Count; q++)
+        {
+            Debug.Log("Data From File Line:" + q + " contents||" + dataFromFile[q]);
+            WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
+            int x = wc.WorldCoords.x/ChunkSize; int y = wc.WorldCoords.y / ChunkSize;
+            Debug.Log("Parsed chunk at " + wc.WorldCoords);
+            Chunks[x, y] = wc;
+            
+        }
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].InitPathfindingNodes();
+
+                for(int x1 = 0; x1 < Chunks[x, y].ChunkTiles.GetLength(0); x1++)
+                {
+                    for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(0); y1++)
+                    {
+                        Chunks[x, y].ChunkTiles[x1, y1].UpdateWaterLevel(Chunks[x, y].ChunkTiles[x1, y1].WaterData.WaterLevel);
+                    }
+                }
+
+
+                for(int q = 0; q < Chunks[x, y].EnvironmentObjectsInChunk.Count; q++)
+                {
+                    WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(Chunks[x, y].EnvironmentObjectsInChunk[q], !EnvironmentObjectHelpers.GetEnvironmentObject(Chunks[x, y].EnvironmentObjectsInChunk[q].Name()).BlocksTile);
+                }
+
+            }
+        }
+
+        Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
+    }
+
 
     public void OnBuildableFinished(BuildableStructure bs)
     {

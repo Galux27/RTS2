@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using UnityEditor;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour, Storage, ISerialize
@@ -322,5 +323,10 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
     public UID GetMyUID()
     {
         throw new NotImplementedException();
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+        //myUID = new UID(uid);
     }
 }

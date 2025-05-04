@@ -35,7 +35,8 @@ public class PauseMenuUIElement : BaseUIElement
         for (int x = 0; x < dataFromFile.Count; x++)
         {
             Debug.Log("Data From File Line:" + x + " contents||" + dataFromFile[x]);
-            DataReaders.ParseWorldChunks(dataFromFile[x]);
+            WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[x]);
+            Debug.Log("Parsed chunk at " + wc.WorldCoords);
             //splitObjects = dataFromFile[x].Split(SerializeDataHelpers.DATA_OBJECT_SPLIT);
             //for(int y=0; y < splitObjects.Length; y++)
             //{

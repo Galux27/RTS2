@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class BuildableStructure : Constructable,ObjectInfo
@@ -243,10 +244,18 @@ public class BuildableStructure : Constructable,ObjectInfo
         retVal.AddDataToSerialize(DataKeys.Coords, new Vector2Int(x, y));
         retVal.AddDataToSerialize(DataKeys.Health, Health());
         retVal.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
-        retVal.AddDataToSerialize(DataKeys.CurrentProgress, Timer.GetCurrentTime);
-        retVal.AddDataToSerialize(DataKeys.MaxProgress, Timer.TimeLimit);
+        if (Timer == null)
+        {
+            retVal.AddDataToSerialize(DataKeys.CurrentProgress,progress);
+            retVal.AddDataToSerialize(DataKeys.MaxProgress, maxProgress);
+        }
+        else
+        {
+            retVal.AddDataToSerialize(DataKeys.CurrentProgress, progress);
+            retVal.AddDataToSerialize(DataKeys.MaxProgress, maxProgress);
+        }
         retVal.AddDataToSerialize(DataKeys.ObjectKey, constructOnComplete);
-
+        retVal.AddDataToSerialize(DataKeys.ConstructableType, (int)myType);
         return retVal;
     }
 
@@ -267,6 +276,11 @@ public class BuildableStructure : Constructable,ObjectInfo
             MyUID = IDManager.GetUIDForObject();
         }
         return MyUID;
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+        MyUID = new UID(uid);
     }
 }
 

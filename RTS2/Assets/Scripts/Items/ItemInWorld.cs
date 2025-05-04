@@ -136,6 +136,10 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
         return MyUID;
     }
 
+    public void SetMyUID(ulong uid)
+    {
+        MyUID = new UID(uid);
+    }
     public Item MyItem;
     public SpriteRenderer sr;
 }

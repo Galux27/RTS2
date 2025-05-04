@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class ConstructableObjectManager : MonoBehaviour
 {
@@ -95,13 +97,23 @@ public class ConstructableObjectManager : MonoBehaviour
     {
         string toBuild = selectedToConstruct.Name;
 
-        
-        Action OnBuilt = () => {  CreateObject(coords, pos, toBuild); };
-        ConstructableObject buildingData = AllObjects[toBuild];
+
+        Action OnBuilt = GetActionForConstructableOnBuilt(coords, pos, toBuild);
+        ConstructableObject buildingData = GetData(toBuild);
 
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(pos);
         new BuildableStructure(coords.x, coords.y, buildingData.TimeToBuild, false, OnBuilt, buildingData.Size(),default,ConstructableType.Furniture,buildingData.Name);
         ResourceHelpers.ConsumeResources(resourcesToConsume);
+    }
+    
+    public ConstructableObject GetData(string key)
+    {
+        return AllObjects[key];
+    }
+    
+    public Action GetActionForConstructableOnBuilt(Vector2Int coords, Vector3 pos, string toBuild)
+    {
+        return () => { CreateObject(coords, pos, toBuild); };
     }
 
     public void CreateObject(Vector2Int coords, Vector3 pos, string toConstruct)
@@ -114,11 +126,6 @@ public class ConstructableObjectManager : MonoBehaviour
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         ConstructableObjectInstance instance = new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name);
         WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(instance);
-
         WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !AllObjects[toConstruct].BlocksTile);
-
-     
-
-
     }
 }

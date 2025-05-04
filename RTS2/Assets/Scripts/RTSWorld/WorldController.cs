@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -52,11 +53,17 @@ public class WorldController : MonoBehaviour
         
         InitWorld();
     }
-
+    public bool LoadWorld = false;
     public void InitWorld()
     {
-        MapGenerator.Instance.GenerateMap();
-
+        if (!LoadWorld)
+        {
+            MapGenerator.Instance.GenerateMap();
+        }
+        else
+        {
+            WorldChunkManager.Instance.LoadChunksFromFile();
+        }
 
         for(int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
         {
@@ -227,6 +234,11 @@ public class WorldTile:ISerialize
     public UID GetMyUID()
     {
         throw new NotImplementedException();
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+       // myUID = new UID(uid);
     }
 }
 
