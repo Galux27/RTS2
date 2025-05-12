@@ -30,19 +30,19 @@ public class PauseMenuUIElement : BaseUIElement
     {
         SerializationHelpers.SaveGame("TestWorld");
         EasyStopwatch.StartStopwatch();
-        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath("TestWorld"));
-      //  string[] splitObjects = null;
-        for (int x = 0; x < dataFromFile.Count; x++)
-        {
-            Debug.Log("Data From File Line:" + x + " contents||" + dataFromFile[x]);
-            WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[x]);
-            Debug.Log("Parsed chunk at " + wc.WorldCoords);
-            //splitObjects = dataFromFile[x].Split(SerializeDataHelpers.DATA_OBJECT_SPLIT);
-            //for(int y=0; y < splitObjects.Length; y++)
-            //{
-            //    DataReaders.ReadData(splitObjects[y]);
-            //}
-        }
+      //  List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath("TestWorld"));
+      ////  string[] splitObjects = null;
+      //  for (int x = 0; x < dataFromFile.Count; x++)
+      //  {
+      //      Debug.Log("Data From File Line:" + x + " contents||" + dataFromFile[x]);
+      //      WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[x]);
+      //      Debug.Log("Parsed chunk at " + wc.WorldCoords);
+      //      //splitObjects = dataFromFile[x].Split(SerializeDataHelpers.DATA_OBJECT_SPLIT);
+      //      //for(int y=0; y < splitObjects.Length; y++)
+      //      //{
+      //      //    DataReaders.ReadData(splitObjects[y]);
+      //      //}
+      //  }
         Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
 
     }

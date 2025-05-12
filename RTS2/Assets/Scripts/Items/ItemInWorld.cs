@@ -126,19 +126,23 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
     {
         throw new System.NotImplementedException();
     }
-    UID MyUID;
+    UID myUid;
     public UID GetMyUID()
     {
-        if (MyUID.Value == 0)
+        if (myUid.Value == 0)
         {
-            MyUID = IDManager.GetUIDForObject();
+            myUid = IDManager.GetUIDForObject();
+            IDManager.OnUIDCreated(this, myUid);
+
         }
-        return MyUID;
+        return myUid;
     }
 
     public void SetMyUID(ulong uid)
     {
-        MyUID = new UID(uid);
+        myUid = new UID(uid);
+        IDManager.OnUIDCreated(this, myUid);
+
     }
     public Item MyItem;
     public SpriteRenderer sr;

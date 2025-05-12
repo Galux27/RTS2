@@ -18,8 +18,6 @@ public static class DataReaders
             }
         }
         string key = data.Substring(0, firstSplit);
-      //  Debug.Log("Loading data " + (firstSplit + "|" + lookingFor + "|") + key);
-
         ParseData(key,data);
     }
     static Vector2Int currentLoadingChunkCoords;
@@ -113,6 +111,7 @@ public static class DataReaders
             case DataKeys.TileType:    
             case DataKeys.WallVisual:
             case DataKeys.ObjectKey:
+            case DataKeys.UnitFaction:
                 return data;
             case DataKeys.UID:
                 return ParseULong(data);
@@ -120,6 +119,7 @@ public static class DataReaders
             case DataKeys.Quantitiy:
             case DataKeys.WallType:
             case DataKeys.ConstructableType:
+            case DataKeys.UnitType:
                 return ParseInt(data);
                 break;
             case DataKeys.EnvironmentObjects:

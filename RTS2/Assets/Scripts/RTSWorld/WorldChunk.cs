@@ -401,6 +401,7 @@ public class WorldChunk:ISerialize
         if (myUid.Value==0)
         {
             myUid = IDManager.GetUIDForObject();
+            IDManager.OnUIDCreated(this, myUid);
         }
         return myUid;
     }
@@ -408,5 +409,6 @@ public class WorldChunk:ISerialize
     public void SetMyUID(ulong uid)
     {
         myUid = new UID(uid);
+        IDManager.OnUIDCreated(this, myUid);
     }
 }

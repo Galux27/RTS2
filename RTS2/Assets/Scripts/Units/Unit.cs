@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class Unit : MonoBehaviour,Selectable,ObjectInfo
+public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 {
     public bool isSelected=false;
     public bool isSelectable = false;
@@ -266,6 +266,50 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo
         {
             MyHealth.DecreaseHealth(value);
         }
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize data=new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.Pos, this.transform.position);
+        data.AddDataToSerialize(DataKeys.UID, GetMyUID().Value.ToString());
+        data.AddDataToSerialize(DataKeys.UnitType, (int)MyType);
+        data.AddDataToSerialize(DataKeys.UnitFaction, MyFaction.MyFactionID);
+        data.AddDataToSerialize(DataKeys.Health, MyHealth.CurrentHealth);
+        data.AddDataToSerialize(DataKeys.MaxHealth,MyHealth.MaxHealth);
+        //TODO
+        //Orders
+        //Inventory
+        //Holding
+
+
+        return data;
+    }
+
+    public SerializedData Serialize()
+    {
+        return new SerializedData(GetDataToSerialize());
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new NotImplementedException();
+    }
+
+    UID myUid;
+    public UID GetMyUID()
+    {
+        if (myUid.Value==0)
+        {
+            myUid = new UID();
+        }
+        return myUid;
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+        myUid = new UID(uid);
+        IDManager.OnUIDCreated(this, myUid);
     }
 }
 

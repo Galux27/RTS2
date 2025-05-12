@@ -1683,6 +1683,7 @@ MonoBehaviour:
   BuildingTilemap: {fileID: 1289217260}
   WallTest: {fileID: 11400000, guid: 102a885a2c1508846a5c80a9e702808e, type: 2}
   WallCollider: {fileID: 1150100288391625594, guid: 55ebbfcdb71636b4b822993bf8bcffd5, type: 3}
+  LoadWorld: 0
 --- !u!114 &247636641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1890,9 +1891,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ZombieSpawnRate: 1
-  ZombieSpawnCount: 5
+  ZombieSpawnCount: 77
   ZombiePrefab: {fileID: 1965254852317116142, guid: 71b2a2af47f21324194c8ca455e31063, type: 3}
-  Spawn: 0
+  Spawn: 1
 --- !u!114 &247636656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10473,7 +10474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0e877dd6ef1a72409cea768d1f71a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InstantConstructVal: 1
+  InstantConstructVal: 0
   CareAboutResources: 0
 --- !u!114 &1606643383
 MonoBehaviour:

@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
+using Unity.Mathematics;
 using UnityEngine;
 
 public static class SerializationHelpers
 {
     const string SaveDirectory = "ReclemationCorpSaves";
-    const string WorldSectionExtension = ".RCWRLD";
+    const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT";
     static string GetSaveFolderParentLocation()
     {
         return System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
@@ -37,11 +37,28 @@ public static class SerializationHelpers
         path=Path.Combine(path,saveName);
         EnsureDirectoryExists(path);
         SaveLoadedWorld(path);
+        SaveUnits(path);
         Debug.Log("Saving took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
 
     }
 
-    public static void SaveLoadedWorld(string path)
+    public static void SaveUnits(string path)
+    {
+        string name = "UNITS" + UnitsExtension;
+        List<string> dataWriting = new List<string>();
+        for(int x = 0; x < UnitMoniter.Instance.AllUnits.Count; x++)
+        {
+            dataWriting.Add(UnitMoniter.Instance.AllUnits[x].Serialize().Data);
+        }
+
+
+        if (dataWriting.Count > 0)
+        {
+            WriteToFile(path, name, dataWriting);
+        }
+    }
+
+        public static void SaveLoadedWorld(string path)
     {
         string name = "CHUNK_TEST" + WorldSectionExtension ;
         List<string> dataWriting = new List<string>();
@@ -118,6 +135,8 @@ public class DataKeys
     public const string MaxProgress = "MAX_PROGRESS";
     public const string ConstructableType = "CONSTRUCTABLE_TYPE";
     public const string Constructables = "CONSTRUCTABLES";//todo
+    public const string UnitType = "UNIT_TYPE";
+    public const string UnitFaction = "UNIT_FACTION";
 }
 
 public enum DataType
@@ -193,7 +212,8 @@ public static class SerializeDataHelpers
         }
         else if (key == DataKeys.TileType|| key == DataKeys.WaterLevel|| key == DataKeys.WallType
             ||key==DataKeys.WallVisual||key==DataKeys.Health||key==DataKeys.MaxHealth||key==DataKeys.UID||
-            key==DataKeys.ObjectKey||key==DataKeys.Quantitiy||key==DataKeys.ItemUID||key==DataKeys.CurrentProgress||key==DataKeys.MaxProgress||key==DataKeys.ConstructableType)
+            key==DataKeys.ObjectKey||key==DataKeys.Quantitiy||key==DataKeys.ItemUID||key==DataKeys.CurrentProgress
+            ||key==DataKeys.MaxProgress||key==DataKeys.ConstructableType||key==DataKeys.UnitType||key==DataKeys.UnitFaction)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(),DATA_ELEMENT_SPLIT.ToString());
         }

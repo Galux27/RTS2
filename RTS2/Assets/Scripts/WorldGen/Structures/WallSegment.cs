@@ -220,19 +220,22 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     {
         throw new System.NotImplementedException();
     }
-    UID myUID;
+    UID myUid;
     public UID GetMyUID()
     {
-        if (myUID.Value == 0)
+        if (myUid.Value == 0)
         {
-            myUID = IDManager.GetUIDForObject();
+            myUid = IDManager.GetUIDForObject();
+            IDManager.OnUIDCreated(this, myUid);
+
         }
-        return myUID;
+        return myUid;
     }
 
     public void SetMyUID(ulong uid)
     {
-        myUID = new UID(uid);
+        myUid = new UID(uid);
+        IDManager.OnUIDCreated(this, myUid);
     }
 }
 
