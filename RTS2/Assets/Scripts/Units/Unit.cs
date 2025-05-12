@@ -301,7 +301,9 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     {
         if (myUid.Value==0)
         {
-            myUid = new UID();
+            myUid = IDManager.GetUIDForObject();
+            IDManager.OnUIDCreated(this, myUid);
+
         }
         return myUid;
     }

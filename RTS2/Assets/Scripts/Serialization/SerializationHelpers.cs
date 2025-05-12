@@ -137,6 +137,9 @@ public class DataKeys
     public const string Constructables = "CONSTRUCTABLES";//todo
     public const string UnitType = "UNIT_TYPE";
     public const string UnitFaction = "UNIT_FACTION";
+    public const string RoomName = "ROOM_NAME";
+    public const string RoomType = "ROOM_TYPE";
+    public const string RoomTiles = "ROOM_TILES";
 }
 
 public enum DataType
@@ -202,20 +205,33 @@ public static class SerializeDataHelpers
     public const char DATA_OBJECT_SPLIT = '^';
     public static string SerializeData(string key,object value)
     {
-        if (key== DataKeys.Coords)
+        if (key == DataKeys.Coords)
         {
-            return CombineStrings(key , KEY_OBJECT_SPLIT.ToString() ,SerializeVector2Int(value),DATA_ELEMENT_SPLIT.ToString());
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector2Int(value), DATA_ELEMENT_SPLIT.ToString());
         }
         else if (key == DataKeys.Pos)
         {
-            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector3(value),DATA_ELEMENT_SPLIT.ToString());
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector3(value), DATA_ELEMENT_SPLIT.ToString());
         }
-        else if (key == DataKeys.TileType|| key == DataKeys.WaterLevel|| key == DataKeys.WallType
-            ||key==DataKeys.WallVisual||key==DataKeys.Health||key==DataKeys.MaxHealth||key==DataKeys.UID||
-            key==DataKeys.ObjectKey||key==DataKeys.Quantitiy||key==DataKeys.ItemUID||key==DataKeys.CurrentProgress
-            ||key==DataKeys.MaxProgress||key==DataKeys.ConstructableType||key==DataKeys.UnitType||key==DataKeys.UnitFaction)
+        else if (key == DataKeys.TileType || key == DataKeys.WaterLevel || key == DataKeys.WallType
+            || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
+            key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
+            || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
+            || key == DataKeys.RoomName || key == DataKeys.RoomType)
         {
-            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(),DATA_ELEMENT_SPLIT.ToString());
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
+        } 
+        else if (key == DataKeys.RoomTiles)
+        {
+            List<string> stored = new List<string>();
+            List<Vector2Int> obj = (List<Vector2Int>)value;
+            for(int x=0;x<obj.Count; x++)
+            {
+                stored.Add(SerializeVector2Int(obj[x]));
+                stored.Add(LIST_ELEMENT_SPLIT.ToString());
+            }
+            stored.Add(DATA_ELEMENT_SPLIT.ToString());
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), stored);
         }
         else if(key==DataKeys.ChunkTiles)
         {

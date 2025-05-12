@@ -112,6 +112,7 @@ public static class DataReaders
             case DataKeys.WallVisual:
             case DataKeys.ObjectKey:
             case DataKeys.UnitFaction:
+            case DataKeys.RoomName:
                 return data;
             case DataKeys.UID:
                 return ParseULong(data);
@@ -120,6 +121,7 @@ public static class DataReaders
             case DataKeys.WallType:
             case DataKeys.ConstructableType:
             case DataKeys.UnitType:
+            case DataKeys.RoomType:
                 return ParseInt(data);
                 break;
             case DataKeys.EnvironmentObjects:

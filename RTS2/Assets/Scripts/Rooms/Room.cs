@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Room
+public class Room:ISerialize
 {
     public string roomName = "";
     public Color displayColour;
@@ -174,6 +174,45 @@ public class Room
     {
         SetCanUseRoom(DoesRoomHaveNeededObjects());
         UnitCapacityManager.RefreshCapacities();
+    }
+
+   public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.RoomName, roomName);
+        data.AddDataToSerialize(DataKeys.RoomType, (int)roomType);
+        data.AddDataToSerialize(DataKeys.RoomTiles, tilesInRoom);
+        return data;
+    }
+
+   
+
+    public SerializedData Serialize()
+    {
+        return new SerializedData(GetDataToSerialize());
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new NotImplementedException();
+    }
+    UID myUid;
+    public UID GetMyUID()
+    {
+        if (myUid.Value == 0)
+        {
+            myUid = IDManager.GetUIDForObject();
+            IDManager.OnUIDCreated(this, myUid);
+
+        }
+        return myUid;
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+       myUid=new UID(uid);
+        IDManager.OnUIDCreated(this, myUid);
+
     }
 }
 
