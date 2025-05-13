@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class SerializationHelpers
@@ -140,6 +141,9 @@ public class DataKeys
     public const string RoomName = "ROOM_NAME";
     public const string RoomType = "ROOM_TYPE";
     public const string RoomTiles = "ROOM_TILES";
+    public const string Behaviour = "BEHAVIOUR";
+    public const string BehaviourType = "BEHAVIOUR_TYPE";
+    
 }
 
 public enum DataType
@@ -217,7 +221,7 @@ public static class SerializeDataHelpers
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
-            || key == DataKeys.RoomName || key == DataKeys.RoomType)
+            || key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
         } 
@@ -232,6 +236,20 @@ public static class SerializeDataHelpers
             }
             stored.Add(DATA_ELEMENT_SPLIT.ToString());
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), stored);
+        }
+        else if (key == DataKeys.Behaviour)
+        {
+            BehaviourBase b = (BehaviourBase)value;
+            if (b != null)
+            {
+                SerializedData data = b.Serialize();
+                return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), data.Data);
+            }
+            else
+            {
+                return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), "null");
+
+            }
         }
         else if(key==DataKeys.ChunkTiles)
         {

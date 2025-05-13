@@ -108,7 +108,7 @@ public class WorldChunkManager : MonoBehaviour
     {
         getCoordsCache.x = Mathf.Min(Mathf.FloorToInt(worldPos.x/ChunkSize), Chunks.GetLength(0) - 1);
         getCoordsCache.y = Mathf.Min( Mathf.FloorToInt(worldPos.y / ChunkSize),Chunks.GetLength(1)-1);
-
+        ValidateCoordsCache();
         return getCoordsCache;
     }
 
@@ -116,9 +116,31 @@ public class WorldChunkManager : MonoBehaviour
     {
         getCoordsCache.x = Mathf.Min(coords.x / ChunkSize, Chunks.GetLength(0) - 1);
         getCoordsCache.y = Mathf.Min(coords.y / ChunkSize, Chunks.GetLength(1) - 1);
-
+        ValidateCoordsCache();
         return getCoordsCache;
     }
+
+    void ValidateCoordsCache()
+    {
+        if (getCoordsCache.x < 0)
+        {
+            getCoordsCache.x = 0;
+        }
+        else if (getCoordsCache.x > Chunks.GetLength(0) - 1)
+        {
+            getCoordsCache.x = Chunks.GetLength(0) - 1;
+        }
+
+        if (getCoordsCache.y < 0)
+        {
+            getCoordsCache.y = 0;
+        }
+        else if (getCoordsCache.y > Chunks.GetLength(1) - 1)
+        {
+            getCoordsCache.y= Chunks.GetLength(1) - 1;
+        }
+    }
+
 
     private void Update()
     {
@@ -237,9 +259,16 @@ public class WorldChunkManager : MonoBehaviour
 
         if(u.MyCurrentChunk != getCoordsCache)
         {
-            Chunks[u.MyCurrentChunk.x, u.MyCurrentChunk.y].RemoveUnitFromChunk(u);
-            Chunks[getCoordsCache.x, getCoordsCache.y].AddUnitToChunk(u);
-            u.UpdateChunk( getCoordsCache);
+            try
+            {
+                Chunks[u.MyCurrentChunk.x, u.MyCurrentChunk.y].RemoveUnitFromChunk(u);
+                Chunks[getCoordsCache.x, getCoordsCache.y].AddUnitToChunk(u);
+                u.UpdateChunk(getCoordsCache);
+            }
+            catch
+            {
+                Debug.LogError("Issue moving between chunks "+  u.MyCurrentChunk.ToString()+" to " +getCoordsCache.ToString());
+            }
         }
 
     

@@ -21,7 +21,7 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
 
     public override bool IsBehaviourComplete()
     {
-        return objectToFollow==null|| healthOfUnitAttacking.CurrentHealth <= 0;
+        return objectToFollow==null|| healthOfUnitAttacking.CurrentHealth <= 0||Vector3.Distance(objectToFollow.transform.position,unitToMove.transform.position)>25f;
     }
 
    
@@ -50,6 +50,11 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
                 unitToMove.MyAttackController.AttemptAttack(objectToFollow);
             }
         }
+    }
+
+    public override bool DoWeNullBehaviourOnComplete()
+    {
+        return true;
     }
 }
 

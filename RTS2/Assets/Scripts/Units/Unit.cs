@@ -279,6 +279,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         data.AddDataToSerialize(DataKeys.MaxHealth,MyHealth.MaxHealth);
         //TODO
         //Orders
+        data.AddDataToSerialize(DataKeys.Behaviour, behaviourRunner.CurrentBehaviour);
         //Inventory
         //Holding
 

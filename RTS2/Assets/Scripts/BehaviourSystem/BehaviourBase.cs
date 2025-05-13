@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 /// <summary>
 /// Base class for a behaviour that a unit can perform e.g. move to location, attack other unit...
 /// </summary>
-public class BehaviourBase
+public class BehaviourBase:ISerialize
 {
     protected Unit unitToMove;
 
@@ -38,5 +39,48 @@ public class BehaviourBase
     public virtual bool DoWeNullBehaviourOnComplete()
     {
         return false;
+    }
+
+    public virtual DataToSerialize GetBehaviourSpecificData()
+    {
+
+
+        return new DataToSerialize();
+    }
+
+    public virtual string BehaviourType()
+    {
+        return this.GetType().ToString();
+    }
+
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize otherData = GetBehaviourSpecificData();
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.UID, unitToMove.GetMyUID().Value);
+        retVal.AddDataToSerialize(DataKeys.BehaviourType, BehaviourType());
+
+       return retVal;
+    }
+
+    public SerializedData Serialize()
+    {
+        return new SerializedData(GetDataToSerialize());
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public UID GetMyUID()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -8,7 +8,8 @@ public class ZombieRoam_Behaviour :BehaviourBase
 
     Vector3 direction = Vector3.zero;
     float directionChangeTimer = 0f;
-    const float directionChangeTimerLength = 5f;
+    int count = 0;
+    const float directionChangeTimerLength = 2f;
     public void InitRoamBehaviour( Zombie me)
     {
         InitBehaviour(me);
@@ -26,7 +27,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
 
     public override bool IsBehaviourComplete()
     {
-        return false;
+        return count > 0;
     }
 
 
@@ -38,16 +39,27 @@ public class ZombieRoam_Behaviour :BehaviourBase
 
     public override void PerformBehaviour()
     {
-        if (!IsBehaviourComplete())
-        {
-            unitToMove.MoveUnit(DirectionToTarget());
-            directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta,0.01f);
-            if (directionChangeTimer > directionChangeTimerLength)
+       
+            Vector2Int coords = this.unitToMove.MyCurrentChunk;
+            PathfindingNode node = Pathfinding.GetNodeFromPosition(unitToMove.transform.position+direction);
+            if (node.IsPassable)
             {
-               
-                directionChangeTimer = 0f;
+                unitToMove.MoveUnit(DirectionToTarget());
             }
-        }
+            else
+            {
+                directionChangeTimer = directionChangeTimerLength;
+            }
+            directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta,0.01f);
+        Debug.Log("Roam Timer " + directionChangeTimer+"/"+count);
+
+        if (directionChangeTimer > directionChangeTimerLength)
+            {
+                GenerateDirectionToRoam();
+                directionChangeTimer = 0f;
+                count++;
+            }
+        
     }
 
     void GenerateDirectionToRoam()
@@ -70,5 +82,10 @@ public class ZombieRoam_Behaviour :BehaviourBase
             direction.y = -1f;
         }
         direction = direction.normalized;
+    }
+
+    public override bool DoWeNullBehaviourOnComplete()
+    {
+        return true;
     }
 }
