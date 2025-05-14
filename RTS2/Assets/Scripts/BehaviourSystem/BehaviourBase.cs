@@ -60,7 +60,10 @@ public class BehaviourBase:ISerialize
         DataToSerialize retVal = new DataToSerialize();
         retVal.AddDataToSerialize(DataKeys.UID, unitToMove.GetMyUID().Value);
         retVal.AddDataToSerialize(DataKeys.BehaviourType, BehaviourType());
-
+        foreach(KeyValuePair<string,object> kvp in otherData.data)
+        {
+            retVal.AddDataToSerialize(kvp.Key,kvp.Value);
+        }
        return retVal;
     }
 

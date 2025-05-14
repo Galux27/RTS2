@@ -4,23 +4,35 @@ using UnityEngine;
 
 public static class UnitHelpers 
 {
-    public static List<Vector3> GetRelativePositionsForUnitsToMoveTo(List<Selectable> toMove,Vector3 target)
+    public static List<Vector3> GetWalkablePositionsNearTarget(List<Selectable> toMove,Vector3 target)
     {
-        List<Vector3> retVal = new List<Vector3>();
-        Vector3 centerOfExisting = Vector3.zero;
-        for(int x = 0; x < toMove.Count; x++)
+     
+        List<Vector3> closeResults = new List<Vector3>();
+
+        HashSet<PathfindingNode> checkedNodes = new HashSet<PathfindingNode>();
+        List<PathfindingNode> toCheck = new List<PathfindingNode>();
+        toCheck.Add(Pathfinding.GetNodeFromPosition(target));
+        while (closeResults.Count < toMove.Count)
         {
-            centerOfExisting +=  ((Unit)toMove[x]).Position();
+            List<PathfindingNode> newToCheck = new List<PathfindingNode>();
+            for(int x = 0; x < toCheck.Count; x++)
+            {
+                if (toCheck[x].IsPassable)
+                {
+                    closeResults.Add(toCheck[x].worldPos);
+                    checkedNodes.Add(toCheck[x]);
+                }
+                for(int q = 0; q < toCheck[x].neighbours.Count; q++)
+                {
+                    if (checkedNodes.Contains(toCheck[x].neighbours[q])==false) {
+                        newToCheck.Add(toCheck[x].neighbours[q]);
+                    }
+                }
+            }
+            toCheck = newToCheck;
         }
-        centerOfExisting /= toMove.Count;
 
-        for(int x = 0; x < toMove.Count; x++)
-        {
-            retVal.Add(target+ (((Unit)toMove[x]).Position() - centerOfExisting));
-        }
-
-
-        return retVal;
+        return closeResults;
     }
 
     public static void OnUnitCollision(Unit unit1,Unit unit2)

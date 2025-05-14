@@ -274,7 +274,7 @@ public class Units_SelectionMode : SelectionMode
                         Vector3 targetPos = hit.point;
                         targetPos.z = 0;
                         List<Selectable> selected = SelectableManager.Instance.CurrentlySelected;
-                        List<Vector3> targetPositions = UnitHelpers.GetRelativePositionsForUnitsToMoveTo(selected, targetPos);
+                        List<Vector3> targetPositions = UnitHelpers.GetWalkablePositionsNearTarget(selected, targetPos);
 
 
                         Action move = () =>
