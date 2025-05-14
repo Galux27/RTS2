@@ -49,6 +49,7 @@ public class ActionSelectMenu : MonoBehaviour
     public void ShowUI()
     {
         cg.alpha = 1f;
+        cg.blocksRaycasts = true;
         transform.localScale = Vector3.one;
         Vector3 startPos = Input.mousePosition / GetComponentInParent<Canvas>().scaleFactor;
         GetComponent<RectTransform>().anchoredPosition = startPos;
@@ -78,6 +79,7 @@ public class ActionSelectMenu : MonoBehaviour
     {
         Cleanup();
         cg.alpha = 0f;
+        cg.blocksRaycasts = false;
         transform.localScale = Vector3.zero;
         this.gameObject.SetActive(false);
     }

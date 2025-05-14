@@ -18,9 +18,40 @@ public static class ScreenUIUtilities
         {
             RaycastResult curRaysastResult = eventSystemRaysastResults[index];
             if (curRaysastResult.gameObject.layer == LayerMask.NameToLayer("UI"))
-                return true;
+            {
+
+                if (IsUIElementHitActive(curRaysastResult.gameObject))
+                {
+                    return true;
+                }
+                
+            }
         }
-        return false;
+            return false;
+    }
+
+    static bool IsUIElementHitActive(GameObject g)
+    {
+        ActionSelectMenu actionSelect= g.GetComponentInChildren<ActionSelectMenu>();
+        if (actionSelect != null)
+        {
+            if (actionSelect.GetComponent<CanvasGroup>().alpha == 0f)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+   static string getFullPathToObject(GameObject g)
+    {
+        string retVal = g.name;
+        while (g.transform.parent != null)
+        {
+            retVal += "/" + g.name;
+            g = g.transform.parent.gameObject;
+        }
+        return retVal;
     }
 
 

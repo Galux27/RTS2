@@ -53,22 +53,28 @@ public class CursorSelect : MonoBehaviour
         }
     }
 
+    public bool IsMouseDown()
+    {
+        return mouseDown;
+    }
 
     public Vector2 startPoint,endPoint;
     Vector3 cachedPosition;
     bool mouseDown = false,GotPositionThisFrame=false;
     public bool UpdateCursorPos = true;
     // Update is called once per frame
-    public void UpdateSelectionPoints()
+    public void UpdateSelectionPoints(bool checkForMouseDown)
     {
         GotPositionThisFrame = false;
-        if(Input.GetMouseButtonDown(0))
+        if (checkForMouseDown)
         {
-            startPoint = GetMousePosition() ;
-            mouseDown = true;
+            if (Input.GetMouseButtonDown(0))
+            {
+                startPoint = GetMousePosition();
+                mouseDown = true;
+            }
         }
-
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0)&&mouseDown)
         {
             endPoint = GetMousePosition();
             mouseDown = false;
@@ -92,6 +98,6 @@ public class CursorSelect : MonoBehaviour
         {
             CursorIcon.Instance.SetPosition(GetMousePosition());
         }
-            CursorIcon.Instance.SetVisible(!mouseDown);
+        CursorIcon.Instance.SetVisible(!mouseDown);
     }
 }
