@@ -32,6 +32,15 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
         return toConstruct.IsBuilt();
     }
 
+
+
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.TargetUID, toConstruct.GetMyUID().Value);
+
+        return data;
+    }
     Vector3 DirectionToTarget()
     {
         if (follower.HasPath())

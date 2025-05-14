@@ -237,6 +237,11 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         myUid = new UID(uid);
         IDManager.OnUIDCreated(this, myUid);
     }
+
+    public UID MyUID()
+    {
+        return GetMyUID();
+    }
 }
 
 public enum WallType 

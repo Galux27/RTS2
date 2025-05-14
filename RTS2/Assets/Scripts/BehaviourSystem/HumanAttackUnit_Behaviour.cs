@@ -22,7 +22,12 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
         follower.GetPath(me.transform.position, targetPosition);
     }
 
-
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize dataToSerialize = new DataToSerialize();
+        dataToSerialize.AddDataToSerialize(DataKeys.TargetUID, objectToFollow.GetMyUID().Value);
+        return dataToSerialize;
+    }
 
 
     public override bool CanPerformBehaviour()

@@ -284,5 +284,10 @@ public class BuildableStructure : Constructable,ObjectInfo
         myUid = new UID(uid);
         IDManager.OnUIDCreated(this, myUid);
     }
+
+    public UID MyUID()
+    {
+        return GetMyUID();
+    }
 }
 

@@ -9,4 +9,6 @@ public interface ObjectInfo :Health
     public int Quantitiy();
   
     public Vector3 Position();
+
+    public UID MyUID();
 }

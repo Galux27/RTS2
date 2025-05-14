@@ -62,6 +62,13 @@ public class ZombieRoam_Behaviour :BehaviourBase
         
     }
 
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.Pos, direction);
+        return data;
+    }
+
     void GenerateDirectionToRoam()
     {
         direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f));

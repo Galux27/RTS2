@@ -42,7 +42,13 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
         return targetObject==null|| targetObject.Health() <= 0;
     }
 
-   
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize behaviourSpecificData = new DataToSerialize();
+        behaviourSpecificData.AddDataToSerialize(DataKeys.TargetUID,targetObject.MyUID());
+
+        return behaviourSpecificData;
+    }
 
     Vector3 DirectionToTarget()
     {

@@ -30,6 +30,14 @@ public class TransferResourcesToContainer_Behaviour : BehaviourBase
         return attemptedTransfer;
     }
 
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.TargetUID,toPutIn.GetMyUID().Value);
+
+        return data;
+    }
+
     Vector3 DirectionToTarget()
     {
         if (follower.HasPath())

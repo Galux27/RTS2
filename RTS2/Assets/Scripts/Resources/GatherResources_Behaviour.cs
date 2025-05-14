@@ -40,6 +40,14 @@ public class GatherResources_Behaviour : BehaviourBase
         }
     }
 
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.TargetUID, toHarvest.GetMyUID().Value);
+
+        return data;
+    }
+
     public override void PerformBehaviour()
     {
         float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);

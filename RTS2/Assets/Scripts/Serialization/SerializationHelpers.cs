@@ -126,6 +126,8 @@ public class DataKeys
     public const string MaxHealth = "MAX_HEALTH";
     public const string WallTiles = "WALL_TILES";//todo
     public const string UID = "UID";
+    public const string TargetUID = "TARGET";
+    public const string UIDType = "UID_TYPE";
     public const string ObjectKey = "OBJECT_KEY";
     public const string EnvironmentObjects = "ENV_OBJECTS";//todo
     public const string Quantitiy = "QUANTITY";
@@ -221,7 +223,7 @@ public static class SerializeDataHelpers
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
-            || key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType)
+            || key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType||key==DataKeys.TargetUID)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
         } 

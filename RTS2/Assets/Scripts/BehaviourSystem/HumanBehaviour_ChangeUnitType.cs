@@ -21,7 +21,13 @@ public class HumanBehaviour_ChangeUnitType : BehaviourBase
 
     Vector3 TargetPosition;
 
-
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.CurrentProgress, Progress());
+        data.AddDataToSerialize(DataKeys.MaxProgress, MaxProgress());
+        return data;
+    }
 
     public override bool CanPerformBehaviour()
     {
@@ -44,6 +50,21 @@ public class HumanBehaviour_ChangeUnitType : BehaviourBase
             return (TargetPosition - unitToMove.transform.position).normalized;
         }
     }
+
+    float Progress()
+    {
+        if (Timer == null)
+        {
+            return 0f;
+        }
+        return Timer.GetCurrentTime;
+    }
+
+    float MaxProgress()
+    {
+        return UnitTypesController.Instance.Units[UnitTypeToBecome].TrainingTime;
+    }
+
     Timer Timer;
     public override void PerformBehaviour()
     {
@@ -57,8 +78,7 @@ public class HumanBehaviour_ChangeUnitType : BehaviourBase
         {
             if (Timer == null)
             {
-                UnitTypeSO toBecome = UnitTypesController.Instance.Units[UnitTypeToBecome];
-                Timer = new Timer(toBecome.TrainingTime, 0f);
+                Timer = new Timer(MaxProgress(), 0f);
                 Timer.CreateProgressBarFromTimer(unitToMove.transform.position);
             }
             Timer.ProgressTime(DeltaTimeWrapper.GameplayDelta);

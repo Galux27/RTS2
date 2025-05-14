@@ -256,4 +256,9 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         IDManager.OnUIDCreated(this, myUid);
 
     }
+
+    public UID MyUID()
+    {
+        return GetMyUID();
+    }
 }

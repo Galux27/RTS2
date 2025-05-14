@@ -21,6 +21,14 @@ public class CollectResources_Behaviour : BehaviourBase
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
 
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.TargetUID, toCollect.GetMyUID().Value);
+
+        return data;
+    }
+
 
     public override bool CanPerformBehaviour()
     {

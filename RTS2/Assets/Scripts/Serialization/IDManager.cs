@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public static class IDManager
@@ -19,7 +18,6 @@ public static class IDManager
         {
             BaseUID=uID.Value;
         }
-        Debug.Log("Created object of type " + obj.GetType().ToString() + " using UID " + uID.Value.ToString());
         if (!IDDictionaries.ContainsKey(obj.GetType()))
         {
             IDDictionaries.Add(obj.GetType(), new UIDObjectDictionary(obj.GetType()));

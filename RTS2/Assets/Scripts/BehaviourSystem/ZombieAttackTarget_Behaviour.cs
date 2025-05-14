@@ -24,7 +24,14 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         return objectToFollow==null|| healthOfUnitAttacking.CurrentHealth <= 0||Vector3.Distance(objectToFollow.transform.position,unitToMove.transform.position)>25f;
     }
 
-   
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize behaviourSpecificData = new DataToSerialize();
+        behaviourSpecificData.AddDataToSerialize(DataKeys.TargetUID, objectToFollow.GetMyUID().Value);
+
+        return behaviourSpecificData;
+    }
+
 
     Vector3 DirectionToTarget()
     {
@@ -38,7 +45,10 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         }
     }
 
-  
+    bool AreWeInRangeToAttack()
+    {
+        return Vector3.Distance(unitToMove.transform.position, objectToFollow.transform.position) < 1f ;
+    }
 
     public override void PerformBehaviour()
     {
@@ -46,7 +56,10 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         {
             if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectionToTarget(),unitToMove))
             {
-                unitToMove.MoveUnit(DirectionToTarget());
+                if (!AreWeInRangeToAttack())
+                {
+                    unitToMove.MoveUnit(DirectionToTarget());
+                }
                 unitToMove.MyAttackController.AttemptAttack(objectToFollow);
             }
         }

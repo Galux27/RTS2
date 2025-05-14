@@ -115,6 +115,7 @@ public static class DataReaders
             case DataKeys.RoomName:
                 return data;
             case DataKeys.UID:
+            case DataKeys.TargetUID:
                 return ParseULong(data);
                 break;
             case DataKeys.Quantitiy:

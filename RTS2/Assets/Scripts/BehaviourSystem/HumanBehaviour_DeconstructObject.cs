@@ -60,7 +60,7 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
             if (progressBarUI == null)
             {
                 progressBarUI = ProgressBarUI.CreateProgressBar();
-                progressBarUI.InitProgressBar(toDeconstruct.MaxHealth() / 10f, 0f, toDeconstruct.Position());
+                progressBarUI.InitProgressBar(MaxProgress(), 0f, toDeconstruct.Position());
             }
 
             progressBarUI.UpdateCurrent(DeltaTimeWrapper.GameplayDelta+progressBarUI.CurrentValue);
@@ -72,7 +72,29 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
                 DestroyObject();
             }
         }
+    }
 
+    float MaxProgress()
+    {
+        return toDeconstruct.MaxHealth() / 10f;
+    }
+
+    float Progress()
+    {
+        if (progressBarUI == null)
+        {
+            return 0f;
+        }
+        return progressBarUI.CurrentValue;
+    }
+
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize data = new DataToSerialize();
+        data.AddDataToSerialize(DataKeys.TargetUID, toDeconstruct.MyUID().Value);
+        data.AddDataToSerialize(DataKeys.CurrentProgress, Progress());
+        data.AddDataToSerialize(DataKeys.MaxProgress,MaxProgress());
+        return data;
     }
 
     void DestroyObject()
