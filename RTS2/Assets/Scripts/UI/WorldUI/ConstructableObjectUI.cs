@@ -10,7 +10,16 @@ public class ConstructableObjectUI : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
+    private void OnEnable()
+    {
+        Debug.Log("Construction UI enabled");
 
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log("Construction UI disabled");
+    }
     public void InitUI(Vector3 size,Vector3 pos)
     {
         this.transform.localScale = size;

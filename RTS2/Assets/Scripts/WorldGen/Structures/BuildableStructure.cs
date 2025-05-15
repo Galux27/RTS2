@@ -58,6 +58,7 @@ public class BuildableStructure : Constructable,ObjectInfo
         SetBuilt(true);
         WorldChunkManager.Instance.OnBuildableFinished(this);
         Cleanup();
+        Debug.Log("Buildable constructed");
         onComplete?.Invoke();
     }
 
@@ -95,9 +96,8 @@ public class BuildableStructure : Constructable,ObjectInfo
 
     public void Render()
     {
-        if (isBuilt)
+        if (isBuilt||isDrawn)
         {
-
             return;
         }
         Object = GameObjectPoolManager.Instance.GetObjectFromPool("ConstructionMarker");
@@ -107,7 +107,8 @@ public class BuildableStructure : Constructable,ObjectInfo
     }
 
     public void Cleanup()
-    {   
+    {
+        Object.SetActive(false);
         GameObjectPoolManager.Instance.ReturnObjectToPool(Object, "ConstructionMarker");
         Vector2Int coords= WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(new Vector2Int (x, y));
         WorldChunkManager.Instance.Chunks[coords.x, coords.y].RemoveConstructable(this,false);

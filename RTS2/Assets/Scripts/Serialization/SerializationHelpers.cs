@@ -27,7 +27,11 @@ public static class SerializationHelpers
     {
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory,saveName, "CHUNK_TEST" + WorldSectionExtension);
     }
+    public static string GetUnitFilePath(string saveName)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "UNITS" + UnitsExtension);
 
+    }
 
     public static void SaveGame(string saveName)
     {
@@ -93,7 +97,35 @@ public static class SerializationHelpers
         return retVal;
     }
 
+    public static void LoadGame(string name)
+    {
+        EasyStopwatch.StartStopwatch();
+        WorldChunkManager.Instance.LoadChunksFromFile(name);
+        ReadUnitFile(name);
+        //List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath("TestWorld"));
+        ////  string[] splitObjects = null;
+        //for (int x = 0; x < dataFromFile.Count; x++)
+        //{
+        //    Debug.Log("Data From File Line:" + x + " contents||" + dataFromFile[x]);
+        //    WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[x]);
+        //    Debug.Log("Parsed chunk at " + wc.WorldCoords);
+        //    //splitObjects = dataFromFile[x].Split(SerializeDataHelpers.DATA_OBJECT_SPLIT);
+        //    //for(int y=0; y < splitObjects.Length; y++)
+        //    //{
+        //    //    DataReaders.ReadData(splitObjects[y]);
+        //    //}
+        //}
+        Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
+    }
 
+    static void ReadUnitFile(string name)
+    {
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetUnitFilePath("TestWorld"));
+        for(int x=0;x<dataFromFile.Count;x++)
+        {
+            UnitPrefabController.Instance.CreateUnitFromSavedData(dataFromFile[x]);
+        }
+    }
 
    public static void WriteToFile(string path,string fileName,List<string> dataToWrite)
     {

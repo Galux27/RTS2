@@ -51,10 +51,10 @@ public class WorldChunkManager : MonoBehaviour
         }
     }
 
-    public void LoadChunksFromFile()
+    public void LoadChunksFromFile(string name)
     {
         EasyStopwatch.StartStopwatch();
-        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath("TestWorld"));
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath(name));
         //  string[] splitObjects = null;
         for (int q = 0; q < dataFromFile.Count; q++)
         {
@@ -173,7 +173,7 @@ public class WorldChunkManager : MonoBehaviour
         return retVal;
     }
 
-    const bool DrawNodeWalkable = true, DrawNodeNeighbours = false;
+    const bool DrawNodeWalkable = false, DrawNodeNeighbours = false;
     void DebugDrawChunks()
     {
     

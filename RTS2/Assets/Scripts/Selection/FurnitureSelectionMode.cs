@@ -16,10 +16,13 @@ public class FurnitureSelectionMode : SelectionMode
         {
             CheckForRequiredResources();
             ConstructableObjectManager.Instance.GetCursor().SetActive(true);
+            float height = ConstructableObjectManager.Instance.selectedToConstruct.GetHeight;
+            float width = ConstructableObjectManager.Instance.selectedToConstruct.GetWidth;
+            Vector3 pos = new Vector3(coords.x - (width / 2f), coords.y - (height / 2f), 0f);
 
             if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth,
                 ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
-                && DoBoundsIntersectExisting(coords, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false && hasEnoughResources)
+                && DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false && hasEnoughResources)
             {
                 ConstructableObjectManager.Instance.SetCursorColour(new Color(0, 1, 0, .5f));
             }
@@ -28,8 +31,8 @@ public class FurnitureSelectionMode : SelectionMode
                 ConstructableObjectManager.Instance.SetCursorColour(new Color(1, 0, 0, .5f));
 
             }
-
-            ConstructableObjectManager.Instance.GetCursor().transform.position = new Vector3(coords.x , coords.y , 0f);
+          
+            ConstructableObjectManager.Instance.GetCursor().transform.position = pos;
         }
         else
         {
@@ -90,12 +93,14 @@ public class FurnitureSelectionMode : SelectionMode
 
             ConstructableObjectManager.Instance.GetCursor().SetActive(true);
             Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-            
-         
+            float height = ConstructableObjectManager.Instance.selectedToConstruct.GetHeight;
+            float width = ConstructableObjectManager.Instance.selectedToConstruct.GetWidth;
+            Vector3 pos = new Vector3(coords.x - (width / 2f), coords.y - (height / 2f), 0f);
+
 
 
             if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
-                && DoBoundsIntersectExisting(coords, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false
+                && DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false
                 )
             {
                 ConstructableObjectManager.Instance.CreateBuildableForObject(coords, cursorPos,resourcesForConstruction);
@@ -103,29 +108,59 @@ public class FurnitureSelectionMode : SelectionMode
         }
     }
 
-    public static bool DoBoundsIntersectExisting(Vector2Int coords,Vector3 size)
+    public static bool DoBoundsIntersectExisting(Vector3 coords,Vector3 size)
     {
-        return false;
-
-
-        Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
-
-        Bounds toBuild = new Bounds(new Vector3(coords.x, coords.y),size*.9f);
-
-        List<Constructable> selectables= SelectionUtilities.GetAllConstructablesInRangeOfObject(cursorPos, 20);
-        Bounds comparison = new Bounds();
-
-        for(int x = 0; x < selectables.Count; x++)
+        Debug.Log("Intersect check call..."+coords+"||"+size);
+        List<Constructable> constructables = new List<Constructable>();
+        Vector3 pos= new Vector3();
+        for (float x = coords.x; x < coords.x + (size.x); x++)
         {
-            comparison = new Bounds(selectables[x].GetPosition(), selectables[x].Size());
-            if (comparison.Intersects(toBuild))
+            for (float y = coords.y; y < coords.y + (size.y); y++)
             {
-                return true;
-            }
-          
-        }
+                pos.x = x+.5f;
+                pos.y = y+.5f;
+                constructables = SelectionUtilities.GetAllConstructablesInRangeOfObject(pos,1);
+                bool hit = false;
+                for (int q = 0; q < constructables.Count; q++) {
+                   if(constructables[q].IsPointInBounds(pos))
+                    {
+                        hit = true;
+                        break;
+                    }
+                }
 
+                if(hit )
+                {
+                    Debug.DrawLine(pos, pos + Vector3.up, Color.magenta);
+                    return true;
+                }
+                else
+                {
+                    Debug.DrawLine(pos, pos + Vector3.up, Color.yellow);
+
+                }
+            }
+
+        }
         return false;
+        //Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
+
+        //Bounds toBuild = new Bounds(new Vector3(coords.x, coords.y),size*.9f);
+
+        //List<Constructable> selectables= SelectionUtilities.GetAllConstructablesInRangeOfObject(cursorPos, 20);
+        //Bounds comparison = new Bounds();
+
+        //for(int x = 0; x < selectables.Count; x++)
+        //{
+        //    comparison = new Bounds(selectables[x].GetPosition(), selectables[x].Size());
+        //    if (comparison.Intersects(toBuild))
+        //    {
+        //        return true;
+        //    }
+
+        //}
+
+        //return false;
     }
 
     public static void DrawBounds(Bounds b,Color c )

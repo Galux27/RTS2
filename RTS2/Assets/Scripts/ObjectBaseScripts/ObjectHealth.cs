@@ -15,6 +15,13 @@ public class ObjectHealth : MonoBehaviour
         healthUI.LinkToHealth(this);
     }
 
+    public void ForceHealthValues(float health,float max)
+    {
+        CurrentHealth = health;
+        MaxHealth = max;
+        healthUI?.UpdateHealth();
+    }
+
     public void IncreaseHealth(float val)
     {
         CurrentHealth += val;

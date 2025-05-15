@@ -62,7 +62,7 @@ public class WorldController : MonoBehaviour
         }
         else
         {
-            WorldChunkManager.Instance.LoadChunksFromFile();
+            SerializationHelpers.LoadGame("TestWorld");
         }
 
         for(int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)

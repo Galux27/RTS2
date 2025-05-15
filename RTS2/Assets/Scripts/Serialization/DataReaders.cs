@@ -86,7 +86,7 @@ public static class DataReaders
         } 
     }
 
-    static object ParseDataObject(string key,string data)
+   public static object ParseDataObject(string key,string data)
     {
         switch (key)
         {
@@ -144,8 +144,16 @@ public static class DataReaders
 
     static Vector3 ParseVector3(string val)
     {
+        Debug.Log("Parsing vector 3 from " + val);
         string[] split = val.Split(SerializeDataHelpers.DATA_SPLIT);
-        return new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));    
+        if (split.Length == 3)
+        {
+            return new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
+        }
+        else
+        {
+            return new Vector3(float.Parse(split[0]), float.Parse(split[1]), 0f);
+        }
     }
 
     static ulong ParseULong(string val)

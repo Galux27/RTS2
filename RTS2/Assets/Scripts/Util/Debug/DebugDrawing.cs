@@ -22,7 +22,7 @@ public class DebugDrawing : MonoBehaviour
     {
         if (ConstructableObjectManager.Instance.selectedToConstruct != null)
         {
-            DrawConstruction();
+           // DrawConstruction();
         }
     }
 
@@ -51,7 +51,7 @@ public class DebugDrawing : MonoBehaviour
                 {
                     c = Color.blue;
                 }
-                else if (FurnitureSelectionMode.DoBoundsIntersectExisting(coords, data.Size()))
+                else if (FurnitureSelectionMode.DoBoundsIntersectExisting(cursorPos, data.Size()))
                 {
                     c = Color.cyan;
                     
@@ -83,7 +83,7 @@ public class DebugDrawing : MonoBehaviour
                 else if (FurnitureSelectionMode.AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) == false)
                 {
                     c = Color.blue;
-                }else if (FurnitureSelectionMode.DoBoundsIntersectExisting(coords, ConstructableObjectManager.Instance.selectedToConstruct.Size()))
+                }else if (FurnitureSelectionMode.DoBoundsIntersectExisting(cursorPos, ConstructableObjectManager.Instance.selectedToConstruct.Size()))
                 {
                     c = Color.cyan;
                 }
