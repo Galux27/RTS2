@@ -76,6 +76,11 @@ public class BehaviourBase:ISerialize
     {
         throw new NotImplementedException();
     }
+
+    public virtual void InitializeFromData(Unit performing,Dictionary<string,object> data)
+    {
+
+    }
     
     public UID GetMyUID()
     {

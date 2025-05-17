@@ -47,5 +47,16 @@ public class MoveTo_Behaviour : BehaviourBase
         follower.OnUpdate(unitToMove.transform.position);
     }
 
+    public override DataToSerialize GetBehaviourSpecificData()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.Pos, TargetPosition);
+        return retVal;
+    }
+
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour(performing, (Vector3)data[DataKeys.Pos]);
+    }
 
 }

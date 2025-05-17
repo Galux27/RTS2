@@ -25,7 +25,9 @@ public class UnitPrefabController : MonoBehaviour
     public GameObject CreateUnitFromSavedData(string data)
     {
         Debug.Log("Unit Data: " + data);
-        string[] splitData = data.Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT);
+        string[] behaviourSplit = data.Split(SerializeDataHelpers.BEHAVIOUR_MARKER);
+        string[] splitData = behaviourSplit[0].Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT);
+      
         string[] KeyDataSplit = null;
         Dictionary<string, object> deserialized = new Dictionary<string, object>();
         for(int x = 0; x < splitData.Length; x++)
@@ -39,7 +41,7 @@ public class UnitPrefabController : MonoBehaviour
                 Debug.Log("Unit data: added key " + KeyDataSplit[0] + "|" + KeyDataSplit[1]);
             }
         }
-            Debug.Log("Unit data: type " + deserialized[DataKeys.UnitType].ToString());
+        Debug.Log("Unit data: type " + deserialized[DataKeys.UnitType].ToString());
 
         UnitType type = (UnitType)(int)deserialized[DataKeys.UnitType];
         GameObject retVal = Instantiate(allUnitPrefabs[type].UnitSO.Prefab);
@@ -49,6 +51,9 @@ public class UnitPrefabController : MonoBehaviour
         retVal.GetComponent<UnitFaction>().MyFactionID = (string)deserialized[DataKeys.UnitFaction];
         retVal.transform.position = (Vector3)deserialized[DataKeys.Pos];
         retVal.GetComponent<Unit>().SetMyUID((ulong)deserialized[DataKeys.UID]);
+
+        BehaviourDeserializer.DeserializeBehaviour(behaviourSplit[1],retVal.GetComponent<Unit>());
+
 
         return retVal;
     }

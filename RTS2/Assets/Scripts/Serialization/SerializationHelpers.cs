@@ -241,6 +241,8 @@ public static class SerializeDataHelpers
     public const char LIST_ELEMENT_SPLIT = '`';
     //splits data on different objects in the same file
     public const char DATA_OBJECT_SPLIT = '^';
+
+    public const char BEHAVIOUR_MARKER = '~';
     public static string SerializeData(string key,object value)
     {
         if (key == DataKeys.Coords)
@@ -277,11 +279,11 @@ public static class SerializeDataHelpers
             if (b != null)
             {
                 SerializedData data = b.Serialize();
-                return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), data.Data);
+                return CombineStrings(BEHAVIOUR_MARKER.ToString(),key, KEY_OBJECT_SPLIT.ToString(), data.Data, BEHAVIOUR_MARKER.ToString());
             }
             else
             {
-                return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), "null");
+                return CombineStrings(BEHAVIOUR_MARKER.ToString(),key, KEY_OBJECT_SPLIT.ToString(), "null", BEHAVIOUR_MARKER.ToString());
 
             }
         }

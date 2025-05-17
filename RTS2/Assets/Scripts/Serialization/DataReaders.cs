@@ -113,6 +113,7 @@ public static class DataReaders
             case DataKeys.ObjectKey:
             case DataKeys.UnitFaction:
             case DataKeys.RoomName:
+            case DataKeys.BehaviourType:
                 return data;
             case DataKeys.UID:
             case DataKeys.TargetUID:
@@ -145,6 +146,7 @@ public static class DataReaders
     static Vector3 ParseVector3(string val)
     {
         Debug.Log("Parsing vector 3 from " + val);
+        val=val.Replace(SerializeDataHelpers.DATA_ELEMENT_SPLIT.ToString(), "");
         string[] split = val.Split(SerializeDataHelpers.DATA_SPLIT);
         if (split.Length == 3)
         {
