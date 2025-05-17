@@ -18,12 +18,13 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
 
     public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
     {
-        InitBehaviour((ObjectInfo)IDManager.GetObjectByUID(Type.GetType((string)data[DataKeys.MiscString]), (ulong)data[DataKeys.TargetUID]), performing);
+        InitBehaviour((ObjectInfo)
+            IDManager.GetObjectByUID(Type.GetType((string)data[DataKeys.MiscString]), (ulong)data[DataKeys.TargetUID]), performing);
     }
 
     void SetTargetPosition()
     {
-        EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(targetObject.Name());
+        EnvironmentObject obj  = EnvironmentObjectHelpers.GetEnvironmentObject(targetObject.Name());
         if (obj == null)
         {
             TargetPosition = targetObject.Position();
@@ -53,8 +54,7 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
     {
         DataToSerialize behaviourSpecificData = new DataToSerialize();
         behaviourSpecificData.AddDataToSerialize(DataKeys.MiscString, targetObject.GetType());
-        behaviourSpecificData.AddDataToSerialize(DataKeys.TargetUID,targetObject.MyUID());
-
+        behaviourSpecificData.AddDataToSerialize(DataKeys.TargetUID,targetObject.MyUID().Value);
         return behaviourSpecificData;
     }
 
@@ -75,9 +75,9 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
             if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectionToTarget(),unitToMove))
             {
                 unitToMove.MoveUnit(DirectionToTarget());
-                unitToMove.MyAttackController.AttemptAttack(targetObject,TargetPosition);
             }
-       
+        unitToMove.MyAttackController.AttemptAttack(targetObject, TargetPosition);
+
     }
 }
 

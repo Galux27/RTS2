@@ -29,9 +29,9 @@ public static class BehaviourDeserializer
             {
                 DeserializeBehaviour(BehavioursToApply[x], ToApplyTo[x]);
             }
-            catch
+            catch(System.Exception e)
             {
-                Debug.LogError("Error deserializing behaviour " + BehavioursToApply[x]);
+                Debug.LogError("Error deserializing behaviour " + BehavioursToApply[x]+" error: "+ e.ToString());
             }
         }
         BehavioursToApply.Clear();
@@ -40,18 +40,27 @@ public static class BehaviourDeserializer
 
    public static void DeserializeBehaviour(string data,Unit applyingTo)
     {
+        
+
         Debug.Log("Behaviour: Deserializing behaviour from " + data);
         data = data.Replace(SerializeDataHelpers.BEHAVIOUR_MARKER.ToString(), "");
         data=data.Remove(0, DataKeys.Behaviour.Length+ 1);
         string[] allData = data.Split(SerializeDataHelpers.DATA_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        if (allData.Length == 1)
+        {
+            //unit had no behaviour, returning
+            return;
+        }
         Dictionary<string, object> sortedData = new Dictionary<string, object>();
         string[] keyValueSplit = null;
         for(int x = 0; x < allData.Length; x++)
         {
-            allData[x] = allData[x].Replace(SerializeDataHelpers.DATA_ELEMENT_SPLIT.ToString(), "");
-            Debug.Log("Behaviour: parsing from " + allData[x]);
-            keyValueSplit = allData[x].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-            sortedData.Add(keyValueSplit[0], DataReaders.ParseDataObject(keyValueSplit[0],keyValueSplit[1]));
+            
+                allData[x] = allData[x].Replace(SerializeDataHelpers.DATA_ELEMENT_SPLIT.ToString(), "");
+                Debug.Log("Behaviour: parsing from " + allData[x]);
+                keyValueSplit = allData[x].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+                sortedData.Add(keyValueSplit[0], DataReaders.ParseDataObject(keyValueSplit[0], keyValueSplit[1]));
+         
         }
 
         string typeName = (string)sortedData[DataKeys.BehaviourType];

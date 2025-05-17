@@ -275,18 +275,41 @@ public static class DataReaders
         parsing = objects[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         string key = (string)ParseDataObject(parsing[0],parsing[1]);
         //COORDS;14,45::OBJECT_KEY;Bush::UID;102::HEALTH;5::MAX_HEALTH;5::
-        EnvironmentObjectInstance obj = new EnvironmentObjectInstance(coords.x,coords.y,key);
-        float health = 0f, maxHealth = 0f;
-        parsing = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-        ulong uid = (ulong)ParseDataObject(parsing[0], parsing[1]);
-        parsing = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
 
-        health =  (float)ParseDataObject(parsing[0], parsing[1]);
-        parsing = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-        maxHealth = (float)ParseDataObject(parsing[0], parsing[1]);
-        obj.OverrideHealth(health, maxHealth);
-        obj.SetMyUID(uid);
-        return obj;
+        bool shouldBeConstructed = EnvironmentObjectHelpers.ShouldBeConstructableObjectInstance(key);
+
+        if (!shouldBeConstructed)
+        {
+            EnvironmentObjectInstance obj = new EnvironmentObjectInstance(coords.x, coords.y, key);
+            float health = 0f, maxHealth = 0f;
+            parsing = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            ulong uid = (ulong)ParseDataObject(parsing[0], parsing[1]);
+            parsing = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+
+            health = (float)ParseDataObject(parsing[0], parsing[1]);
+            parsing = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            maxHealth = (float)ParseDataObject(parsing[0], parsing[1]);
+            obj.OverrideHealth(health, maxHealth);
+            obj.SetMyUID(uid);
+            return obj;
+        }
+        else
+        {
+            ConstructableObjectInstance obj = new ConstructableObjectInstance(coords.x, coords.y, key);
+            float health = 0f, maxHealth = 0f;
+            parsing = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            ulong uid = (ulong)ParseDataObject(parsing[0], parsing[1]);
+            parsing = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+
+            health = (float)ParseDataObject(parsing[0], parsing[1]);
+            parsing = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            maxHealth = (float)ParseDataObject(parsing[0], parsing[1]);
+            obj.OverrideHealth(health, maxHealth);
+            obj.SetMyUID(uid);
+            return obj;
+        }
+      
+        
     }
 
     static WorldTile[,] ParseChunkTiles(string data)

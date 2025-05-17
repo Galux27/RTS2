@@ -49,8 +49,7 @@ public class EnvironmentObjectManager : MonoBehaviour
             }
         }
     }
-    const int ObjectsToGenerate =3000;
-
+   
     
 
     public void OnDestroyEnvironmentObject(EnvironmentObjectInstance obj)

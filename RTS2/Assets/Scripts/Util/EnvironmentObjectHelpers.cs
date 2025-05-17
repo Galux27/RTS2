@@ -16,4 +16,18 @@ public static class EnvironmentObjectHelpers
 
         return null;
     }
+
+    public static bool ShouldBeConstructableObjectInstance(string key)
+    {
+        if (EnvironmentObjectManager.Instance.AllObjects.ContainsKey(key))
+        {
+            return false;
+        }
+        else if (ConstructableObjectManager.Instance.AllObjects.ContainsKey(key))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

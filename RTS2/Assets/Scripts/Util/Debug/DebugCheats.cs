@@ -17,7 +17,7 @@ public class DebugCheats : MonoBehaviour
         }
     }
 
-    public bool InstantConstructVal = false;
+    public bool InstantConstructVal = true;
     public bool InstantConstruct()
     {
 #if UNITY_EDITOR

@@ -52,7 +52,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         {
             Debug.LogError("Error creating environment object instance " + envObj);
         }
-        }
+    }
 
 
     public virtual void RenderInstance()
@@ -127,10 +127,10 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
 
     void DestroyInstance()
     {
-        if (Drawn)
-        {
-            CleanupInstance();
-        }
+        //if (Drawn)
+        //{
+        //    CleanupInstance();
+        //}
         if (healthUI != null)
         {
             GameObject.Destroy(healthUI.gameObject);
@@ -232,7 +232,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
 
     public SerializedData Serialize()
     {
-        throw new System.NotImplementedException();
+        return new SerializedData(GetDataToSerialize());
     }
 
     public void Deserialize(SerializedData data)
