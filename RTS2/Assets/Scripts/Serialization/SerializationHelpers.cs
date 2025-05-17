@@ -102,19 +102,8 @@ public static class SerializationHelpers
         EasyStopwatch.StartStopwatch();
         WorldChunkManager.Instance.LoadChunksFromFile(name);
         ReadUnitFile(name);
-        //List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath("TestWorld"));
-        ////  string[] splitObjects = null;
-        //for (int x = 0; x < dataFromFile.Count; x++)
-        //{
-        //    Debug.Log("Data From File Line:" + x + " contents||" + dataFromFile[x]);
-        //    WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[x]);
-        //    Debug.Log("Parsed chunk at " + wc.WorldCoords);
-        //    //splitObjects = dataFromFile[x].Split(SerializeDataHelpers.DATA_OBJECT_SPLIT);
-        //    //for(int y=0; y < splitObjects.Length; y++)
-        //    //{
-        //    //    DataReaders.ReadData(splitObjects[y]);
-        //    //}
-        //}
+        BehaviourDeserializer.DeserializeBehaviours();
+   
         Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
     }
 
@@ -177,7 +166,7 @@ public class DataKeys
     public const string RoomTiles = "ROOM_TILES";
     public const string Behaviour = "BEHAVIOUR";
     public const string BehaviourType = "BEHAVIOUR_TYPE";
-    
+    public const string MiscString = "MISC_STRING";
 }
 
 public enum DataType
@@ -257,7 +246,7 @@ public static class SerializeDataHelpers
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
-            || key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType||key==DataKeys.TargetUID)
+            || key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType||key==DataKeys.TargetUID||key==DataKeys.MiscString)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
         } 

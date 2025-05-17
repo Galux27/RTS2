@@ -32,7 +32,10 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
         return toConstruct.IsBuilt();
     }
 
-
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour(performing, (Constructable)IDManager.GetObjectByUID(typeof(Constructable), (ulong)data[DataKeys.TargetUID]));
+    }
 
     public override DataToSerialize GetBehaviourSpecificData()
     {

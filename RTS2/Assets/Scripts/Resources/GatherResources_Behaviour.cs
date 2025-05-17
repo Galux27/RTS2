@@ -17,7 +17,10 @@ public class GatherResources_Behaviour : BehaviourBase
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
 
-
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour(performing, (EnvironmentObjectInstance)IDManager.GetObjectByUID(typeof(EnvironmentObjectInstance), (ulong)data[DataKeys.TargetUID]));
+    }
     public override bool CanPerformBehaviour()
     {
         return unitToMove != null && toHarvest.isHarvested==false;

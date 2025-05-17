@@ -13,6 +13,11 @@ public class ZombieFollowTarget_Behaviour : BehaviourBase
     }
 
 
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour( (GameObject)IDManager.GetObjectByUID(typeof(Unit), (ulong)data[DataKeys.TargetUID]), performing);
+    }
+
     float DistToTarget()
     {
         return Vector3.Distance(objectToFollow.transform.position, unitToMove.transform.position);

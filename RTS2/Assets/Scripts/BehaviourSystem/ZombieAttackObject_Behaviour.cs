@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,12 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
         InitBehaviour(me);
         targetObject=objectToATtack;
         SetTargetPosition();
+    }
+
+
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour((ObjectInfo)IDManager.GetObjectByUID(Type.GetType((string)data[DataKeys.MiscString]), (ulong)data[DataKeys.TargetUID]), performing);
     }
 
     void SetTargetPosition()
@@ -45,6 +52,7 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
     public override DataToSerialize GetBehaviourSpecificData()
     {
         DataToSerialize behaviourSpecificData = new DataToSerialize();
+        behaviourSpecificData.AddDataToSerialize(DataKeys.MiscString, targetObject.GetType());
         behaviourSpecificData.AddDataToSerialize(DataKeys.TargetUID,targetObject.MyUID());
 
         return behaviourSpecificData;

@@ -22,6 +22,7 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
         follower.GetPath(me.transform.position, targetPosition);
     }
 
+
     public override DataToSerialize GetBehaviourSpecificData()
     {
         DataToSerialize dataToSerialize = new DataToSerialize();
@@ -29,6 +30,10 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
         return dataToSerialize;
     }
 
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour((Unit)IDManager.GetObjectByUID(performing.GetType(), (ulong)data[DataKeys.TargetUID]), performing);
+    }
 
     public override bool CanPerformBehaviour()
     {

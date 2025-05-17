@@ -13,6 +13,11 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         healthOfUnitAttacking=objectToFollow.GetComponent<ObjectHealth>();
     }
 
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour((Unit)IDManager.GetObjectByUID(typeof(Unit), (ulong)data[DataKeys.TargetUID]), performing);
+    }
+
 
     public override bool CanPerformBehaviour()
     {

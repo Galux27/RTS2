@@ -20,7 +20,10 @@ public class CollectResources_Behaviour : BehaviourBase
         inventory=toPerform.GetComponent<Inventory>();
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
-
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour(performing,(ResourceInstance)IDManager.GetObjectByUID(typeof(ResourceInstance), (ulong)data[DataKeys.TargetUID]) );
+    }
     public override DataToSerialize GetBehaviourSpecificData()
     {
         DataToSerialize data = new DataToSerialize();

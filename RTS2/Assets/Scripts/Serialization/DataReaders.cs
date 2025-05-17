@@ -114,6 +114,7 @@ public static class DataReaders
             case DataKeys.UnitFaction:
             case DataKeys.RoomName:
             case DataKeys.BehaviourType:
+            case DataKeys.MiscString:
                 return data;
             case DataKeys.UID:
             case DataKeys.TargetUID:

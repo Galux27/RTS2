@@ -6,6 +6,38 @@ using UnityEngine;
 
 public static class BehaviourDeserializer
 {
+
+    public static List<string> BehavioursToApply;
+    public static List<Unit> ToApplyTo;
+
+    public static void AddBehaviourToDeserialize(string data,Unit applyingTo)
+    {
+        if(BehavioursToApply == null)
+        {
+            BehavioursToApply = new List<string>();
+            ToApplyTo=new List<Unit>();
+        }
+        BehavioursToApply.Add(data);
+        ToApplyTo.Add(applyingTo);
+    }
+
+    public static void DeserializeBehaviours()
+    {
+        for(int x=0;x<BehavioursToApply.Count;x++)
+        {
+            try
+            {
+                DeserializeBehaviour(BehavioursToApply[x], ToApplyTo[x]);
+            }
+            catch
+            {
+                Debug.LogError("Error deserializing behaviour " + BehavioursToApply[x]);
+            }
+        }
+        BehavioursToApply.Clear();
+        ToApplyTo.Clear();
+    }
+
    public static void DeserializeBehaviour(string data,Unit applyingTo)
     {
         Debug.Log("Behaviour: Deserializing behaviour from " + data);

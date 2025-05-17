@@ -26,7 +26,17 @@ public class HumanBehaviour_ChangeUnitType : BehaviourBase
         DataToSerialize data = new DataToSerialize();
         data.AddDataToSerialize(DataKeys.CurrentProgress, Progress());
         data.AddDataToSerialize(DataKeys.MaxProgress, MaxProgress());
+        data.AddDataToSerialize(DataKeys.UnitType, UnitTypeToBecome);
+        data.AddDataToSerialize(DataKeys.TargetUID, toConstruct.GetMyUID());
         return data;
+    }
+
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour(performing, (ConstructableObjectInstance)IDManager.GetObjectByUID(typeof(ConstructableObjectInstance),
+            (ulong)data[DataKeys.TargetUID]), (string)data[DataKeys.UnitType]);
+        maxTime = (float)data[DataKeys.MaxProgress];
+        startTime = (float)data[DataKeys.CurrentProgress];
     }
 
     public override bool CanPerformBehaviour()
@@ -62,9 +72,14 @@ public class HumanBehaviour_ChangeUnitType : BehaviourBase
 
     float MaxProgress()
     {
-        return UnitTypesController.Instance.Units[UnitTypeToBecome].TrainingTime;
+        if (maxTime < 0f)
+        {
+            maxTime= UnitTypesController.Instance.Units[UnitTypeToBecome].TrainingTime; 
+        }
+        return maxTime;
     }
-
+    float maxTime = -1f;
+    float startTime = 0f;
     Timer Timer;
     public override void PerformBehaviour()
     {
@@ -78,7 +93,7 @@ public class HumanBehaviour_ChangeUnitType : BehaviourBase
         {
             if (Timer == null)
             {
-                Timer = new Timer(MaxProgress(), 0f);
+                Timer = new Timer(MaxProgress(), startTime);
                 Timer.CreateProgressBarFromTimer(unitToMove.transform.position);
             }
             Timer.ProgressTime(DeltaTimeWrapper.GameplayDelta);

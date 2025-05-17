@@ -19,6 +19,10 @@ public class TransferResourcesToContainer_Behaviour : BehaviourBase
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
 
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour(performing,(Inventory)IDManager.GetObjectByUID(typeof(Inventory), (ulong)data[DataKeys.TargetUID]));
+    }
 
     public override bool CanPerformBehaviour()
     {

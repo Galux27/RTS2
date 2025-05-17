@@ -52,7 +52,7 @@ public class UnitPrefabController : MonoBehaviour
         retVal.transform.position = (Vector3)deserialized[DataKeys.Pos];
         retVal.GetComponent<Unit>().SetMyUID((ulong)deserialized[DataKeys.UID]);
 
-        BehaviourDeserializer.DeserializeBehaviour(behaviourSplit[1],retVal.GetComponent<Unit>());
+        BehaviourDeserializer.AddBehaviourToDeserialize(behaviourSplit[1],retVal.GetComponent<Unit>());
 
 
         return retVal;

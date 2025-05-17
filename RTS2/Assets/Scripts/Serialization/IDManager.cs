@@ -12,6 +12,16 @@ public static class IDManager
 
     static Dictionary<System.Type, UIDObjectDictionary> IDDictionaries = new Dictionary<System.Type, UIDObjectDictionary>();
 
+
+    public static object GetObjectByUID(System.Type type,ulong uid)
+    {
+        if (IDDictionaries.ContainsKey(type))
+        {
+           return IDDictionaries[type].GetObjectFromUID(uid);
+        }
+        return null;
+    }
+
     public static void OnUIDCreated(object obj,UID uID)
     {
         if (BaseUID < uID.Value)

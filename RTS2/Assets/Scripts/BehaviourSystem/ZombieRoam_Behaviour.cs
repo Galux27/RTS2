@@ -18,6 +18,11 @@ public class ZombieRoam_Behaviour :BehaviourBase
         GenerateDirectionToRoam();
     }
 
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitRoamBehaviour((Zombie)performing);
+        direction = (Vector3)data[DataKeys.Pos];
+    }
 
 
     public override bool CanPerformBehaviour()

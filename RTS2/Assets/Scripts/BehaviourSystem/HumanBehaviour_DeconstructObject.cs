@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,12 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
 
+    public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
+    {
+        InitBehaviour(performing, (ObjectInfo)IDManager.GetObjectByUID(Type.GetType((string)data[DataKeys.MiscString]),  (ulong)data[DataKeys.TargetUID]));
+        maxTime = (float)data[DataKeys.MaxProgress];
+        startTime = (float)data[DataKeys.CurrentProgress];
+    }
 
     Vector3 TargetPosition;
     bool isDeconstructed = false;
@@ -42,6 +49,10 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
             return (TargetPosition - unitToMove.transform.position).normalized;
         }
     }
+    float startTime = 0f;
+    float maxTime = -1f;
+
+
     ProgressBarUI progressBarUI;
     public override void PerformBehaviour()
     {
@@ -60,7 +71,7 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
             if (progressBarUI == null)
             {
                 progressBarUI = ProgressBarUI.CreateProgressBar();
-                progressBarUI.InitProgressBar(MaxProgress(), 0f, toDeconstruct.Position());
+                progressBarUI.InitProgressBar(MaxProgress(), startTime, toDeconstruct.Position());
             }
 
             progressBarUI.UpdateCurrent(DeltaTimeWrapper.GameplayDelta+progressBarUI.CurrentValue);
@@ -76,7 +87,11 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
 
     float MaxProgress()
     {
-        return toDeconstruct.MaxHealth() / 10f;
+        if(maxTime < 0f)
+        {
+            maxTime= toDeconstruct.MaxHealth() / 10f;
+        }
+        return maxTime;
     }
 
     float Progress()
@@ -94,6 +109,7 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
         data.AddDataToSerialize(DataKeys.TargetUID, toDeconstruct.MyUID().Value);
         data.AddDataToSerialize(DataKeys.CurrentProgress, Progress());
         data.AddDataToSerialize(DataKeys.MaxProgress,MaxProgress());
+        data.AddDataToSerialize(DataKeys.MiscString, toDeconstruct.GetType());
         return data;
     }
 
