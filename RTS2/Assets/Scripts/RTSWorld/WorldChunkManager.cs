@@ -99,7 +99,7 @@ public class WorldChunkManager : MonoBehaviour
         {
             return;
         }
-        Chunks[coords.x, coords.y].ToBuild.Remove(bs);
+        Chunks[coords.x, coords.y].RemoveConstructable(bs);
     }
     
 

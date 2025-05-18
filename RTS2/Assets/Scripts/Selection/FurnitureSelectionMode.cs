@@ -110,7 +110,6 @@ public class FurnitureSelectionMode : SelectionMode
 
     public static bool DoBoundsIntersectExisting(Vector3 coords,Vector3 size)
     {
-        Debug.Log("Intersect check call..."+coords+"||"+size);
         List<Constructable> constructables = new List<Constructable>();
         Vector3 pos= new Vector3();
         for (float x = coords.x; x < coords.x + (size.x); x++)

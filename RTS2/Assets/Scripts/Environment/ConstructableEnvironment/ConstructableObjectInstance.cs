@@ -42,7 +42,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         if (obj.GetType() == typeof(ConstructableContainer))
         {
             ConstructableContainer parentType = (ConstructableContainer)obj;
-            if (parentType != null)
+            if (parentType != null && inventoryObject==null)
             {
                 inventoryObject = new GameObject();
                 inventoryObject.transform.position = new Vector3(PosX, PosY, 0);
@@ -53,6 +53,23 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         Drawn = true;
 
     }
+
+    public void InitInventoryObject(ulong uid)
+    {
+        EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey);
+        ConstructableContainer parentType = (ConstructableContainer)obj;
+        if (parentType == null)
+        {
+            Debug.LogError("Error assigning inventory for " + ObjectKey);
+            return;
+        }
+        inventoryObject = new GameObject();
+        inventoryObject.transform.position = new Vector3(PosX, PosY, 0);
+        inventoryObject.name = "Inventory For Object " + obj.name + " pos " + PosX + "," + PosY;      
+        parentType.OnObjectConstructed(inventoryObject);
+        inventoryObject.GetComponent<Inventory>().SetMyUID(uid);
+    }
+
 
     void OnUpdate()
     {
@@ -82,6 +99,8 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         }
         base.CleanupInstance();
     }
+
+    
 
     public void OnObjectDeselected()
     {
@@ -128,6 +147,18 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     {
         return SelectionUtilities.IsInBounds(GetSize(), new Vector3(PosX,PosY,0), point);
 
+    }
+
+    public override DataToSerialize GetExtraDataToSerialize()
+    {
+        if (inventoryObject != null)
+        {
+            DataToSerialize data = new DataToSerialize();
+            data.AddDataToSerialize(DataKeys.InventoryUID, inventoryObject.GetComponent<Inventory>().GetMyUID().Value);
+            data.AddDataToSerialize(DataKeys.Inventory, inventoryObject.GetComponent<Inventory>().Serialize().Data);
+            return data;
+        }
+        return null;
     }
 
     new public string Name()

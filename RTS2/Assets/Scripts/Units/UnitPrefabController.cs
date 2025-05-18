@@ -53,7 +53,11 @@ public class UnitPrefabController : MonoBehaviour
         retVal.GetComponent<Unit>().SetMyUID((ulong)deserialized[DataKeys.UID]);
 
         BehaviourDeserializer.AddBehaviourToDeserialize(behaviourSplit[1],retVal.GetComponent<Unit>());
-
+        if (deserialized.ContainsKey(DataKeys.Inventory))
+        {
+            retVal.GetComponent<Inventory>().SetMyUID((ulong)deserialized[DataKeys.InventoryUID]);
+            InventoryDeserializer.AddInventoryToDeserialize((string)deserialized[DataKeys.Inventory] );
+        }
 
         return retVal;
     }

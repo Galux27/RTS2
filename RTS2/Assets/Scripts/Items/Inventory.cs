@@ -292,8 +292,6 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
         DataToSerialize cur = new DataToSerialize();
         for (int x = 0; x < ObjectsInInventory.Count; x++)
         {
-            cur.AddDataToSerialize(DataKeys.UID, ObjectsInInventory[x].GetMyUID().Value);
-
             cur.AddDataToSerialize(DataKeys.ObjectKey, ObjectsInInventory[x].Name());
             cur.AddDataToSerialize(DataKeys.Quantitiy, ObjectsInInventory[x].Quantity());
             retVal.Add( cur);
@@ -306,13 +304,15 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
     {
         DataToSerialize retVal = new DataToSerialize();
         retVal.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
-        retVal.AddDataToSerialize(DataKeys.ItemsInContainer, GetItemsData());
+        retVal.AddDataToSerialize(DataKeys.ItemsInContainer, SerializeDataHelpers.SerializeListOfData(GetItemsData()));
         return retVal;
     }
 
     public SerializedData Serialize()
     {
-        throw new NotImplementedException();
+        SerializedData retVal = new SerializedData(GetDataToSerialize(),false);
+        Debug.Log("Serialized inventory is " + retVal.Data);
+        return retVal;
     }
 
     public void Deserialize(SerializedData data)
@@ -320,13 +320,21 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
         throw new NotImplementedException();
     }
 
+    UID myUID = new UID();
     public UID GetMyUID()
     {
-        throw new NotImplementedException();
+        if (myUID.Value == 0)
+        {
+            myUID = IDManager.GetUIDForObject();
+            IDManager.OnUIDCreated(this, myUID);
+        }
+        return myUID;
     }
 
     public void SetMyUID(ulong uid)
     {
-        //myUID = new UID(uid);
+        myUID = new UID(uid);
+        IDManager.OnUIDCreated(this, myUID);
+
     }
 }

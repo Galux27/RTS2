@@ -140,6 +140,7 @@ public class WorldChunk:ISerialize
 
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
     {
+        Debug.Log("Adding environment object " + environmentObject.Name());
         EnvironmentObjectsInChunk.Add(environmentObject);
         environmentObject.SetChunk(this);
         if (ShouldDrawEnvironmentObjects() && environmentObject.Drawn == false)
@@ -253,6 +254,7 @@ public class WorldChunk:ISerialize
 
     public void AddConstructable(Constructable toBuild)
     {
+        Debug.Log("ADDED TO BUILD " + GetType());
         ToBuild.Add(toBuild);
         if (ShouldDrawEnvironmentObjects() && !toBuild.IsDrawn())
         {
@@ -268,7 +270,7 @@ public class WorldChunk:ISerialize
         }
         if (ToBuild.Contains(toRemove))
         {
-            Debug.Log("Removed Constructable");
+            Debug.Log("ADDED TO BUILD removed");
             if (needsCleanup)
             {
                 toRemove.Cleanup();

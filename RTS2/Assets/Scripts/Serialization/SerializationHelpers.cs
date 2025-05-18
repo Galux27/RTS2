@@ -198,6 +198,8 @@ public class DataKeys
     public const string MiscString = "MISC_STRING";
     public const string CameraZoom = "ZOOM";
     public const string IDMax = "ID_MAX";
+    public const string InventoryUID = "INVENTORY_UID";
+    public const string Inventory = "INVENTORY";
 }
 
 public enum DataType
@@ -236,16 +238,19 @@ public class SerializedData
 {
     public string Data;
 
-    public SerializedData(DataToSerialize data)
+    public SerializedData(DataToSerialize data, bool addObjectSplit = true)
     {
         List<string> dataToWrite = new List<string>();
         foreach(KeyValuePair<string,object> pair in data.data)
         {
             dataToWrite.Add(SerializeDataHelpers.SerializeData(pair.Key, pair.Value));
-            dataToWrite.Add(SerializeDataHelpers.DATA_OBJECT_SPLIT.ToString());
+            if (addObjectSplit)
+            {
+                dataToWrite.Add(SerializeDataHelpers.DATA_OBJECT_SPLIT.ToString());
+            }
         }
-       
-        Data = SerializeDataHelpers.CombineStrings(dataToWrite);
+
+            Data = SerializeDataHelpers.CombineStrings(dataToWrite);
     }
 }
 
@@ -263,6 +268,10 @@ public static class SerializeDataHelpers
     public const char DATA_OBJECT_SPLIT = '^';
 
     public const char BEHAVIOUR_MARKER = '~';
+
+    public const char INVENTORY_ELEMENT_SPLIT = '|';
+    public const char INVENTORY_MARKER = '~';
+    public const char INVENTORY_SPLIT_TWO = ']';
     public static string SerializeData(string key,object value)
     {
         if (key == DataKeys.Coords)
@@ -277,7 +286,8 @@ public static class SerializeDataHelpers
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
-            || key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType||key==DataKeys.TargetUID||key==DataKeys.MiscString||key==DataKeys.CameraZoom)
+            || key==DataKeys.ItemsInContainer ||key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType
+            ||key==DataKeys.TargetUID|| key == DataKeys.InventoryUID || key==DataKeys.MiscString||key==DataKeys.CameraZoom)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
         } 
@@ -306,6 +316,9 @@ public static class SerializeDataHelpers
                 return CombineStrings(BEHAVIOUR_MARKER.ToString(),key, KEY_OBJECT_SPLIT.ToString(), "null", BEHAVIOUR_MARKER.ToString());
 
             }
+        }else if (key == DataKeys.Inventory)
+        {
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), INVENTORY_MARKER.ToString(), value.ToString(), INVENTORY_MARKER.ToString());
         }
         else if(key==DataKeys.ChunkTiles)
         {
@@ -330,12 +343,11 @@ public static class SerializeDataHelpers
         }else if (key == DataKeys.WallTiles
             || key == DataKeys.EnvironmentObjects
             ||key==DataKeys.Resources
-            ||key==DataKeys.ItemsInContainer
             ||key==DataKeys.Constructables)
         {
             List<DataToSerialize> data = (List<DataToSerialize>)value;
             List<string> stored = new List<string>();
-            for(int x = 0; x < data.Count; x++)
+            for (int x = 0; x < data.Count; x++)
             {
                 foreach (KeyValuePair<string, object> kvp in data[x].data)
                 {
@@ -346,11 +358,28 @@ public static class SerializeDataHelpers
                 stored.Add(LIST_ELEMENT_SPLIT.ToString());
 
             }
-
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), stored);
         }
         Debug.LogError("Could not serialize " + key + " as its been assigned a serializer");
         return "";
+    }
+
+    public static string SerializeListOfData(List<DataToSerialize> data)
+    {
+        List<string> stored = new List<string>();
+        for (int x = 0; x < data.Count; x++)
+        {
+            foreach (KeyValuePair<string, object> kvp in data[x].data)
+            {
+                stored.Add(SerializeData(kvp.Key, kvp.Value));
+                stored.Add(INVENTORY_SPLIT_TWO.ToString());
+
+            }
+            stored.Add(INVENTORY_ELEMENT_SPLIT.ToString());
+
+        }
+
+        return CombineStrings( stored);
     }
 
     static string SerializeVector2Int(object value)

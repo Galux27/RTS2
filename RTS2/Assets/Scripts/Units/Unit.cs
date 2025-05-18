@@ -280,6 +280,8 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         //TODO
         //Orders
         data.AddDataToSerialize(DataKeys.Behaviour, behaviourRunner.CurrentBehaviour);
+        data.AddDataToSerialize(DataKeys.InventoryUID, GetComponent<Inventory>().GetMyUID().Value);
+        data.AddDataToSerialize(DataKeys.Inventory, GetComponent<Inventory>().Serialize().Data);
         //Inventory
         //Holding
 

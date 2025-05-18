@@ -10500,7 +10500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0e877dd6ef1a72409cea768d1f71a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InstantConstructVal: 0
+  InstantConstructVal: 1
   CareAboutResources: 0
 --- !u!114 &1606643383
 MonoBehaviour:

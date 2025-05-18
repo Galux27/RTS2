@@ -30,7 +30,10 @@ public class GatherResources_Behaviour : BehaviourBase
     {
         return toHarvest.isHarvested;
     }
-
+    public override bool DoWeNullBehaviourOnComplete()
+    {
+        return true;
+    }
     Vector3 DirectionToTarget()
     {
         if (follower.HasPath())

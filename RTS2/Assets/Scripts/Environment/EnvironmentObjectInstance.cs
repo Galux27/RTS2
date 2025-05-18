@@ -227,8 +227,22 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         data.AddDataToSerialize(DataKeys.UID, GetMyUID().Value);
         data.AddDataToSerialize(DataKeys.Health, Health());
         data.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
+        DataToSerialize extra = GetExtraDataToSerialize();
+        if (extra != null)
+        {
+            foreach (KeyValuePair<string, object> kvp in extra.data)
+            {
+                data.AddDataToSerialize(kvp.Key, kvp.Value);
+            }
+        }
         return data;
     }
+
+    public virtual DataToSerialize GetExtraDataToSerialize()
+    {
+        return null;
+    }
+
 
     public SerializedData Serialize()
     {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class DataReaders
@@ -63,16 +64,20 @@ public static class DataReaders
 
         keyValueSplit = splitListFromData[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         if (keyValueSplit.Length > 1)
-        { 
+        {
+            Debug.Log("Constructables " + keyValueSplit[0] + "|" + keyValueSplit[1]);
             List<BuildableStructure> buildableStructures = (List<BuildableStructure>)ParseDataObject(keyValueSplit[0], splitListFromData[5].Substring(keyValueSplit[0].Length));
             chunk.ToBuild = new List<Constructable>();
-            for(int x = 0; x < buildableStructures.Count; x++)
+            if (buildableStructures != null)
             {
-                
-                chunk.ToBuild.Add(buildableStructures[x]);
+                for (int x = 0; x < buildableStructures.Count; x++)
+                {
+
+                    chunk.ToBuild.Add(buildableStructures[x]);
+                }
             }
-        }
-        return chunk;
+            }
+            return chunk;
     }
 
     public static void ParseData(string key,string remainder)
@@ -116,9 +121,11 @@ public static class DataReaders
             case DataKeys.RoomName:
             case DataKeys.BehaviourType:
             case DataKeys.MiscString:
+            case DataKeys.Inventory:
                 return data;
             case DataKeys.UID:
             case DataKeys.TargetUID:
+            case DataKeys.InventoryUID:
                 return ParseULong(data);
                 break;
             case DataKeys.Quantitiy:
@@ -143,6 +150,7 @@ public static class DataReaders
         return null;
     }
 
+    
 
 
     static Vector3 ParseVector3(string val)
@@ -254,12 +262,13 @@ public static class DataReaders
     public static List<EnvironmentObjectInstance> ParseEnvironmentObjects(string data)
     {
         List<EnvironmentObjectInstance> instances = new List<EnvironmentObjectInstance>();
-
         string[] objects = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT,System.StringSplitOptions.RemoveEmptyEntries);
         
         
-        for(int x = 0; x < objects.Length; x++)
+        for(int x = 0; x < objects.Length-2; x++)
         {
+            Debug.Log("Parsing environment object from " + objects[x] + "+1" + objects[x+1]+ "+2" + objects[x + 2]);
+
             EnvironmentObjectInstance toAdd = ParseEnvironmentObject(objects[x]);
             if (toAdd != null) {
                 instances.Add(toAdd);
@@ -270,46 +279,51 @@ public static class DataReaders
 
     public static EnvironmentObjectInstance ParseEnvironmentObject(string data)
     {
+        Debug.Log("Env Obj: " + data);// ;COORDS;9,30::OBJECT_KEY;Tree_1::UID;5::HEALTH;5::MAX_HEALTH;5::
         string[] objects = data.Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-        string[] parsing = objects[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-        Vector2Int coords = (Vector2Int)ParseDataObject(parsing[0], parsing[1]);
-        parsing = objects[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-        string key = (string)ParseDataObject(parsing[0],parsing[1]);
-        //COORDS;14,45::OBJECT_KEY;Bush::UID;102::HEALTH;5::MAX_HEALTH;5::
+        Dictionary<string, object> deserialized = new Dictionary<string, object>();
+        string[] keySplit = null;
+        for(int x = 0; x < objects.Length; x++)
+        {
+            keySplit = objects[x].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            Debug.Log("Env Obj: deserializing " + objects[x]);
+            if (keySplit.Length > 1)
+            {
+                deserialized.Add(keySplit[0], ParseDataObject(keySplit[0], keySplit[1]));
+            }
+            }
+            string key = (string)deserialized[DataKeys.ObjectKey];
+        Vector2Int coords = (Vector2Int)deserialized[DataKeys.Coords];
 
+    
         bool shouldBeConstructed = EnvironmentObjectHelpers.ShouldBeConstructableObjectInstance(key);
 
         if (!shouldBeConstructed)
         {
             EnvironmentObjectInstance obj = new EnvironmentObjectInstance(coords.x, coords.y, key);
-            float health = 0f, maxHealth = 0f;
-            parsing = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-            ulong uid = (ulong)ParseDataObject(parsing[0], parsing[1]);
-            parsing = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-
-            health = (float)ParseDataObject(parsing[0], parsing[1]);
-            parsing = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-            maxHealth = (float)ParseDataObject(parsing[0], parsing[1]);
-            obj.OverrideHealth(health, maxHealth);
-            obj.SetMyUID(uid);
+            obj.OverrideHealth((float)deserialized[DataKeys.Health], (float)deserialized[DataKeys.MaxHealth]);
+            obj.SetMyUID((ulong)deserialized[DataKeys.UID]);
             return obj;
         }
         else
         {
             ConstructableObjectInstance obj = new ConstructableObjectInstance(coords.x, coords.y, key);
-            float health = 0f, maxHealth = 0f;
-            parsing = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-            ulong uid = (ulong)ParseDataObject(parsing[0], parsing[1]);
-            parsing = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            obj.OverrideHealth((float)deserialized[DataKeys.Health], (float)deserialized[DataKeys.MaxHealth]);
+            obj.SetMyUID((ulong)deserialized[DataKeys.UID]);
 
-            health = (float)ParseDataObject(parsing[0], parsing[1]);
-            parsing = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-            maxHealth = (float)ParseDataObject(parsing[0], parsing[1]);
-            obj.OverrideHealth(health, maxHealth);
-            obj.SetMyUID(uid);
+            //if (objects.Length > 5)
+            //{
+            //    string[] inventory = objects[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+
+            //    obj.InitInventoryObject((ulong)ParseDataObject(inventory[0], inventory[1]));
+            //    inventory = objects[6].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+
+            //    InventoryDeserializer.AddInventoryToDeserialize((string)inventory[1]);
+            //}
+
             return obj;
         }
-      
+     
         
     }
 
