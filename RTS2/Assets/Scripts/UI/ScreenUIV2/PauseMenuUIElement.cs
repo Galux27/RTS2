@@ -13,7 +13,7 @@ public class PauseMenuUIElement : BaseUIElement
         Resume.gameObject.GetComponent<Button>().onClick.AddListener(HideUI);
         SaveLoad.gameObject.GetComponent<Button>().onClick.AddListener(SaveTest);
     }
-    float SpeedGameAtWhenOpened = 0f;
+    public static float SpeedGameAtWhenOpened = 0f;
     public override void HideUI()
     {
         DeltaTimeWrapper.GameplayDeltaMultiplier =SpeedGameAtWhenOpened;
@@ -29,7 +29,5 @@ public class PauseMenuUIElement : BaseUIElement
     void SaveTest()
     {
         SerializationHelpers.SaveGame("TestWorld");
-      
-
     }
 }

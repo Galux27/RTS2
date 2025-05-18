@@ -10,6 +10,16 @@ public static class IDManager
         return new UID(BaseUID++);
     }
 
+    public static ulong GetCurrentID()
+    {
+        return BaseUID;
+    }
+
+    public static void SetBaseUID(ulong val)
+    {
+        BaseUID = val;
+    }
+
     static Dictionary<System.Type, UIDObjectDictionary> IDDictionaries = new Dictionary<System.Type, UIDObjectDictionary>();
 
 

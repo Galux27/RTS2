@@ -9,7 +9,7 @@ using UnityEngine;
 public static class SerializationHelpers
 {
     const string SaveDirectory = "ReclemationCorpSaves";
-    const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT";
+    const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT",MiscExtension=".RCMISC";
     static string GetSaveFolderParentLocation()
     {
         return System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
@@ -33,6 +33,12 @@ public static class SerializationHelpers
 
     }
 
+    public static string GetMiscFilePath(string saveName)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "MISC" + MiscExtension);
+
+    }
+
     public static void SaveGame(string saveName)
     {
         EasyStopwatch.StartStopwatch();
@@ -41,9 +47,19 @@ public static class SerializationHelpers
         EnsureDirectoryExists(path);
         path=Path.Combine(path,saveName);
         EnsureDirectoryExists(path);
+        SaveMiscData(path);
         SaveLoadedWorld(path);
         SaveUnits(path);
         Debug.Log("Saving took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
+
+    }
+
+    public static void SaveMiscData(string path)
+    {
+        string name = "MISC" + MiscExtension;
+        List<string> dataWriting = new List<string>();
+        dataWriting.Add(MiscDataSerialization.GetMiscData().Data);
+        WriteToFile(path, name, dataWriting);
 
     }
 
@@ -63,7 +79,7 @@ public static class SerializationHelpers
         }
     }
 
-        public static void SaveLoadedWorld(string path)
+    public static void SaveLoadedWorld(string path)
     {
         string name = "CHUNK_TEST" + WorldSectionExtension ;
         List<string> dataWriting = new List<string>();
@@ -100,6 +116,7 @@ public static class SerializationHelpers
     public static void LoadGame(string name)
     {
         EasyStopwatch.StartStopwatch();
+        ReadMiscFile(name);
         WorldChunkManager.Instance.LoadChunksFromFile(name);
         ReadUnitFile(name);
         BehaviourDeserializer.DeserializeBehaviours();
@@ -107,8 +124,20 @@ public static class SerializationHelpers
         Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
     }
 
+
+    static void ReadMiscFile(string name)
+    {
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetMiscFilePath("TestWorld"));
+        MiscDataSerialization.DeserializeMiscData(dataFromFile);
+
+    }
+
     static void ReadUnitFile(string name)
     {
+        if (!File.Exists(SerializationHelpers.GetUnitFilePath("TestWorld")))
+        {
+            return;
+        }
         List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetUnitFilePath("TestWorld"));
         for(int x=0;x<dataFromFile.Count;x++)
         {
@@ -167,6 +196,8 @@ public class DataKeys
     public const string Behaviour = "BEHAVIOUR";
     public const string BehaviourType = "BEHAVIOUR_TYPE";
     public const string MiscString = "MISC_STRING";
+    public const string CameraZoom = "ZOOM";
+    public const string IDMax = "ID_MAX";
 }
 
 public enum DataType
@@ -246,7 +277,7 @@ public static class SerializeDataHelpers
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
-            || key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType||key==DataKeys.TargetUID||key==DataKeys.MiscString)
+            || key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType||key==DataKeys.TargetUID||key==DataKeys.MiscString||key==DataKeys.CameraZoom)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
         } 

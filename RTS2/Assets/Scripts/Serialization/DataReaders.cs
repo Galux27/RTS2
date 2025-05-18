@@ -101,6 +101,7 @@ public static class DataReaders
             case DataKeys.Health:
             case DataKeys.MaxHealth:
             case DataKeys.WaterLevel:
+            case DataKeys.CameraZoom:
                 return ParseFloat(data);
                 break;        
             case DataKeys.Pos:

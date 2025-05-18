@@ -23,6 +23,10 @@ public static class BehaviourDeserializer
 
     public static void DeserializeBehaviours()
     {
+        if (BehavioursToApply == null)
+        {
+            return;
+        }
         for(int x=0;x<BehavioursToApply.Count;x++)
         {
             try

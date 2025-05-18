@@ -54,6 +54,16 @@ public class CameraController : MonoBehaviour
         
     }
 
+    public float GetCameraZoom()
+    {
+        return GameCamera.orthographicSize;
+    }
+
+    public void SetCameraZoom(float val)
+    {
+        GameCamera.orthographicSize= val;
+    }
+
     float GetScrollAdjustment()
     {
         return Input.mouseScrollDelta.y * -ZoomSpeed * DeltaTimeWrapper.CameraDelta;
