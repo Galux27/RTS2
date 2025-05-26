@@ -43,4 +43,9 @@ public class ItemController : MonoBehaviour
     }
 
     public List<ItemInWorld> AllItemsInWorld = new List<ItemInWorld>();
+
+    public bool DoesItemExist(string key)
+    {
+        return AllItems.ContainsKey(key);
+    }
 }

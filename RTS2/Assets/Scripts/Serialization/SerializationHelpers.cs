@@ -120,7 +120,7 @@ public static class SerializationHelpers
         WorldChunkManager.Instance.LoadChunksFromFile(name);
         ReadUnitFile(name);
         BehaviourDeserializer.DeserializeBehaviours();
-   
+        InventoryDeserializer.DeserializeInventorys();
         Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
     }
 
@@ -270,7 +270,9 @@ public static class SerializeDataHelpers
     public const char BEHAVIOUR_MARKER = '~';
 
     public const char INVENTORY_ELEMENT_SPLIT = '|';
-    public const char INVENTORY_MARKER = '~';
+    public const char INVENTORY_MARKER = '[';
+    public const char INVENTORY_MARKER_TWO = '}';
+
     public const char INVENTORY_SPLIT_TWO = ']';
     public static string SerializeData(string key,object value)
     {
@@ -282,11 +284,15 @@ public static class SerializeDataHelpers
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector3(value), DATA_ELEMENT_SPLIT.ToString());
         }
+        else if(key == DataKeys.ItemsInContainer)
+        {
+            return CombineStrings(INVENTORY_MARKER_TWO.ToString(),key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
+        }
         else if (key == DataKeys.TileType || key == DataKeys.WaterLevel || key == DataKeys.WallType
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
-            || key==DataKeys.ItemsInContainer ||key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType
+             ||key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType
             ||key==DataKeys.TargetUID|| key == DataKeys.InventoryUID || key==DataKeys.MiscString||key==DataKeys.CameraZoom)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());

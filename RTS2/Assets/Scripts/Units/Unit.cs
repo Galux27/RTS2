@@ -314,6 +314,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public void SetMyUID(ulong uid)
     {
         myUid = new UID(uid);
+        Debug.Log("Inventory: setting UID for " + this.GetType().ToString() + " uid " + uid);
         IDManager.OnUIDCreated(this, myUid);
     }
 

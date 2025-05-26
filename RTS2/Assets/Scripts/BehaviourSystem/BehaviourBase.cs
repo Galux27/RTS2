@@ -38,7 +38,7 @@ public class BehaviourBase:ISerialize
 
     public virtual bool DoWeNullBehaviourOnComplete()
     {
-        return false;
+        return true;
     }
 
     public virtual DataToSerialize GetBehaviourSpecificData()

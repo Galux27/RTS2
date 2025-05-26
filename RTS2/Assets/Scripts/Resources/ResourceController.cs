@@ -9,9 +9,9 @@ public class ResourceController : MonoBehaviour
     {
         get
         {
-            if(instance == null)
+            if (instance == null)
             {
-                instance=FindObjectOfType<ResourceController>(true);
+                instance = FindObjectOfType<ResourceController>(true);
             }
             return instance;
         }
@@ -41,12 +41,12 @@ public class ResourceController : MonoBehaviour
         }
     }
 
-    public GameObject CreateResourceInstance(ResourceInstanceData toRender,Vector3 positionOverride = default)
+    public GameObject CreateResourceInstance(ResourceInstanceData toRender, Vector3 positionOverride = default)
     {
         GameObject retVal = new GameObject();
         retVal.name = toRender.Name();
         SpriteRenderer sr = retVal.AddComponent<SpriteRenderer>();
-        sr.sprite = AllResources[ toRender.Name()].Item;
+        sr.sprite = AllResources[toRender.Name()].Item;
         ResourceInstance resourceInstance = retVal.AddComponent<ResourceInstance>();
         resourceInstance.InstanceData = toRender;
         if (positionOverride != default)
@@ -58,7 +58,7 @@ public class ResourceController : MonoBehaviour
     }
 
 
-    public GameObject CreateResourceInstance(Resource toCreate,int quantity)
+    public GameObject CreateResourceInstance(Resource toCreate, int quantity)
     {
         GameObject retVal = new GameObject();
         retVal.name = toCreate.name;
@@ -69,6 +69,11 @@ public class ResourceController : MonoBehaviour
 
 
         return retVal;
+    }
+
+    public bool DoesResourceTypeExist(string key)
+    {
+        return AllResources.ContainsKey(key);
     }
 }
 

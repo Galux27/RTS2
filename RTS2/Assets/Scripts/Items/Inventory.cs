@@ -334,6 +334,7 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
     public void SetMyUID(ulong uid)
     {
         myUID = new UID(uid);
+        Debug.Log("Inventory: set inventory UID to " +  uid);
         IDManager.OnUIDCreated(this, myUID);
 
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class UnitPrefabController : MonoBehaviour
@@ -25,13 +26,15 @@ public class UnitPrefabController : MonoBehaviour
     public GameObject CreateUnitFromSavedData(string data)
     {
         Debug.Log("Unit Data: " + data);
-        string[] behaviourSplit = data.Split(SerializeDataHelpers.BEHAVIOUR_MARKER);
+        string[] inventorySplit = data.Split(SerializeDataHelpers.INVENTORY_MARKER);
+        Debug.Log("Inventory: inventory split 0" + inventorySplit[0] + " 1 " + inventorySplit[1]);
+        string[] behaviourSplit = inventorySplit[0].Split(SerializeDataHelpers.BEHAVIOUR_MARKER);
         string[] splitData = behaviourSplit[0].Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT);
-      
         string[] KeyDataSplit = null;
         Dictionary<string, object> deserialized = new Dictionary<string, object>();
         for(int x = 0; x < splitData.Length; x++)
         {
+            Debug.Log("Unit Data: parsing " + splitData[x]);
             KeyDataSplit = splitData[x].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT);
             if (KeyDataSplit.Length == 2)
             {
@@ -43,6 +46,7 @@ public class UnitPrefabController : MonoBehaviour
         }
         Debug.Log("Unit data: type " + deserialized[DataKeys.UnitType].ToString());
 
+
         UnitType type = (UnitType)(int)deserialized[DataKeys.UnitType];
         GameObject retVal = Instantiate(allUnitPrefabs[type].UnitSO.Prefab);
 
@@ -52,12 +56,26 @@ public class UnitPrefabController : MonoBehaviour
         retVal.transform.position = (Vector3)deserialized[DataKeys.Pos];
         retVal.GetComponent<Unit>().SetMyUID((ulong)deserialized[DataKeys.UID]);
 
+        Debug.Log("Unit Data: invr split 1 " + behaviourSplit[2].ToString());
+
+        KeyDataSplit = behaviourSplit[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT);
+        // ^INVENTORY_UID; 4214:^INVENTORY;
+        KeyDataSplit[0]=KeyDataSplit[0].Replace(SerializeDataHelpers.DATA_OBJECT_SPLIT.ToString(), "");
+        KeyDataSplit[1] = KeyDataSplit[1].Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT)[0];
+        Debug.Log("unit data: key obj split " + KeyDataSplit[0] + "1 " + KeyDataSplit[1]);
+
+        ulong id = (ulong) DataReaders.ParseDataObject(KeyDataSplit[0], KeyDataSplit[1]);
+
         BehaviourDeserializer.AddBehaviourToDeserialize(behaviourSplit[1],retVal.GetComponent<Unit>());
-        if (deserialized.ContainsKey(DataKeys.Inventory))
+        if (inventorySplit.Length > 1)
         {
-            retVal.GetComponent<Inventory>().SetMyUID((ulong)deserialized[DataKeys.InventoryUID]);
-            InventoryDeserializer.AddInventoryToDeserialize((string)deserialized[DataKeys.Inventory] );
+            InventoryDeserializer.AddInventoryToDeserialize(inventorySplit[1],retVal.GetComponent<Inventory>().GetType());
+
+
         }
+     
+        retVal.GetComponent<Inventory>().SetMyUID(id);
+        
 
         return retVal;
     }
