@@ -306,22 +306,26 @@ public static class DataReaders
 
     public static List<EnvironmentObjectInstance> ParseEnvironmentObjects(string data)
     {
+        Debug.Log("Env Objects: parsing objects from " + data);
         List<EnvironmentObjectInstance> instances = new List<EnvironmentObjectInstance>();
         string[] objects = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT,System.StringSplitOptions.RemoveEmptyEntries);
         
         
-        for(int x = 0; x < objects.Length-2; x++)
+        for(int x = 0; x < objects.Length; x++)
         {
-            Debug.Log("Parsing environment object from " + objects[x] + "+1" + objects[x+1]+ "+2" + objects[x + 2]);
+            Debug.Log("Env Objects: Parsing environment object from " + objects[x] );
 
             EnvironmentObjectInstance toAdd = ParseEnvironmentObject(objects[x]);
             if (toAdd != null) {
                 instances.Add(toAdd);
+            }else
+            {
+                Debug.Log("Env Objects: was null from " + objects[x]);
             }
         }
         return instances;
     }
-
+    const string InventorySplit = "INVENTORY;";
     public static EnvironmentObjectInstance ParseEnvironmentObject(string data)
     {
         Debug.Log("Env Obj: " + data);// ;COORDS;9,30::OBJECT_KEY;Tree_1::UID;5::HEALTH;5::MAX_HEALTH;5::
@@ -344,7 +348,7 @@ public static class DataReaders
             string key = (string)deserialized[DataKeys.ObjectKey];
         Vector2Int coords = (Vector2Int)deserialized[DataKeys.Coords];
 
-    
+      
         bool shouldBeConstructed = EnvironmentObjectHelpers.ShouldBeConstructableObjectInstance(key);
 
         if (!shouldBeConstructed)
@@ -359,7 +363,17 @@ public static class DataReaders
             ConstructableObjectInstance obj = new ConstructableObjectInstance(coords.x, coords.y, key);
             obj.OverrideHealth((float)deserialized[DataKeys.Health], (float)deserialized[DataKeys.MaxHealth]);
             obj.SetMyUID((ulong)deserialized[DataKeys.UID]);
-            obj.InitInventoryObject((ulong)deserialized[DataKeys.InventoryUID]);
+            if (deserialized.ContainsKey(DataKeys.InventoryUID))
+            {
+                obj.InitInventoryObject((ulong)deserialized[DataKeys.InventoryUID]);
+            }
+            //Env Obj: COORDS;23,18::OBJECT_KEY;Box::UID;460::HEALTH;30::MAX_HEALTH;30::INVENTORY_UID;461::INVENTORY;[UID;461:}CONTAINER_CONTENTS;OBJECT_KEY;Construction Supplies:]QUANTITY;12:]|:[:
+            if (data.Contains(InventorySplit))
+            {
+                string[] inventoryContents = data.Split(InventorySplit);
+                inventoryContents[1] = inventoryContents[1].Remove(0, 1);
+                InventoryDeserializer.AddInventoryToDeserialize(inventoryContents[1], typeof(Inventory));
+            }
 
             //if (objects.Length > 5)
             //{

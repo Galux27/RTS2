@@ -8,25 +8,25 @@ public static class InventoryDeserializer
 {
     static List<string> inventorysToDeserialize;
     static List<Type> inventoryTypes;
-    public static void AddInventoryToDeserialize(string inventory,Type inventoryType)
+    public static void AddInventoryToDeserialize(string inventory, Type inventoryType)
     {
-        if(inventorysToDeserialize == null)
+        if (inventorysToDeserialize == null)
         {
             inventorysToDeserialize = new List<string>();
             inventoryTypes = new List<Type>();
         }
-        Debug.Log("Inventory: adding inventory to deserialize "+  inventory);
+        Debug.Log("Inventory: adding inventory to deserialize " + inventory);
         inventorysToDeserialize.Add(inventory);
         inventoryTypes.Add(inventoryType);
     }
 
     public static void DeserializeInventorys()
     {
-        if(inventorysToDeserialize == null)
+        if (inventorysToDeserialize == null)
         {
             return;
         }
-        for(int x=0;x<inventorysToDeserialize.Count;x++)
+        for (int x = 0; x < inventorysToDeserialize.Count; x++)
         {
             DeserializeInventory(inventorysToDeserialize[x], inventoryTypes[x]);
         }
@@ -34,17 +34,39 @@ public static class InventoryDeserializer
         inventorysToDeserialize = null;
     }
 
-    static void DeserializeInventory(string  inventory,Type inventoryType)
+    static ulong GetInventoryUID(string inventory)
     {
-        Debug.Log("Inventory: Deserializing inventory " + inventory);
         string[] keyValueSplit = inventory.Split(SerializeDataHelpers.INVENTORY_MARKER_TWO);
         string[] uidData = keyValueSplit[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT);
-        Debug.Log("inventory: UID  data " + keyValueSplit[0]);
+        uidData[1] = uidData[1].Replace(SerializeDataHelpers.DATA_ELEMENT_SPLIT.ToString(), "");
+        object readData = DataReaders.ParseDataObject(uidData[0], uidData[1]);
+        if (readData != null)
+        {
+            return (ulong)readData;
+        }
+        else
+        {
+            Debug.LogError("error parsing UID from " + inventory);
+            return 0;
+        }
+
+    }
+
+
+static void DeserializeInventory(string  inventory,Type inventoryType)
+    {
+        //[UID;5090:}CONTAINER_CONTENTS;OBJECT_KEY;Construction Supplies:]QUANTITY;200:]|:[:
+        //UID;5083:}CONTAINER_CONTENTS;OBJECT_KEY;Rifle:]QUANTITY;1:]|OBJECT_KEY;Construction Supplies:]QUANTITY;93:]|: - unit
+
+
+        Debug.Log("Inventory: parsing inventory from " + inventory);
+        string[] keyValueSplit = inventory.Split(SerializeDataHelpers.INVENTORY_MARKER_TWO);
+        string[] uidData = keyValueSplit[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT);
         uidData[1] = uidData[1].Replace(SerializeDataHelpers.DATA_ELEMENT_SPLIT.ToString(), "");
 
         List<InventoryObject> items = new List<InventoryObject>();
 
-         ulong uid =(ulong) DataReaders.ParseDataObject(uidData[0], uidData[1]);
+        ulong uid = GetInventoryUID(inventory);
         keyValueSplit[1]=keyValueSplit[1].Replace(DataKeys.ItemsInContainer, "");
         string[] inventoryContents = keyValueSplit[1].Split(SerializeDataHelpers.INVENTORY_ELEMENT_SPLIT);
         string[] inventoryItem = null;
@@ -56,16 +78,20 @@ public static class InventoryDeserializer
             itemData = new Dictionary<string, object>();
             for(int i=0;i<inventoryItem.Length;i++)
             {
+                Debug.Log("Inventory: parsing inventory from " + inventoryItem[i]);
+
                 inventoryItem[i] = inventoryItem[i].Replace(SerializeDataHelpers.DATA_ELEMENT_SPLIT.ToString(), "");
                 if (inventoryItem[i] != "")
                 {
                     keyObjectSplit = inventoryItem[i].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-                  keyObjectSplit[0] = keyObjectSplit[0].Replace(SerializeDataHelpers.KEY_OBJECT_SPLIT.ToString(), "");
-                  Debug.Log("Inventory: deserializing from " + inventoryItem[i] + "|" + keyObjectSplit.Length + "|" + keyObjectSplit[0]);
-               
-                    itemData.Add(keyObjectSplit[0], DataReaders.ParseDataObject(keyObjectSplit[0], keyObjectSplit[1]));
+                    if (keyObjectSplit.Length > 1)
+                    {
+                        keyObjectSplit[0] = keyObjectSplit[0].Replace(SerializeDataHelpers.KEY_OBJECT_SPLIT.ToString(), "");
+
+                        itemData.Add(keyObjectSplit[0], DataReaders.ParseDataObject(keyObjectSplit[0], keyObjectSplit[1]));
+                    }
+                    }
                 }
-            }
             InventoryObject toadd = null;
             if (itemData.ContainsKey(DataKeys.ObjectKey))
             {
