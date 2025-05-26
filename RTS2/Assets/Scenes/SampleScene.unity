@@ -1684,7 +1684,7 @@ MonoBehaviour:
   BuildingTilemap: {fileID: 1289217260}
   WallTest: {fileID: 11400000, guid: 102a885a2c1508846a5c80a9e702808e, type: 2}
   WallCollider: {fileID: 1150100288391625594, guid: 55ebbfcdb71636b4b822993bf8bcffd5, type: 3}
-  LoadWorld: 0
+  LoadWorld: 1
 --- !u!114 &247636641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4960,6 +4960,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4353548466396294932, guid: fbd3ad113f1bda84ca164f4f0af66137, type: 3}
+      propertyPath: IsBehaviourNull
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6187371589771361298, guid: fbd3ad113f1bda84ca164f4f0af66137, type: 3}
       propertyPath: m_LocalPosition.x
       value: 22.8

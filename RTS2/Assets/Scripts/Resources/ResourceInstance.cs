@@ -70,6 +70,8 @@ public class ResourceInstance : MonoBehaviour,ISerialize
         myUid = new UID(uid);
         IDManager.OnUIDCreated(this, myUid);
     }
+
+
 }
 
 [System.Serializable]

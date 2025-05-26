@@ -41,7 +41,7 @@ public class ResourceController : MonoBehaviour
         }
     }
 
-    public GameObject CreateResourceInstance(ResourceInstanceData toRender)
+    public GameObject CreateResourceInstance(ResourceInstanceData toRender,Vector3 positionOverride = default)
     {
         GameObject retVal = new GameObject();
         retVal.name = toRender.Name();
@@ -49,7 +49,10 @@ public class ResourceController : MonoBehaviour
         sr.sprite = AllResources[ toRender.Name()].Item;
         ResourceInstance resourceInstance = retVal.AddComponent<ResourceInstance>();
         resourceInstance.InstanceData = toRender;
-
+        if (positionOverride != default)
+        {
+            resourceInstance.transform.position = positionOverride;
+        }
 
         return retVal;
     }

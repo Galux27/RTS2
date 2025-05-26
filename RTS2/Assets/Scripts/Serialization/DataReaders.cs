@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public static class DataReaders
@@ -61,6 +62,19 @@ public static class DataReaders
             }
         
         }
+        keyValueSplit = splitListFromData[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        if (keyValueSplit.Length > 1)
+        {
+            chunk.ResourceObjectsInChunk = (List<ResourceInstance>)ParseDataObject(keyValueSplit[0], splitListFromData[4].Substring(keyValueSplit[0].Length));
+            //for (int x = 0; x < chunk.ResourceObjectsInChunk.Count; x++)
+            //{
+            //    chunk.ResourceObjectsInChunk[x].SetChunk(chunk);
+            //}
+
+        }
+
+
+
 
         keyValueSplit = splitListFromData[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         if (keyValueSplit.Length > 1)
@@ -142,6 +156,7 @@ public static class DataReaders
                 return ParseConstructableObjects(data);
                 break;
             case DataKeys.Resources:
+                return ParseResourceObjects(data);
             case DataKeys.ItemUID:
             case DataKeys.ItemsInContainer:
             default:
@@ -150,7 +165,37 @@ public static class DataReaders
         return null;
     }
 
-    
+    static List<ResourceInstance> ParseResourceObjects(string data)
+    {
+        List<ResourceInstance> retVal = new List<ResourceInstance>();
+        string[] dataElementSplit = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] dataSplit = null;
+        string[] keyObjectSplit = null;
+        Dictionary<string, object> deserializedObject = null;
+        for (int x = 0; x < dataElementSplit.Length; x++)
+        {
+            dataSplit = dataElementSplit[x].Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            if (dataSplit.Length > 0)
+            {
+                deserializedObject = new Dictionary<string, object>();
+                for (int i = 0; i < dataSplit.Length; i++)
+                {
+                    keyObjectSplit = dataSplit[i].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+                    if (keyObjectSplit.Length > 0f)
+                    {
+                        deserializedObject.Add(keyObjectSplit[0], ParseDataObject(keyObjectSplit[0], keyObjectSplit[1]));
+                    }
+                }
+                ResourceInstanceData resourceData = new ResourceInstanceData((string)deserializedObject[DataKeys.ObjectKey], (int)deserializedObject[DataKeys.Quantitiy]);
+                ResourceInstance instance = ResourceController.Instance.CreateResourceInstance(resourceData, (Vector3)deserializedObject[DataKeys.Pos]).GetComponent<ResourceInstance>();
+                instance.SetMyUID((ulong)deserializedObject[DataKeys.UID]);
+                retVal.Add(instance);
+            }
+
+
+            }
+        return retVal;
+    }
 
 
     static Vector3 ParseVector3(string val)
@@ -280,6 +325,10 @@ public static class DataReaders
     public static EnvironmentObjectInstance ParseEnvironmentObject(string data)
     {
         Debug.Log("Env Obj: " + data);// ;COORDS;9,30::OBJECT_KEY;Tree_1::UID;5::HEALTH;5::MAX_HEALTH;5::
+        //check for "INVENTORY;" then split before and after that
+        //run normal code on that
+        //pass inventory string to inventory deserializer
+
         string[] objects = data.Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         Dictionary<string, object> deserialized = new Dictionary<string, object>();
         string[] keySplit = null;
@@ -291,7 +340,7 @@ public static class DataReaders
             {
                 deserialized.Add(keySplit[0], ParseDataObject(keySplit[0], keySplit[1]));
             }
-            }
+        }
             string key = (string)deserialized[DataKeys.ObjectKey];
         Vector2Int coords = (Vector2Int)deserialized[DataKeys.Coords];
 
@@ -310,6 +359,7 @@ public static class DataReaders
             ConstructableObjectInstance obj = new ConstructableObjectInstance(coords.x, coords.y, key);
             obj.OverrideHealth((float)deserialized[DataKeys.Health], (float)deserialized[DataKeys.MaxHealth]);
             obj.SetMyUID((ulong)deserialized[DataKeys.UID]);
+            obj.InitInventoryObject((ulong)deserialized[DataKeys.InventoryUID]);
 
             //if (objects.Length > 5)
             //{

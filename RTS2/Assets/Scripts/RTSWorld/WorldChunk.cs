@@ -119,6 +119,10 @@ public class WorldChunk:ISerialize
 
     public void AddResourceObject(ResourceInstance resourceInstance)
     {
+        if (ResourceObjectsInChunk.Contains(resourceInstance))
+        {
+            return;
+        }
         ResourceObjectsInChunk.Add(resourceInstance);
     }
 
