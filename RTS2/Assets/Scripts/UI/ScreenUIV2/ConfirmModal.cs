@@ -31,13 +31,19 @@ public class ConfirmModal : BaseUIElement
         MessageDisplay.text = message;
         Button button = Confirm.GetComponent<Button>();
         button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(()=>onConfirm.Invoke());
-        button.onClick.AddListener(HideUI);
+        if (onConfirm != null)
+        {
+            button.onClick.AddListener(() => onConfirm.Invoke());
+        }
+            button.onClick.AddListener(HideUI);
 
         button = Cancel.GetComponent<Button>();
         button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => onCancel.Invoke());
-        button.onClick.AddListener(HideUI);
+        if (onCancel != null)
+        {
+            button.onClick.AddListener(() => onCancel.Invoke());
+        }
+            button.onClick.AddListener(HideUI);
         this.DrawUI();
 
     }

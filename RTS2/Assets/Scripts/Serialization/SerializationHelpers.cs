@@ -39,11 +39,16 @@ public static class SerializationHelpers
 
     }
 
+    public static string GetSaveDir()
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory);
+    }
+
     public static void SaveGame(string saveName)
     {
         EasyStopwatch.StartStopwatch();
 
-        string path = Path.Combine(GetSaveFolderParentLocation(), SaveDirectory);
+        string path = GetSaveDir();
         EnsureDirectoryExists(path);
         path=Path.Combine(path,saveName);
         EnsureDirectoryExists(path);
@@ -116,6 +121,7 @@ public static class SerializationHelpers
     public static void LoadGame(string name)
     {
         EasyStopwatch.StartStopwatch();
+        IDManager.OnLevelLoaded();
         ReadMiscFile(name);
         WorldChunkManager.Instance.LoadChunksFromFile(name);
         ReadUnitFile(name);

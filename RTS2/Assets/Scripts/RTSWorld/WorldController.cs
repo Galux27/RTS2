@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -54,15 +55,31 @@ public class WorldController : MonoBehaviour
         InitWorld();
     }
     public bool LoadWorld = false;
+    bool DoWeLoadWorld()
+    {
+        return LoadWorld || SaveLoadHelpers.DoWeLoadWorld;
+    }
+
     public void InitWorld()
     {
-        if (!LoadWorld)
+        if (!DoWeLoadWorld())
         {
             MapGenerator.Instance.GenerateMap();
         }
         else
         {
-            SerializationHelpers.LoadGame("TestWorld");
+            if (SaveLoadHelpers.DoWeLoadWorld)
+            {
+                SerializationHelpers.LoadGame(SaveLoadHelpers.SaveToLoad);
+                SaveLoadHelpers.SaveToLoad = "";
+                SaveLoadHelpers.DoWeLoadWorld = false;
+
+            }
+            else
+            {
+                SerializationHelpers.LoadGame("TestWorld");
+
+            }
         }
 
         for(int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)

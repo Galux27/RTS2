@@ -6,12 +6,26 @@ using UnityEngine.UI;
 
 public class PauseMenuUIElement : BaseUIElement
 {
-    public ButtonManager Resume, Options, SaveLoad, Quit;
+
+    static PauseMenuUIElement instance;
+    public static PauseMenuUIElement Instance
+    {
+        get
+        {
+            if(instance == null)
+            {
+                instance=FindObjectOfType<PauseMenuUIElement>(true);
+            }
+            return instance;
+        }
+    }
+    public ButtonManager Resume, Options, Save,Load, Quit;
 
     private void Start()
     {
         Resume.gameObject.GetComponent<Button>().onClick.AddListener(HideUI);
-        SaveLoad.gameObject.GetComponent<Button>().onClick.AddListener(SaveTest);
+        Save.gameObject.GetComponent<Button>().onClick.AddListener(OpenSaveMenu);
+        Load.gameObject.GetComponent<Button>().onClick.AddListener(OpenLoadMenu);
     }
     public static float SpeedGameAtWhenOpened = 0f;
     public override void HideUI()
@@ -26,8 +40,13 @@ public class PauseMenuUIElement : BaseUIElement
         base.DrawUI();
     }
 
-    void SaveTest()
+    void OpenSaveMenu()
     {
-        SerializationHelpers.SaveGame("TestWorld");
+        SavingMenu.Instance.DrawUI();
+       // SerializationHelpers.SaveGame("TestWorld");
+    }
+    void OpenLoadMenu()
+    {
+        LoadingMenu.Instance.DrawUI();
     }
 }

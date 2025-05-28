@@ -20,6 +20,11 @@ public static class IDManager
         BaseUID = val;
     }
 
+    public static void OnLevelLoaded()
+    {
+        IDDictionaries = new Dictionary<System.Type, UIDObjectDictionary>();
+    }
+
     static Dictionary<System.Type, UIDObjectDictionary> IDDictionaries = new Dictionary<System.Type, UIDObjectDictionary>();
 
 
