@@ -12566,10 +12566,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 404852598771804295, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 445685224804115432, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -12625,26 +12621,6 @@ PrefabInstance:
     - target: {fileID: 2195505570165142476, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_Name
       value: RecCorpUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 3526006769673025056, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3526006769673025056, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3526006769673025056, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3526006769673025056, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3760025083639107182, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
-      propertyPath: buttonText
-      value: Yes
       objectReference: {fileID: 0}
     - target: {fileID: 4820853303559877362, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12825,10 +12801,6 @@ PrefabInstance:
     - target: {fileID: 8879482612345853579, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8967533169807802710, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
-      propertyPath: buttonText
-      value: No
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

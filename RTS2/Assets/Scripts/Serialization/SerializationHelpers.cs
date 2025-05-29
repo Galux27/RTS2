@@ -9,7 +9,7 @@ using UnityEngine;
 public static class SerializationHelpers
 {
     const string SaveDirectory = "ReclemationCorpSaves";
-    const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT",MiscExtension=".RCMISC";
+    const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT",MiscExtension=".RCMISC",RoomExtension=".RCROOM";
     static string GetSaveFolderParentLocation()
     {
         return System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
@@ -32,7 +32,11 @@ public static class SerializationHelpers
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "UNITS" + UnitsExtension);
 
     }
+    public static string GetRoomFilePath(string saveName)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "ROOMS" + RoomExtension);
 
+    }
     public static string GetMiscFilePath(string saveName)
     {
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "MISC" + MiscExtension);
@@ -55,6 +59,7 @@ public static class SerializationHelpers
         SaveMiscData(path);
         SaveLoadedWorld(path);
         SaveUnits(path);
+        SaveRooms(path);
         Debug.Log("Saving took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
 
     }
@@ -66,6 +71,23 @@ public static class SerializationHelpers
         dataWriting.Add(MiscDataSerialization.GetMiscData().Data);
         WriteToFile(path, name, dataWriting);
 
+    }
+
+
+    public static void SaveRooms(string path)
+    {
+        string name = "ROOMS" + RoomExtension;
+        List<string> dataWriting = new List<string>();
+        for (int x = 0; x < RoomManager.Instance.roomList.Count; x++)
+        {
+            dataWriting.Add(RoomManager.Instance.roomList[x].Serialize().Data);
+        }
+
+
+        if (dataWriting.Count > 0)
+        {
+            WriteToFile(path, name, dataWriting);
+        }
     }
 
     public static void SaveUnits(string path)
@@ -123,6 +145,8 @@ public static class SerializationHelpers
         EasyStopwatch.StartStopwatch();
         IDManager.OnLevelLoaded();
         ReadMiscFile(name);
+        ReadRoomsFile(name);
+
         WorldChunkManager.Instance.LoadChunksFromFile(name);
         ReadUnitFile(name);
         BehaviourDeserializer.DeserializeBehaviours();
@@ -133,18 +157,31 @@ public static class SerializationHelpers
 
     static void ReadMiscFile(string name)
     {
-        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetMiscFilePath("TestWorld"));
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetMiscFilePath(name));
         MiscDataSerialization.DeserializeMiscData(dataFromFile);
 
     }
 
-    static void ReadUnitFile(string name)
+    static void ReadRoomsFile(string name)
     {
-        if (!File.Exists(SerializationHelpers.GetUnitFilePath("TestWorld")))
+        if (!File.Exists(SerializationHelpers.GetRoomFilePath(name)))
         {
             return;
         }
-        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetUnitFilePath("TestWorld"));
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetRoomFilePath(name));
+        for (int x = 0; x < dataFromFile.Count; x++)
+        {
+            RoomDeserializer.DeserializeRooms(dataFromFile[x]);
+        }
+    }
+
+    static void ReadUnitFile(string name)
+    {
+        if (!File.Exists(SerializationHelpers.GetUnitFilePath(name)))
+        {
+            return;
+        }
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetUnitFilePath(name));
         for(int x=0;x<dataFromFile.Count;x++)
         {
             UnitPrefabController.Instance.CreateUnitFromSavedData(dataFromFile[x]);
@@ -172,6 +209,7 @@ public static class SerializationHelpers
 public class DataKeys
 {
     public const string Coords = "COORDS";
+    public const string LocalCoords = "LOCAL_COORDS";
     public const string Pos = "POS";
     public const string TileType = "TILE_TYPE";
     public const string WaterLevel = "WATER_LEVEL";
@@ -282,7 +320,7 @@ public static class SerializeDataHelpers
     public const char INVENTORY_SPLIT_TWO = ']';
     public static string SerializeData(string key,object value)
     {
-        if (key == DataKeys.Coords)
+        if (key == DataKeys.Coords||key==DataKeys.LocalCoords)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector2Int(value), DATA_ELEMENT_SPLIT.ToString());
         }

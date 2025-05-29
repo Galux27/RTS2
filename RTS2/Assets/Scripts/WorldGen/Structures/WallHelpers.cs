@@ -428,7 +428,7 @@ public static class WallHelpers
          Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coordsCache);
         WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForWall.x, chunkForWall.y];
         coordsCache = coordsCache - toGetFrom.WorldCoords;
-        toGetFrom.WallSegments[coordsCache.x, coordsCache.y] = new DoorSegment(x, y, toPlaceOn, wallType);
+        toGetFrom.WallSegments[coordsCache.x, coordsCache.y] = new DoorSegment(x, y, toPlaceOn, wallType,coordsCache.x,coordsCache.y);
         return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
     }
 

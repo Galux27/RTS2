@@ -10,12 +10,13 @@ using UnityEngine.Tilemaps;
 public class WallSegment:Selectable ,ObjectInfo,ISerialize
 {
     public int x, y;
+    public Vector2Int localCoords;
     public bool HasWallUnderConstruction=false;
     public WallType WallType=WallType.None;
     public GameObject Collider;
     public float HealthVal, MaxHealthVal;
    public WallTile baseWallType;
-    public WallSegment(int x, int y,WallTile wallType)
+    public WallSegment(int x, int y,WallTile wallType,int localX,int localY)
     {
         this.x = x;
         this.y = y;
@@ -25,6 +26,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
             this.MaxHealthVal = HealthVal;
             this.baseWallType = wallType;
         }
+        localCoords = new Vector2Int(localX, localY);
     }
 
     public bool HasWall
@@ -208,6 +210,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         retVal.AddDataToSerialize(DataKeys.WallVisual, baseWallType.WallName);
         retVal.AddDataToSerialize(DataKeys.Health, Health());
         retVal.AddDataToSerialize(DataKeys.MaxHealth, MaxHealth());
+        retVal.AddDataToSerialize(DataKeys.LocalCoords, localCoords);
         return retVal;
     }
 

@@ -99,7 +99,7 @@ public class WorldChunk:ISerialize
            
             for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
             {
-                WallSegments[localx, localy] = new WallSegment(x, y, null);
+                WallSegments[localx, localy] = new WallSegment(x, y, null,localx,localy);
                 localy++;
             }
             localx++;

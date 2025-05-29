@@ -110,6 +110,7 @@ public static class DataReaders
         switch (key)
         {
             case DataKeys.Coords:
+            case DataKeys.LocalCoords:
                 return ParseVector2Int(data);
                 break;
             case DataKeys.ChunkTiles:
@@ -157,12 +158,28 @@ public static class DataReaders
                 break;
             case DataKeys.Resources:
                 return ParseResourceObjects(data);
+            case DataKeys.RoomTiles:
+                return ParseRoomTiles(data);
+
             case DataKeys.ItemUID:
+
             case DataKeys.ItemsInContainer:
             default:
                 break;
         }
         return null;
+    }
+
+    static List<Vector2Int> ParseRoomTiles(string data)
+    {
+        List<Vector2Int> retVal = new List<Vector2Int>();
+        Debug.Log("Room Data: room from " + data);
+        string[] elements = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        for (int x = 0; x < elements.Length; x++)
+        {
+            retVal.Add(ParseVector2Int(elements[x]));
+        }
+        return retVal;
     }
 
     static List<ResourceInstance> ParseResourceObjects(string data)
@@ -445,7 +462,7 @@ public static class DataReaders
         {
             for(int y1 = 0; y1 < retVal.GetLength(1); y1++)
             {
-                retVal[x1, y1] = new WallSegment(x1+currentLoadingChunkCoords.x, y1+currentLoadingChunkCoords.y, null);
+                retVal[x1, y1] = new WallSegment(x1+currentLoadingChunkCoords.x, y1+currentLoadingChunkCoords.y, null,x1,y1);
             }
         }
 
@@ -456,6 +473,7 @@ public static class DataReaders
         
         for (int q = 0; q < objects.Length; q++)
         {
+
             currentTile = ParseWallSegment(objects[q]);
             if (currentTile != null)
             {
@@ -465,7 +483,8 @@ public static class DataReaders
                     yc = RoundToMultiple(currentTile.y, WorldChunkManager.ChunkSize);
                     gotCorner = true;
                 }
-                if (xc == 0)
+                if (xc == 0||currentTile.
+                    x<WorldChunkManager.ChunkSize)
                 {
                     x = currentTile.x;
 
@@ -475,7 +494,7 @@ public static class DataReaders
                     x = currentTile.x - ((xc));
 
                 }
-                if (yc == 0)
+                if (yc == 0||currentTile.y<WorldChunkManager.ChunkSize)
                 {
                     y = currentTile.y;
 
@@ -487,8 +506,8 @@ public static class DataReaders
                 }
 
 
-
-                retVal[x, y] = currentTile;
+                Debug.Log("Parsing coords "+ x+","+y+"/"+retVal.GetLength(0)+","+retVal.GetLength(1)+"/"+xc+","+yc+"/"+currentTile.x+","+currentTile.y);
+                retVal[currentTile.localCoords.x, currentTile.localCoords.y] = currentTile;
             }
         }
 
@@ -511,7 +530,7 @@ public static class DataReaders
         WallType wallType = (WallType)ParseDataObject(split[0], split[1]);
         split = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         string wallVisualType = (string)ParseDataObject(split[0], split[1]);
-        WallSegment retVal = new WallSegment(coords.x, coords.y, WallTypeManager.Instance.AllObjects[wallVisualType]);
+        WallSegment retVal = new WallSegment(coords.x, coords.y, WallTypeManager.Instance.AllObjects[wallVisualType],-1,-1);
         retVal.SetMyUID(uid);
         retVal.WallType = wallType;
         
@@ -520,6 +539,8 @@ public static class DataReaders
         split = objects[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         float maxHealth = (float)ParseDataObject(split[0], split[1]);
         retVal.OverrideHealthValues(health, maxHealth);
+        split = objects[6].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        retVal.localCoords = (Vector2Int)ParseDataObject(split[0], split[1]);
         return retVal;
     }
 

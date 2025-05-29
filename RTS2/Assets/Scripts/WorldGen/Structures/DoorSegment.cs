@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class DoorSegment : WallSegment
 {
-    public DoorSegment(int x, int y, Tilemap toPlaceOn, WallTile wallType) : base(x, y,wallType)
+    public DoorSegment(int x, int y, Tilemap toPlaceOn, WallTile wallType,int localX,int localY) : base(x, y,wallType,localX,localY)
     {
         WallType = WallType.Door;
 
