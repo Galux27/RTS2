@@ -21,6 +21,15 @@ public class WorldChunk:ISerialize
     public PathfindingNode[,] PathfindingNodes;
     public WorldTile[,] ChunkTiles;
     public Vector2Int WorldCoords;
+
+    public bool CoordsValid(int x,int y)
+    {
+        if(x<0 || y<0) return false;
+        if (x >= WorldChunkManager.ChunkSize || y >= WorldChunkManager.ChunkSize) return false;
+        return true;
+    }
+
+
     public WorldChunk(int x,int y)
     {
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);

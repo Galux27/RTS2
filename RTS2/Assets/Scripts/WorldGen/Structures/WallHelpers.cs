@@ -312,7 +312,15 @@ public static class WallHelpers
     static Bounds boundsCheck;
     public static bool CanIPlaceWallAtPosition(int x, int y)
     {
-         if(DoesUnderConstructionWallExistAtPosition (x,y)|| DoesConstructedWallExistAtPosition(x,y)||Pathfinding.GetNodeFromCoords(x,y).IsPassable==false)
+        PathfindingNode node = Pathfinding.GetNodeFromCoords(x, y);
+        if (node == null)
+        {
+            return false;   
+        }
+
+         if (DoesUnderConstructionWallExistAtPosition (x,y)
+            || DoesConstructedWallExistAtPosition(x,y)
+            ||node.IsPassable==false)
         {
             return false;
         }
@@ -418,8 +426,30 @@ public static class WallHelpers
         Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForWall.x, chunkForWall.y];
         coordsCache = coords - toGetFrom.WorldCoords;
-       
+        coordsCache = LimitToLocalChunk(coordsCache);
         return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
+    }
+
+    static Vector2Int LimitToLocalChunk(Vector2Int coords)
+    {
+        if (coords.x > WorldChunkManager.ChunkSize - 1)
+        {
+            coords.x=WorldChunkManager.ChunkSize - 1;
+        }
+        if (coords.x < 0)
+        {
+            coords.x = 0;
+        }
+
+        if (coords.y > WorldChunkManager.ChunkSize - 1)
+        {
+            coords.y = WorldChunkManager.ChunkSize - 1;
+        }
+        if (coords.y < 0)
+        {
+            coords.y = 0;
+        }
+        return coords;
     }
 
     public static WallSegment ChangeWallAtCoords(int x, int y, Tilemap toPlaceOn, WallTile wallType)

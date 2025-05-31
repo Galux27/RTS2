@@ -32,7 +32,7 @@ public class FurnitureSelectionMode : SelectionMode
 
             }
           
-            ConstructableObjectManager.Instance.GetCursor().transform.position = pos;
+            ConstructableObjectManager.Instance.SetCursorPosition( pos);
         }
         else
         {

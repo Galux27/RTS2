@@ -62,6 +62,31 @@ public class ConstructableObjectManager : MonoBehaviour
         return Cursor;
     }
 
+    public void SetCursorPosition(Vector3 pos)
+    {
+        if (Cursor == null)
+        {
+            GetCursor();
+        }
+       // Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(pos);
+       // Cursor.transform.position = new Vector3(chunk.x, chunk.y);
+
+
+        Vector3 cursorPos = pos;
+
+        ConstructableObjectManager.Instance.GetCursor().SetActive(true);
+        Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+        float height = ConstructableObjectManager.Instance.selectedToConstruct.GetHeight;
+        float width = ConstructableObjectManager.Instance.selectedToConstruct.GetWidth;
+
+
+        Cursor.transform.position = new Vector3(coords.x + (width / 2f), coords.y + (height / 2f), 0f);
+
+
+    }
+
+
+
     public void SetCursorColour(Color colour)
     {
         spriteRenderer.color = colour;
