@@ -153,7 +153,6 @@ public class WorldChunk:ISerialize
 
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
     {
-        Debug.Log("Adding environment object " + environmentObject.Name());
         EnvironmentObjectsInChunk.Add(environmentObject);
         environmentObject.SetChunk(this);
         if (ShouldDrawEnvironmentObjects() && environmentObject.Drawn == false)

@@ -72,6 +72,7 @@ public class WallManager
     public void SetWall(int x, int y, WallTile wallTile, bool value = true)
     {
         WallSegment wall= WallHelpers.GetWallAtCoords(x, y);
+        Debug.Log("Adding wall at " + x + "," + y+" wall found " + wall.x+","+wall.y);
 
         wall.SetHasWall(value) ;
         wall.SetWallType(wallTile);
@@ -274,19 +275,21 @@ public class WallManager
         }
         WallSegment wall = null;
 
-        for (int x1 = 0; x1 < width; x1++)
-        {
-            for (int y1 = 0; y1 < height; y1++)
-            {
-                wall = WallHelpers.GetWallAtCoords(x1, y1);
+        //for (int x1 = 0; x1 < width; x1++)
+        //{
+        //    for (int y1 = 0; y1 < height; y1++)
+        //    {
+        //        wall = WallHelpers.GetWallAtCoords(x+x1,y+ y1);
 
-                if (wall.HasWall)
-                {
-                    WallHelpers.CalculateTileType(ref wall, this,wall.baseWallType);
-                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
-                }
-            }
-        }
+        //        if (wall.HasWall)
+        //        {
+        //            WallHelpers.CalculateTileType(ref wall, this,wall.baseWallType);
+        //            WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
+        //        }
+        //    }
+        //}
+        wall = WallHelpers.GetWallAtCoords(x, y);
+        WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
 
 
         for (int x1 = x - 1; x1 <= x + 1; x1++)
@@ -301,11 +304,36 @@ public class WallManager
 
                 if (wall.HasWall)
                 {
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
 
                     toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
                 }
             }
         }
     }
+
+    public void RefreshWalls(int x,int y)
+    {
+        Vector2Int asCoords = new Vector2Int(x, y);
+        Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
+        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        WallSegment wall = null;
+
+        for (int x1 = 0; x1 < width; x1++)
+        {
+            for (int y1 = 0; y1 < height; y1++)
+            {
+                wall = WallHelpers.GetWallAtCoords(x1, y1);
+
+                if (wall.HasWall)
+                {
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
+                }
+            }
+        }
+
+    }
+
 
 }

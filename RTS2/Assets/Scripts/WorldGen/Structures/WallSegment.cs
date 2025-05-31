@@ -83,6 +83,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     public Tile ToDraw;
     public void SetTile(Tile tile)
     {
+        Debug.Log("Set tile sprite for " + x + "," + y + " to " + tile.sprite.name.ToString());
         ToDraw = tile;
         Drawn = true;
     }
@@ -97,9 +98,12 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
 
     public void OnObjectDeselected()
     {
-        Collider.gameObject.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
+        if (Collider.gameObject.GetComponentInChildren<SelectedOutline>())
+        {
+            Collider.gameObject.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
+        }
     }
-    public void OnObjectSelected()
+        public void OnObjectSelected()
     {
         SelectedOutlineManager.Instance.OnSelectObject(Collider,GetSize());
     }

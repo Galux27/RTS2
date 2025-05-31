@@ -58,10 +58,8 @@ public class WorldChunkManager : MonoBehaviour
         //  string[] splitObjects = null;
         for (int q = 0; q < dataFromFile.Count; q++)
         {
-            Debug.Log("Data From File Line:" + q + " contents||" + dataFromFile[q]);
             WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
             int x = wc.WorldCoords.x/ChunkSize; int y = wc.WorldCoords.y / ChunkSize;
-            Debug.Log("Parsed chunk at " + wc.WorldCoords);
             Chunks[x, y] = wc;
             
         }
@@ -116,6 +114,7 @@ public class WorldChunkManager : MonoBehaviour
     {
         getCoordsCache.x = Mathf.Min(coords.x / ChunkSize, Chunks.GetLength(0) - 1);
         getCoordsCache.y = Mathf.Min(coords.y / ChunkSize, Chunks.GetLength(1) - 1);
+        //Debug.Log("Getting chunk coords from " + coords + " returning " + getCoordsCache);
         ValidateCoordsCache();
         return getCoordsCache;
     }

@@ -384,7 +384,6 @@ public static class WallHelpers
 
         Action OnBuilt = GetOnBuilt(new Vector2Int(x, y), toDrawOn, toUse);
         WallHelpers.GetWallAtCoords(x, y).SetWallUnderConstruction(true);
-        Debug.Log("Adding constructable to " + coords.ToString());
         new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Wall, toUse.WallName);
         //WorldChunkManager.Instance.Chunks[coords.x,coords.y].AddConstructable(bs);
     }
@@ -417,16 +416,19 @@ public static class WallHelpers
 
     public static WallSegment GetWallAtCoords(int x,int y)
     {
-        coordsCache = new Vector2Int(x, y);
-        return GetWallAtCoords(coordsCache);
+        return GetWallAtCoords(new Vector2Int(x, y));
     }
 
     public static WallSegment GetWallAtCoords(Vector2Int coords)
     {
+
         Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForWall.x, chunkForWall.y];
         coordsCache = coords - toGetFrom.WorldCoords;
         coordsCache = LimitToLocalChunk(coordsCache);
+
+
+
         return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
     }
 

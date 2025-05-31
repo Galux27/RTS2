@@ -22,15 +22,11 @@ public static class DataReaders
         string key = data.Substring(0, firstSplit);
         ParseData(key,data);
     }
-    static Vector2Int currentLoadingChunkCoords;
+    static Vector2Int currentLoadingChunkWorldCoords;
     public static WorldChunk ParseWorldChunk(string data)
     {
         string[] splitListFromData = data.Split(SerializeDataHelpers.DATA_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-        for(int x=0;x<splitListFromData.Length;x++)
-        {
-            Debug.Log("Split list from data " + x +" " + splitListFromData[x]);
-          
-        }
+       
 
         //0 coords
         //1 tile data
@@ -40,8 +36,9 @@ public static class DataReaders
         //5 constructables
         string[] keyValueSplit = splitListFromData[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         Vector2Int coords = (Vector2Int)ParseDataObject(keyValueSplit[0], keyValueSplit[1]);
-        currentLoadingChunkCoords = coords;
         WorldChunk chunk = new WorldChunk(coords.x, coords.y);
+        currentLoadingChunkWorldCoords =chunk.WorldCoords;
+
         keyValueSplit = splitListFromData[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
        chunk.ChunkTiles = (WorldTile[,])ParseDataObject(keyValueSplit[0], splitListFromData[1].Substring(keyValueSplit[0].Length));
 
@@ -49,8 +46,9 @@ public static class DataReaders
         if (keyValueSplit.Length > 1)
         {
             chunk.WallSegments = (WallSegment[,])ParseDataObject(keyValueSplit[0], splitListFromData[2].Substring(keyValueSplit[0].Length));
-           
+
         }
+        
 
         keyValueSplit = splitListFromData[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         if (keyValueSplit.Length > 1)
@@ -79,7 +77,6 @@ public static class DataReaders
         keyValueSplit = splitListFromData[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         if (keyValueSplit.Length > 1)
         {
-            Debug.Log("Constructables " + keyValueSplit[0] + "|" + keyValueSplit[1]);
             List<BuildableStructure> buildableStructures = (List<BuildableStructure>)ParseDataObject(keyValueSplit[0], splitListFromData[5].Substring(keyValueSplit[0].Length));
             chunk.ToBuild = new List<Constructable>();
             if (buildableStructures != null)
@@ -173,7 +170,6 @@ public static class DataReaders
     static List<Vector2Int> ParseRoomTiles(string data)
     {
         List<Vector2Int> retVal = new List<Vector2Int>();
-        Debug.Log("Room Data: room from " + data);
         string[] elements = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         for (int x = 0; x < elements.Length; x++)
         {
@@ -217,7 +213,6 @@ public static class DataReaders
 
     static Vector3 ParseVector3(string val)
     {
-        Debug.Log("Parsing vector 3 from " + val);
         val=val.Replace(SerializeDataHelpers.DATA_ELEMENT_SPLIT.ToString(), "");
         string[] split = val.Split(SerializeDataHelpers.DATA_SPLIT);
         if (split.Length == 3)
@@ -335,9 +330,6 @@ public static class DataReaders
             EnvironmentObjectInstance toAdd = ParseEnvironmentObject(objects[x]);
             if (toAdd != null) {
                 instances.Add(toAdd);
-            }else
-            {
-                Debug.Log("Env Objects: was null from " + objects[x]);
             }
         }
         return instances;
@@ -345,7 +337,6 @@ public static class DataReaders
     const string InventorySplit = "INVENTORY;";
     public static EnvironmentObjectInstance ParseEnvironmentObject(string data)
     {
-        Debug.Log("Env Obj: " + data);// ;COORDS;9,30::OBJECT_KEY;Tree_1::UID;5::HEALTH;5::MAX_HEALTH;5::
         //check for "INVENTORY;" then split before and after that
         //run normal code on that
         //pass inventory string to inventory deserializer
@@ -356,7 +347,6 @@ public static class DataReaders
         for(int x = 0; x < objects.Length; x++)
         {
             keySplit = objects[x].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
-            Debug.Log("Env Obj: deserializing " + objects[x]);
             if (keySplit.Length > 1)
             {
                 deserialized.Add(keySplit[0], ParseDataObject(keySplit[0], keySplit[1]));
@@ -458,11 +448,12 @@ public static class DataReaders
         WallSegment[,] retVal = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
         string[] objects = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         WallSegment currentTile = null;
+        Debug.Log("Parsing wall segments in current chunk " + currentLoadingChunkWorldCoords);
         for(int x1 = 0; x1 < retVal.GetLength(0); x1++)
         {
             for(int y1 = 0; y1 < retVal.GetLength(1); y1++)
             {
-                retVal[x1, y1] = new WallSegment(x1+currentLoadingChunkCoords.x, y1+currentLoadingChunkCoords.y, null,x1,y1);
+                retVal[x1, y1] = new WallSegment(x1+currentLoadingChunkWorldCoords.x, y1+currentLoadingChunkWorldCoords.y, null,x1,y1);
             }
         }
 
@@ -483,8 +474,7 @@ public static class DataReaders
                     yc = RoundToMultiple(currentTile.y, WorldChunkManager.ChunkSize);
                     gotCorner = true;
                 }
-                if (xc == 0||currentTile.
-                    x<WorldChunkManager.ChunkSize)
+                if (xc == 0||currentTile. x<WorldChunkManager.ChunkSize)
                 {
                     x = currentTile.x;
 
@@ -506,11 +496,11 @@ public static class DataReaders
                 }
 
 
-                Debug.Log("Parsing coords "+ x+","+y+"/"+retVal.GetLength(0)+","+retVal.GetLength(1)+"/"+xc+","+yc+"/"+currentTile.x+","+currentTile.y);
                 retVal[currentTile.localCoords.x, currentTile.localCoords.y] = currentTile;
+
             }
         }
-
+        
         return retVal;
     }
 
@@ -530,10 +520,12 @@ public static class DataReaders
         WallType wallType = (WallType)ParseDataObject(split[0], split[1]);
         split = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         string wallVisualType = (string)ParseDataObject(split[0], split[1]);
+        Debug.Log("Wall visual type " + wallVisualType + "," + coords+","+wallType); 
+        
         WallSegment retVal = new WallSegment(coords.x, coords.y, WallTypeManager.Instance.AllObjects[wallVisualType],-1,-1);
         retVal.SetMyUID(uid);
         retVal.WallType = wallType;
-        
+        retVal.HasWallUnderConstruction = false;
         split = objects[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         float health = (float)ParseDataObject(split[0], split[1]);
         split = objects[5].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);

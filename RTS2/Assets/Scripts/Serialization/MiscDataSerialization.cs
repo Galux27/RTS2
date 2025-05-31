@@ -17,13 +17,11 @@ public static class MiscDataSerialization
 
     public static void DeserializeMiscData(List<string> data)
     {
-        Debug.Log("Misc deserializing from " + data[0]);
         string[] split = data[0].Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         string[] keyObjectSplit = null;
         Dictionary<string,object> deserializedData = new Dictionary<string,object>();
         for(int x=0;x<split.Length;x++)
         {
-            Debug.Log("Misc deserializing element from "+ split[x]);
             split[x] = split[x].Replace(SerializeDataHelpers.DATA_OBJECT_SPLIT.ToString(), "");
             keyObjectSplit = split[x].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
             if (keyObjectSplit.Length > 1)

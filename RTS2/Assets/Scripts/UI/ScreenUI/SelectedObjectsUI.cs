@@ -41,7 +41,6 @@ public class SelectedObjectsUI : BaseUI
 
     public void CloseUI()
     {
-        Debug.Log("Closing obj  UI" + SelectableManager.Instance.CurrentSelectedType);
         CleanupUI();
         this.gameObject.SetActive(false);
     }

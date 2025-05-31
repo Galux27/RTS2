@@ -90,7 +90,6 @@ public class SelectableManager : MonoBehaviour
         }
         ClearSelectables();
         AddSelectable(newSelected);
-        Debug.Log("Set to name selected " + key + "Found " +  newSelected.Count);
         OnSelectionChanged?.Invoke();
 
     }

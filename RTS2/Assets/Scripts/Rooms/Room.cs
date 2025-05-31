@@ -92,25 +92,21 @@ public class Room:ISerialize
 
     void CheckForConstructablesNoLongerInRoom(List<Vector2Int> tilesInRoom)
     {
-        Debug.Log("Checking for objects not in room pre" + tilesInRoom.Count+"|"+ObjectsInRoom.Count);
         string coords = "";
         for(int x=0;x<tilesInRoom.Count;x++)
         {
             coords += tilesInRoom[x].ToString() + ",";
         }
-        Debug.Log("Checking for objects not in room coords " + coords);
 
         List<ConstructableObjectInstance> newObjectsInRoom = new List<ConstructableObjectInstance>();
         for (int y = 0; y < ObjectsInRoom.Count; y++)
         {
-            Debug.Log("Checking for objects not in room coords" + ObjectsInRoom[y].coords);
             if (tilesInRoom.Contains(ObjectsInRoom[y].coords)==false)
             {
                 newObjectsInRoom.Add(ObjectsInRoom[y] );
             }
         }
         ObjectsInRoom = newObjectsInRoom;
-        Debug.Log("Checking for objects not in room post" + tilesInRoom.Count + "|" + ObjectsInRoom.Count);
 
 
     }
