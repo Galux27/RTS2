@@ -80,7 +80,13 @@ public class WallManager
 
     public void GenerateWallCollider(WallSegment wall)
     {
+        if (wall.Collider != null||wall.WallType==WallType.None)
+        {
+            return;
+        }
+        Debug.Log("Generating wall collider for " + wall.x + "," + wall.y + "||" + wall.localCoords + "|" + wall.WallType.ToString());
         GameObject col = GameObject.Instantiate(WorldController.Instance.WallCollider, new Vector3(wall.x + .5f, wall.y + .5f, 0), Quaternion.identity);
+        col.name = "Wall Collider " + wall.x + "," + wall.y + "||" + wall.localCoords + "|" + wall.WallType.ToString();
         wall.Collider = col;
     }
 
@@ -208,7 +214,9 @@ public class WallManager
 
     public void AddSingleDoor(int x,int y,Tilemap toDrawOn, WallTile toUse)
     {
+
         SetDoor(x, y,toDrawOn,toUse);
+        WorldController.Instance.WallManager.GenerateWallCollider(WallHelpers.GetWallAtCoords(x, y));
         Vector2Int asCoords = new Vector2Int(x, y);
         Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];

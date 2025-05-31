@@ -74,6 +74,14 @@ public class WorldChunkManager : MonoBehaviour
                     for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(0); y1++)
                     {
                         Chunks[x, y].ChunkTiles[x1, y1].UpdateWaterLevel(Chunks[x, y].ChunkTiles[x1, y1].WaterData.WaterLevel);
+                        if (Chunks[x, y].WallSegments[x1,y1].WallType==WallType.Door)
+                        {
+                            Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
+                            //WorldController.Instance.WallManager.SetDoor(coords.x, coords.y,WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
+                            Chunks[x, y].WallSegments[x1, y1].DestroyWall();
+                            WallHelpers.CreateDoorObject(coords.x,coords.y,
+                                WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
+                        }
                     }
                 }
 

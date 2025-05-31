@@ -83,7 +83,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     public Tile ToDraw;
     public void SetTile(Tile tile)
     {
-        Debug.Log("Set tile sprite for " + x + "," + y + " to " + tile.sprite.name.ToString());
+        Debug.Log("Set tile sprite for " + x + "," + y + " to " + tile.sprite.name.ToString()+"|"+WallType);
         ToDraw = tile;
         Drawn = true;
     }
@@ -94,11 +94,15 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         WallType = WallType.None;
         Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(Position());
         Pathfinding.UpdateNodeData(x, y, true);
+        if (Collider != null)
+        {
+            GameObject.Destroy(Collider);
+        }
     }
 
     public void OnObjectDeselected()
     {
-        if (Collider.gameObject.GetComponentInChildren<SelectedOutline>())
+        if (Collider!=null && Collider.gameObject.GetComponentInChildren<SelectedOutline>())
         {
             Collider.gameObject.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
         }

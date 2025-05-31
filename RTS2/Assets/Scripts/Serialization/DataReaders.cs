@@ -472,31 +472,13 @@ public static class DataReaders
                     yc = RoundToMultiple(currentTile.y, WorldChunkManager.ChunkSize);
                     gotCorner = true;
                 }
-                if (xc == 0||currentTile. x<WorldChunkManager.ChunkSize)
-                {
-                    x = currentTile.x;
-
-                }
-                else
-                {
-                    x = currentTile.x - ((xc));
-
-                }
-                if (yc == 0||currentTile.y<WorldChunkManager.ChunkSize)
-                {
-                    y = currentTile.y;
-
-                }
-                else
-                {
-                    y = currentTile.y - ((yc));
-
-                }
+               
 
 
                 retVal[currentTile.localCoords.x, currentTile.localCoords.y] = currentTile;
-               WorldController.Instance.WallManager.GenerateWallCollider(retVal[currentTile.localCoords.x, currentTile.localCoords.y]);
-
+              
+                    WorldController.Instance.WallManager.GenerateWallCollider(retVal[currentTile.localCoords.x, currentTile.localCoords.y]);
+                
             }
         }
         
@@ -519,9 +501,16 @@ public static class DataReaders
         WallType wallType = (WallType)ParseDataObject(split[0], split[1]);
         split = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         string wallVisualType = (string)ParseDataObject(split[0], split[1]);
-        Debug.Log("Wall visual type " + wallVisualType + "," + coords+","+wallType); 
-        
-        WallSegment retVal = new WallSegment(coords.x, coords.y, WallTypeManager.Instance.AllObjects[wallVisualType],-1,-1);
+        Debug.Log("Wall visual type " + wallVisualType + "," + coords+","+wallType);
+        WallSegment retVal = null;
+        if (wallType == WallType.Door)
+        {
+            retVal=new DoorSegment(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.AllObjects[wallVisualType], -1, -1);
+        }
+        else
+        {
+            retVal = new WallSegment(coords.x, coords.y, WallTypeManager.Instance.AllObjects[wallVisualType], -1, -1);
+        }
         retVal.SetMyUID(uid);
         retVal.WallType = wallType;
         retVal.HasWallUnderConstruction = false;

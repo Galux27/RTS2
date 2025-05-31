@@ -12,6 +12,7 @@ public class DoorSegment : WallSegment
         myAnim = WallHelpers.GetDoorVisual(this, WorldController.Instance.WallManager);
         DoorAnimator=new TilemapAnimator(myAnim,toPlaceOn,new Vector3Int(x,y,0));
         DoorAnimator.OnEnd += OnAnimEnd;
+        SetTile(myAnim.AnimationFrames[0]);
     }
     TilemapAnimation myAnim;
     public TilemapAnimator DoorAnimator;
@@ -68,6 +69,7 @@ public class DoorSegment : WallSegment
         currentState = DoorState.Opening;
         DoorAnimator.Reverse = false;
         DoorAnimator.StartAnimation();
+        
         Collider.SetActive(false);
     }
 
