@@ -318,14 +318,12 @@ public static class DataReaders
 
     public static List<EnvironmentObjectInstance> ParseEnvironmentObjects(string data)
     {
-        Debug.Log("Env Objects: parsing objects from " + data);
         List<EnvironmentObjectInstance> instances = new List<EnvironmentObjectInstance>();
         string[] objects = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT,System.StringSplitOptions.RemoveEmptyEntries);
         
         
         for(int x = 0; x < objects.Length; x++)
         {
-            Debug.Log("Env Objects: Parsing environment object from " + objects[x] );
 
             EnvironmentObjectInstance toAdd = ParseEnvironmentObject(objects[x]);
             if (toAdd != null) {
@@ -497,6 +495,7 @@ public static class DataReaders
 
 
                 retVal[currentTile.localCoords.x, currentTile.localCoords.y] = currentTile;
+               WorldController.Instance.WallManager.GenerateWallCollider(retVal[currentTile.localCoords.x, currentTile.localCoords.y]);
 
             }
         }

@@ -27,11 +27,14 @@ public class ResourceInstance : MonoBehaviour,ISerialize
 
     private void OnDestroy()
     {
-        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
-        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveResourceObject(this);
+        if (WorldChunkManager.Instance != null)
+        {
+            Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+            WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveResourceObject(this);
+        }
     }
 
-    public DataToSerialize GetDataToSerialize()
+        public DataToSerialize GetDataToSerialize()
     {
         DataToSerialize retVal = new DataToSerialize();
         retVal.AddDataToSerialize(DataKeys.ObjectKey, data.Name());

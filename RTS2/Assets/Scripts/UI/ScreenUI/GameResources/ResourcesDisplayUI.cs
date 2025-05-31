@@ -17,7 +17,11 @@ public class ResourcesDisplayUI : BaseUIElement
             return instance;
         }
     }
+    private void Awake()
+    {
+        ResourceUIElements = new Dictionary<string, ResourceUI>();
 
+    }
 
     public Transform ContentsParent;
     public GameObject ResourceUIPrefab;
@@ -27,12 +31,15 @@ public class ResourcesDisplayUI : BaseUIElement
     {
         if (ResourceUIElements.ContainsKey(toDraw.ResourceName))
         {
+            Debug.Log("Resources: returning due to " + toDraw.ResourceName + " already existing");
             return;
         }
         GameObject g = Instantiate(ResourceUIPrefab,ContentsParent);
         ResourceUI resource=g.GetComponent<ResourceUI>();
         resource.Init(toDraw.ResourceName, toDraw.Quantity, ResourceController.Instance.AllResources[toDraw.ResourceName].Item);
         ResourceUIElements.Add(toDraw.ResourceName, resource);
+        Debug.Log("Resources: created resource icon for "+  toDraw.ResourceName);
+
     }
 
     public void UpdateUIElement(ResourceData toDraw)

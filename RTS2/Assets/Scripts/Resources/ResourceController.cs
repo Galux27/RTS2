@@ -36,9 +36,9 @@ public class ResourceController : MonoBehaviour
             if (AllResources.ContainsKey(i.Name) == false)
             {
                 AllResources.Add(i.Name, i);
-                CreateResourceInstance(i, 1);
             }
         }
+        Debug.Log("Resources: loaded " + AllResources.Count);
     }
 
     public GameObject CreateResourceInstance(ResourceInstanceData toRender, Vector3 positionOverride = default)

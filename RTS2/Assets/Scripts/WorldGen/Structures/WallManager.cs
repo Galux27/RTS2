@@ -72,7 +72,6 @@ public class WallManager
     public void SetWall(int x, int y, WallTile wallTile, bool value = true)
     {
         WallSegment wall= WallHelpers.GetWallAtCoords(x, y);
-        Debug.Log("Adding wall at " + x + "," + y+" wall found " + wall.x+","+wall.y);
 
         wall.SetHasWall(value) ;
         wall.SetWallType(wallTile);

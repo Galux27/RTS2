@@ -36,7 +36,6 @@ public class WallTypeManager : MonoBehaviour
             if ((items[x] as WallTile) != null)
             {
                 
-                Debug.Log("Loading env object " + items[x].name);
                 WallTile i = (WallTile)items[x];
                 if (AllObjects.ContainsKey(i.WallName) == false)
                 {
