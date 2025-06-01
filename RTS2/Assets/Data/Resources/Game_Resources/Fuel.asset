@@ -17,3 +17,4 @@ MonoBehaviour:
   ContainersICanBeStoredIn:
   - Tank
   WeightPerUnit: 0.1
+  BaseCapacity: 200

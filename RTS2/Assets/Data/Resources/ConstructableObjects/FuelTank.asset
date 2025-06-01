@@ -20,9 +20,15 @@ MonoBehaviour:
   Width: 2
   Height: 1
   CanHarvest: 0
+  IsDecoration: 0
+  RequiresUpdate: 0
   Resources:
     resources: []
     HarvestLength: 0
+  CapacityData:
+    CapacityData:
+    - CapacityProvidedFor: Fuel
+      CapacityProvided: 200
   MaxHealth: 30
   Cost: 0
   TimeToBuild: 10

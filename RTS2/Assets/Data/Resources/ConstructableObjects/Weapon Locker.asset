@@ -20,9 +20,15 @@ MonoBehaviour:
   Width: 2
   Height: 1
   CanHarvest: 0
+  IsDecoration: 0
+  RequiresUpdate: 0
   Resources:
     resources: []
     HarvestLength: 0
+  CapacityData:
+    CapacityData:
+    - CapacityProvidedFor: Munitions
+      CapacityProvided: 100
   MaxHealth: 30
   Cost: 100
   TimeToBuild: 5

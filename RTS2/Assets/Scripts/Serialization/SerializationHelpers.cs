@@ -144,13 +144,17 @@ public static class SerializationHelpers
     {
         EasyStopwatch.StartStopwatch();
         IDManager.OnLevelLoaded();
-        ReadMiscFile(name);
         ReadRoomsFile(name);
 
         WorldChunkManager.Instance.LoadChunksFromFile(name);
         ReadUnitFile(name);
         BehaviourDeserializer.DeserializeBehaviours();
         InventoryDeserializer.DeserializeInventorys();
+        ReadMiscFile(name);
+        for(int x=0;x<RoomManager.Instance.roomList.Count;x++)
+        {
+            RoomManager.Instance.roomList[x].RefreshRoom();
+        }
         Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
     }
 

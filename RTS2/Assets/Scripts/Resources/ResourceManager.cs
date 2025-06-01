@@ -37,6 +37,15 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
+    public int GetResourceCapacity(string resourceKey)
+    {
+        if (UserResources.ContainsKey(resourceKey))
+        {
+            return UserResources[resourceKey].GetCapacity();
+        }
+        return 0;
+    }
+
     void InitResourceManager()
     {
         UserResources = new Dictionary<string, ResourceData>();
@@ -85,7 +94,19 @@ public class ResourceManager : MonoBehaviour
         
     }
 
-    
+    public void UpdateResourceCapacity(string name)
+    {
+        UserResources[name].NeedsCapacityRefresh = true;
+
+    }
+    public void UpdateResourceUI()
+    {
+        foreach(KeyValuePair<string,ResourceData> kvp in UserResources)
+        {
+            ResourcesDisplayUI.Instance.UpdateUIElement(kvp.Value);
+
+        }
+    }
 
     public void AddQuantityOfResource(string key,int quantity)
     {
@@ -107,11 +128,16 @@ public class ResourceManager : MonoBehaviour
     public List<Storage> StoragesToUse = new List<Storage>();
 }
 
+
+/// <summary>
+/// Class to store the data on a resource in the users game
+/// </summary>
 public class ResourceData
 {
     public string ResourceName;
     public int Quantity;
-
+    public bool NeedsCapacityRefresh = true;
+    public int CapacityCache = 0;
     public ResourceData(string name)
     {
         ResourceName = name;
@@ -121,10 +147,45 @@ public class ResourceData
     public void IncreaseQuantitiy(int val)
     {
         Quantity += val;
+        if (Quantity > GetCapacity())
+        {
+            Quantity = GetCapacity();
+        }
     }
 
     public void DecreaseQuantity(int val)
     {
         Quantity -= val;
+    }
+
+    public int GetCapacity()
+    {
+        if (NeedsCapacityRefresh)
+        {
+            CapacityCache = 0;
+            CapacityCache = ResourceController.Instance.AllResources[ResourceName].BaseCapacity;
+
+            for(int x = 0; x < RoomManager.Instance.roomList.Count; x++)
+            {
+                if (!RoomManager.Instance.roomList[x].CanUseRoom())
+                {
+                    continue;
+                }
+                for(int q = 0; q < RoomManager.Instance.roomList[x].ObjectsInRoom.Count; q++)
+                {
+                    string key = (RoomManager.Instance.roomList[x].ObjectsInRoom[q].ObjectKey);
+                    EnvironmentObject envObj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+                    if (envObj != null)
+                    {
+                        if (envObj.CapacityData != null && envObj.CapacityData.IncreasesCapacityForResource(ResourceName))
+                        {
+                            CapacityCache += envObj.CapacityData.GetCapacityIncreaseForResource(ResourceName);
+                        }
+                    }
+                }
+            }
+
+        }
+        return CapacityCache;
     }
 }

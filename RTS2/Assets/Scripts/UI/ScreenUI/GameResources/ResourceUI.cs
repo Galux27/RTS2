@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.Port;
+
 public class ResourceUI : MonoBehaviour
 {
     public TextMeshProUGUI Quantitiy;
     public Image Icon;
-    public void Init(string name,int quantity,Sprite icon)
+    public void Init(string name,int quantity,Sprite icon,int capacity)
     {
         //Name.text = name;
-        Quantitiy.text = quantity.ToString();
+        Quantitiy.text = quantity.ToString() + "/" + capacity;
         Icon.sprite = icon;
     }
 
-    public void UpdateQuantity(int newVal)
+    public void UpdateQuantity(int newVal,int capacity)
     {
-        Quantitiy.text = newVal.ToString();
+        Quantitiy.text = newVal.ToString()+"/"+capacity;
     }
 }

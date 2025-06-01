@@ -296,6 +296,10 @@ public class WallManager
         //    }
         //}
         wall = WallHelpers.GetWallAtCoords(x, y);
+        if (wall.WallType == WallType.Wall)
+        {
+            WorldController.Instance.SetTraversible(x, y,false);
+        }
         WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
 
 

@@ -102,7 +102,7 @@ public class RoomManager : MonoBehaviour
 
     public void OnConstructableCreated(Vector2Int coords, ConstructableObjectInstance Created)
     {
-        Debug.Log("trying to Constructable added to room at " + coords);
+        Debug.Log("invalid: trying to Constructable added to room at " + coords+" "+Created.ObjectKey);
 
         for (int x=0;x< roomList.Count;x++)
         {

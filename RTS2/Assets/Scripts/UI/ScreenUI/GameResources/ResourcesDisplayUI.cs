@@ -32,7 +32,7 @@ public class ResourcesDisplayUI : BaseUIElement
         }
         GameObject g = Instantiate(ResourceUIPrefab,ContentsParent);
         ResourceUI resource=g.GetComponent<ResourceUI>();
-        resource.Init(toDraw.ResourceName, toDraw.Quantity, ResourceController.Instance.AllResources[toDraw.ResourceName].Item);
+        resource.Init(toDraw.ResourceName, toDraw.Quantity, ResourceController.Instance.AllResources[toDraw.ResourceName].Item, ResourceManager.Instance.UserResources[toDraw.ResourceName].GetCapacity());
         ResourceUIElements.Add(toDraw.ResourceName, resource);
         Debug.Log("Resources: created resource icon for "+  toDraw.ResourceName);
 
@@ -46,6 +46,6 @@ public class ResourcesDisplayUI : BaseUIElement
         }
         Debug.Log("Resources: updated ui element for " + toDraw.ResourceName+" to "+  toDraw.Quantity);
 
-        ResourceUIElements[toDraw.ResourceName].UpdateQuantity(toDraw.Quantity);
+        ResourceUIElements[toDraw.ResourceName].UpdateQuantity(toDraw.Quantity,ResourceManager.Instance.GetResourceCapacity(toDraw.ResourceName));
     }
 }

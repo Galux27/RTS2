@@ -54,12 +54,18 @@ public static class DataReaders
         if (keyValueSplit.Length > 1)
         {
             chunk.EnvironmentObjectsInChunk = (List<EnvironmentObjectInstance>)ParseDataObject(keyValueSplit[0], splitListFromData[3].Substring(keyValueSplit[0].Length));
+            ConstructableObjectInstance currentObj = null;
             for(int x = 0; x < chunk.EnvironmentObjectsInChunk.Count; x++)
             {
                 chunk.EnvironmentObjectsInChunk[x].SetChunk(chunk);
+                currentObj = chunk.EnvironmentObjectsInChunk[x] as ConstructableObjectInstance;
+                if (currentObj != null)
+                {
+                    RoomManager.Instance.OnConstructableCreated(currentObj.coords, currentObj);
+                }
+                }
+
             }
-        
-        }
         keyValueSplit = splitListFromData[4].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         if (keyValueSplit.Length > 1)
         {
@@ -168,7 +174,6 @@ public static class DataReaders
     }
     static Dictionary<string, ResourceData> DesieralizeResources(string data)
     {
-        Debug.Log("Desieralizing resources from " + data);
         // Construction Supplies,217`Food,0`Fuel,0`Money,0`Munitions,0`
         string[] split = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         string[] keyObjectSplit = null;

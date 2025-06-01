@@ -86,9 +86,24 @@ public class Room:ISerialize
                 }
             }
         }
-        ObjectsInRoom.AddRange(newObjects);
+        for(int x = 0; x < newObjects.Count; x++)
+        {
+            string key = newObjects[x].ObjectKey;
+            EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+            if (obj.CapacityData!=null&&obj.CapacityData.CapacityData.Count>0)
+            {
+                for(int q = 0; q < obj.CapacityData.CapacityData.Count; q++)
+                {
+                    ResourceManager.Instance.UpdateResourceCapacity(obj.CapacityData.CapacityData[q].CapacityProvidedFor);
+                }
+            }
+        }
+        ResourceManager.Instance.UpdateResourceUI();
+       ObjectsInRoom.AddRange(newObjects);
     }
 
+
+    
 
     void CheckForConstructablesNoLongerInRoom(List<Vector2Int> tilesInRoom)
     {
@@ -106,8 +121,22 @@ public class Room:ISerialize
                 newObjectsInRoom.Add(ObjectsInRoom[y] );
             }
         }
+        for (int x = 0; x < ObjectsInRoom.Count; x++)
+        {
+            string key = ObjectsInRoom[x].ObjectKey;
+            EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+            if (obj.CapacityData != null && obj.CapacityData.CapacityData.Count > 0)
+            {
+                for (int q = 0; q < obj.CapacityData.CapacityData.Count; q++)
+                {
+                    ResourceManager.Instance.UpdateResourceCapacity(obj.CapacityData.CapacityData[q].CapacityProvidedFor);
+                }
+            }
+        }
+        ResourceManager.Instance.UpdateResourceUI();
         ObjectsInRoom = newObjectsInRoom;
 
+     
 
     }
 
@@ -146,6 +175,22 @@ public class Room:ISerialize
     public virtual void SetCanUseRoom(bool value)
     {
         CanUseRoomValue = value;
+        if (CanUseRoomValue)
+        {
+            for (int x = 0; x < ObjectsInRoom.Count; x++)
+            {
+                string key = ObjectsInRoom[x].ObjectKey;
+                EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+                if (obj.CapacityData != null && obj.CapacityData.CapacityData.Count > 0)
+                {
+                    for (int q = 0; q < obj.CapacityData.CapacityData.Count; q++)
+                    {
+                        ResourceManager.Instance.UpdateResourceCapacity(obj.CapacityData.CapacityData[q].CapacityProvidedFor);
+                    }
+                }
+            }
+        }
+            ResourceManager.Instance.UpdateResourceUI();
     }
 
     public bool DoesRoomContainPosition(Vector2Int coords)
@@ -155,8 +200,19 @@ public class Room:ISerialize
 
     public void OnObjectAddedToRoom(ConstructableObjectInstance obj)
     {
-        Debug.Log("Invalid: added object to room"+obj.Name());
+        
         ObjectsInRoom.Add(obj);
+        
+            string key = obj.Name();
+            EnvironmentObject objData = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+            if (objData.CapacityData != null && objData.CapacityData.CapacityData.Count > 0)
+            {
+                for (int q = 0; q < objData.CapacityData.CapacityData.Count; q++)
+                {
+                    ResourceManager.Instance.UpdateResourceCapacity(objData.CapacityData.CapacityData[q].CapacityProvidedFor);
+                }
+            }
+        ResourceManager.Instance.UpdateResourceUI();
     }
 
 

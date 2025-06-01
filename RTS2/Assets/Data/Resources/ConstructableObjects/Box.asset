@@ -20,12 +20,25 @@ MonoBehaviour:
   Width: 1
   Height: 1
   CanHarvest: 0
+  IsDecoration: 0
+  RequiresUpdate: 0
   Resources:
     resources: []
     HarvestLength: 0
+  CapacityData:
+    CapacityData:
+    - CapacityProvidedFor: Construction Supplies
+      CapacityProvided: 20
+    - CapacityProvidedFor: Food
+      CapacityProvided: 20
+    - CapacityProvidedFor: Money
+      CapacityProvided: 20
+    - CapacityProvidedFor: Munitions
+      CapacityProvided: 20
   MaxHealth: 30
   Cost: 0
   TimeToBuild: 1
+  RequirementsToBuild: []
   MyBehaviour: {fileID: 0}
   WeightLimit: 9999
   Filter:

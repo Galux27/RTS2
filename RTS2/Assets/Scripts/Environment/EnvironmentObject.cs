@@ -16,6 +16,7 @@ public class EnvironmentObject : ScriptableObject
     public int Width, Height;
     public bool CanHarvest,IsDecoration,RequiresUpdate;
     public HarvestableResourceData Resources;
+    public ResourceCapacityData CapacityData;
     public float MaxHealth;
     public Vector3 Size()
     {

@@ -9,4 +9,5 @@ public class Resource : ScriptableObject
     public Sprite Item;
     public List<string> ContainersICanBeStoredIn;
     public float WeightPerUnit;
+    public int BaseCapacity;
 }

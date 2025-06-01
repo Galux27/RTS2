@@ -18,3 +18,4 @@ MonoBehaviour:
   - Box
   - Crate
   WeightPerUnit: 0.1
+  BaseCapacity: 200
