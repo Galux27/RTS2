@@ -226,6 +226,7 @@ public class DataKeys
     public const string EnvironmentObjects = "ENV_OBJECTS";//todo
     public const string Quantitiy = "QUANTITY";
     public const string Resources = "RESOURCE_OBJECTS";//todo
+    public const string ResourcesStored = "RESOURCES_STORED";
     public const string ItemUID = "ITEM_UID";
     public const string ItemsInContainer = "CONTAINER_CONTENTS";//todo
     public const string CurrentProgress = "CURRENT_PROGRESS";
@@ -409,6 +410,18 @@ public static class SerializeDataHelpers
 
             }
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), stored);
+        }else if (key == DataKeys.ResourcesStored)
+        {
+            List<string> data = new List<string>();
+            Dictionary<string,ResourceData> stored = (Dictionary<string, ResourceData>)value;
+            foreach(KeyValuePair<string,ResourceData> kvp in stored)
+            {
+                data.Add(kvp.Key);
+                data.Add(DATA_SPLIT.ToString());
+                data.Add(kvp.Value.Quantity.ToString());
+                data.Add(LIST_ELEMENT_SPLIT.ToString());
+            }
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), data);
         }
         Debug.LogError("Could not serialize " + key + " as its been assigned a serializer");
         return "";

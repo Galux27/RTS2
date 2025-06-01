@@ -17,11 +17,7 @@ public class ResourcesDisplayUI : BaseUIElement
             return instance;
         }
     }
-    private void Awake()
-    {
-        ResourceUIElements = new Dictionary<string, ResourceUI>();
-
-    }
+  
 
     public Transform ContentsParent;
     public GameObject ResourceUIPrefab;
@@ -44,6 +40,12 @@ public class ResourcesDisplayUI : BaseUIElement
 
     public void UpdateUIElement(ResourceData toDraw)
     {
+        if (!ResourceUIElements.ContainsKey(toDraw.ResourceName))
+        {
+            CreateUIElement(toDraw);
+        }
+        Debug.Log("Resources: updated ui element for " + toDraw.ResourceName+" to "+  toDraw.Quantity);
+
         ResourceUIElements[toDraw.ResourceName].UpdateQuantity(toDraw.Quantity);
     }
 }

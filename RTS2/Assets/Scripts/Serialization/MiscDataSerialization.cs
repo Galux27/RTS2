@@ -12,6 +12,7 @@ public static class MiscDataSerialization
         retVal.AddDataToSerialize(DataKeys.CameraZoom, CameraController.Instance.GetCameraZoom());
         retVal.AddDataToSerialize(DataKeys.UID, IDManager.GetCurrentID());
         retVal.AddDataToSerialize(DataKeys.WaterLevel, PauseMenuUIElement.SpeedGameAtWhenOpened);
+        retVal.AddDataToSerialize(DataKeys.ResourcesStored, ResourceManager.Instance.UserResources);
         return new SerializedData(retVal);
    }
 
@@ -34,6 +35,7 @@ public static class MiscDataSerialization
         CameraController.Instance.transform.position = cameraPos;
         CameraController.Instance.SetCameraZoom((float)deserializedData[DataKeys.CameraZoom]);
         DeltaTimeWrapper.GameplayDeltaMultiplier = (float)deserializedData[DataKeys.WaterLevel];
+        ResourceManager.Instance.SetUserResources( (Dictionary<string, ResourceData>)deserializedData[DataKeys.ResourcesStored]);
         IDManager.SetBaseUID((ulong)deserializedData[DataKeys.UID]);
     }
 }

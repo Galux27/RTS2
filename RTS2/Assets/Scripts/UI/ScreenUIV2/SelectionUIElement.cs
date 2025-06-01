@@ -100,24 +100,28 @@ public class SelectionUIElement :BaseUIElement
         {
             foreach (var item in units)
             {
-                for (int x = 0; x < item.Value.Count; x++)
+                if (item.Value.Count > 0)
                 {
-                    GameObject button = Instantiate(SelectedObjectButtonPrefab, SelectedObjectsParent.transform);
-                    Action onClick = () => {
+                    for (int x = 0; x < item.Value.Count; x++)
+                    {
+                        GameObject button = Instantiate(SelectedObjectButtonPrefab, SelectedObjectsParent.transform);
+                        Action onClick = () =>
+                        {
 
-                        SelectableManager.Instance.ClearSelectables();
-                        SelectableManager.Instance.AddSelectable(item.Value[x]);
-                        SelectableManager.OnSelectionChanged();
-                        SelectionController.Instance.blockInputTimer = .2f;
-                        
+                            SelectableManager.Instance.ClearSelectables();
+                            SelectableManager.Instance.AddSelectable(item.Value[x]);
+                            SelectableManager.OnSelectionChanged();
+                            SelectionController.Instance.blockInputTimer = .2f;
 
-                    };
-                    button.GetComponent<SelectedObjectUIElement>().SetupButton(item.Value[x] as ObjectInfo, 1, onClick);
 
+                        };
+                        button.GetComponent<SelectedObjectUIElement>().SetupButton(item.Value[x] as ObjectInfo, 1, onClick);
+
+                    }
                 }
 
+                }
             }
-        }
     }
 
     void DrawSelectedObjects()

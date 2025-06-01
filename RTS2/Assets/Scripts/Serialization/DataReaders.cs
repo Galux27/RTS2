@@ -157,16 +157,31 @@ public static class DataReaders
                 return ParseResourceObjects(data);
             case DataKeys.RoomTiles:
                 return ParseRoomTiles(data);
-
+            case DataKeys.ResourcesStored:
+                return DesieralizeResources(data);
             case DataKeys.ItemUID:
-
             case DataKeys.ItemsInContainer:
             default:
                 break;
         }
         return null;
     }
-
+    static Dictionary<string, ResourceData> DesieralizeResources(string data)
+    {
+        Debug.Log("Desieralizing resources from " + data);
+        // Construction Supplies,217`Food,0`Fuel,0`Money,0`Munitions,0`
+        string[] split = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] keyObjectSplit = null;
+        Dictionary<string, ResourceData> retVal = new Dictionary<string, ResourceData>();
+        for (int x = 0; x < split.Length; x++)
+        {
+            keyObjectSplit = split[x].Split(SerializeDataHelpers.DATA_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            ResourceData res = new ResourceData(keyObjectSplit[0]);
+            res.Quantity = int.Parse(keyObjectSplit[1]);
+            retVal.Add(keyObjectSplit[0], res);
+        }
+        return retVal;
+    }
     static List<Vector2Int> ParseRoomTiles(string data)
     {
         List<Vector2Int> retVal = new List<Vector2Int>();

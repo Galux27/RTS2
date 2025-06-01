@@ -20,9 +20,21 @@ public class ResourceManager : MonoBehaviour
 
     public Dictionary<string, ResourceData> UserResources;
 
-    private void Start()
+    private void Awake()
     {
         InitResourceManager();
+    }
+
+    public void SetUserResources(Dictionary<string, ResourceData> data)
+    {
+        if (UserResources == null)
+        {
+            InitResourceManager();
+        }
+        foreach(KeyValuePair<string, ResourceData> kvp in data)
+        {
+            AddQuantityOfResource(kvp.Value.ResourceName, kvp.Value.Quantity);
+        }
     }
 
     void InitResourceManager()
@@ -77,10 +89,9 @@ public class ResourceManager : MonoBehaviour
 
     public void AddQuantityOfResource(string key,int quantity)
     {
-        Debug.Log("RES: Adding quantity of resource " + key + " q" + quantity + "|" + UserResources[key].Quantity);
+        Debug.Log("Adding quantity of " + key + " q " + quantity);
         UserResources[key].IncreaseQuantitiy(quantity);
         ResourcesDisplayUI.Instance.UpdateUIElement(UserResources[key]);
-        Debug.Log("RES: Total after "+ UserResources[key].ResourceName+"|" + UserResources[key].Quantity);
 
     }
 
@@ -89,6 +100,8 @@ public class ResourceManager : MonoBehaviour
         UserResources[key].DecreaseQuantity( quantity);
         ResourcesDisplayUI.Instance.UpdateUIElement(UserResources[key]);
     }
+
+   
 
     public Action OnRefreshResourceData;
     public List<Storage> StoragesToUse = new List<Storage>();
