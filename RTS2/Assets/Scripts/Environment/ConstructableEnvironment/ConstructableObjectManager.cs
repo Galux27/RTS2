@@ -128,7 +128,9 @@ public class ConstructableObjectManager : MonoBehaviour
 
         Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(pos);
         new BuildableStructure(coords.x, coords.y, buildingData.TimeToBuild, false, OnBuilt, buildingData.Size(),default,ConstructableType.Furniture,buildingData.Name);
-        ResourceHelpers.ConsumeResources(resourcesToConsume);
+       
+        
+        ResourceHelpers.ConsumeResources(selectedToConstruct.RequirementsToBuild);
     }
     
     public ConstructableObject GetData(string key)

@@ -73,6 +73,7 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
         {
             return;
         }
+        Debug.Log("RES: Adding item to inventory "+  inventoryObject.Name());
         if (inventoryObject.Weight() + GetSumOfInventoryWeight() <= InventoryCapacity)
         {
 

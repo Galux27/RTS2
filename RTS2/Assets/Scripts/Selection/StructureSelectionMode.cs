@@ -125,7 +125,7 @@ public class StructureSelectionMode: SelectionMode
         if (WallHelpers.CanIPlaceWallAtPosition(coords.x, coords.y) && hasEnoughResources)
         {
             WallHelpers.CreateWallBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
-            ResourceHelpers.ConsumeResources(resourcesForConstruction);
+            ResourceHelpers.ConsumeResources(WallTypeManager.Instance.SelectedWallTile.RequirementsToBuild);
         }
     }
 
@@ -201,7 +201,7 @@ public class StructureSelectionMode: SelectionMode
         if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y) && hasEnoughResources)
         {
             WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
-            ResourceHelpers.ConsumeResources(resourcesForConstruction);
+            ResourceHelpers.ConsumeResources(WallTypeManager.Instance.SelectedWallTile.RequirementsToBuild);
 
         }
     }

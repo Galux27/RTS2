@@ -35,7 +35,7 @@ public class CollectResources_Behaviour : BehaviourBase
 
     public override bool CanPerformBehaviour()
     {
-        return unitToMove != null && toCollect != null&& inventory.IsNotFull();
+        return unitToMove != null && toCollect != null;
     }
 
     public override bool IsBehaviourComplete()
@@ -65,8 +65,8 @@ public class CollectResources_Behaviour : BehaviourBase
         }
         else
         {
-
-            inventory.AddItemToInventory(toCollect.InstanceData);
+            ResourceManager.Instance.AddQuantityOfResource(toCollect.InstanceData.Name(), toCollect.InstanceData.Quantity);
+            GameObject.Destroy(toCollect.gameObject);
             collected = true;
         }
 
