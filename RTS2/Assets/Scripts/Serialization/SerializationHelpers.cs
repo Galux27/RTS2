@@ -110,13 +110,13 @@ public static class SerializationHelpers
     {
         string name = "CHUNK_TEST" + WorldSectionExtension ;
         List<string> dataWriting = new List<string>();
-        for (int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
-        {
-            for (int y = 0; y < WorldChunkManager.Instance.Chunks.GetLength(1); y++)
-            {
-                dataWriting.Add(WorldChunkManager.Instance.Chunks[x, y].Serialize().Data);
-            }
-        }
+        //for (int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
+        //{
+        //    for (int y = 0; y < WorldChunkManager.Instance.Chunks.GetLength(1); y++)
+        //    {
+        //        dataWriting.Add(WorldChunkManager.Instance.Chunks[x, y].Serialize().Data);
+        //    }
+        //}
         EasyStopwatch.StopStopwatch();
         WriteToFile(path,name,dataWriting);
     }

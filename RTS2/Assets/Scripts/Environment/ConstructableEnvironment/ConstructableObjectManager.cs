@@ -149,9 +149,8 @@ public class ConstructableObjectManager : MonoBehaviour
             return;
         }
         ConstructableObject selectedToConstruct = AllObjects[toConstruct];
-        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         ConstructableObjectInstance instance = new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name);
-        WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddEnvironmentObject(instance);
+        WorldChunkManager.Instance.AddEnvironmentObjectInstanceToChunk(instance);
         WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !AllObjects[toConstruct].BlocksTile);
     }
 }

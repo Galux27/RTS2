@@ -17,7 +17,7 @@ public static class WorldTileHelpers
         Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         if (WorldChunkManager.Instance.CoordsValid(chunkForNode.x,chunkForNode.y))
         {
-            WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForNode.x, chunkForNode.y];
+            WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords);
             coordsCache = coords - toGetFrom.WorldCoords;
             if (coordsCache.x < 0 || coordsCache.y < 0 || coordsCache.x >= WorldChunkManager.ChunkSize || coordsCache.y >= WorldChunkManager.ChunkSize) { return null; }
             return toGetFrom.ChunkTiles[coordsCache.x, coordsCache.y];

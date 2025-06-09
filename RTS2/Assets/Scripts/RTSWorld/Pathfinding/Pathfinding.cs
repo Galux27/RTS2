@@ -120,8 +120,7 @@ public static class Pathfinding
 
     public static PathfindingNode GetNodeFromCoords(Vector2Int coords)
     {
-        Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
-        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForNode.x, chunkForNode.y];
+        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords);
         if (toGetFrom == null)
         {
             return null;
@@ -134,8 +133,7 @@ public static class Pathfinding
 
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null)
     {
-        Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(Position+new Vector3(.5f,.5f,0f));
-        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForNode.x, chunkForNode.y];
+        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromPos(Position + new Vector3(.5f, .5f, 0f));//.Chunks[chunkForNode.x, chunkForNode.y];
 
         int xC = 0, yC = 0;
         for(int x = 0; x < toGetFrom.PathfindingNodes.GetLength(0); x++)

@@ -219,7 +219,7 @@ public class WallManager
         WorldController.Instance.WallManager.GenerateWallCollider(WallHelpers.GetWallAtCoords(x, y));
         Vector2Int asCoords = new Vector2Int(x, y);
         Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
-        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(asCoords); //Chunks[toGetFromCoords.x, toGetFromCoords.y];
         EnvironmentObjectInstance objAtWall = null;
         if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
         {
@@ -271,7 +271,7 @@ public class WallManager
         // WallHelpers.CalculateTileType(ref WallsInWorld[x, y], this, toUse);
         Vector2Int asCoords = new Vector2Int(x, y);
         Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
-        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(asCoords);//Chunks[toGetFromCoords.x, toGetFromCoords.y];
         EnvironmentObjectInstance objAtWall = null;
         if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
         {
@@ -327,7 +327,7 @@ public class WallManager
     {
         Vector2Int asCoords = new Vector2Int(x, y);
         Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
-        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(asCoords);//.Chunks[toGetFromCoords.x, toGetFromCoords.y];
         WallSegment wall = null;
 
         for (int x1 = 0; x1 < width; x1++)

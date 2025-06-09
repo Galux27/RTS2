@@ -41,7 +41,7 @@ public class FurnitureSelectionMode : SelectionMode
         }
 
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
-        Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Furniture);
+        Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords).GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Furniture);
 
         
 
@@ -203,7 +203,7 @@ public class FurnitureSelectionMode : SelectionMode
 
             Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
            WallHelpers.GetWallAtCoords(coords.x, coords.y).HasWallUnderConstruction = false;
-            WorldChunkManager.Instance.Chunks[v.x, v.y].RemoveConstructable(ConstructableHoveringOver);
+            WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords).RemoveConstructable(ConstructableHoveringOver);
         }
     }
 }

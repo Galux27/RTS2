@@ -20,8 +20,9 @@ public class ResourceInstance : MonoBehaviour,ISerialize
     }
     private void Start()
     {
-        Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
-        WorldChunkManager.Instance.Chunks[chunk.x,chunk.y].AddResourceObject(this);
+        WorldChunkManager.Instance.AddResourceObject(this);
+      //  Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+       // WorldChunkManager.Instance.Chunks[chunk.x,chunk.y].AddResourceObject(this);
     }
 
 
@@ -29,8 +30,9 @@ public class ResourceInstance : MonoBehaviour,ISerialize
     {
         if (WorldChunkManager.Instance != null)
         {
-            Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
-            WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveResourceObject(this);
+            WorldChunkManager.Instance.RemoveResourceObject(this);
+           // Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+           // WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveResourceObject(this);
         }
     }
 

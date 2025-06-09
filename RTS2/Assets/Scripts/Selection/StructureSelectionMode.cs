@@ -91,7 +91,7 @@ public class StructureSelectionMode: SelectionMode
 
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
 
-        Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
+        Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.GetWorldChunkFromPos(cursorPos).GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
 
 
         if (ValidToPlaceStructure(v))
@@ -149,7 +149,7 @@ public class StructureSelectionMode: SelectionMode
         {
             Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
            WallHelpers.GetWallAtCoords(coords).HasWallUnderConstruction = false;
-            WorldChunkManager.Instance.Chunks[v.x, v.y].RemoveConstructable(ConstructableHoveringOver);
+            WorldChunkManager.Instance.RemoveConstructable(ConstructableHoveringOver);
         }
     }
 
@@ -168,7 +168,7 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
 
         Constructable ConstructableHoveringOverThisFrame =
-            WorldChunkManager.Instance.Chunks[v.x, v.y].GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
+            WorldChunkManager.Instance.GetWorldChunkFromPos(cursorPos).GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
 
         if (ValidToPlaceStructure(v))
         {
@@ -220,7 +220,7 @@ public class StructureSelectionMode: SelectionMode
         {
             Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
             WallHelpers.GetWallAtCoords(coords).HasWallUnderConstruction = false;
-            WorldChunkManager.Instance.Chunks[v.x, v.y].RemoveConstructable(ConstructableHoveringOver);
+            WorldChunkManager.Instance.GetWorldChunkFromPos(cursorPos).RemoveConstructable(ConstructableHoveringOver);
         }
     }
 

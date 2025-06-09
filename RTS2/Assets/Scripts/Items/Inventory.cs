@@ -13,8 +13,9 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
     {
         if (!this.GetComponent<Unit>())
         {
-            Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
-            WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddContainerObject(this);
+            WorldChunkManager.Instance.AddContainerObject(this);
+            //Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+            //WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].AddContainerObject(this);
         }
     }
 
@@ -23,8 +24,9 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
     {
         if (!this.GetComponent<Unit>())
         {
-            Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
-            WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveContainerObject(this);
+            WorldChunkManager.Instance.RemoveContainerObject(this);
+            //Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
+            //WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveContainerObject(this);
         }
     }
 

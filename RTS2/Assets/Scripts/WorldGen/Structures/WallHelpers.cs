@@ -423,7 +423,7 @@ public static class WallHelpers
     {
 
         Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
-        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForWall.x, chunkForWall.y];
+        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords);//Chunks[chunkForWall.x, chunkForWall.y];
         coordsCache = coords - toGetFrom.WorldCoords;
         coordsCache = LimitToLocalChunk(coordsCache);
 
@@ -458,7 +458,7 @@ public static class WallHelpers
     {
         coordsCache=new Vector2Int(x,y);
          Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coordsCache);
-        WorldChunk toGetFrom = WorldChunkManager.Instance.Chunks[chunkForWall.x, chunkForWall.y];
+        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coordsCache);//Chunks[chunkForWall.x, chunkForWall.y];
         coordsCache = coordsCache - toGetFrom.WorldCoords;
         toGetFrom.WallSegments[coordsCache.x, coordsCache.y] = new DoorSegment(x, y, toPlaceOn, wallType,coordsCache.x,coordsCache.y);
         return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];

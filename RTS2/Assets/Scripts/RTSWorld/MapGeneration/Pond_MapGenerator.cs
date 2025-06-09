@@ -41,45 +41,45 @@ public class Pond_MapGenerator : MapFeatureBase
 
     public override void GenerateFeature()
     {
-        OnStartGenerate();
-        Vector2Int startCoords = new Vector2Int(Random.Range(5, WorldController.Instance.WorldWidth-5), Random.Range(5, WorldController.Instance.WorldHeight-5));
-        float dist = 0f;
-        Vector2Int curCoords = new Vector2Int();
-        WorldTile tileChecking = null;
-        Vector2Int chunkCoords = new Vector2Int(0, 0);
-        EnvironmentObjectInstance objectToClear = null;
+        //OnStartGenerate();
+        //Vector2Int startCoords = new Vector2Int(Random.Range(5, WorldController.Instance.WorldWidth-5), Random.Range(5, WorldController.Instance.WorldHeight-5));
+        //float dist = 0f;
+        //Vector2Int curCoords = new Vector2Int();
+        //WorldTile tileChecking = null;
+        //Vector2Int chunkCoords = new Vector2Int(0, 0);
+        //EnvironmentObjectInstance objectToClear = null;
         
-        for (int q = 0; q < Iterations; q++)
-        {
-            for(int x = startCoords.x - MaxDistForWater; x < startCoords.x + MaxDistForWater; x++)
-            {
-                for (int y = startCoords.y - MaxDistForWater;y < startCoords.y + MaxDistForWater; y++)
-                {
-                    curCoords.x = x;
-                    curCoords.y = y;
-                    dist = Vector2Int.Distance(curCoords, startCoords);
-                    if (dist <= MaxDistForWater)
-                    {
-                        tileChecking = WorldTileHelpers.GetTileFromCoords(x, y);
-                        if (tileChecking != null )
-                        {
-                            chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(curCoords);
-                            if (WorldChunkManager.Instance.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(curCoords, out objectToClear))
-                            {
-                                objectToClear.AdjustHealth(-99999999f);
-                            }
-                            tileChecking.tileType = "Mud";
-                            tileChecking.UpdateWaterLevel(MaxDistForWater-dist);
-                            PointsUsed.Add(curCoords);
-                        }
-                    }
-                }
-            }
-            startCoords = PointsUsed[Random.Range(0,PointsUsed.Count)];
+        //for (int q = 0; q < Iterations; q++)
+        //{
+        //    for(int x = startCoords.x - MaxDistForWater; x < startCoords.x + MaxDistForWater; x++)
+        //    {
+        //        for (int y = startCoords.y - MaxDistForWater;y < startCoords.y + MaxDistForWater; y++)
+        //        {
+        //            curCoords.x = x;
+        //            curCoords.y = y;
+        //            dist = Vector2Int.Distance(curCoords, startCoords);
+        //            if (dist <= MaxDistForWater)
+        //            {
+        //                tileChecking = WorldTileHelpers.GetTileFromCoords(x, y);
+        //                if (tileChecking != null )
+        //                {
+        //                    chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(curCoords);
+        //                    if (WorldChunkManager.Instance.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(curCoords, out objectToClear))
+        //                    {
+        //                        objectToClear.AdjustHealth(-99999999f);
+        //                    }
+        //                    tileChecking.tileType = "Mud";
+        //                    tileChecking.UpdateWaterLevel(MaxDistForWater-dist);
+        //                    PointsUsed.Add(curCoords);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    startCoords = PointsUsed[Random.Range(0,PointsUsed.Count)];
 
-        }
+        //}
 
-        //for (int r = 0; r < Iterations; r++)
+        ////for (int r = 0; r < Iterations; r++)
         //{
         //    Vector2Int center = startCoords + new Vector2Int(Random.Range(MinWidth, MaxWidth), Random.Range(MinHeight, MaxHeight));
         //    List<Vector2Int> pointsToCheck = new List<Vector2Int>();

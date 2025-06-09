@@ -65,41 +65,41 @@ public class Room:ISerialize
 
     void CheckForItemsThatCouldBeInRoom(List<Vector2Int> NewTilesInRoom)
     {
-        HashSet<Vector2Int> chunksChecked = new HashSet<Vector2Int>();
+       // HashSet<Vector2Int> chunksChecked = new HashSet<Vector2Int>();
 
-        List<ConstructableObjectInstance> newObjects = new List<ConstructableObjectInstance>();
-        for(int x = 0; x < NewTilesInRoom.Count; x++)
-        {
-            Vector2Int chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(NewTilesInRoom[x]);
-            if(!chunksChecked.Contains(chunkCoords))
-            {
-                WorldChunk chunk = WorldChunkManager.Instance.Chunks[chunkCoords.x, chunkCoords.y];
-                for(int q = 0; q < chunk.EnvironmentObjectsInChunk.Count; q++)
-                {
-                    if (chunk.EnvironmentObjectsInChunk[q].coords == NewTilesInRoom[x])
-                    {
-                        if(chunk.EnvironmentObjectsInChunk[q].GetType().Equals(typeof(ConstructableObjectInstance)))
-                        {
-                            newObjects.Add(chunk.EnvironmentObjectsInChunk[q] as ConstructableObjectInstance);
-                        }
-                    }
-                }
-            }
-        }
-        for(int x = 0; x < newObjects.Count; x++)
-        {
-            string key = newObjects[x].ObjectKey;
-            EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
-            if (obj.CapacityData!=null&&obj.CapacityData.CapacityData.Count>0)
-            {
-                for(int q = 0; q < obj.CapacityData.CapacityData.Count; q++)
-                {
-                    ResourceManager.Instance.UpdateResourceCapacity(obj.CapacityData.CapacityData[q].CapacityProvidedFor);
-                }
-            }
-        }
-        ResourceManager.Instance.UpdateResourceUI();
-       ObjectsInRoom.AddRange(newObjects);
+       // List<ConstructableObjectInstance> newObjects = new List<ConstructableObjectInstance>();
+       // for(int x = 0; x < NewTilesInRoom.Count; x++)
+       // {
+       //     Vector2Int chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(NewTilesInRoom[x]);
+       //     if(!chunksChecked.Contains(chunkCoords))
+       //     {
+       //         WorldChunk chunk = WorldChunkManager.Instance.Chunks[chunkCoords.x, chunkCoords.y];
+       //         for(int q = 0; q < chunk.EnvironmentObjectsInChunk.Count; q++)
+       //         {
+       //             if (chunk.EnvironmentObjectsInChunk[q].coords == NewTilesInRoom[x])
+       //             {
+       //                 if(chunk.EnvironmentObjectsInChunk[q].GetType().Equals(typeof(ConstructableObjectInstance)))
+       //                 {
+       //                     newObjects.Add(chunk.EnvironmentObjectsInChunk[q] as ConstructableObjectInstance);
+       //                 }
+       //             }
+       //         }
+       //     }
+       // }
+       // for(int x = 0; x < newObjects.Count; x++)
+       // {
+       //     string key = newObjects[x].ObjectKey;
+       //     EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+       //     if (obj.CapacityData!=null&&obj.CapacityData.CapacityData.Count>0)
+       //     {
+       //         for(int q = 0; q < obj.CapacityData.CapacityData.Count; q++)
+       //         {
+       //             ResourceManager.Instance.UpdateResourceCapacity(obj.CapacityData.CapacityData[q].CapacityProvidedFor);
+       //         }
+       //     }
+       // }
+       // ResourceManager.Instance.UpdateResourceUI();
+       //ObjectsInRoom.AddRange(newObjects);
     }
 
 

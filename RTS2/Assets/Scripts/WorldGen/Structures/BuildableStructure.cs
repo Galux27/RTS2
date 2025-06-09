@@ -18,8 +18,9 @@ public class BuildableStructure : Constructable,ObjectInfo
         this.offset = offset;
         this.myType = myType;
         constructOnComplete = toConstruct;
-        Vector2Int coords= WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(new Vector2Int(x,y));
-        WorldChunkManager.Instance.Chunks[coords.x, coords.y].AddConstructable(this);
+     //   Vector2Int coords= WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(new Vector2Int(x,y));
+        WorldChunkManager.Instance.AddConstructable(this);
+       // WorldChunkManager.Instance.Chunks[coords.x, coords.y].AddConstructable(this);
         if (forceComplete||DebugCheats.Instance.InstantConstruct())
         {
             OnObjectConstructed();
@@ -114,7 +115,7 @@ public class BuildableStructure : Constructable,ObjectInfo
             GameObjectPoolManager.Instance.ReturnObjectToPool(Object, "ConstructionMarker");
         }
             Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(new Vector2Int (x, y));
-        WorldChunkManager.Instance.Chunks[coords.x, coords.y].RemoveConstructable(this,false);
+        WorldChunkManager.Instance.RemoveConstructable(this);//was a second false argument here,not sure whyu 09/06/25
         Object = null;
         isDrawn = false;
        

@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class WorldChunkManager : MonoBehaviour
 {
     public const int ChunkSize = 16;
-
+    public const int ChunksPerBatch = 16;
     static WorldChunkManager instance;
-
+    public Dictionary<Vector2Int, WorldChunkBatch> ChunkBatches;
 
     public static WorldChunkManager Instance
     {
@@ -16,139 +17,120 @@ public class WorldChunkManager : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType<WorldChunkManager>();
+                if (instance.IsInit==false)
+                {
+                    instance.Init();
+                }
             }
             return instance;
         }
     }
-
-    public WorldChunk[,] Chunks;
-    private void Awake()
+    public bool IsInit = false;
+    public void Init()
     {
+       
         InitWorldChunks();
+        IsInit = true;
     }
     int Width, Height;
     public void InitWorldChunks()
     {
-        Chunks=new WorldChunk[WorldController.Instance.WorldWidth/ChunkSize, WorldController.Instance.WorldHeight / ChunkSize];
-       
-            for (int x = 0; x < Chunks.GetLength(0); x++)
-            {
-                for (int y = 0; y < Chunks.GetLength(1); y++)
-                {
-                    Chunks[x, y] = new WorldChunk(x, y);
-                }
-            }
-        
-       
-        Height = Chunks.GetLength(1);
-        Width = Chunks.GetLength(0);
-        for (int x = 0; x < Chunks.GetLength(0); x++)
+        ChunkBatches = new Dictionary<Vector2Int, WorldChunkBatch>();
+        ChunkBatches.Add(new Vector2Int(), WorldChunkBatch.CreateWorldChunkBatch(new Vector2Int()));
+        Debug.Log("Init world chunk manager");
+        foreach (KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
         {
-            for (int y = 0; y < Chunks.GetLength(1); y++)
-            {
-                Chunks[x, y].InitPathfindingNodes();
-            }
+            kvp.Value.InitWorldChunks();
+        }
+    }
+
+    public void RenderWorldChunks()
+    {
+        foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
+        {
+            kvp.Value.RenderChunk();
         }
     }
 
     public void LoadChunksFromFile(string name)
     {
-        EasyStopwatch.StartStopwatch();
-        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath(name));
-        //  string[] splitObjects = null;
-        for (int q = 0; q < dataFromFile.Count; q++)
-        {
-            WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
-            int x = wc.WorldCoords.x/ChunkSize; int y = wc.WorldCoords.y / ChunkSize;
-            Chunks[x, y] = wc;
-            
-        }
-        for (int x = 0; x < Chunks.GetLength(0); x++)
-        {
-            for (int y = 0; y < Chunks.GetLength(1); y++)
-            {
-                Chunks[x, y].InitPathfindingNodes();
+        ChunkBatches[new Vector2Int()].LoadChunksFromFile(name);
+    }
+    public WorldChunkBatch GetWorldChunkBatchFromPosition(Vector2Int pos)
+    {
+        return ChunkBatches[new Vector2Int()];
+    }
 
-                for(int x1 = 0; x1 < Chunks[x, y].ChunkTiles.GetLength(0); x1++)
-                {
-                    for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(0); y1++)
-                    {
-                        Chunks[x, y].ChunkTiles[x1, y1].UpdateWaterLevel(Chunks[x, y].ChunkTiles[x1, y1].WaterData.WaterLevel);
-                        if (Chunks[x, y].WallSegments[x1,y1].WallType==WallType.Door)
-                        {
-                            Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
-                            //WorldController.Instance.WallManager.SetDoor(coords.x, coords.y,WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
-                            Chunks[x, y].WallSegments[x1, y1].DestroyWall();
-                            WallHelpers.CreateDoorObject(coords.x,coords.y,
-                                WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
-                        }
-                    }
-                }
-
-
-                for(int q = 0; q < Chunks[x, y].EnvironmentObjectsInChunk.Count; q++)
-                {
-                    WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(Chunks[x, y].EnvironmentObjectsInChunk[q], !EnvironmentObjectHelpers.GetEnvironmentObject(Chunks[x, y].EnvironmentObjectsInChunk[q].Name()).BlocksTile);
-                }
-
-            }
-        }
-
-        Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
+    public WorldChunkBatch GetWorldChunkBatchFromPosition(Vector3 pos)
+    {
+        return ChunkBatches[new Vector2Int()];
     }
 
 
     public void OnBuildableFinished(BuildableStructure bs)
     {
-        Vector2Int coords = GetChunkCoordsFromWorldPos(bs.GetPosition());
-        if (!CoordsValid(coords.x, coords.y))
-        {
-            return;
-        }
-        Chunks[coords.x, coords.y].RemoveConstructable(bs);
+        GetWorldChunkBatchFromPosition(bs.GetPosition()).OnBuildableFinished(bs);
+       
     }
     
+    public WorldChunk GetWorldChunkFromPos(Vector3 pos)
+    {
+        Vector2Int chunkCoords = GetChunkCoordsFromWorldPos(pos);
+        return GetWorldChunkBatchFromPosition(pos).Chunks[chunkCoords.x, chunkCoords.y];
+    }
 
-    Vector2Int getCoordsCache=new Vector2Int();
     public Vector2Int GetChunkCoordsFromWorldPos(Vector3 worldPos)
     {
-        getCoordsCache.x = Mathf.Min(Mathf.FloorToInt(worldPos.x/ChunkSize), Chunks.GetLength(0) - 1);
-        getCoordsCache.y = Mathf.Min( Mathf.FloorToInt(worldPos.y / ChunkSize),Chunks.GetLength(1)-1);
-        ValidateCoordsCache();
-        return getCoordsCache;
+        return GetWorldChunkBatchFromPosition(worldPos).GetChunkCoordsFromWorldPos(worldPos);
     }
+
+    public WorldChunk GetWorldChunkFromTileCoords(Vector2Int coords)
+    {
+        Vector2Int chunkCoords = GetWorldChunkBatchFromPosition(coords).GetChunkCoordsFromTileCoords(coords);
+        return GetWorldChunkBatchFromPosition(coords).Chunks[chunkCoords.x, chunkCoords.y];
+    }
+
 
     public Vector2Int GetChunkCoordsFromTileCoords(Vector2Int coords)
     {
-        getCoordsCache.x = Mathf.Min(coords.x / ChunkSize, Chunks.GetLength(0) - 1);
-        getCoordsCache.y = Mathf.Min(coords.y / ChunkSize, Chunks.GetLength(1) - 1);
-        //Debug.Log("Getting chunk coords from " + coords + " returning " + getCoordsCache);
-        ValidateCoordsCache();
-        return getCoordsCache;
+        return GetWorldChunkBatchFromPosition(coords).GetChunkCoordsFromTileCoords(coords);
     }
 
-    void ValidateCoordsCache()
+    public void AddEnvironmentObjectInstanceToChunk(EnvironmentObjectInstance obj)
     {
-        if (getCoordsCache.x < 0)
-        {
-            getCoordsCache.x = 0;
-        }
-        else if (getCoordsCache.x > Chunks.GetLength(0) - 1)
-        {
-            getCoordsCache.x = Chunks.GetLength(0) - 1;
-        }
+        GetWorldChunkBatchFromPosition(obj.Position()).AddEnvironmentObject(obj, obj.Position());
 
-        if (getCoordsCache.y < 0)
-        {
-            getCoordsCache.y = 0;
-        }
-        else if (getCoordsCache.y > Chunks.GetLength(1) - 1)
-        {
-            getCoordsCache.y= Chunks.GetLength(1) - 1;
-        }
     }
 
+    public void AddContainerObject(Inventory toAdd)
+    {
+        GetWorldChunkBatchFromPosition(toAdd.transform.position).AddContainerObject(toAdd);
+    }
 
+    public void RemoveContainerObject(Inventory toRemove)
+    {
+        GetWorldChunkBatchFromPosition(toRemove.transform.position).RemoveContainerObject(toRemove);
+
+    }
+
+    public void AddResourceObject(ResourceInstance res)
+    {
+        GetWorldChunkBatchFromPosition(res.transform.position).AddResourceObject(res);
+    }
+
+    public void RemoveResourceObject(ResourceInstance res)
+    {
+        GetWorldChunkBatchFromPosition(res.transform.position).RemoveResourceObject(res);
+    }
+
+    public void AddConstructable(Constructable bs)
+    {
+        GetWorldChunkBatchFromPosition(bs.GetPosition()).AddConstructable(bs);
+    }
+    public void RemoveConstructable(Constructable bs)
+    {
+        GetWorldChunkBatchFromPosition(bs.GetPosition()).RemoveConstructable(bs);
+    }
     private void Update()
     {
         DebugDrawChunks();
@@ -162,128 +144,42 @@ public class WorldChunkManager : MonoBehaviour
 
     public List<WorldChunk> GetChunksInRadius(float radius,Vector3 searchCenter)
     {
-        List<WorldChunk> retVal = new List<WorldChunk>();
-        GetChunkCoordsFromWorldPos(searchCenter);
-        int chunkRadius = Mathf.Max(Mathf.RoundToInt(radius/ChunkSize), 1);
-
-        for (int x = getCoordsCache.x-chunkRadius; x < getCoordsCache.x + chunkRadius; x++)
-        {
-            for (int y= getCoordsCache.y - chunkRadius;y < getCoordsCache.y + chunkRadius; y++)
-            {
-                if (CoordsValid(x, y))
-                {
-                    retVal.Add(Chunks[x,y]);
-                }
-            }
-        }
-
-        return retVal;
+       return GetWorldChunkBatchFromPosition(searchCenter).GetChunksInRadius(radius,searchCenter);
     }
 
     const bool DrawNodeWalkable = false, DrawNodeNeighbours = false;
     void DebugDrawChunks()
     {
-    
-        Vector3 tl = new Vector3(0 , ChunkSize , 0f);
-        Vector3 tr = new Vector3(ChunkSize , ChunkSize , 0f);
-        Vector3 bl = new Vector3(0 , 0 , 0f);
-        Vector3 br = new Vector3(ChunkSize , 0 , 0f);
-        for (int x = 0; x < Chunks.GetLength(0); x++)
+        foreach (KeyValuePair<Vector2Int, WorldChunkBatch> kvp in ChunkBatches)
         {
-            for (int y = 0; y < Chunks.GetLength(1); y++)
-            {
-                Vector3 Center = new Vector3(x * ChunkSize, y * ChunkSize, 0);
-                //for(int z = 0; z < Chunks[x,y].UnitsInChunk.Count; z++)
-                //{
-                //    try
-                //    {
-                //        Debug.DrawLine(Center, Chunks[x, y].UnitsInChunk[z].transform.position, Chunks[x, y].DebugColor);
-                //    }
-                //    catch
-                //    {
-                //        Debug.LogError("Error drawing chunk units in chunk " + x + "," + y);
-                //    }
-
-
-                //}
-
-                Debug.DrawLine(Center+tl, Center+tr, Chunks[x, y].DebugColor);
-                Debug.DrawLine(Center + tr, Center + br, Chunks[x, y].DebugColor);
-                Debug.DrawLine(Center + br, Center + bl, Chunks[x, y].DebugColor);
-                Debug.DrawLine(Center + tl, Center + bl, Chunks[x, y].DebugColor);
-
-
-                Vector3 pos = Vector3.zero;
-                for (int x1 = 0; x1 < Chunks[x,y].PathfindingNodes.GetLength(0); x1++)
-                {
-                    for (int y1 = 0; y1 < Chunks[x, y].PathfindingNodes.GetLength(1); y1++)
-                    {
-                        if (DrawNodeWalkable)
-                        {
-                            pos = Chunks[x, y].PathfindingNodes[x1, y1].worldPos;
-                            if (Chunks[x, y].PathfindingNodes[x1, y1].IsPassable)
-                            {
-                                Debug.DrawLine(pos, pos + (Vector3.up * (x1+y1)/32f), Color.green);
-                            }
-                            else
-                            {
-                                Debug.DrawLine(pos, pos + (Vector3.up * (x1 + y1) / 32f), Color.red);
-
-                            }
-                        }
-
-                        if (DrawNodeNeighbours)
-                        {
-                            pos = Chunks[x, y].PathfindingNodes[x1, y1].worldPos;
-                            for (int i=0;i< Chunks[x, y].PathfindingNodes[x1, y1].neighbours.Count; i++) {
-                                Debug.DrawLine(pos, Chunks[x, y].PathfindingNodes[x1, y1].neighbours[i].worldPos);
-                            }
-                        }
-                        Debug.DrawLine(Chunks[x, y].PathfindingNodes[0, 0].worldPos, Chunks[x, y].PathfindingNodes[1, 1].worldPos, Color.magenta);
-                    }
-                }
-
-            }
+            kvp.Value.DebugDrawChunks();
         }
-
-
-
-
-
+       
     }
+
+
+
+
+
+  
 
 
     public void OnUnitCreated(Unit u)
     {
-        GetChunkCoordsFromWorldPos(u.transform.position);
-        Chunks[getCoordsCache.x, getCoordsCache.y].AddUnitToChunk(u) ;
-        u.UpdateChunk(getCoordsCache);
+        GetWorldChunkBatchFromPosition(u.transform.position).OnUnitCreated(u);
+      
     }
 
     public void OnUnitMove(Unit u)
     {
-        GetChunkCoordsFromWorldPos(u.transform.position);
+        GetWorldChunkBatchFromPosition(u.transform.position).OnUnitMove(u);
 
-        if(u.MyCurrentChunk != getCoordsCache)
-        {
-            try
-            {
-                Chunks[u.MyCurrentChunk.x, u.MyCurrentChunk.y].RemoveUnitFromChunk(u);
-                Chunks[getCoordsCache.x, getCoordsCache.y].AddUnitToChunk(u);
-                u.UpdateChunk(getCoordsCache);
-            }
-            catch
-            {
-                Debug.LogError("Issue moving between chunks "+  u.MyCurrentChunk.ToString()+" to " +getCoordsCache.ToString());
-            }
-        }
-
-    
+      
     }
 
     public void OnUnitDeath(Unit u)
     {
-        Chunks[u.MyCurrentChunk.x, u.MyCurrentChunk.y].RemoveUnitFromChunk(u);
+        GetWorldChunkBatchFromPosition(u.transform.position).OnUnitDeath(u);
     }
 
 }
