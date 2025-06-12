@@ -35,7 +35,7 @@ public class WorldChunk:ISerialize
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
         X = x;
         Y = y;
-        WorldCoords=new Vector2Int(x* WorldChunkManager.ChunkSize, y* WorldChunkManager.ChunkSize);
+        WorldCoords=new Vector2Int(x, y);
         GenerateTilesForChunk();
         GenerateWallsForChunk();
         GeneratePathfindingNodes();
@@ -44,8 +44,8 @@ public class WorldChunk:ISerialize
     void GenerateTilesForChunk()
     {
         ChunkTiles = new WorldTile[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
-        int xStart = WorldChunkManager.ChunkSize * X;
-        int yStart = WorldChunkManager.ChunkSize * Y;
+        int xStart = X;
+        int yStart = Y;
         int localx = 0, localy = 0;
         for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
         {
@@ -63,8 +63,8 @@ public class WorldChunk:ISerialize
     void GeneratePathfindingNodes()
     {
         PathfindingNodes=new PathfindingNode[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
-        int xStart = WorldChunkManager.ChunkSize * X;
-        int yStart = WorldChunkManager.ChunkSize * Y;
+        int xStart = X;
+        int yStart = Y;
         int localx = 0, localy = 0;
         for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
         {
@@ -81,8 +81,8 @@ public class WorldChunk:ISerialize
 
     public void InitPathfindingNodes()
     {
-        int xStart = WorldChunkManager.ChunkSize * X;
-        int yStart = WorldChunkManager.ChunkSize * Y;
+        int xStart = X;
+        int yStart = Y;
         int localx = 0, localy = 0;
         for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
         {
@@ -100,8 +100,8 @@ public class WorldChunk:ISerialize
     void GenerateWallsForChunk()
     {
         WallSegments = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
-        int xStart = WorldChunkManager.ChunkSize *X;
-        int yStart = WorldChunkManager.ChunkSize*Y;
+        int xStart = X;
+        int yStart = Y;
         int localx = 0, localy = 0;
         for(int x=xStart; x<xStart+WorldChunkManager.ChunkSize; x++)
         {

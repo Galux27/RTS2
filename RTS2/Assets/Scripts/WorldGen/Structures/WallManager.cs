@@ -122,9 +122,12 @@ public class WallManager
             for (int y = 0; y < height; y++)
             {
                 wall = WallHelpers.GetWallAtCoords(x, y);
-                toDrawOn.SetTile(new Vector3Int(x, y, 0), wall.ToDraw);
+                if (wall != null)
+                {
+                    toDrawOn.SetTile(new Vector3Int(x, y, 0), wall.ToDraw);
+                }
+                }
             }
-        }
     }
 
     public void RemoveSingleWall(int x, int y, Tilemap toDrawOn, WallTile toUse)
@@ -220,6 +223,10 @@ public class WallManager
         Vector2Int asCoords = new Vector2Int(x, y);
         Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(asCoords); //Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        if (toGetFrom == null)
+        {
+            return;
+        }
         EnvironmentObjectInstance objAtWall = null;
         if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
         {
@@ -272,6 +279,10 @@ public class WallManager
         Vector2Int asCoords = new Vector2Int(x, y);
         Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(asCoords);//Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        if (toGetFrom == null)
+        {
+            return;
+        }
         EnvironmentObjectInstance objAtWall = null;
         if (toGetFrom.DoesAnyObjectExistAtCoords(asCoords, out objAtWall))
         {
@@ -328,6 +339,10 @@ public class WallManager
         Vector2Int asCoords = new Vector2Int(x, y);
         Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(asCoords);//.Chunks[toGetFromCoords.x, toGetFromCoords.y];
+        if (toGetFrom == null)
+        {
+            return;
+        }
         WallSegment wall = null;
 
         for (int x1 = 0; x1 < width; x1++)

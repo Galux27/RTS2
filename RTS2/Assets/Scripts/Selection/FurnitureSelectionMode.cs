@@ -41,7 +41,13 @@ public class FurnitureSelectionMode : SelectionMode
         }
 
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
-        Constructable ConstructableHoveringOverThisFrame = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords).GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Furniture);
+
+        WorldChunk wc = WorldChunkManager.Instance.GetWorldChunkFromPos(cursorPos);
+        if (wc == null)
+        {
+            return;
+        }
+        Constructable ConstructableHoveringOverThisFrame = wc.GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Furniture);
 
         
 
@@ -98,8 +104,11 @@ public class FurnitureSelectionMode : SelectionMode
             Vector3 pos = new Vector3(coords.x - (width / 2f), coords.y - (height / 2f), 0f);
 
 
+            Debug.Log("Furniture Click: walkable " +
+                (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight))
 
-            if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
+                + " intersect " + DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()));
+            if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight)
                 && DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false
                 )
             {

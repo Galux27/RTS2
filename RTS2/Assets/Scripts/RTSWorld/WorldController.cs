@@ -166,9 +166,16 @@ public class WorldController : MonoBehaviour
 
     public bool IsTraversible(int x,int y)
     {
-        if(x<0 || y<0) return false;
-        if(x>WorldWidth || y>WorldHeight) return false;
-        return WorldTileHelpers.GetTileFromCoords(x,y).traversable;
+        //if(x<0 || y<0) return false;
+        //if(x>WorldWidth || y>WorldHeight) return false;
+
+        WorldTile tile = WorldTileHelpers.GetTileFromCoords(x, y);
+        if (tile == null)
+        {
+           // Debug.Log("Furniture Click: tile at " + x + "," + y + " was null");
+            return false;
+        }
+            return tile.traversable;
 
     }
 }
@@ -180,6 +187,12 @@ public class WorldTile:ISerialize
     public string tileType;
     public WaterData WaterData;
     
+    public Vector2Int Coords()
+    {
+        return new Vector2Int(x, y);
+    }
+
+
     public WorldTile(int x,int y)
     {
         this.x = x;

@@ -43,7 +43,7 @@ public class WorldChunkBatch : MonoBehaviour
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
-                Chunks[x, y] = new WorldChunk(x, y);
+                Chunks[x, y] = new WorldChunk(coords.x+(x* WorldChunkManager.ChunkSize),coords.y+ (y *WorldChunkManager.ChunkSize));
             }
         }
 
@@ -55,9 +55,13 @@ public class WorldChunkBatch : MonoBehaviour
             }
         }
     }
-
+    public bool IsRendered = false;
     public void RenderChunk()
     {
+        if (IsRendered)
+        {
+            return;
+        }
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
@@ -65,6 +69,7 @@ public class WorldChunkBatch : MonoBehaviour
                 WorldRenderer.Instance.RenderWorld(Chunks[x, y].ChunkTiles);
             }
         }
+        IsRendered = true;
         
     }
 
@@ -129,18 +134,25 @@ public class WorldChunkBatch : MonoBehaviour
     Vector2Int getCoordsCache = new Vector2Int();
     public Vector2Int GetChunkCoordsFromWorldPos(Vector3 worldPos)
     {
-        getCoordsCache.x = Mathf.Min(Mathf.FloorToInt(worldPos.x / WorldChunkManager.ChunkSize), Chunks.GetLength(0) - 1);
-        getCoordsCache.y = Mathf.Min(Mathf.FloorToInt(worldPos.y / WorldChunkManager.ChunkSize), Chunks.GetLength(1) - 1);
-        ValidateCoordsCache();
-        return getCoordsCache;
+        return GetChunkCoordsFromTileCoords(new Vector2Int((int)worldPos.x,(int) worldPos.y));
     }
 
-    public Vector2Int GetChunkCoordsFromTileCoords(Vector2Int coords)
+    public Vector2Int GetChunkCoordsFromTileCoords(Vector2Int coords,bool debug=false)
     {
-        getCoordsCache.x = Mathf.Min(coords.x / WorldChunkManager.ChunkSize, Chunks.GetLength(0) - 1);
-        getCoordsCache.y = Mathf.Min(coords.y / WorldChunkManager.ChunkSize, Chunks.GetLength(1) - 1);
-        //Debug.Log("Getting chunk coords from " + coords + " returning " + getCoordsCache);
-        ValidateCoordsCache();
+        int topRightX = Chunks[Chunks.GetLength(0) - 1, Chunks.GetLength(1) - 1].X;
+        int topRightY = Chunks[Chunks.GetLength(0) - 1, Chunks.GetLength(1) - 1].Y;
+        float xLerp = Mathf.InverseLerp(this.coords.x, topRightX, coords.x);
+        float yLerp = Mathf.InverseLerp(this.coords.y, topRightY, coords.y);
+        //
+       
+        
+        getCoordsCache.x = Mathf.CeilToInt(Mathf.Lerp(0,Chunks.GetLength(0)-1,xLerp))-1;//Mathf.Min(coords.x / WorldChunkManager.ChunkSize, Chunks.GetLength(0) - 1);
+        getCoordsCache.y = Mathf.CeilToInt(Mathf.Lerp(0, Chunks.GetLength(1) - 1, yLerp))-1; //Mathf.Min(coords.y / WorldChunkManager.ChunkSize, Chunks.GetLength(1) - 1);
+        if (debug)
+        {
+            Debug.Log("Getting chunk coords from " + coords + " returning " + getCoordsCache+"TR" + topRightX+","+topRightY+" my coords "+   this.coords);
+        }
+            ValidateCoordsCache();
         return getCoordsCache;
     }
 
@@ -329,10 +341,10 @@ public class WorldChunkBatch : MonoBehaviour
     }
 
 
-    public void RemoveConstructable(Constructable bs)
+    public void RemoveConstructable(Constructable bs, bool needsCleanup = true)
     {
         Vector2Int coords = GetChunkCoordsFromWorldPos(bs.GetPosition());
-        Chunks[coords.x, coords.y].RemoveConstructable(bs);
+        Chunks[coords.x, coords.y].RemoveConstructable(bs,needsCleanup);
     }
 
 }

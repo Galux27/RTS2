@@ -115,7 +115,7 @@ public class BuildableStructure : Constructable,ObjectInfo
             GameObjectPoolManager.Instance.ReturnObjectToPool(Object, "ConstructionMarker");
         }
             Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(new Vector2Int (x, y));
-        WorldChunkManager.Instance.RemoveConstructable(this);//was a second false argument here,not sure whyu 09/06/25
+        WorldChunkManager.Instance.RemoveConstructable(this,false);
         Object = null;
         isDrawn = false;
        
