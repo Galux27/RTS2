@@ -28,10 +28,33 @@ public class PathfindingNode
 
     }
 
-    public void InitData()
+    public void InitData(PathfindingNode[,] myGrid,int localX,int localY)
     {
         worldPos = new Vector3(x+.5f, y+.5f);
-        neighbours = Pathfinding.GetNeighbours(this);
+        neighbours = new List<PathfindingNode>();
+        if (localX > 0)
+        {
+            neighbours.Add(myGrid[localX-1,localY]);
+        }
+        
+        if(localX < WorldChunkManager.ChunkSize-1)
+        {
+            neighbours.Add(myGrid[localX + 1, localY]);
+        }
+
+        if (localY > 0)
+        {
+            neighbours.Add(myGrid[localX , localY - 1]);
+        }
+        
+        if (localY < WorldChunkManager.ChunkSize - 1)
+        {
+            neighbours.Add(myGrid[localX , localY + 1]);
+        }
+
+
+
+        Pathfinding.GetNeighbours(this);
     }
 
     public void UpdatePassable(bool val)
@@ -131,5 +154,10 @@ public class PathfindingNode
             }
         }
         return Cache;
+    }
+
+    public void ManuallyAddNeighbour(PathfindingNode toAdd)
+    {
+        neighbours.Add(toAdd);
     }
 }

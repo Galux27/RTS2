@@ -7,28 +7,7 @@ using UnityEngine.Tilemaps;
 public static class Pathfinding
 {
     static int worldWidth, worldHeight;
-    public static void CreateNodesFromWorld(WorldTile[,] world)
-    {
-        worldWidth = world.GetLength(0);
-        worldHeight = world.GetLength(1);
-        for(int x = 0; x < worldWidth; x++)
-        {
-            for(int y = 0; y < worldHeight; y++)
-            {
-                GetNodeFromCoords(x, y).UpdatePassable(world[x, y].traversable);
-            }
-        }
-
-        for (int x = 0; x < worldWidth; x++)
-        {
-            for (int y = 0; y < worldHeight; y++)
-            {
-                GetNodeFromCoords(x, y).InitData();
-            }
-        }
-    }
-
-    public static void UpdateNodeData(int x,int y,bool traversable)
+       public static void UpdateNodeData(int x,int y,bool traversable)
     {
        GetNodeFromCoords(x,y).UpdatePassable(traversable);
     }
@@ -47,44 +26,54 @@ public static class Pathfinding
     {
         List<PathfindingNode> retVal = new List<PathfindingNode>();
         PathfindingNode toAdd = null;
-        toAdd = GetNodeFromCoords(node.x - 1, node.y);
-        if (toAdd != null)
+        //if (node.x == 0)
         {
-            retVal.Add(toAdd);
-            if (!toAdd.neighbours.Contains(node))
+            toAdd = GetNodeFromCoords(node.x - 1, node.y);
+            if (toAdd != null)
             {
-                toAdd.neighbours.Add(node);
+                retVal.Add(toAdd);
+                if (!toAdd.neighbours.Contains(node))
+                {
+                    toAdd.neighbours.Add(node);
+                }
             }
         }
 
-
-        toAdd = GetNodeFromCoords(node.x + 1, node.y);
-        if (toAdd != null)
+        //if (node.x == WorldChunkManager.ChunkSize - 1)
         {
-            retVal.Add(toAdd);
-            if (!toAdd.neighbours.Contains(node))
+            toAdd = GetNodeFromCoords(node.x + 1, node.y);
+            if (toAdd != null)
             {
-                toAdd.neighbours.Add(node);
+                retVal.Add(toAdd);
+                if (!toAdd.neighbours.Contains(node))
+                {
+                    toAdd.neighbours.Add(node);
+                }
+            }
+        }
+       // if (node.y == 0)
+        {
+            toAdd = GetNodeFromCoords(node.x, node.y - 1);
+            if (toAdd != null)
+            {
+                retVal.Add(toAdd);
+                if (!toAdd.neighbours.Contains(node))
+                {
+                    toAdd.neighbours.Add(node);
+                }
             }
         }
 
-
-        toAdd = GetNodeFromCoords(node.x, node.y - 1);
-        if (toAdd != null)
+       // if (node.y == WorldChunkManager.ChunkSize - 1)
         {
-            retVal.Add(toAdd);
-            if (!toAdd.neighbours.Contains(node))
+            toAdd = GetNodeFromCoords(node.x, node.y + 1);
+            if (toAdd != null)
             {
-                toAdd.neighbours.Add(node);
-            }
-        }
-        toAdd = GetNodeFromCoords(node.x, node.y + 1);
-        if (toAdd != null)
-        {
-            retVal.Add(toAdd);
-            if (!toAdd.neighbours.Contains(node))
-            {
-                toAdd.neighbours.Add(node);
+                retVal.Add(toAdd);
+                if (!toAdd.neighbours.Contains(node))
+                {
+                    toAdd.neighbours.Add(node);
+                }
             }
         }
         return retVal;
@@ -131,31 +120,57 @@ public static class Pathfinding
     }
 
 
-    public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null)
+    public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null,bool debug=false)
     {
-        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromPos(Position + new Vector3(.5f, .5f, 0f));//.Chunks[chunkForNode.x, chunkForNode.y];
-
+        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromPos(Position );//.Chunks[chunkForNode.x, chunkForNode.y];
+        if(toGetFrom == null)
+        {
+            if (debug)
+            {
+                Debug.Log("Pathfinding: chunk from " + Position + " is null");
+            }
+            return null;
+        }
+        if (debug)
+        {
+            Debug.Log("Pathfinding: chunk from " + Position + " is " + toGetFrom.WorldCoords);
+        }
         int xC = 0, yC = 0;
-        for(int x = 0; x < toGetFrom.PathfindingNodes.GetLength(0); x++)
-        {
-            if (toGetFrom.PathfindingNodes[x,0].worldPos.x > Position.x)
-            {
-                xC = Mathf.Max( x-1,0);
+        Vector2Int bottom = toGetFrom.ChunkTiles[0, 0].Coords();
+        Vector2Int top = toGetFrom.ChunkTiles[WorldChunkManager.ChunkSize-1, WorldChunkManager.ChunkSize - 1].Coords();
 
-                break;
-            }
-            
-        }
-        for (int y = 0; y < toGetFrom.PathfindingNodes.GetLength(1); y++)
-        {
-            if (toGetFrom.PathfindingNodes[0, y].worldPos.y > Position.y)
-            {
-                yC = Mathf.Max(y -1,0);
-                break;
-            }
-        }
+        float lX = Mathf.InverseLerp(bottom.x, top.x, Position.x);
+        float lY = Mathf.InverseLerp(bottom.y, top.y, Position.y);
 
-      
+        xC = Mathf.RoundToInt(Mathf.Lerp(0, WorldChunkManager.ChunkSize - 1, lX));
+        yC = Mathf.RoundToInt(Mathf.Lerp(0, WorldChunkManager.ChunkSize - 1, lY));
+
+
+        //for(int x = 0; x < toGetFrom.PathfindingNodes.GetLength(0); x++)
+        //{
+        //    if (toGetFrom.PathfindingNodes[x,0].worldPos.x > Position.x)
+        //    {
+        //        xC =x ;
+
+        //        break;
+        //    }
+
+        //}
+        //for (int y = 0; y < toGetFrom.PathfindingNodes.GetLength(1); y++)
+        //{
+        //    if (toGetFrom.PathfindingNodes[0, y].worldPos.y > Position.y)
+        //    {
+        //        yC = y;
+        //        break;
+        //    }
+        //}
+
+        if (debug)
+        {
+            Debug.Log("Pathfinding: chunk from " + Position + " returning  " + xC+","+yC);
+
+
+        }
         return toGetFrom.PathfindingNodes[xC, yC];
 
      

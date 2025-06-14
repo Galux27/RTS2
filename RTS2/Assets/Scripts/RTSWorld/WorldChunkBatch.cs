@@ -54,6 +54,8 @@ public class WorldChunkBatch : MonoBehaviour
                 Chunks[x, y].InitPathfindingNodes();
             }
         }
+
+        LinkBatchToOtherBatches();
     }
     public bool IsRendered = false;
     public void RenderChunk()
@@ -139,15 +141,15 @@ public class WorldChunkBatch : MonoBehaviour
 
     public Vector2Int GetChunkCoordsFromTileCoords(Vector2Int coords,bool debug=false)
     {
-        int topRightX = Chunks[Chunks.GetLength(0) - 1, Chunks.GetLength(1) - 1].X;
-        int topRightY = Chunks[Chunks.GetLength(0) - 1, Chunks.GetLength(1) - 1].Y;
+        int topRightX = Chunks[Chunks.GetLength(0) - 1, Chunks.GetLength(1) - 1].X+WorldChunkManager.ChunkSize;
+        int topRightY = Chunks[Chunks.GetLength(0) - 1, Chunks.GetLength(1) - 1].Y + WorldChunkManager.ChunkSize;
         float xLerp = Mathf.InverseLerp(this.coords.x, topRightX, coords.x);
         float yLerp = Mathf.InverseLerp(this.coords.y, topRightY, coords.y);
         //
-       
-        
-        getCoordsCache.x = Mathf.CeilToInt(Mathf.Lerp(0,Chunks.GetLength(0)-1,xLerp))-1;//Mathf.Min(coords.x / WorldChunkManager.ChunkSize, Chunks.GetLength(0) - 1);
-        getCoordsCache.y = Mathf.CeilToInt(Mathf.Lerp(0, Chunks.GetLength(1) - 1, yLerp))-1; //Mathf.Min(coords.y / WorldChunkManager.ChunkSize, Chunks.GetLength(1) - 1);
+
+
+        getCoordsCache.x = Mathf.FloorToInt (Mathf.Lerp(0,Chunks.GetLength(0),xLerp));//Mathf.Min(coords.x / WorldChunkManager.ChunkSize, Chunks.GetLength(0) - 1);
+        getCoordsCache.y = Mathf.FloorToInt(Mathf.Lerp(0, Chunks.GetLength(1), yLerp)); //Mathf.Min(coords.y / WorldChunkManager.ChunkSize, Chunks.GetLength(1) - 1);
         if (debug)
         {
             Debug.Log("Getting chunk coords from " + coords + " returning " + getCoordsCache+"TR" + topRightX+","+topRightY+" my coords "+   this.coords);
@@ -155,6 +157,83 @@ public class WorldChunkBatch : MonoBehaviour
             ValidateCoordsCache();
         return getCoordsCache;
     }
+
+    void LinkToOtherBatch(Vector2Int coordsToCheck)
+    {
+        WorldChunkBatch neighbour = WorldChunkManager.Instance.ChunkBatches[coordsToCheck];
+        if (coords.x < coordsToCheck.x)
+        {
+            //link left of mine to right of theres
+            int myX = WorldChunkManager.ChunksPerBatch - 1;
+            int theirX = 0;
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
+            {
+                Chunks[myX, y].GenerateOtherChunkLinks(coords, coordsToCheck, myX, y);
+            }
+        }
+        else if (coords.x > coordsToCheck.x)
+        {
+            //link right of mine to left of theres
+            int myX = 0;
+            int theirX = WorldChunkManager.ChunksPerBatch - 1;
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
+            {
+                Chunks[myX, y].GenerateOtherChunkLinks(coords, coordsToCheck, myX, y);
+            }
+        }
+
+        if (coords.y < coordsToCheck.y)
+        {
+            //top of mine to bottom of theres
+            int myY = WorldChunkManager.ChunksPerBatch - 1;
+            int theirY = 0;
+            for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
+            {
+                Chunks[x, myY].GenerateOtherChunkLinks(coords, coordsToCheck, x, myY);
+
+            }
+        }
+        else if (coords.y > coordsToCheck.y)
+        {
+            //bottom of mine to top of theres,
+            int myY = 0;
+            int theirY = WorldChunkManager.ChunksPerBatch - 1;
+            for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
+            {
+                Chunks[x, myY].GenerateOtherChunkLinks(coords, coordsToCheck, x, myY);
+            }
+        }
+    }
+
+
+    public void LinkBatchToOtherBatches()
+    {
+        Vector2Int coordsToCheck = coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+        if(WorldChunkManager.Instance.ChunkBatches.ContainsKey(coordsToCheck))
+        {
+            LinkToOtherBatch(coordsToCheck);
+        }
+
+        coordsToCheck = coords + new Vector2Int(-WorldChunkManager.ChunkBatchSize, 0);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coordsToCheck))
+        {
+            LinkToOtherBatch(coordsToCheck);
+        }
+
+        coordsToCheck = coords + new Vector2Int(0, -WorldChunkManager.ChunkBatchSize);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coordsToCheck))
+        {
+            LinkToOtherBatch(coordsToCheck);
+        }
+
+        coordsToCheck = coords + new Vector2Int( 0, WorldChunkManager.ChunkBatchSize);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coordsToCheck))
+        {
+            LinkToOtherBatch(coordsToCheck);
+        }
+
+    }
+
 
     void ValidateCoordsCache()
     {

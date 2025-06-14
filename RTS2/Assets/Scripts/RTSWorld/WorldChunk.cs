@@ -79,17 +79,72 @@ public class WorldChunk:ISerialize
         }
     }
 
+    public void GenerateOtherChunkLinks(Vector2Int myBatchCoords, Vector2Int neighbourBatchCoords, int localX, int localY)
+    {
+        WorldChunkBatch neighbour = WorldChunkManager.Instance.ChunkBatches[neighbourBatchCoords];
+        WorldChunk editing = null;
+        if (myBatchCoords.x < neighbourBatchCoords.x)
+        {
+            //link left of mine to right of theres
+            editing = neighbour.Chunks[0, localY];
+            int myX = WorldChunkManager.ChunkSize-1;
+            int theirX = 0;
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[myX, y].ManuallyAddNeighbour(editing.PathfindingNodes[theirX, y]);
+                editing.PathfindingNodes[theirX, y].ManuallyAddNeighbour(PathfindingNodes[myX, y]);
+            }
+        }
+        else if (myBatchCoords.x > neighbourBatchCoords.x)
+        {
+            //link right of mine to left of theres
+            editing = neighbour.Chunks[WorldChunkManager.ChunkSize-1, localY];
+            int myX = 0;
+            int theirX = WorldChunkManager.ChunkSize - 1;
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[myX, y].ManuallyAddNeighbour(editing.PathfindingNodes[theirX, y]);
+                editing.PathfindingNodes[theirX, y].ManuallyAddNeighbour(PathfindingNodes[myX, y]);
+            }
+        }
+
+        if (myBatchCoords.y < neighbourBatchCoords.y)
+        {
+            //top of mine to bottom of theres
+            editing = neighbour.Chunks[ localX,0];
+            int myY = WorldChunkManager.ChunkSize - 1;
+            int theirY = 0;
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                PathfindingNodes[x, myY].ManuallyAddNeighbour(editing.PathfindingNodes[x, theirY]);
+                editing.PathfindingNodes[x, theirY].ManuallyAddNeighbour(PathfindingNodes[x, myY]);
+            }
+        }
+        else if (myBatchCoords.y > neighbourBatchCoords.y)
+        {
+            //bottom of mine to top of theres,
+            editing = neighbour.Chunks[localX, WorldChunkManager.ChunksPerBatch- 1];
+            int myY = 0;
+            int theirY = WorldChunkManager.ChunkSize - 1;
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                PathfindingNodes[x, myY].ManuallyAddNeighbour(editing.PathfindingNodes[x, theirY]);
+                editing.PathfindingNodes[x, theirY].ManuallyAddNeighbour(PathfindingNodes[x, myY]);
+            }
+        }
+    }
+
     public void InitPathfindingNodes()
     {
         int xStart = X;
         int yStart = Y;
         int localx = 0, localy = 0;
-        for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
+        for (int x = xStart; x < xStart + (WorldChunkManager.ChunkSize); x++)
         {
 
-            for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
+            for (int y = yStart; y < yStart +( WorldChunkManager.ChunkSize); y++)
             {
-                PathfindingNodes[localx, localy].InitData();
+                PathfindingNodes[localx, localy].InitData(PathfindingNodes,localx,localy);
                 localy++;
             }
             localx++;
