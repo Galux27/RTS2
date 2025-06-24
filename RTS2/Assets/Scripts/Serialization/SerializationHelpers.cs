@@ -108,17 +108,26 @@ public static class SerializationHelpers
 
     public static void SaveLoadedWorld(string path)
     {
-        string name = "CHUNK_TEST" + WorldSectionExtension ;
+        string name = "";
         List<string> dataWriting = new List<string>();
-        //for (int x = 0; x < WorldChunkManager.Instance.Chunks.GetLength(0); x++)
-        //{
-        //    for (int y = 0; y < WorldChunkManager.Instance.Chunks.GetLength(1); y++)
-        //    {
-        //        dataWriting.Add(WorldChunkManager.Instance.Chunks[x, y].Serialize().Data);
-        //    }
-        //}
+
+        foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in WorldChunkManager.Instance.ChunkBatches)
+        {
+            name = "CHUNK_TEST_"+kvp.Value.coords.x+"_"+kvp.Value.coords.y + WorldSectionExtension;
+            for (int x = 0; x < kvp.Value.Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < kvp.Value.Chunks.GetLength(1); y++)
+                {
+                    dataWriting.Add(kvp.Value.Chunks[x, y].Serialize().Data);
+                }
+            }
+            WriteToFile(path, name, dataWriting);
+            dataWriting.Clear();
+        }
+
+
         EasyStopwatch.StopStopwatch();
-        WriteToFile(path,name,dataWriting);
+        Debug.Log("Saving Chunks took " + EasyStopwatch.GetStopwatchElapsedTime());
     }
 
     public static List<string> ReadFile(string path)
@@ -212,43 +221,43 @@ public static class SerializationHelpers
 
 public class DataKeys
 {
-    public const string Coords = "COORDS";
-    public const string LocalCoords = "LOCAL_COORDS";
+    public const string Coords = "CD";
+    public const string LocalCoords = "LCD";
     public const string Pos = "POS";
-    public const string TileType = "TILE_TYPE";
-    public const string WaterLevel = "WATER_LEVEL";
-    public const string ChunkTiles = "CHUNK_TILES";//todo
-    public const string WallType = "WALL_TYPE";
-    public const string WallVisual = "WALL_VISUAL";
-    public const string Health = "HEALTH";
-    public const string MaxHealth = "MAX_HEALTH";
-    public const string WallTiles = "WALL_TILES";//todo
+    public const string TileType = "TT";
+    public const string WaterLevel = "WLL";
+    public const string ChunkTiles = "CT";//todo
+    public const string WallType = "WTY";
+    public const string WallVisual = "WV";
+    public const string Health = "HP";
+    public const string MaxHealth = "MHP";
+    public const string WallTiles = "WT";//todo
     public const string UID = "UID";
-    public const string TargetUID = "TARGET";
-    public const string UIDType = "UID_TYPE";
-    public const string ObjectKey = "OBJECT_KEY";
-    public const string EnvironmentObjects = "ENV_OBJECTS";//todo
-    public const string Quantitiy = "QUANTITY";
-    public const string Resources = "RESOURCE_OBJECTS";//todo
-    public const string ResourcesStored = "RESOURCES_STORED";
+    public const string TargetUID = "TGT";
+    public const string UIDType = "UIDT";
+    public const string ObjectKey = "OKEY";
+    public const string EnvironmentObjects = "EOBJ";//todo
+    public const string Quantitiy = "QUA";
+    public const string Resources = "ROBJ";//todo
+    public const string ResourcesStored = "RESST";
     public const string ItemUID = "ITEM_UID";
-    public const string ItemsInContainer = "CONTAINER_CONTENTS";//todo
-    public const string CurrentProgress = "CURRENT_PROGRESS";
-    public const string MaxProgress = "MAX_PROGRESS";
-    public const string ConstructableType = "CONSTRUCTABLE_TYPE";
-    public const string Constructables = "CONSTRUCTABLES";//todo
-    public const string UnitType = "UNIT_TYPE";
-    public const string UnitFaction = "UNIT_FACTION";
-    public const string RoomName = "ROOM_NAME";
-    public const string RoomType = "ROOM_TYPE";
-    public const string RoomTiles = "ROOM_TILES";
-    public const string Behaviour = "BEHAVIOUR";
-    public const string BehaviourType = "BEHAVIOUR_TYPE";
-    public const string MiscString = "MISC_STRING";
-    public const string CameraZoom = "ZOOM";
+    public const string ItemsInContainer = "CC";//todo
+    public const string CurrentProgress = "CPR";
+    public const string MaxProgress = "MPR";
+    public const string ConstructableType = "CNTY";
+    public const string Constructables = "CN";//todo
+    public const string UnitType = "UT";
+    public const string UnitFaction = "UF";
+    public const string RoomName = "RN";
+    public const string RoomType = "RT";
+    public const string RoomTiles = "RTLS";
+    public const string Behaviour = "BH";
+    public const string BehaviourType = "BHT";
+    public const string MiscString = "MSCT";
+    public const string CameraZoom = "ZM";
     public const string IDMax = "ID_MAX";
-    public const string InventoryUID = "INVENTORY_UID";
-    public const string Inventory = "INVENTORY";
+    public const string InventoryUID = "INVID";
+    public const string Inventory = "INV";
 }
 
 public enum DataType

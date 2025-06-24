@@ -77,7 +77,7 @@ public class WorldChunkBatch : MonoBehaviour
             {
                 if (Chunks[x, y].CheckIfChunkNeedsToRender())
                 {
-                    WorldRenderer.Instance.RenderWorld(Chunks[x, y].ChunkTiles);
+                    WorldRenderer.Instance.RenderChunk(Chunks[x, y].ChunkTiles);
                     Chunks[x, y].NeedsToRender = false;
                     Chunks[x, y].IsRendered = true;
                     count++;
@@ -89,6 +89,22 @@ public class WorldChunkBatch : MonoBehaviour
         }
         IsRendered = (count==Chunks.GetLength(0)*Chunks.GetLength(1));
         return true;
+    }
+
+    public void CheckForCleanup()
+    {
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                if (  Chunks[x,y].CanWeCleanupChunk())
+                {
+                    WorldRenderer.Instance.UnrenderChunk(Chunks[x, y].ChunkTiles);
+                    Chunks[x, y].UnRenderChunk();
+                    Chunks[x, y].IsRendered = false;
+                }
+            }
+        }
     }
 
     public void LoadChunksFromFile(string name)

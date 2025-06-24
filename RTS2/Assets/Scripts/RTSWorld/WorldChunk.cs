@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -29,6 +30,14 @@ public class WorldChunk:ISerialize
         Vector3 cameraPos = CameraController.Instance.transform.position;
         float dist = Vector2.Distance(new Vector2(X + (WorldChunkManager.ChunkSize / 2), Y + (WorldChunkManager.ChunkSize / 2)), new Vector2(cameraPos.x, cameraPos.y));
         return NeedsToRender||dist<CameraRenderDistance && IsRendered==false;
+    }
+
+    public bool CanWeCleanupChunk()
+    {
+        Vector3 cameraPos = CameraController.Instance.transform.position;
+        float dist = Vector2.Distance(new Vector2(X + (WorldChunkManager.ChunkSize / 2), Y + (WorldChunkManager.ChunkSize / 2)), new Vector2(cameraPos.x, cameraPos.y));
+
+        return dist > CameraRenderDistance*2f && IsRendered;
     }
 
 
@@ -553,5 +562,10 @@ public class WorldChunk:ISerialize
     {
         myUid = new UID(uid);
         IDManager.OnUIDCreated(this, myUid);
+    }
+
+    public void UnRenderChunk()
+    {
+        CleanupEnvironmentObjects();
     }
 }

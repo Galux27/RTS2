@@ -153,8 +153,11 @@ public class WorldChunkManager : MonoBehaviour
         {
             if (kvp.Value.RenderChunk())
             {
-               
+
             }
+            
+             kvp.Value.CheckForCleanup();
+            
         }
     }
 
