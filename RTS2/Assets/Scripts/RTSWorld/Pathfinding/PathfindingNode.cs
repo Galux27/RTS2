@@ -10,11 +10,11 @@ public class PathfindingNode
     public int hCost;
     public bool obstacle;
 
-    public int x, y;
+    public int X, Y;
     public PathfindingNode parent;
     public bool IsPassable = true;
 
-    public List<PathfindingNode> neighbours=new List<PathfindingNode>();
+    public List<PathfindingNode> neighbours;
     public Vector3 worldPos;
 
 
@@ -22,16 +22,20 @@ public class PathfindingNode
 
     public PathfindingNode(int x, int y, bool passable)
     {
-        this.x = x;
-        this.y = y;
+        X = x;
+        Y = y;
         IsPassable= passable;
 
     }
 
     public void InitData(PathfindingNode[,] myGrid,int localX,int localY)
     {
-        worldPos = new Vector3(x+.5f, y+.5f);
-        neighbours = new List<PathfindingNode>();
+        worldPos = new Vector3(X+.5f, Y+.5f);
+        if (neighbours == null)
+        {
+            neighbours = new List<PathfindingNode>(4);
+        }
+        
         if (localX > 0)
         {
             neighbours.Add(myGrid[localX-1,localY]);
@@ -52,9 +56,6 @@ public class PathfindingNode
             neighbours.Add(myGrid[localX , localY + 1]);
         }
 
-
-
-        Pathfinding.GetNeighbours(this);
     }
 
     public void UpdatePassable(bool val)
@@ -73,11 +74,14 @@ public class PathfindingNode
     }
 
 
-    Dictionary<string, PathNodeModifier> modifiers = new Dictionary<string, PathNodeModifier>();
+    Dictionary<string, PathNodeModifier> modifiers;
 
     public void AddModifier(PathNodeModifier modifier)
     {
-       
+        if (modifiers == null)
+        {
+            modifiers= new Dictionary<string, PathNodeModifier>();
+        }
         if(!modifiers.ContainsKey(modifier.modifierKey))
         {
             modifiers.Add(modifier.modifierKey, modifier);
@@ -86,6 +90,10 @@ public class PathfindingNode
 
     public void RemoveModifier(string key)
     {
+        if (modifiers == null)
+        {
+            return;
+        }
         if (!modifiers.ContainsKey(key))
         {
             modifiers.Remove(key);
@@ -158,6 +166,10 @@ public class PathfindingNode
 
     public void ManuallyAddNeighbour(PathfindingNode toAdd)
     {
+        if (neighbours == null)
+        {
+            neighbours = new List<PathfindingNode>(4);
+        }
         neighbours.Add(toAdd);
     }
 }

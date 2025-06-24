@@ -43,7 +43,7 @@ public class WorldChunkBatch : MonoBehaviour
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
-                Chunks[x, y] = new WorldChunk(coords.x+(x* WorldChunkManager.ChunkSize),coords.y+ (y *WorldChunkManager.ChunkSize));
+                Chunks[x, y] = new WorldChunk(coords.x+(x* WorldChunkManager.ChunkSize),coords.y+ (y *WorldChunkManager.ChunkSize),x,y);
             }
         }
 
@@ -54,25 +54,41 @@ public class WorldChunkBatch : MonoBehaviour
                 Chunks[x, y].InitPathfindingNodes();
             }
         }
-
-        LinkBatchToOtherBatches();
-    }
-    public bool IsRendered = false;
-    public void RenderChunk()
-    {
-        if (IsRendered)
-        {
-            return;
-        }
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
-                WorldRenderer.Instance.RenderWorld(Chunks[x, y].ChunkTiles);
+                Chunks[x, y].LinkNodesToAdjacentChunksInBatch(this);
             }
         }
-        IsRendered = true;
-        
+        LinkBatchToOtherBatches();
+    }
+    public bool IsRendered = false;
+    public bool RenderChunk()
+    {
+        if (IsRendered)
+        {
+            return false;
+        }
+        int count = 0;
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                if (Chunks[x, y].CheckIfChunkNeedsToRender())
+                {
+                    WorldRenderer.Instance.RenderWorld(Chunks[x, y].ChunkTiles);
+                    Chunks[x, y].NeedsToRender = false;
+                    Chunks[x, y].IsRendered = true;
+                    count++;
+                }else if (Chunks[x, y].IsRendered)
+                {
+                    count++;
+                }
+            }
+        }
+        IsRendered = (count==Chunks.GetLength(0)*Chunks.GetLength(1));
+        return true;
     }
 
     public void LoadChunksFromFile(string name)

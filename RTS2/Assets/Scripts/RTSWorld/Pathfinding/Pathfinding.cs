@@ -28,7 +28,7 @@ public static class Pathfinding
         PathfindingNode toAdd = null;
         //if (node.x == 0)
         {
-            toAdd = GetNodeFromCoords(node.x - 1, node.y);
+            toAdd = GetNodeFromCoords(node.X - 1, node.Y);
             if (toAdd != null)
             {
                 retVal.Add(toAdd);
@@ -41,7 +41,7 @@ public static class Pathfinding
 
         //if (node.x == WorldChunkManager.ChunkSize - 1)
         {
-            toAdd = GetNodeFromCoords(node.x + 1, node.y);
+            toAdd = GetNodeFromCoords(node.X + 1, node.Y);
             if (toAdd != null)
             {
                 retVal.Add(toAdd);
@@ -53,7 +53,7 @@ public static class Pathfinding
         }
        // if (node.y == 0)
         {
-            toAdd = GetNodeFromCoords(node.x, node.y - 1);
+            toAdd = GetNodeFromCoords(node.X, node.Y - 1);
             if (toAdd != null)
             {
                 retVal.Add(toAdd);
@@ -66,7 +66,7 @@ public static class Pathfinding
 
        // if (node.y == WorldChunkManager.ChunkSize - 1)
         {
-            toAdd = GetNodeFromCoords(node.x, node.y + 1);
+            toAdd = GetNodeFromCoords(node.X, node.Y + 1);
             if (toAdd != null)
             {
                 retVal.Add(toAdd);
@@ -125,16 +125,10 @@ public static class Pathfinding
         WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromPos(Position );//.Chunks[chunkForNode.x, chunkForNode.y];
         if(toGetFrom == null)
         {
-            if (debug)
-            {
-                Debug.Log("Pathfinding: chunk from " + Position + " is null");
-            }
+            
             return null;
         }
-        if (debug)
-        {
-            Debug.Log("Pathfinding: chunk from " + Position + " is " + toGetFrom.WorldCoords);
-        }
+      
         int xC = 0, yC = 0;
         Vector2Int bottom = toGetFrom.ChunkTiles[0, 0].Coords();
         Vector2Int top = toGetFrom.ChunkTiles[WorldChunkManager.ChunkSize-1, WorldChunkManager.ChunkSize - 1].Coords();
@@ -146,31 +140,7 @@ public static class Pathfinding
         yC = Mathf.RoundToInt(Mathf.Lerp(0, WorldChunkManager.ChunkSize - 1, lY));
 
 
-        //for(int x = 0; x < toGetFrom.PathfindingNodes.GetLength(0); x++)
-        //{
-        //    if (toGetFrom.PathfindingNodes[x,0].worldPos.x > Position.x)
-        //    {
-        //        xC =x ;
 
-        //        break;
-        //    }
-
-        //}
-        //for (int y = 0; y < toGetFrom.PathfindingNodes.GetLength(1); y++)
-        //{
-        //    if (toGetFrom.PathfindingNodes[0, y].worldPos.y > Position.y)
-        //    {
-        //        yC = y;
-        //        break;
-        //    }
-        //}
-
-        if (debug)
-        {
-            Debug.Log("Pathfinding: chunk from " + Position + " returning  " + xC+","+yC);
-
-
-        }
         return toGetFrom.PathfindingNodes[xC, yC];
 
      
@@ -326,8 +296,8 @@ public static class Pathfinding
 
     static int GetDistance(PathfindingNode nodeA, PathfindingNode nodeB)
     {
-        int dstX = Mathf.Abs(nodeA.x- nodeB.x);
-        int dstY = Mathf.Abs(nodeA.y - nodeB.y);
+        int dstX = Mathf.Abs(nodeA.X- nodeB.X);
+        int dstY = Mathf.Abs(nodeA.Y - nodeB.Y);
 
         if (dstX > dstY)
             return 14 * dstY + 10 * (dstX - dstY);

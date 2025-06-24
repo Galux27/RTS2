@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -15,12 +16,21 @@ public class WorldChunk:ISerialize
     public List<Inventory> StaticContainersInChunk = new List<Inventory>();
     public List<Constructable> ToBuild=new List<Constructable>();
     public Color DebugColor;
-    public int X, Y;
+    public int X, Y,LocalX,LocalY;
 
     public WallSegment[,] WallSegments;
     public PathfindingNode[,] PathfindingNodes;
     public WorldTile[,] ChunkTiles;
     public Vector2Int WorldCoords;
+    public bool NeedsToRender = false,IsRendered=false;
+    const float CameraRenderDistance = 16*3;
+    public bool CheckIfChunkNeedsToRender()
+    {
+        Vector3 cameraPos = CameraController.Instance.transform.position;
+        float dist = Vector2.Distance(new Vector2(X + (WorldChunkManager.ChunkSize / 2), Y + (WorldChunkManager.ChunkSize / 2)), new Vector2(cameraPos.x, cameraPos.y));
+        return NeedsToRender||dist<CameraRenderDistance && IsRendered==false;
+    }
+
 
     public bool CoordsValid(int x,int y)
     {
@@ -30,11 +40,13 @@ public class WorldChunk:ISerialize
     }
 
 
-    public WorldChunk(int x,int y)
+    public WorldChunk(int x,int y,int localX,int localY)
     {
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
         X = x;
         Y = y;
+        LocalX=localX;
+        LocalY=localY;
         WorldCoords=new Vector2Int(x, y);
         GenerateTilesForChunk();
         GenerateWallsForChunk();
@@ -44,9 +56,12 @@ public class WorldChunk:ISerialize
     void GenerateTilesForChunk()
     {
         ChunkTiles = new WorldTile[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
-        int xStart = X;
-        int yStart = Y;
-        int localx = 0, localy = 0;
+        xStart = X;
+        yStart = Y;
+        localx = 0;
+        localy = 0;
+
+
         for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
         {
 
@@ -59,13 +74,14 @@ public class WorldChunk:ISerialize
             localy = 0;
         }
     }
-
+    static int xStart, yStart,localx,localy;
     void GeneratePathfindingNodes()
     {
         PathfindingNodes=new PathfindingNode[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
-        int xStart = X;
-        int yStart = Y;
-        int localx = 0, localy = 0;
+        xStart = X;
+        yStart = Y;
+        localx = 0;
+        localy = 0;
         for (int x = xStart; x < xStart + WorldChunkManager.ChunkSize; x++)
         {
 
@@ -76,6 +92,61 @@ public class WorldChunk:ISerialize
             }
             localx++;
             localy = 0;
+        }
+    }
+
+    public void LinkNodesToAdjacentChunksInBatch(WorldChunkBatch batch)
+    {
+        Vector2Int MyCoords = new Vector2Int(LocalX, LocalY);
+        WorldChunk checking = null;
+        int myX, myY, theirX, theirY;
+        if (LocalX > 0)
+        {
+            checking = batch.Chunks[LocalX-1,LocalY];
+            myX = 0;
+            theirX = WorldChunkManager.ChunkSize - 1;
+            for(int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[myX, y].ManuallyAddNeighbour(checking.PathfindingNodes[theirX, y]);
+                checking.PathfindingNodes[theirX, y].ManuallyAddNeighbour(PathfindingNodes[myX, y]);
+            }
+
+        }
+
+        if (LocalX < WorldChunkManager.ChunksPerBatch - 1)
+        {
+            checking = batch.Chunks[LocalX + 1, LocalY];
+            myX = WorldChunkManager.ChunkSize - 1;
+            theirX = 0;
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[myX, y].ManuallyAddNeighbour(checking.PathfindingNodes[theirX, y]);
+                checking.PathfindingNodes[theirX, y].ManuallyAddNeighbour(PathfindingNodes[myX, y]);
+            }
+        }
+
+        if(LocalY> 0)
+        {
+            checking = batch.Chunks[LocalX , LocalY - 1];
+            myY = 0;
+            theirY = WorldChunkManager.ChunkSize - 1;
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                PathfindingNodes[x, myY].ManuallyAddNeighbour(checking.PathfindingNodes[x, theirY]);
+                checking.PathfindingNodes[x, theirY].ManuallyAddNeighbour(PathfindingNodes[x, myY]);
+            }
+        }
+
+        if(LocalY< WorldChunkManager.ChunksPerBatch - 1)
+        {
+            checking = batch.Chunks[LocalX, LocalY + 1];
+            myY = WorldChunkManager.ChunkSize - 1;
+            theirY = 0;
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                PathfindingNodes[x, myY].ManuallyAddNeighbour(checking.PathfindingNodes[x, theirY]);
+                checking.PathfindingNodes[x, theirY].ManuallyAddNeighbour(PathfindingNodes[x, myY]);
+            }
         }
     }
 
@@ -133,20 +204,22 @@ public class WorldChunk:ISerialize
             }
         }
     }
-
+    static int xIterator=0,yIterator=0;
     public void InitPathfindingNodes()
     {
-        int xStart = X;
-        int yStart = Y;
-        int localx = 0, localy = 0;
-        for (int x = xStart; x < xStart + (WorldChunkManager.ChunkSize); x++)
+        xStart = X;
+        yStart = Y;
+        localx = 0;
+        localy = 0;
+        for (xIterator = xStart; xIterator < xStart + (WorldChunkManager.ChunkSize); xIterator++)
         {
 
-            for (int y = yStart; y < yStart +( WorldChunkManager.ChunkSize); y++)
+            for (yIterator = yStart; yIterator < yStart +( WorldChunkManager.ChunkSize); yIterator++)
             {
                 PathfindingNodes[localx, localy].InitData(PathfindingNodes,localx,localy);
                 localy++;
             }
+            
             localx++;
             localy = 0;
         }
@@ -155,9 +228,10 @@ public class WorldChunk:ISerialize
     void GenerateWallsForChunk()
     {
         WallSegments = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
-        int xStart = X;
-        int yStart = Y;
-        int localx = 0, localy = 0;
+        xStart = X;
+        yStart = Y;
+        localx = 0;
+        localy = 0;
         for(int x=xStart; x<xStart+WorldChunkManager.ChunkSize; x++)
         {
            

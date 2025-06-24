@@ -57,7 +57,7 @@ public class PathFollower
     {
 
         DoorSegment ds = WorldController.Instance.WallManager.IsThereADoorAtCoords(
-            pathfindingNodes[currentIndex].x, pathfindingNodes[currentIndex].y);
+            pathfindingNodes[currentIndex].X, pathfindingNodes[currentIndex].Y);
         if (ds!=null)
         {
             if (ds.UnitCanUseDoor(followingPath))

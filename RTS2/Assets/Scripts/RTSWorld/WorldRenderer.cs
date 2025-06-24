@@ -48,11 +48,23 @@ public class WorldRenderer : MonoBehaviour
             }
         }
     }
-
+    string lastTilePlaced;
+    TileBase lastTileBase;
+    TileBase currentTile;
     void RenderTile(WorldTile tile)
     {
         Vector3Int coords = new Vector3Int(tile.x, tile.y, 0);
-        WorldTilemap.SetTile(coords, WorldTilesManager.GetTileBase(tile.tileType));
+        if (lastTilePlaced != tile.tileType)
+        {
+            currentTile = WorldTilesManager.GetTileBase(tile.tileType);
+            lastTilePlaced = tile.tileType;
+            lastTileBase = currentTile;
+        }
+        else
+        {
+            currentTile = lastTileBase;
+        }
+        WorldTilemap.SetTile(coords, currentTile) ;
         if (tile.WaterData.WaterLevel > 0f)
         {
             WaterTilemap.SetTile(coords, WorldTilesManager.GetTileForWaterLevel(tile.WaterData.WaterLevel));

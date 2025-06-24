@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class WorldChunkManager : MonoBehaviour
 {
@@ -37,16 +36,12 @@ public class WorldChunkManager : MonoBehaviour
     public void InitWorldChunks()
     {
         ChunkBatches = new Dictionary<Vector2Int, WorldChunkBatch>();
-        CreateChunkBatch(new Vector2Int());
-     
-        Debug.Log("Init world chunk manager");
-       
+        CreateChunkBatch(new Vector2Int());       
     }
     
     void CreateChunkBatch(Vector2Int coords,bool init=true)
     {
         ChunkBatches.Add(coords, WorldChunkBatch.CreateWorldChunkBatch(coords));
-        Debug.Log("Creating chunk at " + coords);
         if (init)
         {
             ChunkBatches[coords].InitWorldChunks();
@@ -57,7 +52,6 @@ public class WorldChunkManager : MonoBehaviour
     {
         Vector3 cameraPos = CameraController.Instance.transform.position;
         Vector2Int cameraCoords = ConvertPositionToChunkBatchCoords(cameraPos);
-        Debug.Log("Coords Convert: Converted " + cameraPos + " to " + cameraCoords + " exists " + ChunkBatches.ContainsKey(cameraCoords));
         List<Vector2Int> coords = GetAdjacentBatchCoords(cameraCoords);
         bool needToRender = false;
         for(int x = 0; x < coords.Count; x++)
@@ -68,10 +62,22 @@ public class WorldChunkManager : MonoBehaviour
                 needToRender = true;
             }
         }
-        if (needToRender)
+        if (needToRender||DoWeHaveUndrawnChunks())
         {
             RenderWorldChunks();
         }
+    }
+
+    bool DoWeHaveUndrawnChunks()
+    {
+        foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
+        {
+            if (kvp.Value.IsRendered == false)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     List<Vector2Int> GetAdjacentBatchCoords(Vector2Int coords)
@@ -140,9 +146,13 @@ public class WorldChunkManager : MonoBehaviour
     }
     public void RenderWorldChunks()
     {
+       
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
         {
-            kvp.Value.RenderChunk();
+            if (kvp.Value.RenderChunk())
+            {
+               
+            }
         }
     }
 
@@ -291,7 +301,7 @@ public class WorldChunkManager : MonoBehaviour
     private void Update()
     {
         PerformCreateNewChunksCheck();
-        DebugDrawChunks();
+       // DebugDrawChunks();
     }
 
 

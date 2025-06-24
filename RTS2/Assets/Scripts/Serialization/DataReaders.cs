@@ -36,7 +36,7 @@ public static class DataReaders
         //5 constructables
         string[] keyValueSplit = splitListFromData[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         Vector2Int coords = (Vector2Int)ParseDataObject(keyValueSplit[0], keyValueSplit[1]);
-        WorldChunk chunk = new WorldChunk(coords.x, coords.y);
+        WorldChunk chunk = new WorldChunk(coords.x, coords.y,-1,-1);
         currentLoadingChunkWorldCoords =chunk.WorldCoords;
 
         keyValueSplit = splitListFromData[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
