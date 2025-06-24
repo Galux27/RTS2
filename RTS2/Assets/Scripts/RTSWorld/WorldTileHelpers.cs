@@ -17,7 +17,7 @@ public static class WorldTileHelpers
      //   Vector2Int chunkForNode = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         //if (WorldChunkManager.Instance.CoordsValid(chunkForNode.x,chunkForNode.y))
         {
-            WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords,false,true);
+            WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords,false);
             if (toGetFrom == null)
             {
                 Debug.Log("Furniture Click: no world chunk at " + coords + " to get tile from "+coordsCache);

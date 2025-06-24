@@ -422,7 +422,7 @@ public class WorldChunk:ISerialize
 
     public bool ShouldDrawEnvironmentObjects()
     {
-        return EnvironmentObjectsInChunk.Count > 0;
+        return EnvironmentObjectsInChunk.Count > 0 && IsRendered;
     }
 
     public bool DrawnEnvironmentObjects()

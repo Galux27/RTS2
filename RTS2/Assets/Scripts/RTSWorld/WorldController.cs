@@ -64,7 +64,6 @@ public class WorldController : MonoBehaviour
     {
         if (!DoWeLoadWorld())
         {
-            MapGenerator.Instance.GenerateMap();
         }
         else
         {

@@ -45,6 +45,8 @@ public class WorldChunkManager : MonoBehaviour
         if (init)
         {
             ChunkBatches[coords].InitWorldChunks();
+            MapGenerator.Instance.GenerateMap(ChunkBatches[coords]);
+
         }
     }
     
@@ -237,10 +239,7 @@ public class WorldChunkManager : MonoBehaviour
         if (batch != null)
         {
             Vector2Int chunkCoords = batch.GetChunkCoordsFromTileCoords(coords,debug);
-            if (debug)
-            {
-                Debug.Log("Furniture Click: coords " + coords + " to tile coords was " + chunkCoords + " from " + batch.coords);
-            }
+           
                 return batch.Chunks[chunkCoords.x, chunkCoords.y];
         }
         else

@@ -18,14 +18,19 @@ public class MapGenerator : MonoBehaviour
     public List<MapFeatureBase> features = new List<MapFeatureBase>();
 
     public int FeaturesToGenerate;
-    public void GenerateMap()
+    public void GenerateMap(WorldChunkBatch toGenerateIn)
     {
+        if (toGenerateIn.NeedsGeneration == false)
+        {
+            return;
+        }
         int featureGenerating = 0;
 
         for(int x=0;x<FeaturesToGenerate; x++)
         {
             featureGenerating = Random.Range(0, features.Count);
-            features[featureGenerating].GenerateFeature();
+            features[featureGenerating].GenerateFeature(toGenerateIn);
         }
+        toGenerateIn.NeedsGeneration = false;
     }
 }

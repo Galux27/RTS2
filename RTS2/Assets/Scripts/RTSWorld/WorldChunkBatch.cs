@@ -9,7 +9,7 @@ public class WorldChunkBatch : MonoBehaviour
     public WorldChunk[,] Chunks;
     public bool IsActive = false;
     Vector2Int UpperBound = new Vector2Int();
-
+    public bool NeedsGeneration = true;
 
     public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords)
     {
@@ -166,10 +166,7 @@ public class WorldChunkBatch : MonoBehaviour
 
         getCoordsCache.x = Mathf.FloorToInt (Mathf.Lerp(0,Chunks.GetLength(0),xLerp));//Mathf.Min(coords.x / WorldChunkManager.ChunkSize, Chunks.GetLength(0) - 1);
         getCoordsCache.y = Mathf.FloorToInt(Mathf.Lerp(0, Chunks.GetLength(1), yLerp)); //Mathf.Min(coords.y / WorldChunkManager.ChunkSize, Chunks.GetLength(1) - 1);
-        if (debug)
-        {
-            Debug.Log("Getting chunk coords from " + coords + " returning " + getCoordsCache+"TR" + topRightX+","+topRightY+" my coords "+   this.coords);
-        }
+      
             ValidateCoordsCache();
         return getCoordsCache;
     }
