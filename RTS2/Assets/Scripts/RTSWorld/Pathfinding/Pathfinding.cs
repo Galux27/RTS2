@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public static class Pathfinding
 {
@@ -83,21 +84,12 @@ public static class Pathfinding
    public static Vector2Int GetCoordsFromPosition (Vector3 Position)
     {
         int x = Mathf.RoundToInt(Position.x);
-        x = Mathf.Max(0, x);
-        x = Mathf.Min(worldWidth - 1, x);
+     
 
         int y = Mathf.RoundToInt(Position.y);
-        y = Mathf.Max(0, y);
-        y = Mathf.Min(worldHeight - 1, y);
-
+      
         return new Vector2Int(x, y);
     }
-
-    static bool ValidCoords(int x,int y)
-    {
-        return x>=0&&y>=0&&x<worldWidth&&y<worldHeight;
-    }
-
 
     static Vector2Int coordsCache;
 
@@ -106,44 +98,37 @@ public static class Pathfinding
         coordsCache = new Vector2Int(x, y);
         return GetNodeFromCoords(coordsCache);
     }
+   static Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
 
     public static PathfindingNode GetNodeFromCoords(Vector2Int coords)
     {
-        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords);
-        if (toGetFrom == null)
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(coords.x,coords.y,out batch,out chunk, out local);
+        if (!ValidateCoords())
         {
             return null;
         }
-        coordsCache = coords - toGetFrom.WorldCoords;
-        if (coordsCache.x < 0 || coordsCache.y < 0||coordsCache.x >=WorldChunkManager.ChunkSize||coordsCache.y>=WorldChunkManager.ChunkSize) { return null; }
-        return toGetFrom.PathfindingNodes[coordsCache.x, coordsCache.y];
+        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x,chunk.y].PathfindingNodes[local.x,local.y];   
+    }
+
+    static bool ValidateCoords()
+    {
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch) == false)
+        {
+            return false;
+        }
+        return true;
     }
 
 
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null,bool debug=false)
     {
-        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromPos(Position );//.Chunks[chunkForNode.x, chunkForNode.y];
-        if(toGetFrom == null)
+
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(Position.x, Position.y, out batch, out chunk, out local);
+        if (!ValidateCoords())
         {
-            
             return null;
         }
-      
-        int xC = 0, yC = 0;
-        Vector2Int bottom = toGetFrom.ChunkTiles[0, 0].Coords();
-        Vector2Int top = toGetFrom.ChunkTiles[WorldChunkManager.ChunkSize-1, WorldChunkManager.ChunkSize - 1].Coords();
-
-        float lX = Mathf.InverseLerp(bottom.x, top.x, Position.x);
-        float lY = Mathf.InverseLerp(bottom.y, top.y, Position.y);
-
-        xC = Mathf.RoundToInt(Mathf.Lerp(0, WorldChunkManager.ChunkSize - 1, lX));
-        yC = Mathf.RoundToInt(Mathf.Lerp(0, WorldChunkManager.ChunkSize - 1, lY));
-
-
-
-        return toGetFrom.PathfindingNodes[xC, yC];
-
-     
+        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].PathfindingNodes[local.x, local.y];
     }
 
     /// <summary>

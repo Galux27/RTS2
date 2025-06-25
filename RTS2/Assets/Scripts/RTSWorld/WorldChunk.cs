@@ -17,7 +17,7 @@ public class WorldChunk:ISerialize
     public List<Inventory> StaticContainersInChunk = new List<Inventory>();
     public List<Constructable> ToBuild=new List<Constructable>();
     public Color DebugColor;
-    public int X, Y,LocalX,LocalY;
+    public int X, Y,LocalXCoord,LocalYCoord;
 
     public WallSegment[,] WallSegments;
     public PathfindingNode[,] PathfindingNodes;
@@ -28,8 +28,9 @@ public class WorldChunk:ISerialize
     public bool CheckIfChunkNeedsToRender()
     {
         Vector3 cameraPos = CameraController.Instance.transform.position;
-        float dist = Vector2.Distance(new Vector2(X + (WorldChunkManager.ChunkSize / 2), Y + (WorldChunkManager.ChunkSize / 2)), new Vector2(cameraPos.x, cameraPos.y));
-        return NeedsToRender||dist<CameraRenderDistance && IsRendered==false;
+        float dist = Vector2.Distance(new Vector2(X + (WorldChunkManager.ChunkSize / 2),
+            Y + (WorldChunkManager.ChunkSize / 2)), new Vector2(cameraPos.x, cameraPos.y));
+        return NeedsToRender || dist<CameraRenderDistance && IsRendered==false;
     }
 
     public bool CanWeCleanupChunk()
@@ -54,8 +55,8 @@ public class WorldChunk:ISerialize
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
         X = x;
         Y = y;
-        LocalX=localX;
-        LocalY=localY;
+        LocalXCoord=localX;
+        LocalYCoord=localY;
         WorldCoords=new Vector2Int(x, y);
         GenerateTilesForChunk();
         GenerateWallsForChunk();
@@ -106,12 +107,12 @@ public class WorldChunk:ISerialize
 
     public void LinkNodesToAdjacentChunksInBatch(WorldChunkBatch batch)
     {
-        Vector2Int MyCoords = new Vector2Int(LocalX, LocalY);
+        Vector2Int MyCoords = new Vector2Int(LocalXCoord, LocalYCoord);
         WorldChunk checking = null;
         int myX, myY, theirX, theirY;
-        if (LocalX > 0)
+        if (LocalXCoord > 0)
         {
-            checking = batch.Chunks[LocalX-1,LocalY];
+            checking = batch.Chunks[LocalXCoord-1,LocalYCoord];
             myX = 0;
             theirX = WorldChunkManager.ChunkSize - 1;
             for(int y = 0; y < WorldChunkManager.ChunkSize; y++)
@@ -122,9 +123,9 @@ public class WorldChunk:ISerialize
 
         }
 
-        if (LocalX < WorldChunkManager.ChunksPerBatch - 1)
+        if (LocalXCoord < WorldChunkManager.ChunksPerBatch - 1)
         {
-            checking = batch.Chunks[LocalX + 1, LocalY];
+            checking = batch.Chunks[LocalXCoord + 1, LocalYCoord];
             myX = WorldChunkManager.ChunkSize - 1;
             theirX = 0;
             for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
@@ -134,9 +135,9 @@ public class WorldChunk:ISerialize
             }
         }
 
-        if(LocalY> 0)
+        if(LocalYCoord> 0)
         {
-            checking = batch.Chunks[LocalX , LocalY - 1];
+            checking = batch.Chunks[LocalXCoord , LocalYCoord - 1];
             myY = 0;
             theirY = WorldChunkManager.ChunkSize - 1;
             for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
@@ -146,9 +147,9 @@ public class WorldChunk:ISerialize
             }
         }
 
-        if(LocalY< WorldChunkManager.ChunksPerBatch - 1)
+        if(LocalYCoord< WorldChunkManager.ChunksPerBatch - 1)
         {
-            checking = batch.Chunks[LocalX, LocalY + 1];
+            checking = batch.Chunks[LocalXCoord, LocalYCoord + 1];
             myY = WorldChunkManager.ChunkSize - 1;
             theirY = 0;
             for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
@@ -474,6 +475,7 @@ public class WorldChunk:ISerialize
         retVal.AddDataToSerialize(DataKeys.EnvironmentObjects, GetEnvObjectData());
         retVal.AddDataToSerialize(DataKeys.Resources, ResourceData());
         retVal.AddDataToSerialize(DataKeys.Constructables, ConstructableData());
+        retVal.AddDataToSerialize(DataKeys.LocalCoords,new Vector2Int(LocalXCoord,LocalYCoord));
         return retVal;
     }
 

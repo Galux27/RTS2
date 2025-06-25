@@ -77,7 +77,10 @@ public class EnvironmentObjectManager : MonoBehaviour
         Vector2Int pos = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(CameraPos);
 
         List<WorldChunk> Chunks = WorldChunkManager.Instance.GetChunksInRadius(DrawEnvironmentObjectRadius, CameraPos);
-
+        if (Chunks == null)
+        {
+            return;
+        }
         for(int x = 0; x < Chunks.Count; x++)
         {
             if (Chunks[x].ShouldDrawEnvironmentObjects())

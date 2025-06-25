@@ -8,8 +8,8 @@ using UnityEngine;
 
 public static class SerializationHelpers
 {
-    const string SaveDirectory = "ReclemationCorpSaves";
-    const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT",MiscExtension=".RCMISC",RoomExtension=".RCROOM";
+   public const string SaveDirectory = "ReclemationCorpSaves";
+   public const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT",MiscExtension=".RCMISC",RoomExtension=".RCROOM";
     static string GetSaveFolderParentLocation()
     {
         return System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
@@ -21,6 +21,17 @@ public static class SerializationHelpers
         {
             Directory.CreateDirectory(path);
         }
+    }
+
+    public static string GetSaveDirectory(string saveName)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName);
+    }
+
+    public static string GetWorldChunkBatchFilePath(Vector2Int coords,string saveName)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "_"+coords.x+"_"+coords.y + WorldSectionExtension);
+
     }
 
     public static string GetWorldFilePath(string saveName)
@@ -113,7 +124,7 @@ public static class SerializationHelpers
 
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in WorldChunkManager.Instance.ChunkBatches)
         {
-            name = "CHUNK_TEST_"+kvp.Value.coords.x+"_"+kvp.Value.coords.y + WorldSectionExtension;
+            name = "_"+kvp.Value.coords.x+"_"+kvp.Value.coords.y + WorldSectionExtension;
             for (int x = 0; x < kvp.Value.Chunks.GetLength(0); x++)
             {
                 for (int y = 0; y < kvp.Value.Chunks.GetLength(1); y++)
@@ -151,6 +162,7 @@ public static class SerializationHelpers
 
     public static void LoadGame(string name)
     {
+        Debug.Log("Loading game " + name);
         EasyStopwatch.StartStopwatch();
         IDManager.OnLevelLoaded();
         ReadRoomsFile(name);

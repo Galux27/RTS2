@@ -1,6 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using UnityEngine.Timeline;
 
 public class WorldChunkManager : MonoBehaviour
 {
@@ -160,10 +165,42 @@ public class WorldChunkManager : MonoBehaviour
             
         }
     }
+    Dictionary<Vector2Int, string> ExistingChunkData;
 
+    public bool DoesChunkExist(Vector2Int coords)
+    {
+        if (ExistingChunkData == null)
+        {
+            return false;
+        }
+        return ExistingChunkData.ContainsKey(coords);
+    }
+
+    
     public void LoadChunksFromFile(string name)
     {
-        ChunkBatches[new Vector2Int()].LoadChunksFromFile(name);
+        ExistingChunkData = new Dictionary<Vector2Int, string>();
+        string path = SerializationHelpers.GetSaveDirectory(name);
+        string[] dir = Directory.GetFiles(path);
+        string[] split = null;
+        string fileName = "";
+        Vector2Int coords = Vector2Int.zero;
+        for(int x=0;x<dir.Length; x++)
+        {
+
+            if (dir[x].Contains(SerializationHelpers.WorldSectionExtension))
+            {
+
+                fileName = Path.GetFileNameWithoutExtension(dir[x]);
+                split = fileName.Split("_",System.StringSplitOptions.RemoveEmptyEntries);
+                
+                Debug.Log("Loading " + dir[x]+" "+fileName);
+                coords.x = int.Parse(split[0]);
+                coords.y = int.Parse(split[1]);
+                ExistingChunkData.Add(coords, dir[x]);
+            }
+        }
+       // ChunkBatches[new Vector2Int()].LoadChunksFromFile(name);
     }
     public WorldChunkBatch GetWorldChunkBatchFromPosition(Vector2Int pos,bool canCreateNew=false)
     {
@@ -208,7 +245,49 @@ public class WorldChunkManager : MonoBehaviour
         GetWorldChunkBatchFromPosition(bs.GetPosition()).OnBuildableFinished(bs);
        
     }
-    
+    int localX = 0, localY = 0;
+    int BatchCoordsX = 0, BatchCoordsY = 0;
+    int ChunkCoordsX = 0, ChunkCoordsY = 0;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="x">x pos/coord</param>
+    /// <param name="y">y pos/coord</param>
+    /// <param name="chunkBatch">Coords of the chunk batch that the position was in</param>
+    /// <param name="chunkCoords">Coords of the chunk within the batch that the position was in</param>
+    /// <param name="coords">Coords within the chunk that the position was in</param>
+    public void ConvertPositionToChunkAndLocalCoords(float x, float y, out Vector2Int chunkBatch,out Vector2Int chunkCoords, out Vector2Int coords)
+    {
+        float mod = WorldChunkManager.ChunkBatchSize;
+      
+        localX = Mathf.FloorToInt(x % mod);
+        ChunkCoordsX = Mathf.CeilToInt(localX / WorldChunkManager.ChunkSize);
+        BatchCoordsX = Mathf.FloorToInt(x - localX);
+
+        if (x < 0)
+        {
+            BatchCoordsX -= WorldChunkManager.ChunkBatchSize;
+            localX = WorldChunkManager.ChunkBatchSize + localX;
+
+        }
+        ChunkCoordsX = Mathf.CeilToInt(localX / WorldChunkManager.ChunkSize);
+        localX -= WorldChunkManager.ChunkSize * ChunkCoordsX;
+        mod = WorldChunkManager.ChunkBatchSize;
+        localY = Mathf.FloorToInt(y % mod);
+        BatchCoordsY = Mathf.FloorToInt(y - localY);
+        if (y < 0)
+        {
+            BatchCoordsY -= WorldChunkManager.ChunkBatchSize;
+            localY = WorldChunkManager.ChunkBatchSize + localY;
+        }
+        ChunkCoordsY = Mathf.CeilToInt(localY / WorldChunkManager.ChunkSize);
+        localY -= WorldChunkManager.ChunkSize * ChunkCoordsY;
+
+        chunkBatch = new Vector2Int(BatchCoordsX, BatchCoordsY);
+        chunkCoords = new Vector2Int(ChunkCoordsX, ChunkCoordsY);
+        coords = new Vector2Int(localX, localY);
+    }
+
     public WorldChunk GetWorldChunkFromPos(Vector3 pos)
     {
         Vector2Int chunkCoords = GetChunkCoordsFromWorldPos(pos);
@@ -311,12 +390,26 @@ public class WorldChunkManager : MonoBehaviour
     {
         return x>=0&&y>=0&&x<Width&&y<Height;
     }
-
+    Vector2Int batchCoords = new Vector2Int(), chunkCoords = new Vector2Int(), localCoords = new Vector2Int();
     public List<WorldChunk> GetChunksInRadius(float radius,Vector3 searchCenter)
     {
-       return GetWorldChunkBatchFromPosition(searchCenter).GetChunksInRadius(radius,searchCenter);
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(searchCenter.x, searchCenter.y, out batchCoords, out chunkCoords, out localCoords);
+        if (!ValidateCoords())
+        {
+            return null;
+        }
+        WorldChunkBatch batch = WorldChunkManager.instance.ChunkBatches[batchCoords];
+        
+       return batch.GetChunksInRadius(radius,searchCenter);
     }
-
+    bool ValidateCoords()
+    {
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batchCoords) == false)
+        {
+            return false;
+        }
+        return true;
+    }
     const bool DrawNodeWalkable = false, DrawNodeNeighbours = false;
     void DebugDrawChunks()
     {

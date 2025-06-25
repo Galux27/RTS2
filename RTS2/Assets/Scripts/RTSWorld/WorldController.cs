@@ -70,7 +70,7 @@ public class WorldController : MonoBehaviour
             if (SaveLoadHelpers.DoWeLoadWorld)
             {
                 SerializationHelpers.LoadGame(SaveLoadHelpers.SaveToLoad);
-                SaveLoadHelpers.SaveToLoad = "";
+                //SaveLoadHelpers.SaveToLoad = "";
                 SaveLoadHelpers.DoWeLoadWorld = false;
 
             }
@@ -214,7 +214,16 @@ public class WorldTile:ISerialize
                 traversable = true;
             }
         }
-            Pathfinding.GetNodeFromCoords(x, y).UpdatePassable(traversable);
+        PathfindingNode pn = Pathfinding.GetNodeFromCoords(x, y);
+        if (pn == null)
+        {
+            Debug.Log("Pathfinding node at "+  x+", "+y+" was null");
+        }
+        else
+        {
+            pn.UpdatePassable(traversable);
+
+        }
     }
 
 

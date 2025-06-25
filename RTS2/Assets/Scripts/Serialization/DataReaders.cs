@@ -36,7 +36,10 @@ public static class DataReaders
         //5 constructables
         string[] keyValueSplit = splitListFromData[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         Vector2Int coords = (Vector2Int)ParseDataObject(keyValueSplit[0], keyValueSplit[1]);
-        WorldChunk chunk = new WorldChunk(coords.x, coords.y,-1,-1);
+        keyValueSplit = splitListFromData[6].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        Vector2Int localCoords = (Vector2Int)ParseDataObject(keyValueSplit[0], keyValueSplit[1]);
+
+        WorldChunk chunk = new WorldChunk(coords.x, coords.y,localCoords.x,localCoords.y);
         currentLoadingChunkWorldCoords =chunk.WorldCoords;
 
         keyValueSplit = splitListFromData[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
@@ -93,8 +96,9 @@ public static class DataReaders
                     chunk.ToBuild.Add(buildableStructures[x]);
                 }
             }
-            }
-            return chunk;
+        }
+  
+        return chunk;
     }
 
     public static void ParseData(string key,string remainder)

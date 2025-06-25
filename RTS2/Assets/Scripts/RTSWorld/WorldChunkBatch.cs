@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class WorldChunkBatch : MonoBehaviour
@@ -17,6 +18,7 @@ public class WorldChunkBatch : MonoBehaviour
         g.name = "World Chunk Batch" + coords.ToString();
         WorldChunkBatch wcb = g.AddComponent<WorldChunkBatch>();
         wcb.SetCoords( coords);
+       
         return wcb;
 
     }
@@ -38,30 +40,61 @@ public class WorldChunkBatch : MonoBehaviour
     public void InitWorldChunks()
     {
         Chunks = new WorldChunk[ WorldChunkManager.ChunksPerBatch, WorldChunkManager.ChunksPerBatch];
+        if (WorldChunkManager.Instance.DoesChunkExist(coords))
+        {
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y);
+                }
+            }
 
-        for (int x = 0; x < Chunks.GetLength(0); x++)
-        {
-            for (int y = 0; y < Chunks.GetLength(1); y++)
+            for (int x = 0; x < Chunks.GetLength(0); x++)
             {
-                Chunks[x, y] = new WorldChunk(coords.x+(x* WorldChunkManager.ChunkSize),coords.y+ (y *WorldChunkManager.ChunkSize),x,y);
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y].InitPathfindingNodes();
+                }
             }
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y].LinkNodesToAdjacentChunksInBatch(this);
+                }
+            }
+            LoadChunksFromFile(SaveLoadHelpers.SaveToLoad);
         }
+        else
+        {
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y);
+                }
+            }
 
-        for (int x = 0; x < Chunks.GetLength(0); x++)
-        {
-            for (int y = 0; y < Chunks.GetLength(1); y++)
+            for (int x = 0; x < Chunks.GetLength(0); x++)
             {
-                Chunks[x, y].InitPathfindingNodes();
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y].InitPathfindingNodes();
+                }
+            }
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y].LinkNodesToAdjacentChunksInBatch(this);
+                }
             }
         }
-        for (int x = 0; x < Chunks.GetLength(0); x++)
-        {
-            for (int y = 0; y < Chunks.GetLength(1); y++)
-            {
-                Chunks[x, y].LinkNodesToAdjacentChunksInBatch(this);
-            }
-        }
+     
         LinkBatchToOtherBatches();
+
+       
     }
     public bool IsRendered = false;
     public bool RenderChunk()
@@ -110,12 +143,12 @@ public class WorldChunkBatch : MonoBehaviour
     public void LoadChunksFromFile(string name)
     {
         EasyStopwatch.StartStopwatch();
-        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetWorldFilePath(name));
-        //  string[] splitObjects = null;
+        string path = SerializationHelpers.GetWorldChunkBatchFilePath(coords, name);
+        List<string> dataFromFile = SerializationHelpers.ReadFile(path);
         for (int q = 0; q < dataFromFile.Count; q++)
         {
             WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
-            int x = wc.WorldCoords.x / WorldChunkManager.ChunkSize; int y = wc.WorldCoords.y / WorldChunkManager.ChunkSize;
+            int x = wc.LocalXCoord; int y = wc.LocalYCoord;
             Chunks[x, y] = wc;
 
         }
@@ -133,7 +166,6 @@ public class WorldChunkBatch : MonoBehaviour
                         if (Chunks[x, y].WallSegments[x1, y1].WallType == WallType.Door)
                         {
                             Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
-                            //WorldController.Instance.WallManager.SetDoor(coords.x, coords.y,WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
                             Chunks[x, y].WallSegments[x1, y1].DestroyWall();
                             WallHelpers.CreateDoorObject(coords.x, coords.y,
                                 WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
@@ -149,8 +181,6 @@ public class WorldChunkBatch : MonoBehaviour
 
             }
         }
-
-        Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
     }
 
 
