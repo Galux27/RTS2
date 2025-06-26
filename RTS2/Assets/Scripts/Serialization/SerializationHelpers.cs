@@ -164,6 +164,8 @@ public static class SerializationHelpers
     {
         Debug.Log("Loading game " + name);
         EasyStopwatch.StartStopwatch();
+        ReadMiscFile(name);
+
         IDManager.OnLevelLoaded();
         ReadRoomsFile(name);
 
@@ -171,7 +173,6 @@ public static class SerializationHelpers
         ReadUnitFile(name);
         BehaviourDeserializer.DeserializeBehaviours();
         InventoryDeserializer.DeserializeInventorys();
-        ReadMiscFile(name);
         for(int x=0;x<RoomManager.Instance.roomList.Count;x++)
         {
             RoomManager.Instance.roomList[x].RefreshRoom();

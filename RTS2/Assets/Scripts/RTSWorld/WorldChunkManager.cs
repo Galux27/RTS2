@@ -60,6 +60,7 @@ public class WorldChunkManager : MonoBehaviour
         Vector3 cameraPos = CameraController.Instance.transform.position;
         Vector2Int cameraCoords = ConvertPositionToChunkBatchCoords(cameraPos);
         List<Vector2Int> coords = GetAdjacentBatchCoords(cameraCoords);
+        coords.Add(cameraCoords);
         bool needToRender = false;
         for(int x = 0; x < coords.Count; x++)
         {
