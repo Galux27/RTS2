@@ -8,7 +8,7 @@ public class Forest_MapFeature :MapFeatureBase
     public int MinQuantityToSpawn,MaxQuantityToSpawn;
     public override void GenerateFeature(WorldChunkBatch toGenerateIn)
     {
-        Vector2Int center = toGenerateIn.coords + new Vector2Int(Random.Range(WorldChunkManager.ChunkSize, WorldChunkManager.ChunkBatchSize-WorldChunkManager.ChunkSize), Random.Range(WorldChunkManager.ChunkSize, WorldChunkManager.ChunkBatchSize- WorldChunkManager.ChunkSize));
+        Vector2Int center = toGenerateIn.coords + new Vector2Int(Random.Range(0, WorldChunkManager.ChunkBatchSize), Random.Range(0, WorldChunkManager.ChunkBatchSize));
         int width = Random.Range(MinWidth, MaxWidth);
         int height = Random.Range(MinHeight, MaxHeight);
         int x = 0, y = 0;

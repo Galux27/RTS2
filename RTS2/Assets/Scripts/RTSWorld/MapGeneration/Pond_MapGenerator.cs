@@ -77,7 +77,12 @@ public class Pond_MapGenerator : MapFeatureBase
                     }
                 }
             }
-            startCoords = PointsUsed[Random.Range(0, PointsUsed.Count)];
+            int index = Random.Range(0, PointsUsed.Count);
+            if (PointsUsed.Count == 0)
+            {
+                return;
+            }
+            startCoords = PointsUsed[index];
 
         }
 

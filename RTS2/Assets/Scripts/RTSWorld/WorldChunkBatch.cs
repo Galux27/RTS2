@@ -23,6 +23,18 @@ public class WorldChunkBatch : MonoBehaviour
 
     }
 
+    public void SetChunksLoaded()
+    {
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].HasChunkFinishedLoading = true;
+            }
+        }
+
+    }
+
     public void SetCoords(Vector2Int coords)
     {
         this.coords = coords;
@@ -139,6 +151,43 @@ public class WorldChunkBatch : MonoBehaviour
             }
         }
     }
+    const float DistToUnloadChunkBatch = 750f;
+    public bool CheckToUnloadChunkData()
+    {
+        Vector3 cameraPosition = CameraController.Instance.transform.position;
+        if(Vector2Int.Distance(new Vector2Int(Mathf.RoundToInt(cameraPosition.x), Mathf.RoundToInt(cameraPosition.y)), coords) > DistToUnloadChunkBatch)
+        {
+            bool DoWeNeedToUpdateData = false;
+            for(int x=0;x<Chunks.GetLength(0); x++)
+            {
+                for(int y=0;y<Chunks.GetLength(1);y++)
+                {
+                    if (Chunks[x, y].HasChunkBeenModified())
+                    {
+                        DoWeNeedToUpdateData = true;
+                        break;
+                    }
+                }
+            }
+
+            //Write chunk data to some live save place as its changed from the savegame
+            if (DoWeNeedToUpdateData)
+            {
+                //write chunk to file
+            }
+            UnloadChunk();
+            return true;
+        }
+        return false;
+    }
+
+    void UnloadChunk()
+    {
+        //go through chunks on the edge and remove pathfinding neighbours that 
+        UnlinkBatchFromOtherBatches();
+        WorldChunkManager.Instance.ChunkBatches.Remove(this.coords);
+        Debug.Log("Unloading chunk at " + this.coords);
+    }
 
     public void LoadChunksFromFile(string name)
     {
@@ -181,6 +230,14 @@ public class WorldChunkBatch : MonoBehaviour
 
             }
         }
+
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].HasChunkFinishedLoading = true;
+            }
+        }
     }
 
 
@@ -216,6 +273,54 @@ public class WorldChunkBatch : MonoBehaviour
             ValidateCoordsCache();
         return getCoordsCache;
     }
+
+    void UnlinkFromOtherBatch(Vector2Int coordsToCheck)
+    {
+        WorldChunkBatch neighbour = WorldChunkManager.Instance.ChunkBatches[coordsToCheck];
+        if (coords.x < coordsToCheck.x)
+        {
+            //link left of mine to right of theres
+            int myX = WorldChunkManager.ChunksPerBatch - 1;
+            int theirX = 0;
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
+            {
+                Chunks[myX, y].ManuallyRemoveNeighboursFromOtherBatches(coords, coordsToCheck, myX, y);
+            }
+        }
+        else if (coords.x > coordsToCheck.x)
+        {
+            //link right of mine to left of theres
+            int myX = 0;
+            int theirX = WorldChunkManager.ChunksPerBatch - 1;
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
+            {
+                Chunks[myX, y].ManuallyRemoveNeighboursFromOtherBatches(coords, coordsToCheck, myX, y);
+            }
+        }
+
+        if (coords.y < coordsToCheck.y)
+        {
+            //top of mine to bottom of theres
+            int myY = WorldChunkManager.ChunksPerBatch - 1;
+            int theirY = 0;
+            for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
+            {
+                Chunks[x, myY].ManuallyRemoveNeighboursFromOtherBatches(coords, coordsToCheck, x, myY);
+
+            }
+        }
+        else if (coords.y > coordsToCheck.y)
+        {
+            //bottom of mine to top of theres,
+            int myY = 0;
+            int theirY = WorldChunkManager.ChunksPerBatch - 1;
+            for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
+            {
+                Chunks[x, myY].ManuallyRemoveNeighboursFromOtherBatches(coords, coordsToCheck, x, myY);
+            }
+        }
+    }
+
 
     void LinkToOtherBatch(Vector2Int coordsToCheck)
     {
@@ -292,7 +397,33 @@ public class WorldChunkBatch : MonoBehaviour
         }
 
     }
+    public void UnlinkBatchFromOtherBatches()
+    {
+        Vector2Int coordsToCheck = coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coordsToCheck))
+        {
+            UnlinkFromOtherBatch(coordsToCheck);
+        }
 
+        coordsToCheck = coords + new Vector2Int(-WorldChunkManager.ChunkBatchSize, 0);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coordsToCheck))
+        {
+            UnlinkFromOtherBatch(coordsToCheck);
+        }
+
+        coordsToCheck = coords + new Vector2Int(0, -WorldChunkManager.ChunkBatchSize);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coordsToCheck))
+        {
+            UnlinkFromOtherBatch(coordsToCheck);
+        }
+
+        coordsToCheck = coords + new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coordsToCheck))
+        {
+            UnlinkFromOtherBatch(coordsToCheck);
+        }
+
+    }
 
     void ValidateCoordsCache()
     {

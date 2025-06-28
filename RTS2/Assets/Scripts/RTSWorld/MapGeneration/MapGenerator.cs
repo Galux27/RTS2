@@ -32,5 +32,6 @@ public class MapGenerator : MonoBehaviour
             features[featureGenerating].GenerateFeature(toGenerateIn);
         }
         toGenerateIn.NeedsGeneration = false;
+        toGenerateIn.SetChunksLoaded();
     }
 }

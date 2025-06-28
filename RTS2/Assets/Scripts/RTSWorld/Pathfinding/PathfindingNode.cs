@@ -163,6 +163,15 @@ public class PathfindingNode
         }
         return Cache;
     }
+    public void ManuallyRemoveNeighbour(PathfindingNode toRemove)
+    {
+        if (neighbours == null || !neighbours.Contains(toRemove))
+        {
+            return;
+        }
+        neighbours.Remove(toRemove);
+    }
+
 
     public void ManuallyAddNeighbour(PathfindingNode toAdd)
     {

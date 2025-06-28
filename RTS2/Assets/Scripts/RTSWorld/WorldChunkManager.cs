@@ -76,6 +76,17 @@ public class WorldChunkManager : MonoBehaviour
         }
     }
 
+    void PerformUnloadChunksCheck()
+    {
+        foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
+        {
+            if (kvp.Value.CheckToUnloadChunkData())
+            {
+                return;
+            }
+        }
+    }
+
     bool DoWeHaveUndrawnChunks()
     {
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
@@ -285,8 +296,8 @@ public class WorldChunkManager : MonoBehaviour
         localY -= WorldChunkManager.ChunkSize * ChunkCoordsY;
 
         chunkBatch = new Vector2Int(BatchCoordsX, BatchCoordsY);
-        chunkCoords = new Vector2Int(ChunkCoordsX, ChunkCoordsY);
-        coords = new Vector2Int(localX, localY);
+        chunkCoords = new Vector2Int(Mathf.Clamp( ChunkCoordsX,0, WorldChunkManager.ChunkSize - 1), Mathf.Clamp(ChunkCoordsY, 0, WorldChunkManager.ChunkSize - 1));
+        coords = new Vector2Int(Mathf.Clamp(localX, 0, WorldChunkManager.ChunkSize-1), Mathf.Clamp(localY, 0, WorldChunkManager.ChunkSize - 1));
     }
 
     public WorldChunk GetWorldChunkFromPos(Vector3 pos)
@@ -383,7 +394,7 @@ public class WorldChunkManager : MonoBehaviour
     private void Update()
     {
         PerformCreateNewChunksCheck();
-       // DebugDrawChunks();
+        PerformUnloadChunksCheck();
     }
 
 

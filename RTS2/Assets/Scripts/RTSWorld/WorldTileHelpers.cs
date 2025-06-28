@@ -22,8 +22,16 @@ public static class WorldTileHelpers
         {
             return null;
         }
-        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[local.x, local.y];
-    }
+        try
+        {
+            return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[local.x, local.y];
+        }
+        catch
+        {
+            Debug.LogError("Error getting tile from coords " + coords + " " + batch.ToString() + "/" + chunk.ToString() + "/" + local.ToString());
+            return null;
+        }
+        }
     static bool ValidateCoords()
     {
         if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch) == false)

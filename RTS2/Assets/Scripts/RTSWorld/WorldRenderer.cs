@@ -77,7 +77,7 @@ public class WorldRenderer : MonoBehaviour
             }
         }
         WorldTilemap.SetTiles(positionArray, tileArray);
-        
+        WaterTilemap.SetTiles(positionArray, tileArray);
     }
     string lastTilePlaced;
     TileBase lastTileBase;

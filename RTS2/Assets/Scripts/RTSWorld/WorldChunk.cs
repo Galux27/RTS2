@@ -52,6 +52,7 @@ public class WorldChunk:ISerialize
 
     public WorldChunk(int x,int y,int localX,int localY)
     {
+        HasChunkFinishedLoading = false;
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
         X = x;
         Y = y;
@@ -156,6 +157,66 @@ public class WorldChunk:ISerialize
             {
                 PathfindingNodes[x, myY].ManuallyAddNeighbour(checking.PathfindingNodes[x, theirY]);
                 checking.PathfindingNodes[x, theirY].ManuallyAddNeighbour(PathfindingNodes[x, myY]);
+            }
+        }
+    }
+
+
+    public void ManuallyRemoveNeighboursFromOtherBatches(Vector2Int myBatchCoords,Vector2Int neighbourBatchCoords, int localX, int localY)
+    {
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(neighbourBatchCoords) == false)
+        {
+            return;
+        }
+        WorldChunkBatch neighbour = WorldChunkManager.Instance.ChunkBatches[neighbourBatchCoords];
+        WorldChunk editing = null;
+        if (myBatchCoords.x < neighbourBatchCoords.x)
+        {
+            //link left of mine to right of theres
+            editing = neighbour.Chunks[0, localY];
+            int myX = WorldChunkManager.ChunkSize - 1;
+            int theirX = 0;
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[myX, y].ManuallyRemoveNeighbour(editing.PathfindingNodes[theirX, y]);
+                editing.PathfindingNodes[theirX, y].ManuallyRemoveNeighbour(PathfindingNodes[myX, y]);
+            }
+        }
+        else if (myBatchCoords.x > neighbourBatchCoords.x)
+        {
+            //link right of mine to left of theres
+            editing = neighbour.Chunks[WorldChunkManager.ChunkSize - 1, localY];
+            int myX = 0;
+            int theirX = WorldChunkManager.ChunkSize - 1;
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                PathfindingNodes[myX, y].ManuallyRemoveNeighbour(editing.PathfindingNodes[theirX, y]);
+                editing.PathfindingNodes[theirX, y].ManuallyRemoveNeighbour(PathfindingNodes[myX, y]);
+            }
+        }
+
+        if (myBatchCoords.y < neighbourBatchCoords.y)
+        {
+            //top of mine to bottom of theres
+            editing = neighbour.Chunks[localX, 0];
+            int myY = WorldChunkManager.ChunkSize - 1;
+            int theirY = 0;
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                PathfindingNodes[x, myY].ManuallyRemoveNeighbour(editing.PathfindingNodes[x, theirY]);
+                editing.PathfindingNodes[x, theirY].ManuallyRemoveNeighbour(PathfindingNodes[x, myY]);
+            }
+        }
+        else if (myBatchCoords.y > neighbourBatchCoords.y)
+        {
+            //bottom of mine to top of theres,
+            editing = neighbour.Chunks[localX, WorldChunkManager.ChunksPerBatch - 1];
+            int myY = 0;
+            int theirY = WorldChunkManager.ChunkSize - 1;
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                PathfindingNodes[x, myY].ManuallyRemoveNeighbour(editing.PathfindingNodes[x, theirY]);
+                editing.PathfindingNodes[x, theirY].ManuallyRemoveNeighbour(PathfindingNodes[x, myY]);
             }
         }
     }
@@ -265,6 +326,13 @@ public class WorldChunk:ISerialize
         UnitsInChunk.Remove(unit);
     }
 
+    public bool HasChunkFinishedLoading = false;
+    bool hasChunkBeenModified = false;
+    public bool HasChunkBeenModified()
+    {
+        return hasChunkBeenModified;
+    }
+
     public void AddResourceObject(ResourceInstance resourceInstance)
     {
         if (ResourceObjectsInChunk.Contains(resourceInstance))
@@ -272,22 +340,37 @@ public class WorldChunk:ISerialize
             return;
         }
         ResourceObjectsInChunk.Add(resourceInstance);
+        SetModifiedIfLoaded();
+    }
+
+    void SetModifiedIfLoaded()
+    {
+        if (HasChunkFinishedLoading)
+        {
+            Debug.Log("Set chunk modifed ");
+            hasChunkBeenModified = true;
+        }
     }
 
     public void RemoveResourceObject(ResourceInstance resourceInstance)
     {
         ResourceObjectsInChunk.Remove(resourceInstance);
+        SetModifiedIfLoaded();
     }
 
 
     public void AddContainerObject(Inventory container)
     {
         StaticContainersInChunk.Add(container);
+        SetModifiedIfLoaded();
+
     }
 
     public void RemoveContainerObject(Inventory container)
     {
         StaticContainersInChunk.Remove(container);
+        SetModifiedIfLoaded();
+
     }
 
     public void AddEnvironmentObject(EnvironmentObjectInstance environmentObject)
@@ -298,6 +381,8 @@ public class WorldChunk:ISerialize
         {
             environmentObject.RenderInstance();
         }
+        SetModifiedIfLoaded();
+
     }
 
     public void RemoveEnvironmentObject(EnvironmentObjectInstance instance)
@@ -308,6 +393,8 @@ public class WorldChunk:ISerialize
         }
         
         EnvironmentObjectsInChunk.Remove(instance);
+        SetModifiedIfLoaded();
+
     }
 
     List<EnvironmentObjectInstance> GetAllObjectsAtCoords(Vector2Int coords)
@@ -405,12 +492,13 @@ public class WorldChunk:ISerialize
 
     public void AddConstructable(Constructable toBuild)
     {
-        Debug.Log("ADDED TO BUILD " + GetType());
         ToBuild.Add(toBuild);
         if (ShouldDrawEnvironmentObjects() && !toBuild.IsDrawn())
         {
             toBuild.Render();
         }
+        SetModifiedIfLoaded();
+
     }
 
     public void RemoveConstructable(Constructable toRemove, bool needsCleanup = true)
@@ -428,6 +516,8 @@ public class WorldChunk:ISerialize
             }
             ToBuild.Remove(toRemove);
         }
+        SetModifiedIfLoaded();
+
     }
 
     public bool ShouldDrawEnvironmentObjects()
