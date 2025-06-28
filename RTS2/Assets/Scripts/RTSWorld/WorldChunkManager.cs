@@ -14,7 +14,7 @@ public class WorldChunkManager : MonoBehaviour
     public const int ChunkBatchSize = ChunkSize * ChunksPerBatch;
     static WorldChunkManager instance;
     public Dictionary<Vector2Int, WorldChunkBatch> ChunkBatches;
-
+    public List<Vector2Int> ChunksLoaded;
     public static WorldChunkManager Instance
     {
         get
@@ -53,6 +53,15 @@ public class WorldChunkManager : MonoBehaviour
             MapGenerator.Instance.GenerateMap(ChunkBatches[coords]);
 
         }
+    }
+
+    public void AddChunkStoredInWorkingCopy(Vector2Int v)
+    {
+        if (ChunksLoaded == null)
+        {
+            ChunksLoaded = new List<Vector2Int>();
+        }
+        ChunksLoaded.Add(v);
     }
     
     public void PerformCreateNewChunksCheck()
@@ -188,6 +197,15 @@ public class WorldChunkManager : MonoBehaviour
         return ExistingChunkData.ContainsKey(coords);
     }
 
+
+    public bool DoesChunkExistInWorkingCopy(Vector2Int coords)
+    {
+        if (ChunksLoaded == null)
+        {
+            return false;
+        }
+        return ChunksLoaded.Contains(coords);
+    }
     
     public void LoadChunksFromFile(string name)
     {

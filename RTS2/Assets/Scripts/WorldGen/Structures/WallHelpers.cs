@@ -66,7 +66,10 @@ public static class WallHelpers
     public static Sprite GetSpriteForWallType(WallSegment segment, WallManager wallManager, WallTile toGetTileFrom)
     {
         bool up = false, down = false, left = false, right = false;
-
+        if (segment == null)
+        {
+            return toGetTileFrom.NoNeighbours.sprite;
+        }
         if (segment.x > 0)
         {
             if (WallHelpers.GetWallAtCoords(segment.x - 1, segment.y).HasWall)

@@ -8,7 +8,7 @@ using UnityEngine;
 
 public static class SerializationHelpers
 {
-   public const string SaveDirectory = "ReclemationCorpSaves";
+   public const string SaveDirectory = "ReclemationCorpSaves",WorkingDir= "ReclemationCorpWorkingDir";
    public const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT",MiscExtension=".RCMISC",RoomExtension=".RCROOM";
     static string GetSaveFolderParentLocation()
     {
@@ -26,6 +26,12 @@ public static class SerializationHelpers
     public static string GetSaveDirectory(string saveName)
     {
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName);
+    }
+
+    public static string GetWorldChunkBatchFilePathFromWorkingCopy(Vector2Int coords)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, WorkingDir, "_" + coords.x + "_" + coords.y + WorldSectionExtension);
+
     }
 
     public static string GetWorldChunkBatchFilePath(Vector2Int coords,string saveName)
@@ -52,6 +58,11 @@ public static class SerializationHelpers
     {
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "MISC" + MiscExtension);
 
+    }
+
+    public static string GetWorkingCopyDirectory()
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, WorkingDir);
     }
 
     public static string GetSaveDir()
@@ -116,6 +127,27 @@ public static class SerializationHelpers
             WriteToFile(path, name, dataWriting);
         }
     }
+
+    public static void SaveChunkBatchToWorkingCopy(WorldChunkBatch wb)
+    {
+        string path = GetWorkingCopyDirectory();
+        if (Directory.Exists(path) ==false)
+        {
+           Directory.CreateDirectory(path);
+        }
+        List<string> dataWriting = new List<string>();
+        string name = "_" + wb.coords.x + "_" + wb.coords.y + WorldSectionExtension;
+        for (int x = 0; x < wb.Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < wb.Chunks.GetLength(1); y++)
+            {
+                dataWriting.Add(wb.Chunks[x, y].Serialize().Data);
+            }
+        }
+        WriteToFile(path, name, dataWriting);
+        WorldChunkManager.Instance.AddChunkStoredInWorkingCopy(wb.coords);
+    }
+
 
     public static void SaveLoadedWorld(string path)
     {

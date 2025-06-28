@@ -49,6 +49,15 @@ public static class IDManager
         }
         IDDictionaries[obj.GetType()].AddObject(uID, obj);
     }
+
+    public static void CleanupUID(object obj,UID uID)
+    {
+        if (!IDDictionaries.ContainsKey(obj.GetType()))
+        {
+            IDDictionaries.Add(obj.GetType(), new UIDObjectDictionary(obj.GetType()));
+        }
+        IDDictionaries[obj.GetType()].RemoveUID(uID);
+    }
 }
 
 public class UIDObjectDictionary
@@ -69,6 +78,14 @@ public class UIDObjectDictionary
         else
         {
             Debug.LogError("Error, trying toadd existing ID"+id.Value+" for object type "+typeIStore.ToString());
+        }
+    }
+
+    public void RemoveUID(UID id)
+    {
+        if (Objects.ContainsKey(id.Value))
+        {
+            Objects.Remove(id.Value);
         }
     }
 

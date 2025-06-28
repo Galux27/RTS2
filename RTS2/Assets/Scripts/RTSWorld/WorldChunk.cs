@@ -296,6 +296,37 @@ public class WorldChunk:ISerialize
         }
     }
 
+    public void UnloadChunk()
+    {
+        for(int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
+        {
+            IDManager.CleanupUID(EnvironmentObjectsInChunk[x], EnvironmentObjectsInChunk[x].GetMyUID());
+        }
+
+        for(int x=0;x<ResourceObjectsInChunk.Count; x++)
+        {
+            IDManager.CleanupUID(ResourceObjectsInChunk[x], ResourceObjectsInChunk[x].GetMyUID());
+        }
+
+        for (int x = 0; x <StaticContainersInChunk.Count; x++)
+        {
+            IDManager.CleanupUID(StaticContainersInChunk[x], StaticContainersInChunk[x].GetMyUID());
+        }
+
+        for (int x = 0; x < ToBuild.Count; x++)
+        {
+            IDManager.CleanupUID(ToBuild[x], ToBuild[x].GetMyUID());
+        }
+
+        for (int x = 0; x < WallSegments.GetLength(0); x++)
+        {
+            for(int y = 0; y < WallSegments.GetLength(1); y++)
+            {
+                IDManager.CleanupUID(WallSegments[x, y], WallSegments[x, y].GetMyUID());
+            }
+        }
+    }
+
     void GenerateWallsForChunk()
     {
         WallSegments = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];

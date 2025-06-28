@@ -52,7 +52,34 @@ public class WorldChunkBatch : MonoBehaviour
     public void InitWorldChunks()
     {
         Chunks = new WorldChunk[ WorldChunkManager.ChunksPerBatch, WorldChunkManager.ChunksPerBatch];
-        if (WorldChunkManager.Instance.DoesChunkExist(coords))
+
+        if (WorldChunkManager.Instance.DoesChunkExistInWorkingCopy(coords))
+        {
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y);
+                }
+            }
+
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y].InitPathfindingNodes();
+                }
+            }
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y].LinkNodesToAdjacentChunksInBatch(this);
+                }
+            }
+            LoadFromWorkingCopy();
+        }
+        else if (WorldChunkManager.Instance.DoesChunkExist(coords))
         {
             for (int x = 0; x < Chunks.GetLength(0); x++)
             {
@@ -173,7 +200,7 @@ public class WorldChunkBatch : MonoBehaviour
             //Write chunk data to some live save place as its changed from the savegame
             if (DoWeNeedToUpdateData)
             {
-                //write chunk to file
+                SerializationHelpers.SaveChunkBatchToWorkingCopy(this);
             }
             UnloadChunk();
             return true;
@@ -183,11 +210,78 @@ public class WorldChunkBatch : MonoBehaviour
 
     void UnloadChunk()
     {
+        UnloadChunks();
         //go through chunks on the edge and remove pathfinding neighbours that 
         UnlinkBatchFromOtherBatches();
+        //reset all environment objects and remove UIDs
         WorldChunkManager.Instance.ChunkBatches.Remove(this.coords);
         Debug.Log("Unloading chunk at " + this.coords);
     }
+
+    void UnloadChunks()
+    {
+        for(int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for(int y=0;y<Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].UnloadChunk();
+            }
+        }
+    }
+
+
+    public void LoadFromWorkingCopy()
+    {
+        EasyStopwatch.StartStopwatch();
+        string path = SerializationHelpers.GetWorldChunkBatchFilePathFromWorkingCopy(coords);
+        Debug.Log("Loading from working copy " + path);
+        List<string> dataFromFile = SerializationHelpers.ReadFile(path);
+        for (int q = 0; q < dataFromFile.Count; q++)
+        {
+            WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
+            int x = wc.LocalXCoord; int y = wc.LocalYCoord;
+            Chunks[x, y] = wc;
+
+        }
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].InitPathfindingNodes();
+
+                for (int x1 = 0; x1 < Chunks[x, y].ChunkTiles.GetLength(0); x1++)
+                {
+                    for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(0); y1++)
+                    {
+                        Chunks[x, y].ChunkTiles[x1, y1].UpdateWaterLevel(Chunks[x, y].ChunkTiles[x1, y1].WaterData.WaterLevel);
+                        if (Chunks[x, y].WallSegments[x1, y1].WallType == WallType.Door)
+                        {
+                            Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
+                            Chunks[x, y].WallSegments[x1, y1].DestroyWall();
+                            WallHelpers.CreateDoorObject(coords.x, coords.y,
+                                WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
+                        }
+                    }
+                }
+
+
+                for (int q = 0; q < Chunks[x, y].EnvironmentObjectsInChunk.Count; q++)
+                {
+                    WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(Chunks[x, y].EnvironmentObjectsInChunk[q], !EnvironmentObjectHelpers.GetEnvironmentObject(Chunks[x, y].EnvironmentObjectsInChunk[q].Name()).BlocksTile);
+                }
+
+            }
+        }
+
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].HasChunkFinishedLoading = true;
+            }
+        }
+    }
+
 
     public void LoadChunksFromFile(string name)
     {
