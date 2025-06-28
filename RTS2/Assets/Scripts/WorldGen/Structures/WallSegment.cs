@@ -83,14 +83,28 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     public Tile ToDraw;
     public void SetTile(Tile tile)
     {
+      
         Debug.Log("Set tile sprite for " + x + "," + y + " to " + tile.sprite.name.ToString()+"|"+WallType);
         ToDraw = tile;
+    }
+
+    public void RenderWall()
+    {
+        WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), ToDraw);
         Drawn = true;
+    }
+
+    public void UnRender()
+    {
+        WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), null) ;
+
+        Drawn = false;
     }
 
     public virtual void DestroyWall()
     {
         ToDraw = null;
+        Drawn = false;
         WallType = WallType.None;
         Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(Position());
         Pathfinding.UpdateNodeData(x, y, true);

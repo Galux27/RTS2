@@ -347,6 +347,24 @@ public class WorldChunk:ISerialize
         }
     }
 
+    public void RefreshWalls()
+    {
+        Debug.Log("Refreshing walls in chunk");
+        for (int x = 0; x < WallSegments.GetLength(0); x++)
+        {
+            for (int y = 0; y < WallSegments.GetLength(1); y++)
+            {
+                if (WallSegments[x, y].HasWall)
+                {
+                    Debug.Log("Refreshing wall at " + x + "," + y+(WallSegments[x, y].ToDraw==null)+"|"+(WallSegments[x, y].baseWallType==null));
+                    WallHelpers.CalculateTileType(ref WallSegments[x, y], WorldController.Instance.WallManager, WallSegments[x, y].baseWallType);
+                    WallSegments[x, y].RenderWall();
+                }
+                }
+            }
+    }
+
+
     public void AddUnitToChunk(Unit unit)
     {
         UnitsInChunk.Add(unit);
@@ -690,5 +708,12 @@ public class WorldChunk:ISerialize
     public void UnRenderChunk()
     {
         CleanupEnvironmentObjects();
+        for(int x = 0; x < WallSegments.GetLength(0); x++)
+        {
+            for(int y=0;y < WallSegments.GetLength(1); y++)
+            {
+                WallSegments[x, y].UnRender();
+            }
+        }
     }
 }

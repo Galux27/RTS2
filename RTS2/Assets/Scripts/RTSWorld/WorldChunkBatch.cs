@@ -151,6 +151,7 @@ public class WorldChunkBatch : MonoBehaviour
                 {
                     WorldRenderer.Instance.RenderChunk(Chunks[x, y].ChunkTiles);
                     Chunks[x, y].NeedsToRender = false;
+                    Chunks[x, y].RefreshWalls();
                     Chunks[x, y].IsRendered = true;
                     count++;
                 }else if (Chunks[x, y].IsRendered)

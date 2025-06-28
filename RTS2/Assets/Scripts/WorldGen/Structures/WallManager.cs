@@ -212,7 +212,7 @@ public class WallManager
 
    public bool CoordsValid(int x,int y)
     {
-        return x>0&&y>0 &&x<width&&y<height;
+        return true;
     }
 
     public void AddSingleDoor(int x,int y,Tilemap toDrawOn, WallTile toUse)
@@ -293,19 +293,6 @@ public class WallManager
         }
         WallSegment wall = null;
 
-        //for (int x1 = 0; x1 < width; x1++)
-        //{
-        //    for (int y1 = 0; y1 < height; y1++)
-        //    {
-        //        wall = WallHelpers.GetWallAtCoords(x+x1,y+ y1);
-
-        //        if (wall.HasWall)
-        //        {
-        //            WallHelpers.CalculateTileType(ref wall, this,wall.baseWallType);
-        //            WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
-        //        }
-        //    }
-        //}
         wall = WallHelpers.GetWallAtCoords(x, y);
         if (wall.WallType == WallType.Wall)
         {
@@ -327,39 +314,13 @@ public class WallManager
                 if (wall.HasWall)
                 {
                     WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+                    wall.RenderWall();
 
-                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
                 }
             }
         }
     }
 
-    public void RefreshWalls(int x,int y)
-    {
-        Vector2Int asCoords = new Vector2Int(x, y);
-        Vector2Int toGetFromCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(asCoords);
-        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(asCoords);//.Chunks[toGetFromCoords.x, toGetFromCoords.y];
-        if (toGetFrom == null)
-        {
-            return;
-        }
-        WallSegment wall = null;
-
-        for (int x1 = 0; x1 < width; x1++)
-        {
-            for (int y1 = 0; y1 < height; y1++)
-            {
-                wall = WallHelpers.GetWallAtCoords(x1, y1);
-
-                if (wall.HasWall)
-                {
-                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
-                }
-            }
-        }
-
-    }
-
+   
 
 }

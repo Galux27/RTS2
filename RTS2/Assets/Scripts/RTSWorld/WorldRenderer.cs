@@ -79,6 +79,7 @@ public class WorldRenderer : MonoBehaviour
         WorldTilemap.SetTiles(positionArray, tileArray);
         WaterTilemap.SetTiles(positionArray, tileArray);
         WorldController.Instance.BuildingTilemap.SetTiles(positionArray, tileArray);
+        
     }
     string lastTilePlaced;
     TileBase lastTileBase;
