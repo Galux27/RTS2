@@ -183,37 +183,37 @@ public static class WallHelpers
     {
         bool up=false,down=false,left=false,right=false;
 
-        if (segment.x > 0)
+        WallSegment checking = WallHelpers.GetWallAtCoords(segment.x - 1, segment.y);
+
+
+        if (checking!=null&&checking.HasWall)
         {
-            if (WallHelpers.GetWallAtCoords(segment.x - 1, segment.y).HasWall)
-            {
-                left = true;
-            }
+            left = true;
         }
 
-        if (segment.x < wallManager.width - 1)
-        {
-            if (WallHelpers.GetWallAtCoords(segment.x + 1, segment.y).HasWall)
-            {
-                right = true;
-            }
-        }
+        checking = WallHelpers.GetWallAtCoords(segment.x + 1, segment.y);
 
-        if (segment.y > 0)
-        {
-            if (WallHelpers.GetWallAtCoords(segment.x , segment.y - 1).HasWall)
-            {
-                down = true;
-            }
-        }
 
-        if (segment.y < wallManager.height - 1)
+        if (checking != null && checking.HasWall)
         {
-            if (WallHelpers.GetWallAtCoords(segment.x, segment.y + 1).HasWall)
-            {
-                up = true;
-            }
+            right = true;
         }
+        checking = WallHelpers.GetWallAtCoords(segment.x, segment.y - 1);
+
+
+
+        if (checking != null && checking.HasWall)
+        {
+            down = true;
+        }
+        checking = WallHelpers.GetWallAtCoords(segment.x, segment.y + 1);
+
+
+        if (checking != null && checking.HasWall)
+        {
+            up = true;
+        }
+        
         
 
 
@@ -419,12 +419,22 @@ public static class WallHelpers
 
     public static WallSegment GetWallAtCoords(int x,int y)
     {
-        return GetWallAtCoords(new Vector2Int(x, y));
+        Vector2Int batch = Vector2Int.zero;
+        Vector2Int chunk = Vector2Int.zero;
+        Vector2Int local = Vector2Int.zero;
+
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y, out batch, out chunk, out local);
+        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y];
     }
 
     public static WallSegment GetWallAtCoords(Vector2Int coords)
     {
+        Vector2Int batch = Vector2Int.zero;
+        Vector2Int chunk = Vector2Int.zero;
+        Vector2Int local = Vector2Int.zero;
 
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(coords.x, coords.y, out batch, out chunk, out local);
+        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y];
         Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
         WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords);//Chunks[chunkForWall.x, chunkForWall.y];
         if (toGetFrom == null)
