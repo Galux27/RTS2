@@ -50,6 +50,12 @@ public class RoomsSelectionMode : SelectionMode
         {
             RoomDrawrer.Instance.RenderPoints(RoomDrawrer.Instance.DrawingParent, PositionsCurrentlySelected);
         }
+
+        if (RoomManager.Instance.SelectedRoom != null)
+        {
+           RoomManager.Instance.SelectedRoom.RefreshRoom();
+           
+        }
     }
 
     void RefreshRooms()

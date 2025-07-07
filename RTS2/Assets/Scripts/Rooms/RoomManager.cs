@@ -19,6 +19,7 @@ public class RoomManager : MonoBehaviour
     }
     private void Awake()
     {
+        instance = this;
         LoadData();
         InitEvents();
     }
@@ -61,7 +62,7 @@ public class RoomManager : MonoBehaviour
         return false;
     }
 
-    public Action<Room> OnRoomAdded, OnRoomRemoved, OnRoomSelected;
+    public Action<Room> OnRoomAdded, OnRoomRemoved, OnRoomSelected,OnRoomChange;
 
     public void AddRoom(Room room)
     {

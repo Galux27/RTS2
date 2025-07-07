@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Room:ISerialize
 {
     public string roomName = "";
     public Color displayColour;
     public List<Vector2Int> tilesInRoom = new List<Vector2Int>();
+    public bool Render = true,IsDrawn=false;
+
     RoomUseType roomUseType;
     public RoomUseType roomType
     {
@@ -29,13 +32,24 @@ public class Room:ISerialize
 
     public Room()
     {
-        roomName = "Room " + RoomManager.Instance.roomList.Count;
+        roomName = "Unnamed Room";
+
+        
+    }
+
+    bool HasInitRoom = false;
+    void InitRoom()
+    {
+        roomName = "Unnamed Room "+RoomManager.Instance.roomList.Count;
         displayColour = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), .25f);
     }
 
-
     public void AddTiles(List<Vector2Int> tilesInRoom)
     {
+        if (!HasInitRoom)
+        {
+            InitRoom();
+        }
         List<Vector2Int> addedTiles = new List<Vector2Int>();
         for(int x=0;x<tilesInRoom.Count;x++)
         {
@@ -45,7 +59,8 @@ public class Room:ISerialize
                 addedTiles.Add(tilesInRoom[x]);
             }
         }
-        OnRoomChanged?.Invoke(this);
+        RoomManager.Instance.OnRoomChange?.Invoke(this);
+
         CheckForItemsThatCouldBeInRoom(addedTiles);
         RefreshRoom();
     }
@@ -58,7 +73,7 @@ public class Room:ISerialize
 
         }
         CheckForConstructablesNoLongerInRoom(tilesInRoom);
-        OnRoomChanged?.Invoke(this);
+        RoomManager.Instance.OnRoomChange?.Invoke(this);
         RefreshRoom();
 
     }
@@ -205,6 +220,7 @@ public class Room:ISerialize
         
             string key = obj.Name();
             EnvironmentObject objData = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+        Debug.Log("Room: getting obj data from " + key+"|"+(objData==null)+"|"+(objData.CapacityData==null));
             if (objData.CapacityData != null && objData.CapacityData.CapacityData.Count > 0)
             {
                 for (int q = 0; q < objData.CapacityData.CapacityData.Count; q++)
@@ -213,6 +229,7 @@ public class Room:ISerialize
                 }
             }
         ResourceManager.Instance.UpdateResourceUI();
+        RoomManager.Instance.OnRoomChange?.Invoke(this);
     }
 
 

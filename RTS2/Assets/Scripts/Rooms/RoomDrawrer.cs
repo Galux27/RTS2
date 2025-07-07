@@ -33,9 +33,33 @@ public class RoomDrawrer : MonoBehaviour
             return drawParent;
         }
     }
+
+    private void Update()
+    {
+        for(int x = 0; x < RoomManager.Instance.roomList.Count; x++)
+        {
+            if (DoWeNeedToCleanupRoom(RoomManager.Instance.roomList[x])|| DoWeNeedToRenderRoom(RoomManager.Instance.roomList[x]))
+            {
+                RenderRoom(RoomManager.Instance.roomList[x]);
+            }
+            
+        }
+    }
+
+    bool DoWeNeedToRenderRoom(Room r)
+    {
+        return r.IsDrawn == false && r.Render == true;
+    }
+
+    bool DoWeNeedToCleanupRoom(Room r)
+    {
+        return r.IsDrawn ==true && r.Render == false;
+    }
+
     Dictionary<Room, GameObject> parentsOfRooms=new Dictionary<Room, GameObject>();
     public void RenderPoints(Transform parent,Room room, Color c = default)
     {
+
         CleanupRoom(parent);
         GameObject cur = null;
         if (room == RoomManager.Instance.SelectedRoom) { 
@@ -108,6 +132,7 @@ public class RoomDrawrer : MonoBehaviour
 
             }
         }
+        room.IsDrawn = true;
     }
 
 
@@ -178,8 +203,14 @@ public class RoomDrawrer : MonoBehaviour
             return;
         }
         Debug.Log("Rendering room " + r.displayColour.ToString() + " tiles " + r.tilesInRoom.Count);
-        RenderPoints(parentsOfRooms[r].transform, r, r.displayColour);
-        
+        if (r.Render)
+        {
+            RenderPoints(parentsOfRooms[r].transform, r, r.displayColour);
+        }
+        else
+        {
+            CleanupRoom(r);
+        }
     }
 
     public void CleanupAllRooms()
@@ -198,6 +229,8 @@ public class RoomDrawrer : MonoBehaviour
             return;
         }
         CleanupRoom(parentsOfRooms[r].transform);
+        r.IsDrawn = false;
+        
     }
 
     public void CleanupRoom(Transform parent)

@@ -118,9 +118,10 @@ public class RoomUtils
         retVal += RoomManager.Instance.ValidityData[r.roomType].GetIssuesWithRoom(r);
         return retVal ;
     }
-
+    
     public static bool IsRoomEnclosed(Room r)
     {
+        Debug.Log("Room: is room enclosed " + r.roomName);
         List<Vector2Int> tilesOnEdge = new List<Vector2Int>();
         List<Vector2Int> neighbours = null;
         int count = 0;
@@ -167,15 +168,9 @@ public class RoomUtils
                     {
                         doorNeighbours++;
                     }
-                    if (r.tilesInRoom.Contains(neighbours[q]) ||
-                        WallHelpers.DoesConstructedWallExistAtPosition(neighbours[q].x, neighbours[q].y) ||
-                        WallHelpers.DoesConstructedDoorExistAtPosition(neighbours[q].x, neighbours[q].y))
-                    {
-                        count++;
-                    }
-
+                    count += GetCountForRoomTile(neighbours[q], r);
                 }
-                if (count < 4)
+                if (count < neighbours.Count)
                 {
                     invalidEdge.Add(tilesOnEdge[x]);
                     //return false;
@@ -195,6 +190,16 @@ public class RoomUtils
         return true;
     }
 
+    public static int GetCountForRoomTile(Vector2Int coords,Room r)
+    {
+        if (r.tilesInRoom.Contains(coords) ||
+                       WallHelpers.DoesConstructedWallExistAtPosition(coords.x, coords.y) ||
+                       WallHelpers.DoesConstructedDoorExistAtPosition(coords.x, coords.y))
+        {
+            return 1;
+        }
+        return 0;
+    }
 
     public static bool DoesRoomContainObject(Room r,string objectToFind,out int quantity)
     {

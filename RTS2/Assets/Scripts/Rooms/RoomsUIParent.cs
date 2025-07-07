@@ -49,7 +49,7 @@ public class RoomsUIParent : MonoBehaviour
 
         RoomType.AddOptions(TypeOptions);
         RoomType.onValueChanged.AddListener(OnRoomTypeChange);
-        Room.OnRoomChanged += RefreshUI;
+       // Room.OnRoomChanged += RefreshUI;
     }
 
     void OnSelectModeButton(Button b)
