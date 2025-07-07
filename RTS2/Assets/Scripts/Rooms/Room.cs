@@ -30,9 +30,9 @@ public class Room:ISerialize
     public List<ConstructableObjectInstance> ObjectsInRoom = new List<ConstructableObjectInstance>();
 
 
-    public Room()
+    public Room(string name="Unnamed Room")
     {
-        roomName = "Unnamed Room";
+        roomName = name;
 
         
     }
@@ -40,8 +40,9 @@ public class Room:ISerialize
     bool HasInitRoom = false;
     void InitRoom()
     {
-        roomName = "Unnamed Room "+RoomManager.Instance.roomList.Count;
+        
         displayColour = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), .25f);
+        HasInitRoom = true;
     }
 
     public void AddTiles(List<Vector2Int> tilesInRoom)
@@ -192,19 +193,22 @@ public class Room:ISerialize
         CanUseRoomValue = value;
         if (CanUseRoomValue)
         {
-            for (int x = 0; x < ObjectsInRoom.Count; x++)
+            if (ObjectsInRoom != null)
             {
-                string key = ObjectsInRoom[x].ObjectKey;
-                EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
-                if (obj.CapacityData != null && obj.CapacityData.CapacityData.Count > 0)
+                for (int x = 0; x < ObjectsInRoom.Count; x++)
                 {
-                    for (int q = 0; q < obj.CapacityData.CapacityData.Count; q++)
+                    string key = ObjectsInRoom[x].ObjectKey;
+                    EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+                    if (obj.CapacityData != null && obj.CapacityData.CapacityData.Count > 0)
                     {
-                        ResourceManager.Instance.UpdateResourceCapacity(obj.CapacityData.CapacityData[q].CapacityProvidedFor);
+                        for (int q = 0; q < obj.CapacityData.CapacityData.Count; q++)
+                        {
+                            ResourceManager.Instance.UpdateResourceCapacity(obj.CapacityData.CapacityData[q].CapacityProvidedFor);
+                        }
                     }
                 }
             }
-        }
+            }
             ResourceManager.Instance.UpdateResourceUI();
     }
 
