@@ -40,7 +40,6 @@ public class CreateNewRoomUIElement : BaseUIElement
     void ResetInputFields()
     {
         NameInput.inputText.text = "";
-        TypeDropDown.index = 0;
     }
 
     void OnCreateRoomClick()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
@@ -152,7 +153,7 @@ public class WallManager
                 }
             }
         }
-
+        OnWallRemoved.Invoke(new Vector2Int(x,y));
         for (int x1 = x - 1; x1 <= x + 1; x1++)
         {
             for (int y1 = y - 1; y1 <= y + 1; y1++)
@@ -171,6 +172,9 @@ public class WallManager
             }
         }
     }
+
+    public static Action<Vector2Int> OnWallRemoved, OnWallAdded;
+
 
     public List<WallSegment> GetWallSegments(Vector3 low,Vector3 high)
     {
@@ -250,7 +254,7 @@ public class WallManager
             }
         }
 
-
+        OnWallAdded?.Invoke(asCoords);
         for (int x1 = x - 1; x1 <= x + 1; x1++)
         {
             for (int y1 = y - 1; y1 <= y + 1; y1++)
@@ -299,7 +303,7 @@ public class WallManager
             WorldController.Instance.SetTraversible(x, y,false);
         }
         WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-
+        OnWallAdded?.Invoke(asCoords);
 
         for (int x1 = x - 1; x1 <= x + 1; x1++)
         {

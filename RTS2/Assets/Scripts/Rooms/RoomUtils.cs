@@ -98,7 +98,9 @@ public class RoomUtils
         {
             return true;
         }
-        return RoomManager.Instance.ValidityData[room.roomType].IsValid(room) && IsRoomEnclosed(room);
+        bool isValid = RoomManager.Instance.ValidityData[room.roomType].IsValid(room);
+        bool isEnclosed = IsRoomEnclosed(room);
+        return isValid && isEnclosed;
     }
 
 
@@ -121,7 +123,6 @@ public class RoomUtils
     
     public static bool IsRoomEnclosed(Room r)
     {
-        Debug.Log("Room: is room enclosed " + r.roomName);
         List<Vector2Int> tilesOnEdge = new List<Vector2Int>();
         List<Vector2Int> neighbours = null;
         int count = 0;
@@ -183,8 +184,11 @@ public class RoomUtils
         r.InvalidEdge = invalidEdge;
         if (invalidEdge.Count > 0)
         {
+            Debug.Log("Room: is room enclosed " + r.roomName+" false ");
+
             return false;
         }
+        Debug.Log("Room: is room enclosed " + r.roomName+" true");
 
 
         return true;

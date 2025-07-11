@@ -61,15 +61,15 @@ public class EditRoomUIElement : BaseUIElement
     public override void RefreshUI()
     {
         base.RefreshUI();
-        if(RoomManager.Instance.SelectedRoom == null)
+        if(RoomManager.Instance.GetRoom() == null)
         {
             SelectedRoom.text = "No room selected";
             ValidityDetails.text = "";
         }
         else
         {
-            SelectedRoom.text = "Editing: " + RoomManager.Instance.SelectedRoom.roomName;
-            ValidityDetails.text= RoomManager.Instance.SelectedRoom.GetValidityDetailsForRoom(RoomManager.Instance.SelectedRoom);
+            SelectedRoom.text = "Editing: " + RoomManager.Instance.GetRoom().roomName;
+            ValidityDetails.text= RoomManager.Instance.GetRoom().GetValidityDetailsForRoom(RoomManager.Instance.GetRoom());
         }
     }
 

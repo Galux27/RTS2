@@ -61,9 +61,9 @@ public class RoomsUIParent : MonoBehaviour
 
     private void OnNameTextChanged(string arg0)
     {
-        if(RoomManager.Instance.SelectedRoom!= null)
+        if(RoomManager.Instance.GetRoom() != null)
         {
-            RoomManager.Instance.SelectedRoom.roomName = arg0;
+            RoomManager.Instance.GetRoom().roomName = arg0;
         }
     }
 
@@ -89,7 +89,7 @@ public class RoomsUIParent : MonoBehaviour
         GameObject room = Instantiate(SelectRoomButton, SelectRoomParent);
         room.GetComponent<Button>().onClick.AddListener(()=>SelectRoom(r));
         room.GetComponentInChildren<TextMeshProUGUI>().text = r.roomType.ToString();
-        if (r == RoomManager.Instance.SelectedRoom)
+        if (r == RoomManager.Instance.GetRoom())
         {
             room.GetComponent<Image>().color = Color.green;
         }
@@ -105,7 +105,7 @@ public class RoomsUIParent : MonoBehaviour
     //create room first then adding furniture doesn't update contents of room
     void RefreshUI(Room r)
     {
-        if (r == RoomManager.Instance.SelectedRoom)
+        if (r == RoomManager.Instance.GetRoom())
         {
             RoomName.text = r.roomName;
             RoomDetails.text = r.GetDetailsForRoom();
@@ -120,13 +120,13 @@ public class RoomsUIParent : MonoBehaviour
 
     void OnRoomTypeChange(int i)
     {
-        if (RoomManager.Instance.SelectedRoom==null)
+        if (RoomManager.Instance.GetRoom() == null)
         {
             return;
         }
-        RoomManager.Instance.SelectedRoom.roomType = (RoomUseType)i;
-        RoomManager.Instance.SelectedRoom.SetCanUseRoom(RoomManager.Instance.SelectedRoom.DoesRoomHaveNeededObjects());
-        RefreshUI(RoomManager.Instance.SelectedRoom);
+        RoomManager.Instance.GetRoom().roomType = (RoomUseType)i;
+        RoomManager.Instance.GetRoom().SetCanUseRoom(RoomManager.Instance.GetRoom().DoesRoomHaveNeededObjects());
+        RefreshUI(RoomManager.Instance.GetRoom());
 
     }
 

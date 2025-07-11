@@ -62,7 +62,7 @@ public class RoomDrawrer : MonoBehaviour
 
         CleanupRoom(parent);
         GameObject cur = null;
-        if (room == RoomManager.Instance.SelectedRoom) { 
+       
         for (int x = 0; x < room.tilesInRoom.Count; x++)
         {
             cur = GameObjectPoolManager.Instance.GetObjectFromPool(BaseTileKey);
@@ -104,34 +104,8 @@ public class RoomDrawrer : MonoBehaviour
             }
 
             }
-        }
-        else
-        {
-            for (int x = 0; x < room.tilesInRoom.Count; x++)
-            {
-                cur = GameObjectPoolManager.Instance.GetObjectFromPool(BaseTileKey);
-                cur.transform.parent = parent;
-                cur.SetActive(true);
-
-
-              
-                    if (c != default)
-                    {
-                        cur.transform.position = new Vector3(room.tilesInRoom[x].x + .5f, room.tilesInRoom[x].y + .5f, 0f);
-
-                        cur.GetComponent<SpriteRenderer>().color = new Color(c.r,c.g,c.b,c.a/2f);
-                        cur.GetComponent<SpriteRenderer>().sortingOrder = 98;
-                    }
-                    else
-                    {
-                        cur.transform.position = new Vector3(room.tilesInRoom[x].x + .5f, room.tilesInRoom[x].y + .5f, .1f);
-
-                        cur.GetComponent<SpriteRenderer>().color = new Color(0, 1, 1, .3f);
-                    }
-                
-
-            }
-        }
+      
+        
         room.IsDrawn = true;
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RoomManager : MonoBehaviour
@@ -22,6 +23,8 @@ public class RoomManager : MonoBehaviour
         instance = this;
         LoadData();
         InitEvents();
+        WallManager.OnWallAdded += OnWallSegmentCreated;
+        WallManager.OnWallRemoved += OnWallSegmentCreated;
     }
 
     public Dictionary<RoomUseType, RoomValidityData> ValidityData;
@@ -41,7 +44,16 @@ public class RoomManager : MonoBehaviour
             }
         }
     }
-
+    private void Update()
+    {
+        if (roomList != null)
+        {
+            for(int x = 0; x < roomList.Count; x++)
+            {
+                roomList[x].DrawRoomBounds();
+            }
+        }
+    }
     void InitEvents()
     {
         EventManager.Instance.OnConstructableObjectCreated+= OnConstructableCreated;
@@ -67,6 +79,7 @@ public class RoomManager : MonoBehaviour
     public void AddRoom(Room room)
     {
         roomList.Add(room);
+        Debug.Log("Room: adding new room " + room.roomName + " of type " + room.roomType);
         RoomDrawrer.Instance.OnCreateRoom(room);
         OnRoomAdded?.Invoke(room);
 
@@ -84,34 +97,70 @@ public class RoomManager : MonoBehaviour
 
     public void SetSelectedRoom(Room r)
     {
-        OnRoomSelected?.Invoke(r);
         SelectedRoom = r;
+
+        OnRoomSelected?.Invoke(r);
     }
     public Room SelectedRoom;
-
+  
+    public Room GetRoom()
+    {
+        return SelectedRoom;
+    }
 
     public void DeleteSelected()
     {
-        SelectedRoom.OnRoomDelete();
-        roomList.Remove(SelectedRoom);
-        RoomDrawrer.Instance.OnDestroyRoom(SelectedRoom);
-        SelectedRoom = null;
+        GetRoom().OnRoomDelete();
+        roomList.Remove(GetRoom());
+        RoomDrawrer.Instance.OnDestroyRoom(GetRoom());
         RoomsUIParent.Instance.RedrawRoomSelectionButtons();
         OnRoomRemoved?.Invoke(SelectedRoom);
+        SelectedRoom = null;
 
     }
 
     public void OnConstructableCreated(Vector2Int coords, ConstructableObjectInstance Created)
     {
-        Debug.Log("invalid: trying to Constructable added to room at " + coords+" "+Created.ObjectKey);
+        Debug.Log("room: trying to Constructable added to room at " + coords+" "+Created.ObjectKey+" "+roomList.Count);
 
         for (int x=0;x< roomList.Count;x++)
         {
-            if (roomList[x].DoesRoomContainPosition(coords))
+            if (roomList[x].DoesRoomContainPoint(coords))
             {
                 Debug.Log("invalid: Constructable added to room at " + coords + "|" + roomList[x].roomType);
                 roomList[x].OnObjectAddedToRoom(Created);
                 roomList[x].RefreshRoom();
+            }
+        }
+    }
+
+    public void OnWallSegmentRemoved(Vector2Int coords)
+    {
+        for (int x = 0; x < roomList.Count; x++)
+        {
+            if (roomList[x].DoesRoomContainPoint(coords))
+            {
+                RoomUtils.IsRoomEnclosed(roomList[x]);
+                Debug.Log("Room: wall Removed to room at " + coords + "|" + roomList[x].roomType);
+                //roomList[x].OnObjectAddedToRoom(Created);
+                roomList[x].IsDrawn = false;
+                roomList[x].RefreshRoom();
+
+            }
+        }
+    }
+
+    public void OnWallSegmentCreated(Vector2Int coords)
+    {
+        for (int x = 0; x < roomList.Count; x++)
+        {
+            if (roomList[x].DoesRoomContainPoint(coords))
+            {
+                RoomUtils.IsRoomEnclosed(roomList[x]);
+                Debug.Log("Room: wall added to room at " + coords + "|" + roomList[x].roomType);
+                roomList[x].IsDrawn = false;
+                roomList[x].RefreshRoom();
+                
             }
         }
     }

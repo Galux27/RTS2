@@ -51,9 +51,9 @@ public class RoomsSelectionMode : SelectionMode
             RoomDrawrer.Instance.RenderPoints(RoomDrawrer.Instance.DrawingParent, PositionsCurrentlySelected);
         }
 
-        if (RoomManager.Instance.SelectedRoom != null)
+        if (RoomManager.Instance.GetRoom() != null)
         {
-           RoomManager.Instance.SelectedRoom.RefreshRoom();
+           RoomManager.Instance.GetRoom().RefreshRoom();
            
         }
     }
@@ -66,7 +66,7 @@ public class RoomsSelectionMode : SelectionMode
 
     void OnClick(List<Vector2Int> positions)
     {
-        if (RoomManager.Instance.SelectedRoom == null)
+        if (RoomManager.Instance.GetRoom() == null)
         {
             return;
         }
@@ -75,11 +75,12 @@ public class RoomsSelectionMode : SelectionMode
         {
             case RoomMode.Expand:
                 positions = FilterTilesInRoom(positions);
-                RoomManager.Instance.SelectedRoom.AddTiles(positions);
+                Debug.Log("Room: adding tiles to " + RoomManager.Instance.GetRoom().roomName);
+                RoomManager.Instance.GetRoom().AddTiles(positions);
                 break;
             case RoomMode.Remove:
-                positions = FilterTilesNotInRoom(RoomManager.Instance.SelectedRoom, positions);
-                RoomManager.Instance.SelectedRoom.RemoveTiles(positions);
+                positions = FilterTilesNotInRoom(RoomManager.Instance.GetRoom(), positions);
+                RoomManager.Instance.GetRoom().RemoveTiles(positions);
                 break;
             default:
                 break;
