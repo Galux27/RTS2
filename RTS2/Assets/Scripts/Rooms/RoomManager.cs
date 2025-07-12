@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -24,7 +25,8 @@ public class RoomManager : MonoBehaviour
         LoadData();
         InitEvents();
         WallManager.OnWallAdded += OnWallSegmentCreated;
-        WallManager.OnWallRemoved += OnWallSegmentCreated;
+        WallManager.OnWallRemoved += OnWallSegmentRemoved;
+        EnvironmentObjectManager.OnEnvironmentObjectDestroyed += OnEnvironmentObjectDestroyed;
     }
 
     public Dictionary<RoomUseType, RoomValidityData> ValidityData;
@@ -119,7 +121,23 @@ public class RoomManager : MonoBehaviour
 
     }
 
-    public void OnConstructableCreated(Vector2Int coords, ConstructableObjectInstance Created)
+    void OnEnvironmentObjectDestroyed(EnvironmentObjectInstance destroyed)
+    {
+        ConstructableObjectInstance obj = destroyed as ConstructableObjectInstance;
+        if (obj != null)
+        {
+            Vector2Int coords = obj.coords;
+            for (int x = 0; x < roomList.Count; x++)
+            {
+                if (roomList[x].DoesRoomContainPoint(coords))
+                {
+                    roomList[x].OnObjectDestroyed(obj);
+                }
+            }
+
+        }
+    }
+        public void OnConstructableCreated(Vector2Int coords, ConstructableObjectInstance Created)
     {
         Debug.Log("room: trying to Constructable added to room at " + coords+" "+Created.ObjectKey+" "+roomList.Count);
 
@@ -129,7 +147,6 @@ public class RoomManager : MonoBehaviour
             {
                 Debug.Log("invalid: Constructable added to room at " + coords + "|" + roomList[x].roomType);
                 roomList[x].OnObjectAddedToRoom(Created);
-                roomList[x].RefreshRoom();
             }
         }
     }
@@ -144,7 +161,7 @@ public class RoomManager : MonoBehaviour
                 Debug.Log("Room: wall Removed to room at " + coords + "|" + roomList[x].roomType);
                 //roomList[x].OnObjectAddedToRoom(Created);
                 roomList[x].IsDrawn = false;
-                roomList[x].RefreshRoom();
+                OnRoomChange?.Invoke(roomList[x]);
 
             }
         }
@@ -159,8 +176,7 @@ public class RoomManager : MonoBehaviour
                 RoomUtils.IsRoomEnclosed(roomList[x]);
                 Debug.Log("Room: wall added to room at " + coords + "|" + roomList[x].roomType);
                 roomList[x].IsDrawn = false;
-                roomList[x].RefreshRoom();
-                
+                OnRoomChange?.Invoke(roomList[x]);
             }
         }
     }

@@ -91,10 +91,10 @@ public class Room:ISerialize
             }
         }
         CheckForObjectsInRoom(addedTiles);
-        RoomManager.Instance.OnRoomChange?.Invoke(this);
 
         CheckForItemsThatCouldBeInRoom(addedTiles);
-        RefreshRoom();
+        RoomManager.Instance.OnRoomChange?.Invoke(this);
+
     }
 
 
@@ -122,21 +122,7 @@ public class Room:ISerialize
         }
     }
 
-    void CheckForObjectsNoLongerInRoom()
-    {
-        bool done = false;
-        while (!done)
-        {
-            for(int x = 0; x < ObjectsInRoom.Count; x++)
-            {
-                if (ObjectsInRoom[x]==null|| !DoesRoomContainPoint(ObjectsInRoom[x].coords))
-                {
-                    ObjectsInRoom.RemoveAt(x);
-                }
-            }
-        }
-    }
-
+  
     public void DrawRoomBounds()
     {
         DrawBounds(roomBounds, 0f);
@@ -182,7 +168,6 @@ public class Room:ISerialize
         }
         CheckForConstructablesNoLongerInRoom(tilesInRoom);
         RoomManager.Instance.OnRoomChange?.Invoke(this);
-        RefreshRoom();
 
     }
 
@@ -260,7 +245,32 @@ public class Room:ISerialize
             }
         }
         ResourceManager.Instance.UpdateResourceUI();
-     
+        RoomManager.Instance.OnRoomChange?.Invoke(this);
+
+    }
+
+    public void OnObjectDestroyed(ConstructableObjectInstance obj)
+    {
+        if (ObjectsInRoom == null || !ObjectsInRoom.Contains(obj))
+        {
+            return;
+        }
+        ObjectsInRoom.Remove(obj);
+
+        for (int x = 0; x < ObjectsInRoom.Count; x++)
+        {
+            string key = ObjectsInRoom[x].ObjectKey;
+            EnvironmentObject envObj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
+            if (envObj.CapacityData != null && envObj.CapacityData.CapacityData.Count > 0)
+            {
+                for (int q = 0; q < envObj.CapacityData.CapacityData.Count; q++)
+                {
+                    ResourceManager.Instance.UpdateResourceCapacity(envObj.CapacityData.CapacityData[q].CapacityProvidedFor);
+                }
+            }
+        }
+        ResourceManager.Instance.UpdateResourceUI();
+        RoomManager.Instance.OnRoomChange?.Invoke(this);
 
     }
 
@@ -333,7 +343,7 @@ public class Room:ISerialize
             string key = obj.Name();
             EnvironmentObject objData = EnvironmentObjectHelpers.GetEnvironmentObject(key);
 
-        Debug.Log("Room: getting obj data from " + key+"|"+(objData==null)+"|"+(objData.CapacityData==null)+" is valid "+ CanUseRoom());
+        Debug.Log("Room: getting obj data from " + key+"|"+(objData==null)+"|"+(objData.CapacityData.CapacityData==null)+" is valid "+ CanUseRoom());
             if (objData.CapacityData != null && objData.CapacityData.CapacityData.Count > 0)
             {
                 for (int q = 0; q < objData.CapacityData.CapacityData.Count; q++)
@@ -354,7 +364,7 @@ public class Room:ISerialize
 
     public void RefreshRoom()
     {
-        SetCanUseRoom(DoesRoomHaveNeededObjects());
+        SetCanUseRoom(DoesRoomHaveNeededObjects()); 
         UnitCapacityManager.RefreshCapacities();
     }
 

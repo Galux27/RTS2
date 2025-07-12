@@ -110,29 +110,35 @@ public class PathfindingNode
         }
         if (useModifiers)
         {
-            foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
+            if (modifiers != null)
             {
-                if (kvp.Value.IsValid(performing))
+                foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
                 {
-                    Cache = kvp.Value.ModifyWalkable(Cache, performing);
-                    if (Cache == false)
+                    if (kvp.Value.IsValid(performing))
                     {
-                        return Cache;
+                        Cache = kvp.Value.ModifyWalkable(Cache, performing);
+                        if (Cache == false)
+                        {
+                            return Cache;
+                        }
                     }
                 }
             }
-        }
+            }
             return Cache;
     }
 
     public int GetFCost(Unit performing)
     {
         int Cache = FCost;
-        foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
+        if (modifiers != null)
         {
-            if (kvp.Value.IsValid(performing))
+            foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
             {
-                Cache = kvp.Value.ModifyFCost(Cache, performing);
+                if (kvp.Value.IsValid(performing))
+                {
+                    Cache = kvp.Value.ModifyFCost(Cache, performing);
+                }
             }
         }
         return Cache;
@@ -141,27 +147,34 @@ public class PathfindingNode
     public int GetHCost(Unit performing)
     {
         int Cache = hCost;
-        foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
+        if (modifiers != null)
         {
-            if (kvp.Value.IsValid(performing))
+            foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
             {
-                Cache = kvp.Value.ModifyHCost(Cache, performing);
+                if (kvp.Value.IsValid(performing))
+                {
+                    Cache = kvp.Value.ModifyHCost(Cache, performing);
+                }
             }
+
         }
-        return Cache;
+            return Cache;
     }
 
     public int GetGCost(Unit performing)
     {
         int Cache = gCost;
-        foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
+        if (modifiers != null)
         {
-            if (kvp.Value.IsValid(performing))
+            foreach (KeyValuePair<string, PathNodeModifier> kvp in modifiers)
             {
-                Cache = kvp.Value.ModifyGCost(Cache, performing);
+                if (kvp.Value.IsValid(performing))
+                {
+                    Cache = kvp.Value.ModifyGCost(Cache, performing);
+                }
             }
         }
-        return Cache;
+            return Cache;
     }
     public void ManuallyRemoveNeighbour(PathfindingNode toRemove)
     {

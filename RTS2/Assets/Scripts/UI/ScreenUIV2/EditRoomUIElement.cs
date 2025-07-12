@@ -42,6 +42,9 @@ public class EditRoomUIElement : BaseUIElement
 
     void RefreshOnRoomChange(Room r)
     {
+        r.RefreshRoom();
+        UnitMoniter.Instance.OnUnitCountsChanged();
+        
         RefreshUI();
     }
 

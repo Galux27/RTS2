@@ -32,6 +32,11 @@ public class UnitPopulationUI : MonoBehaviour
         displayUI.Add(UnitType.Engineer, CreateUnitPopDisplay(Color.Lerp(Color.yellow, Color.red, .5f)));
     }
 
+
+    private void Update()
+    {
+        RefreshUI();
+    }
     public void RefreshUI()
     {
         totalDisplay.UpdateValues(UnitMoniter.Instance.GetTotalUnitCount(), UnitCapacityManager.TotalCapacity);

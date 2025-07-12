@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
-
+using System;
 
 /// <summary>
 /// Class to store references to all potential Environment Objects in the game and the drawing/cleaning up
@@ -35,7 +35,7 @@ public class EnvironmentObjectManager : MonoBehaviour
     {
         AllObjects = new Dictionary<string, EnvironmentObject>();
         EnvironmentObjectKeys=new List<string>();
-        Object[] items = Resources.LoadAll(FilePath);
+        UnityEngine.Object[] items = Resources.LoadAll(FilePath);
         for (int x = 0; x < items.Length; x++)
         {
             if ((items[x] as EnvironmentObject) != null)
@@ -49,8 +49,8 @@ public class EnvironmentObjectManager : MonoBehaviour
             }
         }
     }
-   
-    
+
+    public static Action<EnvironmentObjectInstance> OnEnvironmentObjectDestroyed,OnEnvironmentObjectCreated;
 
     public void OnDestroyEnvironmentObject(EnvironmentObjectInstance obj)
     {
@@ -58,7 +58,7 @@ public class EnvironmentObjectManager : MonoBehaviour
 
         Vector2Int coords = obj.coords;//WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
 
-
+        OnEnvironmentObjectDestroyed?.Invoke(obj);
 
         for (int x = coords.x; x < coords.x + data.GetWidth; x++)
         {
