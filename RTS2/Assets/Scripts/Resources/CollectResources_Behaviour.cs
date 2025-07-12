@@ -35,7 +35,7 @@ public class CollectResources_Behaviour : BehaviourBase
 
     public override bool CanPerformBehaviour()
     {
-        return unitToMove != null && toCollect != null;
+        return unitToMove != null && toCollect != null &&ResourceManager.Instance.DoWeHaveEnoughSpaceForResource(toCollect.InstanceData.Resource);
     }
 
     public override bool IsBehaviourComplete()

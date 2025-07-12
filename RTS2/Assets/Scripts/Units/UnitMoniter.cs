@@ -13,7 +13,10 @@ public class UnitMoniter : MonoBehaviour
             if(instance == null)
             {
                 instance = FindObjectOfType<UnitMoniter>();
-                instance.Init();
+                if (instance != null)
+                {
+                    instance.Init();
+                }
             }
             return instance; 
         }
@@ -115,6 +118,10 @@ public class UnitMoniter : MonoBehaviour
 
     public void OnUnitCountsChanged()
     {
+        if (UnitCapacityUIElement.Instance == null)
+        {
+            return;
+        }
         foreach(KeyValuePair<UnitType, UserUnitTypeCount > KeyValuePair in unitCounts)
         {
             UnitCapacityUIElement.Instance.UpdateDisplay(KeyValuePair.Value);

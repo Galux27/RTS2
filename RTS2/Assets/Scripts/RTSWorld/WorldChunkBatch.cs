@@ -52,7 +52,11 @@ public class WorldChunkBatch : MonoBehaviour
     public void InitWorldChunks()
     {
         Chunks = new WorldChunk[ WorldChunkManager.ChunksPerBatch, WorldChunkManager.ChunksPerBatch];
-
+        if (WorldChunkManager.Instance.ExistingChunkData == null)
+        {
+            WorldChunkManager.Instance.ExistingChunkData = new Dictionary<Vector2Int, string>();
+        }
+        Debug.Log("World Load: loading chunk " + coords + " working copy " + WorldChunkManager.Instance.DoesChunkExistInWorkingCopy(coords) + " in save " + WorldChunkManager.Instance.DoesChunkExist(coords) + " count " + WorldChunkManager.Instance.ExistingChunkData.Count);
         if (WorldChunkManager.Instance.DoesChunkExistInWorkingCopy(coords))
         {
             for (int x = 0; x < Chunks.GetLength(0); x++)
@@ -235,7 +239,7 @@ public class WorldChunkBatch : MonoBehaviour
     {
         EasyStopwatch.StartStopwatch();
         string path = SerializationHelpers.GetWorldChunkBatchFilePathFromWorkingCopy(coords);
-        Debug.Log("Loading from working copy " + path);
+        Debug.Log("World Load: Loading from working copy " + path);
         List<string> dataFromFile = SerializationHelpers.ReadFile(path);
         for (int q = 0; q < dataFromFile.Count; q++)
         {
@@ -288,6 +292,7 @@ public class WorldChunkBatch : MonoBehaviour
     {
         EasyStopwatch.StartStopwatch();
         string path = SerializationHelpers.GetWorldChunkBatchFilePath(coords, name);
+        Debug.Log("World Load: loading from path " + path);
         List<string> dataFromFile = SerializationHelpers.ReadFile(path);
         for (int q = 0; q < dataFromFile.Count; q++)
         {

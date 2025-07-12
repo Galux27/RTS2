@@ -19,6 +19,8 @@ public class MultiWindowUI :  BaseUIElement
     {
         if(init)
         {
+            OnButtonClick(buttons[0]);
+
             return;
         }
 
@@ -26,7 +28,6 @@ public class MultiWindowUI :  BaseUIElement
         {
             pair.button.onClick.AddListener(() => OnButtonClick(pair));
         }
-        OnButtonClick(buttons[0]);
 
         init = true;
     }

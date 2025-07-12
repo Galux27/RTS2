@@ -470,7 +470,7 @@ public static class DataReaders
         WallSegment[,] retVal = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
         string[] objects = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         WallSegment currentTile = null;
-        Debug.Log("Parsing wall segments in current chunk " + currentLoadingChunkWorldCoords);
+        Debug.Log("Wall Parse: Parsing wall segments in current chunk " + currentLoadingChunkWorldCoords+" from " + data);
         for(int x1 = 0; x1 < retVal.GetLength(0); x1++)
         {
             for(int y1 = 0; y1 < retVal.GetLength(1); y1++)
@@ -478,11 +478,6 @@ public static class DataReaders
                 retVal[x1, y1] = new WallSegment(x1+currentLoadingChunkWorldCoords.x, y1+currentLoadingChunkWorldCoords.y, null,x1,y1);
             }
         }
-
-
-        int x = 0, y = 0;
-        bool gotCorner = false;
-        int xc = 0, yc = 0;
         
         for (int q = 0; q < objects.Length; q++)
         {
@@ -490,14 +485,13 @@ public static class DataReaders
             currentTile = ParseWallSegment(objects[q]);
             if (currentTile != null)
             {
-                if (!gotCorner)
-                {
-                    xc = RoundToMultiple(currentTile.x, WorldChunkManager.ChunkSize);
-                    yc = RoundToMultiple(currentTile.y, WorldChunkManager.ChunkSize);
-                    gotCorner = true;
-                }
-               
+                
 
+                if (currentTile.HasWall)
+                {
+                    Debug.Log("Wall Parse: wall found in " + currentTile.localCoords.ToString());
+
+                }
 
                 retVal[currentTile.localCoords.x, currentTile.localCoords.y] = currentTile;
               
@@ -511,7 +505,6 @@ public static class DataReaders
 
     static WallSegment ParseWallSegment(string data)
     {
-        Debug.Log("Wall segement data " + data);
         // ; UID; 5::COORDS; 7,17::WALL_TYPE; Wall::WALL_VISUAL; Concrete::HEALTH; 100::MAX_HEALTH; 100::
         string[] objects = data.Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         string[] split = null;
@@ -525,14 +518,17 @@ public static class DataReaders
         WallType wallType = (WallType)ParseDataObject(split[0], split[1]);
         split = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         string wallVisualType = (string)ParseDataObject(split[0], split[1]);
-        Debug.Log("Wall visual type " + wallVisualType + "," + coords+","+wallType);
         WallSegment retVal = null;
         if (wallType == WallType.Door)
         {
-            retVal=new DoorSegment(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.AllObjects[wallVisualType], -1, -1);
+            Debug.Log("Wall Parse: Wall visual type " + wallVisualType + "," + coords + "," + wallType);
+
+            retVal = new DoorSegment(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.AllObjects[wallVisualType], -1, -1);
         }
         else
         {
+            Debug.Log("Wall Parse: Wall visual type " + wallVisualType + "," + coords + "," + wallType);
+
             retVal = new WallSegment(coords.x, coords.y, WallTypeManager.Instance.AllObjects[wallVisualType], -1, -1);
         }
         retVal.SetMyUID(uid);

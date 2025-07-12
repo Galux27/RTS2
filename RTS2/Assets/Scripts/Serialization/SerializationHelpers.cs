@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public static class SerializationHelpers
@@ -82,11 +83,37 @@ public static class SerializationHelpers
         SaveLoadedWorld(path);
         SaveUnits(path);
         SaveRooms(path);
+        CopyWorkingCopyToSaveDir(path);
         Debug.Log("Saving took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
 
     }
 
-    public static void SaveMiscData(string path)
+    static void CopyWorkingCopyToSaveDir(string saveName)
+    {
+        string workingPath = GetWorkingCopyDirectory();
+        if (Directory.Exists(workingPath))
+        {
+            string savePath = GetSaveDir();
+            savePath = Path.Combine(savePath, saveName);
+            string[] alLFiles = Directory.GetFiles(workingPath);
+            string fileName = "", destFilePath = "";
+            for (int x = 0; x < alLFiles.Length; x++)
+            {
+                fileName = Path.GetFileName(alLFiles[x]);
+                destFilePath = Path.Combine(workingPath, fileName);
+                File.Copy(alLFiles[x], destFilePath);
+            }
+        }
+        }
+        static void ClearWorkingCopyDirectory()
+    {
+        string workingPath = GetWorkingCopyDirectory();
+        if (Directory.Exists(workingPath))
+        {
+            Directory.Delete(workingPath, true);
+        }
+        }
+        public static void SaveMiscData(string path)
     {
         string name = "MISC" + MiscExtension;
         List<string> dataWriting = new List<string>();
@@ -196,16 +223,19 @@ public static class SerializationHelpers
     {
         Debug.Log("Loading game " + name);
         EasyStopwatch.StartStopwatch();
+        ClearWorkingCopyDirectory();
         ReadMiscFile(name);
 
         IDManager.OnLevelLoaded();
-        ReadRoomsFile(name);
-
-        WorldChunkManager.Instance.LoadChunksFromFile(name);
+        //shit workaround to instance overwriting 0,0
+        GameObject.FindObjectOfType<WorldChunkManager>().LoadChunksFromFile(name);
+       // WorldChunkManager.Instance.LoadChunksFromFile(name);
         ReadUnitFile(name);
         BehaviourDeserializer.DeserializeBehaviours();
         InventoryDeserializer.DeserializeInventorys();
-        for(int x=0;x<RoomManager.Instance.roomList.Count;x++)
+        ReadRoomsFile(name);
+
+        for (int x=0;x<RoomManager.Instance.roomList.Count;x++)
         {
             RoomManager.Instance.roomList[x].RefreshRoom();
         }

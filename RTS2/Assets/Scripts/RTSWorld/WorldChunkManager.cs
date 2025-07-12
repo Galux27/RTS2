@@ -186,7 +186,7 @@ public class WorldChunkManager : MonoBehaviour
             
         }
     }
-    Dictionary<Vector2Int, string> ExistingChunkData;
+    public Dictionary<Vector2Int, string> ExistingChunkData;
 
     public bool DoesChunkExist(Vector2Int coords)
     {
@@ -209,6 +209,7 @@ public class WorldChunkManager : MonoBehaviour
     
     public void LoadChunksFromFile(string name)
     {
+        Debug.Log("World Load: loading chunks from file " + name);
         ExistingChunkData = new Dictionary<Vector2Int, string>();
         string path = SerializationHelpers.GetSaveDirectory(name);
         string[] dir = Directory.GetFiles(path);
@@ -230,7 +231,9 @@ public class WorldChunkManager : MonoBehaviour
                 ExistingChunkData.Add(coords, dir[x]);
             }
         }
-       // ChunkBatches[new Vector2Int()].LoadChunksFromFile(name);
+        Debug.Log("World Load: final count " + ExistingChunkData.Count );
+
+        // ChunkBatches[new Vector2Int()].LoadChunksFromFile(name);
     }
     public WorldChunkBatch GetWorldChunkBatchFromPosition(Vector2Int pos,bool canCreateNew=false)
     {

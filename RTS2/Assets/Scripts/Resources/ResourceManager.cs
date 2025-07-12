@@ -122,6 +122,10 @@ public class ResourceManager : MonoBehaviour
         ResourcesDisplayUI.Instance.UpdateUIElement(UserResources[key]);
     }
 
+    public bool DoWeHaveEnoughSpaceForResource(string key)
+    {
+        return UserResources[key].Quantity < GetResourceCapacity(key);
+    }
    
 
     public Action OnRefreshResourceData;
@@ -147,10 +151,10 @@ public class ResourceData
     public void IncreaseQuantitiy(int val)
     {
         Quantity += val;
-        if (Quantity > GetCapacity())
-        {
-            Quantity = GetCapacity();
-        }
+        //if (Quantity > GetCapacity())
+        //{
+        //    Quantity = GetCapacity();
+        //}
     }
 
     public void DecreaseQuantity(int val)

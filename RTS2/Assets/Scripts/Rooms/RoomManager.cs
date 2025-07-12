@@ -159,7 +159,6 @@ public class RoomManager : MonoBehaviour
             {
                 RoomUtils.IsRoomEnclosed(roomList[x]);
                 Debug.Log("Room: wall Removed to room at " + coords + "|" + roomList[x].roomType);
-                //roomList[x].OnObjectAddedToRoom(Created);
                 roomList[x].IsDrawn = false;
                 OnRoomChange?.Invoke(roomList[x]);
 

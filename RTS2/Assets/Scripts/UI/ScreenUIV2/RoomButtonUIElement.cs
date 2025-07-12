@@ -9,7 +9,7 @@ public class RoomButtonUIElement : BaseUIElement
 {
     public Room Room;
     public TextMeshProUGUI RoomName;
-    public Button SelectRoom, ZoomTo;
+    public Button SelectRoom, ZoomTo,DrawRoom;
 
     public void InitButton(Room r)
     {
@@ -18,6 +18,8 @@ public class RoomButtonUIElement : BaseUIElement
         SelectRoom.onClick.AddListener(OnSelectRoomClick);
         ZoomTo.onClick.AddListener(OnZoomToClick);
         RoomManager.Instance.OnRoomSelected += OnRoomSelected;
+        DrawRoom.onClick.AddListener(OnDrawRoomClick);
+        UpdateDrawRoomVisual();
     }
 
     void OnSelectRoomClick()
@@ -47,5 +49,25 @@ public class RoomButtonUIElement : BaseUIElement
             return;
         }
         CameraController.Instance.SetToAutoMove(new Vector3(Room.tilesInRoom[0].x, Room.tilesInRoom[0].y));
+    }
+
+    void OnDrawRoomClick()
+    {
+        Room.Render = !Room.Render;
+        RoomDrawrer.Instance.RenderRoom(Room);
+        UpdateDrawRoomVisual();
+    }
+
+    void UpdateDrawRoomVisual()
+    {
+        if (Room.Render)
+        {
+            DrawRoom.GetComponent<Image>().color = Color.green;
+        }
+        else
+        {
+            DrawRoom.GetComponent<Image>().color = Color.red;
+
+        }
     }
 }

@@ -52,6 +52,7 @@ public class WorldChunk:ISerialize
 
     public WorldChunk(int x,int y,int localX,int localY)
     {
+        Debug.Log("WC: created world chunk at " + x + "," + y);
         HasChunkFinishedLoading = false;
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
         X = x;
