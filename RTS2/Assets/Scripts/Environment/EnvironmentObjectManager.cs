@@ -68,38 +68,4 @@ public class EnvironmentObjectManager : MonoBehaviour
             }
         }
     }
-
-    const float DrawEnvironmentObjectRadius = 80f;
-    List<WorldChunk> UpdatedLastFrame = new List<WorldChunk>();
-    private void Update()
-    {
-        Vector3 CameraPos = Camera.main.transform.position;
-        Vector2Int pos = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(CameraPos);
-
-        List<WorldChunk> Chunks = WorldChunkManager.Instance.GetChunksInRadius(DrawEnvironmentObjectRadius, CameraPos);
-        if (Chunks == null)
-        {
-            return;
-        }
-        for(int x = 0; x < Chunks.Count; x++)
-        {
-            if (Chunks[x].ShouldDrawEnvironmentObjects())
-            {
-                if (Chunks[x].DrawnEnvironmentObjects() == false)
-                {
-                    Chunks[x].RenderEnvironmentObjects() ;
-                }
-            }
-        }
-
-        for(int x = 0; x < UpdatedLastFrame.Count; x++)
-        {
-            if (Chunks.Contains(UpdatedLastFrame[x])==false) {
-                UpdatedLastFrame[x].CleanupEnvironmentObjects();
-            }
-        }
-        UpdatedLastFrame = Chunks;
-
-    }
-
 }

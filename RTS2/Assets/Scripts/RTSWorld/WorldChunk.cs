@@ -594,8 +594,13 @@ public class WorldChunk:ISerialize
         return EnvironmentObjectsInChunk.Count > 0 && IsRendered;
     }
 
+   
     public bool DrawnEnvironmentObjects()
     {
+        if (EnvironmentObjectsInChunk.Count == 0)
+        {
+            return true;
+        }
         return  EnvironmentObjectsInChunk[0].Drawn;
     }
 

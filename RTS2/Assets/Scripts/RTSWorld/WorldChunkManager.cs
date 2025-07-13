@@ -441,14 +441,57 @@ public class WorldChunkManager : MonoBehaviour
     Vector2Int batchCoords = new Vector2Int(), chunkCoords = new Vector2Int(), localCoords = new Vector2Int();
     public List<WorldChunk> GetChunksInRadius(float radius,Vector3 searchCenter)
     {
+        List<WorldChunk> Chunks = new List<WorldChunk>();
+        List<Vector2Int> batchesChecked = new List<Vector2Int>();
+
+        WorldChunkBatch batch = null;
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(searchCenter.x, searchCenter.y, out batchCoords, out chunkCoords, out localCoords);
-        if (!ValidateCoords())
+        if (ValidateCoords())
         {
-            return null;
+             batch = WorldChunkManager.instance.ChunkBatches[batchCoords];
+            if (!batchesChecked.Contains(batchCoords))
+            {
+                Chunks.AddRange(batch.GetChunksInRadius(radius, searchCenter));
+            }
         }
-        WorldChunkBatch batch = WorldChunkManager.instance.ChunkBatches[batchCoords];
-        
-       return batch.GetChunksInRadius(radius,searchCenter);
+
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(searchCenter.x+radius, searchCenter.y, out batchCoords, out chunkCoords, out localCoords);
+        if (ValidateCoords())
+        {
+            batch = WorldChunkManager.instance.ChunkBatches[batchCoords];
+            if (!batchesChecked.Contains(batchCoords))
+            {
+                Chunks.AddRange(batch.GetChunksInRadius(radius, searchCenter));
+            }
+        }
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(searchCenter.x-radius, searchCenter.y, out batchCoords, out chunkCoords, out localCoords);
+        if (ValidateCoords())
+        {
+            batch = WorldChunkManager.instance.ChunkBatches[batchCoords];
+            if (!batchesChecked.Contains(batchCoords))
+            {
+                Chunks.AddRange(batch.GetChunksInRadius(radius, searchCenter));
+            }
+        }
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(searchCenter.x, searchCenter.y+radius, out batchCoords, out chunkCoords, out localCoords);
+        if (ValidateCoords())
+        {
+            batch = WorldChunkManager.instance.ChunkBatches[batchCoords];
+            if (!batchesChecked.Contains(batchCoords))
+            {
+                Chunks.AddRange(batch.GetChunksInRadius(radius, searchCenter));
+            }
+        }
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(searchCenter.x, searchCenter.y-radius, out batchCoords, out chunkCoords, out localCoords);
+        if (ValidateCoords())
+        {
+            batch = WorldChunkManager.instance.ChunkBatches[batchCoords];
+            if (!batchesChecked.Contains(batchCoords))
+            {
+                Chunks.AddRange(batch.GetChunksInRadius(radius, searchCenter));
+            }
+        }
+        return Chunks;
     }
     bool ValidateCoords()
     {

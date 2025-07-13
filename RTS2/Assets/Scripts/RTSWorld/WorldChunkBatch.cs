@@ -170,6 +170,7 @@ public class WorldChunkBatch : MonoBehaviour
                 if (Chunks[x, y].CheckIfChunkNeedsToRender())
                 {
                     WorldRenderer.Instance.RenderChunk(Chunks[x, y].ChunkTiles);
+                    Chunks[x, y].RenderEnvironmentObjects();
                     Chunks[x, y].NeedsToRender = false;
                     Chunks[x, y].RefreshWalls();
                     Chunks[x, y].IsRendered = true;
@@ -193,7 +194,8 @@ public class WorldChunkBatch : MonoBehaviour
                 if (  Chunks[x,y].CanWeCleanupChunk())
                 {
                     WorldRenderer.Instance.UnrenderChunk(Chunks[x, y].ChunkTiles);
-                    Chunks[x, y].UnRenderChunk();
+                    Chunks[x, y].CleanupEnvironmentObjects();
+                   Chunks[x, y].UnRenderChunk();
                     Chunks[x, y].IsRendered = false;
                 }
             }
