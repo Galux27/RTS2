@@ -17,6 +17,10 @@ public static class SaveLoadHelpers
         string[] directoriesInFolder = Directory.GetDirectories(path);
         for(int x = 0; x < directoriesInFolder.Length; x++)
         {
+            if (directoriesInFolder[x].Contains(SerializationHelpers.WorkingDir))
+            {
+                continue;
+            }
             retVal.Add(new FoundSave(directoriesInFolder[x]));
         }
         return retVal;

@@ -208,22 +208,18 @@ public class WorldTile:ISerialize
             if (WaterData.WaterLevel > 1f)
             {
                 traversable = false;
+
             }
             else
             {
                 traversable = true;
             }
         }
-        PathfindingNode pn = Pathfinding.GetNodeFromCoords(x, y);
-        if (pn == null)
+        if (!traversable)
         {
-            Debug.Log("Pathfinding node at "+  x+", "+y+" was null");
+            Pathfinding.UpdateNodeData(x, y, false); 
         }
-        else
-        {
-            pn.UpdatePassable(traversable);
 
-        }
     }
 
 

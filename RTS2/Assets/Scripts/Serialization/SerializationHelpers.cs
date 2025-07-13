@@ -100,8 +100,9 @@ public static class SerializationHelpers
             for (int x = 0; x < alLFiles.Length; x++)
             {
                 fileName = Path.GetFileName(alLFiles[x]);
-                destFilePath = Path.Combine(workingPath, fileName);
-                File.Copy(alLFiles[x], destFilePath);
+                destFilePath = Path.Combine(savePath, fileName);
+                
+                File.Copy(alLFiles[x], destFilePath,true);
             }
         }
         }
@@ -183,20 +184,23 @@ public static class SerializationHelpers
 
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in WorldChunkManager.Instance.ChunkBatches)
         {
-            name = "_"+kvp.Value.coords.x+"_"+kvp.Value.coords.y + WorldSectionExtension;
-            for (int x = 0; x < kvp.Value.Chunks.GetLength(0); x++)
+            if (WorldChunkManager.Instance.DoesChunkExistInWorkingCopy(kvp.Key) == false)
             {
-                for (int y = 0; y < kvp.Value.Chunks.GetLength(1); y++)
+                name = "_" + kvp.Value.coords.x + "_" + kvp.Value.coords.y + WorldSectionExtension;
+                for (int x = 0; x < kvp.Value.Chunks.GetLength(0); x++)
                 {
-                    dataWriting.Add(kvp.Value.Chunks[x, y].Serialize().Data);
+                    for (int y = 0; y < kvp.Value.Chunks.GetLength(1); y++)
+                    {
+                        dataWriting.Add(kvp.Value.Chunks[x, y].Serialize().Data);
+                    }
                 }
+                WriteToFile(path, name, dataWriting);
+                dataWriting.Clear();
             }
-            WriteToFile(path, name, dataWriting);
-            dataWriting.Clear();
         }
 
 
-        EasyStopwatch.StopStopwatch();
+            EasyStopwatch.StopStopwatch();
         Debug.Log("Saving Chunks took " + EasyStopwatch.GetStopwatchElapsedTime());
     }
 
@@ -283,14 +287,20 @@ public static class SerializationHelpers
         {
             File.Delete(fullPath);
         }
-
-
-        StreamWriter sw = new StreamWriter(fullPath);
-        for(int x=0;x<dataToWrite.Count;x++)
+        using (StreamWriter writer = new StreamWriter(fullPath))
         {
-            sw.WriteLine(dataToWrite[x]);
+            for (int x = 0; x < dataToWrite.Count; x++)
+            {
+                writer.WriteLine(dataToWrite[x]);
+            }
         }
-        sw.Dispose();
+
+        
+        //    StreamWriter sw = new StreamWriter(fullPath);
+     
+        //sw.Close();
+        //sw.Dispose();
+        
     }
 }
 

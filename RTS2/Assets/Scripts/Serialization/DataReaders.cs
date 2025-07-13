@@ -49,7 +49,16 @@ public static class DataReaders
         if (keyValueSplit.Length > 1)
         {
             chunk.WallSegments = (WallSegment[,])ParseDataObject(keyValueSplit[0], splitListFromData[2].Substring(keyValueSplit[0].Length));
-
+            for(int x = 0; x < chunk.WallSegments.GetLength(0); x++)
+            {
+                for(int y=0;y<chunk.WallSegments.GetLength(1); y++)
+                {
+                    if (chunk.WallSegments[x, y].HasWall)
+                    {
+                        chunk.PathfindingNodes[x, y].UpdatePassable(false);
+                    }
+                }
+            }
         }
         
 
@@ -485,14 +494,7 @@ public static class DataReaders
             currentTile = ParseWallSegment(objects[q]);
             if (currentTile != null)
             {
-                
-
-                if (currentTile.HasWall)
-                {
-                    Debug.Log("Wall Parse: wall found in " + currentTile.localCoords.ToString());
-
-                }
-
+            
                 retVal[currentTile.localCoords.x, currentTile.localCoords.y] = currentTile;
               
                     WorldController.Instance.WallManager.GenerateWallCollider(retVal[currentTile.localCoords.x, currentTile.localCoords.y]);

@@ -52,7 +52,6 @@ public class WorldChunk:ISerialize
 
     public WorldChunk(int x,int y,int localX,int localY)
     {
-        Debug.Log("WC: created world chunk at " + x + "," + y);
         HasChunkFinishedLoading = false;
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
         X = x;
@@ -294,6 +293,26 @@ public class WorldChunk:ISerialize
             
             localx++;
             localy = 0;
+        }
+    }
+
+    public void UpdateTileWalkable()
+    {
+        for (int x = 0; x < WallSegments.GetLength(0); x++)
+        {
+            for (int y = 0; y < WallSegments.GetLength(1); y++)
+            {
+                if(WallSegments[x, y].HasWall)
+                {
+                    PathfindingNodes[x, y].UpdatePassable(false);
+                }else if (WallSegments[x, y].HasDoor)
+                {
+                    PathfindingNodes[x, y].AddModifier(new PathNodeModifier_Door());
+                }else if (ChunkTiles[x, y].traversable == false)
+                {
+                    PathfindingNodes[x, y].UpdatePassable(false);
+                }
+            }
         }
     }
 

@@ -62,7 +62,14 @@ public class WorldChunkManager : MonoBehaviour
 
         }
     }
-
+    public bool IsChunkInWorkingCopy(Vector2Int v)
+    {
+        if (ChunksLoaded == null)
+        {
+            return false;
+        }
+        return ChunksLoaded.Contains(v);
+    }
     public void AddChunkStoredInWorkingCopy(Vector2Int v)
     {
         if (ChunksLoaded == null)

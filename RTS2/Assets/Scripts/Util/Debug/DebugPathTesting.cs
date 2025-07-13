@@ -15,21 +15,44 @@ public class DebugPathTesting : MonoBehaviour
         
     }
 
+    void DrawNodesAroundPosition(Vector3 center)
+    {
+        Vector3 p = center;
+        PathfindingNode node = null;
+        for(int x=-5;x<=5;x++)
+        {
+            for(int y=-5;y<=5;y++)
+            {
+                p = center + new Vector3(x, y, 0);
+                node = Pathfinding.GetNodeFromPosition(p);
+                if(node != null)
+                {
+                    for (int i = 0; i < node.neighbours.Count; i++)
+                    {
+                        if (node.IsPassable)
+                        {
+                            Debug.DrawLine(node.worldPos, node.neighbours[i].worldPos, Color.blue);
+                        }
+                        else
+                        {
+                            Debug.DrawLine(node.worldPos, node.neighbours[i].worldPos, Color.magenta);
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     // Update is called once per frame
     void Update()
     {
 
-        PathfindingNode node =  Pathfinding.GetNodeFromPosition(Marker1.transform.position);
-        for(int x = 0; x < node.neighbours.Count; x++)
-        {
-            Debug.DrawLine(node.worldPos, node.neighbours[x].worldPos,Color.blue);
-        }
+        DrawNodesAroundPosition(Marker1.transform.position);
 
-        node = Pathfinding.GetNodeFromPosition(Marker2.transform.position);
-        for (int x = 0; x < node.neighbours.Count; x++)
-        {
-            Debug.DrawLine(node.worldPos, node.neighbours[x].worldPos, Color.red);
-        }
+
+        DrawNodesAroundPosition(Marker2.transform.position);
 
         if (FindPath)
         {

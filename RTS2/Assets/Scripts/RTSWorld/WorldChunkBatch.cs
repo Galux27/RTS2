@@ -74,6 +74,8 @@ public class WorldChunkBatch : MonoBehaviour
                     Chunks[x, y].InitPathfindingNodes();
                 }
             }
+            
+            LoadFromWorkingCopy();
             for (int x = 0; x < Chunks.GetLength(0); x++)
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
@@ -81,7 +83,13 @@ public class WorldChunkBatch : MonoBehaviour
                     Chunks[x, y].LinkNodesToAdjacentChunksInBatch(this);
                 }
             }
-            LoadFromWorkingCopy();
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y].UpdateTileWalkable() ;
+                }
+            }
         }
         else if (WorldChunkManager.Instance.DoesChunkExist(coords))
         {
@@ -100,6 +108,8 @@ public class WorldChunkBatch : MonoBehaviour
                     Chunks[x, y].InitPathfindingNodes();
                 }
             }
+           
+            LoadChunksFromFile(SaveLoadHelpers.SaveToLoad);
             for (int x = 0; x < Chunks.GetLength(0); x++)
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
@@ -107,7 +117,13 @@ public class WorldChunkBatch : MonoBehaviour
                     Chunks[x, y].LinkNodesToAdjacentChunksInBatch(this);
                 }
             }
-            LoadChunksFromFile(SaveLoadHelpers.SaveToLoad);
+            for (int x = 0; x < Chunks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Chunks.GetLength(1); y++)
+                {
+                    Chunks[x, y].UpdateTileWalkable();
+                }
+            }
         }
         else
         {
@@ -259,11 +275,17 @@ public class WorldChunkBatch : MonoBehaviour
                     for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(0); y1++)
                     {
                         Chunks[x, y].ChunkTiles[x1, y1].UpdateWaterLevel(Chunks[x, y].ChunkTiles[x1, y1].WaterData.WaterLevel);
-                        if (Chunks[x, y].WallSegments[x1, y1].WallType == WallType.Door)
+                        if (Chunks[x, y].WallSegments[x1, y1].HasDoor)
                         {
                             Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
                             Chunks[x, y].WallSegments[x1, y1].DestroyWall();
                             WallHelpers.CreateDoorObject(coords.x, coords.y,
+                                WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
+                        }else if (Chunks[x, y].WallSegments[x1, y1].HasWall)
+                        {
+                            Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
+                            Chunks[x, y].WallSegments[x1, y1].DestroyWall();
+                            WallHelpers.CreateWallObject(coords.x, coords.y,
                                 WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
                         }
                     }

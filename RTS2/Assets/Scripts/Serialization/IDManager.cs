@@ -77,7 +77,7 @@ public class UIDObjectDictionary
         }
         else
         {
-            Debug.LogError("Error, trying toadd existing ID"+id.Value+" for object type "+typeIStore.ToString());
+            Debug.Log("Error, trying toadd existing ID"+id.Value+" for object type "+typeIStore.ToString());
         }
     }
 
