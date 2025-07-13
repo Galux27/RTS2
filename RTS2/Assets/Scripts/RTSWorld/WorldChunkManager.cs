@@ -46,9 +46,17 @@ public class WorldChunkManager : MonoBehaviour
     
     void CreateChunkBatch(Vector2Int coords,bool init=true)
     {
+
+
+
         ChunkBatches.Add(coords, WorldChunkBatch.CreateWorldChunkBatch(coords));
         if (init)
         {
+            if (ExistingChunkData != null)
+            {
+                ChunkBatches[coords].NeedsGeneration = !ExistingChunkData.ContainsKey(coords);
+            }
+
             ChunkBatches[coords].InitWorldChunks();
             MapGenerator.Instance.GenerateMap(ChunkBatches[coords]);
 
