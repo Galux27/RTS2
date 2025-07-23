@@ -4,6 +4,20 @@ using UnityEngine;
 using UnityEngine.UI;
 public class OverworldRenderer : MonoBehaviour
 {
+    static OverworldRenderer instance;
+    public static OverworldRenderer Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<OverworldRenderer>();
+            }
+            return instance;
+        }
+    }
+
+
     public RawImage DrawIn;
     public Button Generate,Render;
 
@@ -24,7 +38,7 @@ public class OverworldRenderer : MonoBehaviour
             {
                 if (OverworldGenerator.Instance.OverworldTiles[x,y].Elevation>OverworldGenerator.Instance.SeaLevel)
                 {
-                    texture.SetPixel(x, y, Color.green);
+                    texture.SetPixel(x, y, Color.Lerp(Color.green,Color.white,Mathf.InverseLerp(OverworldGenerator.Instance.SeaLevel,OverworldGenerator.Instance.MaxElevation, OverworldGenerator.Instance.OverworldTiles[x, y].Elevation)));
                 }
                 else
                 {

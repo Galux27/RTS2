@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,14 +29,27 @@ public class OverworldGenerator : MonoBehaviour
         OverworldTiles=new OverworldTile[OverworldWidth,OverworldHeight];
         for(int x = 0; x < OverworldWidth; x++)
         {
-            for(int y = 0; y < OverworldHeight; y++) {
+            for(int y = 0; y < OverworldHeight; y++) 
+            {
                 OverworldTiles[x,y] = new OverworldTile(x,y);
             }
         }
-        for(int x = 0; x < FeatureGenerators.Count; x++)
+        StartCoroutine(GenerateWorld());
+
+    }
+
+    int index = 0;
+    IEnumerator GenerateWorld()
+    {
+        yield return new WaitForSeconds(.1f);
+        FeatureGenerators[index].GenerateFeature(ref OverworldTiles);
+        OverworldRenderer.Instance.RenderWorld();
+        if(index < FeatureGenerators.Count - 1)
         {
-            FeatureGenerators[x].GenerateFeature(ref OverworldTiles);
+            index++;
+            StartCoroutine(GenerateWorld());
         }
+
     }
 
 }

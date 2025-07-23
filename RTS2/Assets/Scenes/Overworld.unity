@@ -171,12 +171,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4cf4d4dc0408bd40b6663518a201a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OverworldWidth: 1000
-  OverworldHeight: 1000
+  OverworldWidth: 500
+  OverworldHeight: 500
   MaxElevation: 128
   SeaLevel: 50
   FeatureGenerators:
   - {fileID: 11400000, guid: cbe4304556447c74a975a627f8c04d67, type: 2}
+  - {fileID: 11400000, guid: a33f1fb914a5fba42bc67facd42ecb1a, type: 2}
 --- !u!114 &72345947
 MonoBehaviour:
   m_ObjectHideFlags: 0
