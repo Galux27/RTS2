@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Overworld Height Type
   m_EditorClassIdentifier: 
   NumberOfHeightNodes: 300
-  MinPaths: 50
-  MaxPaths: 250
-  MaxPathLength: 300
+  MinPaths: 221
+  MaxPaths: 79
+  MaxPathLength: 33
+  NumberOfFaultLines: 10

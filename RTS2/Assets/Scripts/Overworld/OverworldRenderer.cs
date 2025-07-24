@@ -20,6 +20,7 @@ public class OverworldRenderer : MonoBehaviour
 
     public RawImage DrawIn;
     public Button Generate,Render;
+    public List<HeightmapColour> Colours;
 
     private void Awake()
     {
@@ -36,14 +37,7 @@ public class OverworldRenderer : MonoBehaviour
         {
             for (int y = 0; y < colours.GetLength(1); y++)
             {
-                if (OverworldGenerator.Instance.OverworldTiles[x,y].Elevation>OverworldGenerator.Instance.SeaLevel)
-                {
-                    texture.SetPixel(x, y, Color.Lerp(Color.green,Color.white,Mathf.InverseLerp(OverworldGenerator.Instance.SeaLevel,OverworldGenerator.Instance.MaxElevation, OverworldGenerator.Instance.OverworldTiles[x, y].Elevation)));
-                }
-                else
-                {
-                    texture.SetPixel(x, y, Color.blue);
-                }
+                texture.SetPixel(x, y, GetColourFromHeight(OverworldGenerator.Instance.OverworldTiles[x, y].Elevation));
             }
         }
         texture.Apply();
@@ -52,4 +46,33 @@ public class OverworldRenderer : MonoBehaviour
 
     }
 
+    public Color GetColourFromHeight(float height)
+    {
+        for(int x = 0; x < Colours.Count-1; x++)
+        {
+            if (x == 0)
+            {
+                if (height < Colours[x].MaxHeight)
+                {
+                    return Colours[x].Color;
+                }
+            }
+            else
+            {
+                if (height>=Colours[x-1].MaxHeight && height <= Colours[x].MaxHeight)
+                {
+                    return Color.Lerp(Colours[x-1].Color, Colours[x].Color,Mathf.InverseLerp(Colours[x - 1].MaxHeight, Colours[x].MaxHeight,height));
+
+                }
+            }
+        }
+        return Color.black;
+    }
+
+}
+[System.Serializable]
+public struct HeightmapColour
+{
+    public Color Color;
+    public float MaxHeight;
 }
