@@ -54,19 +54,35 @@ public class OverworldGenerator : MonoBehaviour
 
 }
 
-public struct OverworldTile
+public class OverworldTile
 {
     public int X, Y;
     public float Elevation;
+    public List<OverworldFeature> Features = new List<OverworldFeature>();
+    public int Population = 0;
     public OverworldTile(int x,int y,float elevation=0)
     {
         X = x;
         Y = y;
-        Elevation = 0;
+        SetElevation( elevation);
     }
     
     public void SetElevation(float value)
     {
-        Elevation = value;
+        Elevation = Mathf.Clamp( value,0,OverworldGenerator.Instance.MaxElevation);
     }
+
+    public void AddFeatureToTile(OverworldFeature feature)
+    {
+        if (!Features.Contains(feature))
+        {
+            Features.Add(feature);
+        }
+    }
+}
+
+public enum OverworldFeature
+{
+    River,
+    Settlement
 }

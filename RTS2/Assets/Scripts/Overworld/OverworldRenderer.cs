@@ -21,7 +21,7 @@ public class OverworldRenderer : MonoBehaviour
     public RawImage DrawIn;
     public Button Generate,Render;
     public List<HeightmapColour> Colours;
-
+    public Color RiverColour,SettlementColour;
     private void Awake()
     {
         Render.onClick.AddListener(RenderWorld);
@@ -37,7 +37,14 @@ public class OverworldRenderer : MonoBehaviour
         {
             for (int y = 0; y < colours.GetLength(1); y++)
             {
-                texture.SetPixel(x, y, GetColourFromHeight(OverworldGenerator.Instance.OverworldTiles[x, y].Elevation));
+                if (HasColourByFeature(x, y))
+                {
+                    texture.SetPixel(x, y,GetColourByFeature(x,y));
+                }
+                else
+                {
+                    texture.SetPixel(x, y, GetColourFromHeight(OverworldGenerator.Instance.OverworldTiles[x, y].Elevation));
+                }
             }
         }
         texture.Apply();
@@ -46,9 +53,26 @@ public class OverworldRenderer : MonoBehaviour
 
     }
 
+    bool HasColourByFeature(int x,int y)
+    {
+       return OverworldGenerator.Instance.OverworldTiles[x, y].Features.Count > 0;
+    }
+
+    public Color GetColourByFeature(int x,int y)
+    {
+        if(OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.River))
+        {
+            return RiverColour;
+        }else if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.Settlement))
+        {
+            return SettlementColour;
+        }
+        return Color.cyan;
+    }
+
     public Color GetColourFromHeight(float height)
     {
-        for(int x = 0; x < Colours.Count-1; x++)
+        for (int x = 0; x < Colours.Count; x++)
         {
             if (x == 0)
             {
@@ -59,10 +83,9 @@ public class OverworldRenderer : MonoBehaviour
             }
             else
             {
-                if (height>=Colours[x-1].MaxHeight && height <= Colours[x].MaxHeight)
+                if (height >= Colours[x - 1].MaxHeight && height <= Colours[x].MaxHeight)
                 {
-                    return Color.Lerp(Colours[x-1].Color, Colours[x].Color,Mathf.InverseLerp(Colours[x - 1].MaxHeight, Colours[x].MaxHeight,height));
-
+                    return Color.Lerp(Colours[x - 1].Color, Colours[x].Color, Mathf.InverseLerp(Colours[x - 1].MaxHeight, Colours[x].MaxHeight, height));
                 }
             }
         }
