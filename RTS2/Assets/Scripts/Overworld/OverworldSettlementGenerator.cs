@@ -11,7 +11,7 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
     public int MinSettlementElemevation,MaxSettlementElemevation;
     int width, height;
 
-    public override void GenerateFeature(ref OverworldTile[,] world)
+    public override void GenerateFeature(OverworldTile[,] world)
     {
         Settlement[] settlements=new Settlement[NumberOfSettlements];
         Vector2Int coords = new Vector2Int();
@@ -54,6 +54,7 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
             CanContinue = hitAnything;
             
         }
+        OverworldGenerator.Instance.Settlements = settlements;
     }
 
     void ExpandSettlement(Settlement toExpand,ref OverworldTile[,] world)
@@ -138,13 +139,15 @@ public class Settlement
     static int BaseSettlmentID = 0;
     public int Id;
     public List<Vector2Int> pointsInSettlement,waitingRoom;
-    public int RemainingPopulationToDistribute;
+    public int RemainingPopulationToDistribute,TotalPopulation;
+
     public Settlement(int pop)
     {
         Id=BaseSettlmentID;
         BaseSettlmentID++;
         waitingRoom = new List<Vector2Int>();
         RemainingPopulationToDistribute = pop;
+        TotalPopulation = pop;
         pointsInSettlement = new List<Vector2Int>();
     }
 

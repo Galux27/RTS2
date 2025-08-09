@@ -8,7 +8,7 @@ public class OverworldHeightsGenerator : OverworldFeatureGenerator
     public int NumberOfMountains;
     public int HeightSections,SmoothingIterations,smoothingBrushSize;
     public int NumberOfLakes,LakeSize,MountainSize;
-    public override void GenerateFeature(ref OverworldTile[,] world)
+    public override void GenerateFeature(OverworldTile[,] world)
     {
         int width = world.GetLength(0);
         int height1 = world.GetLength(1);

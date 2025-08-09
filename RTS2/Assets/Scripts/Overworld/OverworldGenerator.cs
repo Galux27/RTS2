@@ -24,6 +24,7 @@ public class OverworldGenerator : MonoBehaviour
     public float MaxElevation, SeaLevel;
    public OverworldTile[,] OverworldTiles;
     public List<OverworldFeatureGenerator> FeatureGenerators;
+    public Settlement[] Settlements;
     public void Generate()
     {
         OverworldTiles=new OverworldTile[OverworldWidth,OverworldHeight];
@@ -42,12 +43,16 @@ public class OverworldGenerator : MonoBehaviour
     IEnumerator GenerateWorld()
     {
         yield return new WaitForSeconds(.1f);
-        FeatureGenerators[index].GenerateFeature(ref OverworldTiles);
+        FeatureGenerators[index].GenerateFeature(OverworldTiles);
         OverworldRenderer.Instance.RenderWorld();
         if(index < FeatureGenerators.Count - 1)
         {
             index++;
             StartCoroutine(GenerateWorld());
+        }
+        else
+        {
+            Debug.Break();
         }
 
     }
@@ -60,6 +65,7 @@ public class OverworldTile
     public float Elevation;
     public List<OverworldFeature> Features = new List<OverworldFeature>();
     public int Population = 0;
+    public OverworldPathfindingNode Node;
     public OverworldTile(int x,int y,float elevation=0)
     {
         X = x;
@@ -79,10 +85,18 @@ public class OverworldTile
             Features.Add(feature);
         }
     }
+
+    public void SetNode(OverworldPathfindingNode node)
+    {
+        Node = node;
+    }
 }
 
 public enum OverworldFeature
 {
     River,
-    Settlement
+    Settlement,
+    MajorRoad,
+    MinorRoad,
+    Backroad
 }

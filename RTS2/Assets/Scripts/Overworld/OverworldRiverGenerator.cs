@@ -7,7 +7,7 @@ public class OverworldRiverGenerator : OverworldFeatureGenerator
 {
     public int NumberOfRiversToGenerate;
     int width, height;
-    public override void GenerateFeature(ref OverworldTile[,] world)
+    public override void GenerateFeature(OverworldTile[,] world)
     {
         if(NumberOfRiversToGenerate<=0) return;
         width = world.GetLength(0);
@@ -46,7 +46,7 @@ public class OverworldRiverGenerator : OverworldFeatureGenerator
             int count = rivers.Count;
             while(index<count)
             {
-                if (ExpandRiver(rivers[index],ref world,ref rivers))
+                if (ExpandRiver(rivers[index],world,rivers))
                 {
                     hasExpandedRiver = true;
                 }
@@ -68,13 +68,13 @@ public class OverworldRiverGenerator : OverworldFeatureGenerator
 
     }
 
-    bool ExpandRiver(River r,ref OverworldTile[,] world,ref List<River> rivers )
+    bool ExpandRiver(River r,OverworldTile[,] world,List<River> rivers )
     {
-        if (!CanRiverProgress(r,ref rivers,ref world))
+        if (!CanRiverProgress(r,rivers,world))
         {
             return false;
         }
-        List<Vector2Int> nextPoints = CanRiverExpand(r, ref world);
+        List<Vector2Int> nextPoints = CanRiverExpand(r, world);
         if (nextPoints!=null && nextPoints.Count>0)
         {
             int index = Random.Range(0, nextPoints.Count);  
@@ -85,7 +85,7 @@ public class OverworldRiverGenerator : OverworldFeatureGenerator
         return false;
     }
 
-    bool CanRiverProgress(River r, ref List<River> rivers,ref OverworldTile[,] world)
+    bool CanRiverProgress(River r,  List<River> rivers,OverworldTile[,] world)
     {
         if (r.currentCoords.x == 0 || r.currentCoords.y == 0 || r.currentCoords.x == width - 1 || r.currentCoords.y == height - 1)
         {
@@ -110,7 +110,7 @@ public class OverworldRiverGenerator : OverworldFeatureGenerator
         return true;
     }
 
-    List<Vector2Int> CanRiverExpand(River r, ref OverworldTile[,] world)
+    List<Vector2Int> CanRiverExpand(River r, OverworldTile[,] world)
     {
         Neighbours(r.currentCoords);
         if (neighbourCache.Count > 0)

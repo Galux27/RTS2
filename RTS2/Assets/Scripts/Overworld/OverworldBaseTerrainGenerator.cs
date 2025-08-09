@@ -9,7 +9,7 @@ public class OverworldBaseTerrainGenerator : OverworldFeatureGenerator
     public int NumberOfNodesToStartWith, NumberOfNodesToExpandFrom;
 
 
-    public override void GenerateFeature(ref OverworldTile[,] world)
+    public override void GenerateFeature(OverworldTile[,] world)
     {
         tileHeight =  OverworldGenerator.Instance.SeaLevel + 1; 
         int width = world.GetLength(0);
