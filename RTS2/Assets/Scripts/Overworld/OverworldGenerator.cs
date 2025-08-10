@@ -27,6 +27,7 @@ public class OverworldGenerator : MonoBehaviour
     public Settlement[] Settlements;
     public void Generate()
     {
+        EasyStopwatch.StartStopwatch();
         OverworldTiles=new OverworldTile[OverworldWidth,OverworldHeight];
         for(int x = 0; x < OverworldWidth; x++)
         {
@@ -52,7 +53,8 @@ public class OverworldGenerator : MonoBehaviour
         }
         else
         {
-            Debug.Break();
+            EasyStopwatch.StopStopwatch();
+            Debug.Log("Generation took " + EasyStopwatch.GetStopwatchElapsedTime());
         }
 
     }
@@ -98,5 +100,6 @@ public enum OverworldFeature
     Settlement,
     MajorRoad,
     MinorRoad,
-    Backroad
+    Backroad,
+    MiscFeature
 }

@@ -39,7 +39,7 @@ public class OverworldMajorRoadGenerator : OverworldFeatureGenerator
                 continue;
             }
             path = OverworldPathfinding.FindPathUsingBasic(MajorSettlements[x].pointsInSettlement[0], MajorSettlements[x + 1].pointsInSettlement[0], world);
-            if (path.Count > 0)
+            if (path!=null&& path.Count > 0)
             {
                 for (int q = 0; q < path.Count; q++)
                 {
@@ -63,7 +63,7 @@ public class OverworldMajorRoadGenerator : OverworldFeatureGenerator
                 }
             }
             path = OverworldPathfinding.FindPathUsingBasic(closestMajor.pointsInSettlement[0], MinorSettlements[x].pointsInSettlement[0], world);
-            if (path.Count > 0)
+            if (path!=null&& path.Count > 0)
             {
                 for (int q = 0; q < path.Count; q++)
                 {

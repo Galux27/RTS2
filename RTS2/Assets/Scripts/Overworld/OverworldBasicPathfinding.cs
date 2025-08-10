@@ -152,7 +152,6 @@ public static class OverworldBasicPathfinding
         }
         if (Start == Target)
         {
-            Debug.LogError("Error getting path between " + chunk1.coords + " and " + chunk2.coords);
             return false;
         }
         List<OverworldPathfindingNode> path = OverworldPathfinding.FindPath(Start, Target, chunk1.TilesISimplify, offset);
@@ -192,7 +191,6 @@ public static class OverworldBasicPathfinding
 
     static List<BasicOverworldPathfindingNode> FindPath(Vector2Int startPos, Vector2Int targetPos, BasicOverworldPathfindingNode[,] world)
     {
-        EasyStopwatch.StartStopwatch();
         //get player and target position in grid coords
         BasicOverworldPathfindingNode seekerNode = world[startPos.x, startPos.y];
         BasicOverworldPathfindingNode targetNode = world[targetPos.x, targetPos.y];
@@ -222,9 +220,7 @@ public static class OverworldBasicPathfinding
             //If target found, retrace path
             if (node == targetNode)
             {
-                EasyStopwatch.StopStopwatch();
 
-                Debug.Log("Got to target, nodes searched " + closedSet.Count + " total length " + openSet.Count + " took " + EasyStopwatch.GetStopwatchElapsedTime());
                 return RetracePath(seekerNode, targetNode);
 
             }
@@ -249,7 +245,6 @@ public static class OverworldBasicPathfinding
                 }
             }
         }
-        EasyStopwatch.StopStopwatch();
 
         return null;
     }

@@ -21,7 +21,7 @@ public class OverworldRenderer : MonoBehaviour
     public RawImage DrawIn;
     public Button Generate,Render;
     public List<HeightmapColour> Colours;
-    public Color RiverColour,SettlementColour,MajorRoadColour, MinorRoadColour;
+    public Color RiverColour,SettlementColour,MajorRoadColour, MinorRoadColour,BackroadColour,MinorFeatureColour;
     private void Awake()
     {
         Render.onClick.AddListener(RenderWorld);
@@ -66,12 +66,20 @@ public class OverworldRenderer : MonoBehaviour
         }else if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.Settlement))
         {
             return SettlementColour;
-        }else if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.MajorRoad))
+        }
+        else if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.MiscFeature))
+        {
+            return MinorFeatureColour;
+        }
+        else if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.MajorRoad))
         {
             return MajorRoadColour;
         }else if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.MinorRoad))
         {
             return MinorRoadColour;
+        }else if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.Backroad))
+        {
+            return BackroadColour;
         }
         return Color.cyan;
     }

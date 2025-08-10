@@ -15,10 +15,11 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
     {
         Settlement[] settlements=new Settlement[NumberOfSettlements];
         Vector2Int coords = new Vector2Int();
-        coords.x = Random.Range(0, width);
-        coords.y = Random.Range(0, height);
         width = world.GetLength(0);
         height = world.GetLength(1);
+        coords.x = Random.Range(0, width);
+        coords.y = Random.Range(0, height);
+   
         List<Vector2Int> coordsUsed = new List<Vector2Int>();
         for (int x = 0; x < NumberOfSettlements; x++)
         {
