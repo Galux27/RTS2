@@ -10,7 +10,7 @@ using UnityEngine;
 public static class SerializationHelpers
 {
    public const string SaveDirectory = "ReclemationCorpSaves",WorkingDir= "ReclemationCorpWorkingDir";
-   public const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT",MiscExtension=".RCMISC",RoomExtension=".RCROOM";
+   public const string WorldSectionExtension = ".RCWRLD",UnitsExtension=".RCUNIT",MiscExtension=".RCMISC",RoomExtension=".RCROOM",OverworldExtension=".OVERW";
     static string GetSaveFolderParentLocation()
     {
         return System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
@@ -55,6 +55,13 @@ public static class SerializationHelpers
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "ROOMS" + RoomExtension);
 
     }
+
+    public static string GetOverworldFilePath(string saveName)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "OVERWORLD" + OverworldExtension);
+
+    }
+
     public static string GetMiscFilePath(string saveName)
     {
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "MISC" + MiscExtension);
@@ -79,6 +86,7 @@ public static class SerializationHelpers
         EnsureDirectoryExists(path);
         path=Path.Combine(path,saveName);
         EnsureDirectoryExists(path);
+        SaveOverworld(path);
         SaveMiscData(path);
         SaveLoadedWorld(path);
         SaveUnits(path);
@@ -86,6 +94,19 @@ public static class SerializationHelpers
         CopyWorkingCopyToSaveDir(path);
         Debug.Log("Saving took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
 
+    }
+
+    public static void SaveOverworld(string saveName)
+    {
+        string name = "OVERWORLD" + OverworldExtension;
+        List<string> dataWriting = new List<string>();
+
+        dataWriting.Add(OverworldGenerator.Instance.Serialize().Data);
+
+        if (dataWriting.Count > 0)
+        {
+            WriteToFile(saveName, name, dataWriting);
+        }
     }
 
     static void CopyWorkingCopyToSaveDir(string saveName)
@@ -229,7 +250,7 @@ public static class SerializationHelpers
         EasyStopwatch.StartStopwatch();
         ClearWorkingCopyDirectory();
         ReadMiscFile(name);
-
+        ReadOverworld(name);
         IDManager.OnLevelLoaded();
         //shit workaround to instance overwriting 0,0
         GameObject.FindObjectOfType<WorldChunkManager>().LoadChunksFromFile(name);
@@ -246,6 +267,11 @@ public static class SerializationHelpers
         Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
     }
 
+    static void ReadOverworld(string name)
+    {
+        List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetOverworldFilePath(name));
+        MiscDataSerialization.DeserialzieOverworld(dataFromFile);
+    }
 
     static void ReadMiscFile(string name)
     {
@@ -343,6 +369,12 @@ public class DataKeys
     public const string IDMax = "ID_MAX";
     public const string InventoryUID = "INVID";
     public const string Inventory = "INV";
+
+    public const string OverElevation = "O_ELE";
+    public const string OverFeature = "O_FET";
+    public const string OverPop = "O_POP";
+    public const string OverSettlement = "O_SET";
+    public const string Overworld = "OVER";
 }
 
 public enum DataType
@@ -430,16 +462,29 @@ public static class SerializeDataHelpers
         else if(key == DataKeys.ItemsInContainer)
         {
             return CombineStrings(INVENTORY_MARKER_TWO.ToString(),key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
+        }else if (key == DataKeys.OverFeature)
+        {
+            string combined = "";
+            List<OverworldFeature> features = (List<OverworldFeature>)value;
+            for(int x = 0; x < features.Count; x++)
+            {
+                combined += features[x].ToString();
+                combined += INVENTORY_SPLIT_TWO;
+            }
+
+            return CombineStrings( key, KEY_OBJECT_SPLIT.ToString(), combined, DATA_ELEMENT_SPLIT.ToString());
+
         }
         else if (key == DataKeys.TileType || key == DataKeys.WaterLevel || key == DataKeys.WallType
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
              ||key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType
-            ||key==DataKeys.TargetUID|| key == DataKeys.InventoryUID || key==DataKeys.MiscString||key==DataKeys.CameraZoom)
+            ||key==DataKeys.TargetUID|| key == DataKeys.InventoryUID || key==DataKeys.MiscString||key==DataKeys.CameraZoom||key==DataKeys.OverElevation||
+            key==DataKeys.OverPop)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
-        } 
+        }  
         else if (key == DataKeys.RoomTiles)
         {
             List<string> stored = new List<string>();
@@ -469,7 +514,7 @@ public static class SerializeDataHelpers
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), INVENTORY_MARKER.ToString(), value.ToString(), INVENTORY_MARKER.ToString());
         }
-        else if(key==DataKeys.ChunkTiles)
+        else if(key==DataKeys.ChunkTiles || key == DataKeys.Overworld)
         {
             DataToSerialize[,] data = (DataToSerialize[,])value;
             List<string> stored = new List<string>();
@@ -520,10 +565,16 @@ public static class SerializeDataHelpers
                 data.Add(LIST_ELEMENT_SPLIT.ToString());
             }
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), data);
+        }else if(key == DataKeys.OverSettlement)
+        {
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString());
+
         }
         Debug.LogError("Could not serialize " + key + " as its been assigned a serializer");
         return "";
     }
+
+    
 
     public static string SerializeListOfData(List<DataToSerialize> data)
     {

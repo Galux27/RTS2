@@ -15,6 +15,44 @@ public static class MiscDataSerialization
         retVal.AddDataToSerialize(DataKeys.ResourcesStored, ResourceManager.Instance.UserResources);
         return new SerializedData(retVal);
    }
+    static bool DisplayedOne = false;
+    public static void DeserialzieOverworld(List<string> data)
+    {
+        string[] overworld = data[0].Substring(4, data[0].Length-4).Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        OverworldTile[,] overworldData = new OverworldTile[OverworldGenerator.Instance.OverworldWidth, OverworldGenerator.Instance.OverworldHeight];
+
+
+        OverworldTile toAdd = null;
+        for (int x=0;x< overworld.Length-1; x++)
+        {
+            toAdd = DeserializeData(overworld[x]);
+            overworldData[toAdd.X, toAdd.Y] = toAdd;
+        }
+        OverworldGenerator.Instance.OverworldTiles = overworldData;
+        OverworldRenderer.Instance.RenderWorld();
+    }
+
+    static OverworldTile DeserializeData(string data)
+    {
+        string[] tileData = data.Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        //CD;22,289::O_ELE;55.5206::}O_FET;OKEY;Settlement:]|OKEY;MajorRoad:]|OKEY;MinorRoad:]|::O_POP;85::O_SET;17:
+
+        Dictionary<string, object> deserializedData = new Dictionary<string, object>();
+
+        for (int x = 0; x < tileData.Length; x++)
+        {
+            string[] keyObjectSplit = tileData[x].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            if (keyObjectSplit.Length == 2)
+            {
+                deserializedData.Add(keyObjectSplit[0], DataReaders.ParseDataObject(keyObjectSplit[0], keyObjectSplit[1]));
+            }
+        }
+        Vector2Int coords = (Vector2Int)deserializedData[DataKeys.Coords];
+        OverworldTile retVal = new OverworldTile(coords.x, coords.y, (float)deserializedData[DataKeys.OverElevation]);
+
+        return retVal;
+    }
+
 
     public static void DeserializeMiscData(List<string> data)
     {

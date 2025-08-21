@@ -76,7 +76,7 @@ public class WorldController : MonoBehaviour
             }
             else
             {
-                SerializationHelpers.LoadGame("TestWorld");
+                OverworldGenerator.Instance.Generate();
 
             }
         }

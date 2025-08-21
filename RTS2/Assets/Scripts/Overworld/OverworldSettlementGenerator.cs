@@ -166,7 +166,7 @@ public class Settlement
         int toAdd = Random.Range(50, 200);
         toAdd=Mathf.Min(RemainingPopulationToDistribute, toAdd);
         world[coords.x, coords.y].AddFeatureToTile(OverworldFeature.Settlement);
-        world[coords.x, coords.y].Population += toAdd;
+        world[coords.x, coords.y].SetPopulation(this, toAdd);
         RemainingPopulationToDistribute -= toAdd;
         pointsInSettlement.Add(coords);
     }

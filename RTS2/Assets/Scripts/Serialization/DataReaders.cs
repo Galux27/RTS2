@@ -120,8 +120,9 @@ public static class DataReaders
             ParseDataObject(keyObjectSplit[0], objects[x].Substring(keyObjectSplit[0].Length));
         } 
     }
-
-   public static object ParseDataObject(string key,string data)
+    //public const string OverFeature = "O_FET";
+    //public const string OverPop = "O_POP";
+    public static object ParseDataObject(string key,string data)
     {
         switch (key)
         {
@@ -138,6 +139,7 @@ public static class DataReaders
             case DataKeys.MaxHealth:
             case DataKeys.WaterLevel:
             case DataKeys.CameraZoom:
+            case DataKeys.OverElevation:
                 return ParseFloat(data);
                 break;        
             case DataKeys.Pos:
@@ -153,6 +155,7 @@ public static class DataReaders
             case DataKeys.BehaviourType:
             case DataKeys.MiscString:
             case DataKeys.Inventory:
+            case DataKeys.OverSettlement:
                 return data;
             case DataKeys.UID:
             case DataKeys.TargetUID:
@@ -164,6 +167,7 @@ public static class DataReaders
             case DataKeys.ConstructableType:
             case DataKeys.UnitType:
             case DataKeys.RoomType:
+            case DataKeys.OverPop:
                 return ParseInt(data);
                 break;
             case DataKeys.EnvironmentObjects:
