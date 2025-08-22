@@ -49,8 +49,11 @@ public static class MiscDataSerialization
         }
         Vector2Int coords = (Vector2Int)deserializedData[DataKeys.Coords];
         OverworldTile retVal = new OverworldTile(coords.x, coords.y, (float)deserializedData[DataKeys.OverElevation]);
-
-        return retVal;
+        if (deserializedData.ContainsKey(DataKeys.OverFeature))
+        {
+            retVal.Features = (List<OverworldFeature>)deserializedData[DataKeys.OverFeature];
+        }
+            return retVal;
     }
 
 

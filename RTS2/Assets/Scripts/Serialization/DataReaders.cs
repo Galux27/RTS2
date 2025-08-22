@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -182,6 +183,8 @@ public static class DataReaders
                 return ParseRoomTiles(data);
             case DataKeys.ResourcesStored:
                 return DesieralizeResources(data);
+            case DataKeys.OverFeature:
+                return DeserializeOverworldFeature(data);
             case DataKeys.ItemUID:
             case DataKeys.ItemsInContainer:
             default:
@@ -189,6 +192,24 @@ public static class DataReaders
         }
         return null;
     }
+    public static T ParseEnum<T>(string value)
+    {
+        return (T)Enum.Parse(typeof(T), value, true);
+    }
+    static List<OverworldFeature> DeserializeOverworldFeature(string data)
+    {
+        List<OverworldFeature> retVal = new List<OverworldFeature>();
+        string[] entries = data.Split(SerializeDataHelpers.INVENTORY_SPLIT_TWO, System.StringSplitOptions.RemoveEmptyEntries);
+        for (int x = 0; x < entries.Length; x++)
+        {
+            retVal.Add(ParseEnum<OverworldFeature>(entries[x]));
+        }
+
+        return retVal;
+
+    }
+
+
     static Dictionary<string, ResourceData> DesieralizeResources(string data)
     {
         // Construction Supplies,217`Food,0`Fuel,0`Money,0`Munitions,0`
