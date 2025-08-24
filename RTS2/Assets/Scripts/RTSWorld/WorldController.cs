@@ -64,6 +64,7 @@ public class WorldController : MonoBehaviour
     {
         if (!DoWeLoadWorld())
         {
+            OverworldGenerator.Instance.GenerateWithoutCoroutine();
         }
         else
         {
@@ -184,6 +185,7 @@ public class WorldTile:ISerialize
     public int x,y;
     public bool traversable = true;
     public string tileType;
+    public float Elevation = OverworldGenerator.Instance.SeaLevel;
     public WaterData WaterData;
     
     public Vector2Int Coords()
@@ -198,6 +200,15 @@ public class WorldTile:ISerialize
         this.y = y;
         tileType = "Ground";
         WaterData = new WaterData(0f);
+    }
+
+    public void SetElevation(float value)
+    {
+        Elevation = value;
+        if (Elevation < OverworldGenerator.Instance.SeaLevel)
+        {
+            UpdateWaterLevel(10f);
+        }
     }
 
     public void UpdateWaterLevel(float val)

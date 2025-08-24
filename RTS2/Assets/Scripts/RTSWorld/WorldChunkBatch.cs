@@ -11,16 +11,35 @@ public class WorldChunkBatch : MonoBehaviour
     public bool IsActive = false;
     Vector2Int UpperBound = new Vector2Int();
     public bool NeedsGeneration = true;
-
-    public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords)
+    public Vector2Int OverworldCoords = new Vector2Int();
+    public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords,Vector2Int overworld)
     {
         GameObject g = new GameObject();
         g.name = "World Chunk Batch" + coords.ToString();
         WorldChunkBatch wcb = g.AddComponent<WorldChunkBatch>();
-        wcb.SetCoords( coords);
+        wcb.SetCoords( coords,overworld);
        
         return wcb;
 
+    }
+
+    public void ApplyOverworldHeight(float height)
+    {
+        Debug.LogError("Setting height of " + height + " for batch " + coords);
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                for(int x1=0;x1< Chunks[x, y].ChunkTiles.GetLength(0); x1++)
+                {
+                    for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(1); y1++)
+                    {
+                        Chunks[x, y].ChunkTiles[x1, y1].SetElevation(height);
+                    }
+                }
+                 
+            }
+        }
     }
 
     public void SetChunksLoaded()
@@ -35,8 +54,9 @@ public class WorldChunkBatch : MonoBehaviour
 
     }
 
-    public void SetCoords(Vector2Int coords)
+    public void SetCoords(Vector2Int coords,Vector2Int overworld)
     {
+        this.OverworldCoords = overworld;
         this.coords = coords;
         UpperBound = coords + new Vector2Int(WorldChunkManager.ChunksPerBatch * WorldChunkManager.ChunkSize, WorldChunkManager.ChunksPerBatch * WorldChunkManager.ChunkSize);
     }

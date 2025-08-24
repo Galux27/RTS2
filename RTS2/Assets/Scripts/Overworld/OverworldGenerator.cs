@@ -19,7 +19,16 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
     }
 
 
+    public OverworldTile GetOverworldTile(Vector2Int coords)
+    {
+        coords.x = Mathf.Clamp(coords.x, 0, OverworldWidth);
+        coords.y=Mathf.Clamp(coords.y, 0, OverworldHeight);
+        return OverworldTiles[coords.x, coords.y];
+    }
 
+
+    Vector2Int OverworldStartingCoords;
+    bool hasSetOverworldStartingCoords = false;
    public int OverworldWidth,OverworldHeight;
     public float MaxElevation, SeaLevel;
    public OverworldTile[,] OverworldTiles;
@@ -39,6 +48,53 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         StartCoroutine(GenerateWorld());
 
     }
+
+
+    public Vector2Int GetOverworldStartingCoords()
+    {
+        if (!hasSetOverworldStartingCoords)
+        {
+
+            for(int x=50;x< OverworldWidth-50; x++)
+            {
+                for(int y=50;y< OverworldHeight-50; y++)
+                {
+                    if (OverworldTiles[x, y].Elevation < SeaLevel)
+                    {
+                        OverworldStartingCoords = new Vector2Int(x,y);
+                        hasSetOverworldStartingCoords = true;
+                    }
+                }
+            }
+
+           // OverworldStartingCoords = new Vector2Int(Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)), Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)));
+            //hasSetOverworldStartingCoords = true;
+        }
+        return OverworldStartingCoords;
+    }
+
+
+    public void GenerateWithoutCoroutine()
+    {
+        EasyStopwatch.StartStopwatch();
+        OverworldTiles = new OverworldTile[OverworldWidth, OverworldHeight];
+        for (int x = 0; x < OverworldWidth; x++)
+        {
+            for (int y = 0; y < OverworldHeight; y++)
+            {
+                OverworldTiles[x, y] = new OverworldTile(x, y);
+            }
+        }
+        for (int x=0;x < FeatureGenerators.Count - 1; x++)
+        {
+            FeatureGenerators[x].GenerateFeature(OverworldTiles);
+
+        }
+        OverworldRenderer.Instance.RenderWorld();
+        Debug.Log("Full Generation took " + EasyStopwatch.GetStopwatchElapsedTime());
+
+    }
+
 
     int index = 0;
     IEnumerator GenerateWorld()

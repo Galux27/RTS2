@@ -26,12 +26,21 @@ public class MapGenerator : MonoBehaviour
         }
         int featureGenerating = 0;
 
-        for(int x=0;x<FeaturesToGenerate; x++)
+
+        OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
+        toGenerateIn.ApplyOverworldHeight(overworldTile.Elevation);
+
+        if (OverworldGenerator.Instance.SeaLevel < overworldTile.Elevation)
         {
-            featureGenerating = Random.Range(0, features.Count);
-            features[featureGenerating].GenerateFeature(toGenerateIn);
+            for (int x = 0; x < FeaturesToGenerate; x++)
+            {
+                featureGenerating = Random.Range(0, features.Count);
+                features[featureGenerating].GenerateFeature(toGenerateIn);
+            }
         }
-        toGenerateIn.NeedsGeneration = false;
+            toGenerateIn.NeedsGeneration = false;
         toGenerateIn.SetChunksLoaded();
     }
+
+
 }

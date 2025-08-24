@@ -44,12 +44,18 @@ public class WorldChunkManager : MonoBehaviour
         CreateChunkBatch(new Vector2Int());       
     }
     
+    Vector2Int ConvertWorldCoordsToOverworldCoords(Vector2Int coords)
+    {
+        Vector2Int retVal = OverworldGenerator.Instance.GetOverworldStartingCoords()+ new Vector2Int(coords.x/ChunkBatchSize,coords.y/ChunkBatchSize);
+
+
+        return retVal;
+    }
+
+
     void CreateChunkBatch(Vector2Int coords,bool init=true)
     {
-
-
-
-        ChunkBatches.Add(coords, WorldChunkBatch.CreateWorldChunkBatch(coords));
+        ChunkBatches.Add(coords, WorldChunkBatch.CreateWorldChunkBatch(coords,ConvertWorldCoordsToOverworldCoords(coords)));
         if (init)
         {
             if (ExistingChunkData != null)
@@ -296,6 +302,7 @@ public class WorldChunkManager : MonoBehaviour
     int localX = 0, localY = 0;
     int BatchCoordsX = 0, BatchCoordsY = 0;
     int ChunkCoordsX = 0, ChunkCoordsY = 0;
+    int xMod, yMod;
     /// <summary>
     /// 
     /// </summary>
@@ -307,27 +314,43 @@ public class WorldChunkManager : MonoBehaviour
     public void ConvertPositionToChunkAndLocalCoords(float x, float y, out Vector2Int chunkBatch,out Vector2Int chunkCoords, out Vector2Int coords)
     {
         float mod = WorldChunkManager.ChunkBatchSize;
-      
-        localX = Mathf.FloorToInt(x % mod);
+        xMod = Mathf.RoundToInt(x % mod);
+        localX =xMod;
         ChunkCoordsX = Mathf.CeilToInt(localX / WorldChunkManager.ChunkSize);
-        BatchCoordsX = Mathf.FloorToInt(x - localX);
-
-        if (x < 0)
+        if (xMod != 0)
         {
-            BatchCoordsX -= WorldChunkManager.ChunkBatchSize;
-            localX = WorldChunkManager.ChunkBatchSize + localX;
+            BatchCoordsX = Mathf.FloorToInt(x - localX);
+            if (x < 0)
+            {
+                BatchCoordsX -= WorldChunkManager.ChunkBatchSize;
+                localX = WorldChunkManager.ChunkBatchSize + localX;
 
+            }
         }
+        else
+        {
+            BatchCoordsX = Mathf.RoundToInt( x);
+        }
+       
         ChunkCoordsX = Mathf.CeilToInt(localX / WorldChunkManager.ChunkSize);
         localX -= WorldChunkManager.ChunkSize * ChunkCoordsX;
         mod = WorldChunkManager.ChunkBatchSize;
-        localY = Mathf.FloorToInt(y % mod);
-        BatchCoordsY = Mathf.FloorToInt(y - localY);
-        if (y < 0)
+        yMod = Mathf.RoundToInt(y % mod);
+        localY = yMod;
+        if (yMod != 0)
         {
-            BatchCoordsY -= WorldChunkManager.ChunkBatchSize;
-            localY = WorldChunkManager.ChunkBatchSize + localY;
+            BatchCoordsY = Mathf.FloorToInt(y - localY);
+            if (y < 0)
+            {
+                BatchCoordsY -= WorldChunkManager.ChunkBatchSize;
+                localY = WorldChunkManager.ChunkBatchSize + localY;
+            }
         }
+        else
+        {
+            BatchCoordsY = Mathf.RoundToInt(y);
+        }
+       
         ChunkCoordsY = Mathf.CeilToInt(localY / WorldChunkManager.ChunkSize);
         localY -= WorldChunkManager.ChunkSize * ChunkCoordsY;
 

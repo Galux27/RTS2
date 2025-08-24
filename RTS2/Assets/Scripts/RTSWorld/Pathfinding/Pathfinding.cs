@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
@@ -99,6 +100,12 @@ public static class Pathfinding
         return GetNodeFromCoords(coordsCache);
     }
    static Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
+
+
+    public static string GetLastCoordsFound()
+    {
+        return batch.ToString() + " " + chunk.ToString() + " " + local.ToString();
+    }
 
     public static PathfindingNode GetNodeFromCoords(Vector2Int coords)
     {
