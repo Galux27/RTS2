@@ -205,7 +205,24 @@ public class WorldChunkBatch : MonoBehaviour
         return true;
     }
 
-    public void CheckForCleanup()
+    public void RefreshGroundTiles()
+    {
+        if (!IsRendered)
+        {
+            return;
+        }
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                WorldRenderer.Instance.RenderChunk(Chunks[x, y].ChunkTiles);
+            }
+        }
+
+     }
+
+
+        public void CheckForCleanup()
     {
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
@@ -394,9 +411,27 @@ public class WorldChunkBatch : MonoBehaviour
         }
         Chunks[coords.x, coords.y].RemoveConstructable(bs);
     }
+    public WorldTile GetWorldTileFromVec2Int(Vector2Int pos)
+    {
+        return GetTileFromPosition(new Vector3(pos.x, pos.y));
+    }
+
+    Vector2Int chunkBatch, chunk, local;
+    public WorldTile GetTileFromPosition(Vector3 pos)
+    {
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out chunkBatch, out chunk, out local);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(chunkBatch))
+        {
+            return WorldChunkManager.Instance.ChunkBatches[chunkBatch].Chunks[chunk.x, chunk.y].ChunkTiles[local.x, local.y];
+        }
+        else
+        {
+            return null;
+        }
+        }
 
 
-    Vector2Int getCoordsCache = new Vector2Int();
+        Vector2Int getCoordsCache = new Vector2Int();
     public Vector2Int GetChunkCoordsFromWorldPos(Vector3 worldPos)
     {
         return GetChunkCoordsFromTileCoords(new Vector2Int((int)worldPos.x,(int) worldPos.y));

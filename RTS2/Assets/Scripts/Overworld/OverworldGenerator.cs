@@ -49,6 +49,40 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
 
     }
 
+    public List<OverworldTile> GetNeighbours(Vector2Int coords)
+    {
+        List<OverworldTile> retVal = new List<OverworldTile>();
+
+        if (coords.x == 0) 
+        {
+            retVal.Add(OverworldTiles[coords.x+1, coords.y]);
+        }
+        else if (coords.x >= OverworldWidth - 1)
+        {
+            retVal.Add(OverworldTiles[coords.x-1, coords.y]);
+        }
+        else
+        {
+            retVal.Add(OverworldTiles[coords.x + 1, coords.y]);
+            retVal.Add(OverworldTiles[coords.x - 1, coords.y]);
+        }
+
+        if (coords.y == 0)
+        {
+            retVal.Add(OverworldTiles[coords.x , coords.y + 1]);
+        }
+        else if (coords.y >= OverworldHeight- 1)
+        {
+            retVal.Add(OverworldTiles[coords.x , coords.y - 1]);
+        }
+        else
+        {
+            retVal.Add(OverworldTiles[coords.x , coords.y + 1]);
+            retVal.Add(OverworldTiles[coords.x , coords.y - 1]);
+        }
+        return retVal;
+    }
+
 
     public Vector2Int GetOverworldStartingCoords()
     {
@@ -59,10 +93,11 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
             {
                 for(int y=50;y< OverworldHeight-50; y++)
                 {
-                    if (OverworldTiles[x, y].Elevation < SeaLevel)
+                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.MajorRoad))
                     {
                         OverworldStartingCoords = new Vector2Int(x,y);
                         hasSetOverworldStartingCoords = true;
+                        break;
                     }
                 }
             }

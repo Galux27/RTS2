@@ -23,7 +23,7 @@ public class Forest_MapFeature :MapFeatureBase
             x = Random.Range(center.x - width, center.x + width);
             y = Random.Range(center.y - height, center.y + height);
             tileChecking = WorldTileHelpers.GetTileFromCoords(x, y);
-            if (tileChecking != null && tileChecking.traversable && tileChecking.WaterData.WaterLevel == 0f)
+            if (tileChecking != null && tileChecking.traversable && tileChecking.WaterData.WaterLevel == 0f &&tileChecking.CanPutDecorationsOn)
             {
                 objectToCreate = Random.Range(0, ValidObjectsForFeature.Count);
                 chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(new Vector3(x, y));

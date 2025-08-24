@@ -55,9 +55,9 @@ public class WorldTilesManager
         {
             return WorldTiles[type].tileBase;
         }
-        return null;
+        return WorldTiles[ErrorTile].tileBase;
     }
-
+    const string ErrorTile = "Error";
 }
 
 

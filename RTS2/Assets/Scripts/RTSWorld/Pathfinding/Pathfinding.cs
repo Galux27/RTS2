@@ -138,6 +138,12 @@ public static class Pathfinding
         return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].PathfindingNodes[local.x, local.y];
     }
 
+
+    public static List<PathfindingNode> FindPath(Vector2Int start,Vector2Int end)
+    {
+        return FindPath(new Vector3(start.x, start.y, 0), new Vector3(end.x, end.y, 0));
+    }
+
     /// <summary>
     /// Finds a path without considering the unit performing the path
     /// Used in calculating whether a building is enclosed or not

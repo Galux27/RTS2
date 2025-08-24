@@ -45,81 +45,56 @@ public class Pond_MapGenerator : MapFeatureBase
     {
         OnStartGenerate();
         Vector2Int startCoords = toGenerateIn.coords + new Vector2Int(Random.Range(WorldChunkManager.ChunkSize, WorldChunkManager.ChunkBatchSize - WorldChunkManager.ChunkSize), Random.Range(WorldChunkManager.ChunkSize, WorldChunkManager.ChunkBatchSize - WorldChunkManager.ChunkSize));
-        float dist = 0f;
-        Vector2Int curCoords = new Vector2Int();
-        WorldTile tileChecking = null;
-        Vector2Int chunkCoords = new Vector2Int(0, 0);
-        EnvironmentObjectInstance objectToClear = null;
-
-        for (int q = 0; q < Iterations; q++)
+        Vector2Int originalStart = startCoords;
+        Dictionary<Vector2Int,PotentialPondTile> tiles=new Dictionary<Vector2Int, PotentialPondTile>();
+        WorldTile toAdd = null;
+       for(int i = 0; i < Iterations; i++)
         {
-            for (int x = startCoords.x - MaxDistForWater; x < startCoords.x + MaxDistForWater; x++)
+            Vector2Int curCoords = new Vector2Int();
+            float dist = 0f;
+            for (int x=startCoords.x-MaxDistForWater ;x<startCoords.x+MaxDistForWater; x++)
             {
-                for (int y = startCoords.y - MaxDistForWater; y < startCoords.y + MaxDistForWater; y++)
+                curCoords.x = x;
+                for(int y= startCoords.y - MaxDistForWater; y < startCoords.y + MaxDistForWater; y++)
                 {
-                    curCoords.x = x;
-                    curCoords.y = y;
+                    curCoords.y= y;
                     dist = Vector2Int.Distance(curCoords, startCoords);
-                    if (dist <= MaxDistForWater)
+                    if (dist < MaxDistForWater)
                     {
-                        tileChecking = WorldTileHelpers.GetTileFromCoords(x, y);
-                        if (tileChecking != null)
+                        toAdd = toGenerateIn.GetWorldTileFromVec2Int(curCoords);
+                        if (toAdd != null)
                         {
-                            chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(curCoords);
-                            if (toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(curCoords, out objectToClear))
+                            if (toAdd.CanPutDecorationsOn == false)
                             {
-                                objectToClear.AdjustHealth(-99999999f);
+                                return;
                             }
-                            tileChecking.tileType = "Mud";
-                            tileChecking.UpdateWaterLevel(MaxDistForWater - dist);
-                            PointsUsed.Add(curCoords);
+                            if (!tiles.ContainsKey(curCoords))
+                            {
+
+                                tiles.Add(curCoords, new PotentialPondTile(toAdd, MaxDistForWater - dist));
+                            }
+                            else
+                            {
+                                tiles[curCoords].waterLevel += MaxDistForWater - dist;
+                            }
+                        }
                         }
                     }
-                }
             }
-            int index = Random.Range(0, PointsUsed.Count);
-            if (PointsUsed.Count == 0)
+
+            startCoords = originalStart + new Vector2Int(Random.Range(-MaxDistForWater, MaxDistForWater), Random.Range(-MaxDistForWater, MaxDistForWater));
+            Vector2Int chunkCoords = new Vector2Int();
+            EnvironmentObjectInstance objectToClear = null;
+            foreach(KeyValuePair<Vector2Int,PotentialPondTile> kvp in tiles)
             {
-                return;
-            }
-            startCoords = PointsUsed[index];
-
-        }
-
-        //for (int r = 0; r < Iterations; r++)
-        {
-            Vector2Int center = startCoords + new Vector2Int(Random.Range(MinWidth, MaxWidth), Random.Range(MinHeight, MaxHeight));
-            List<Vector2Int> pointsToCheck = new List<Vector2Int>();
-            pointsToCheck.Add(center);
-            List<Vector2Int> neighbours = null;
-
-
-            for (int x = 0; x < Iterations; x++)
-            {
-                for (int q = 0; q < pointsToCheck.Count; q++)
+                kvp.Value.tile.UpdateWaterLevel(kvp.Value.waterLevel);
+                chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(kvp.Key);
+                if (toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(kvp.Key, out objectToClear))
                 {
-                    tileChecking = WorldTileHelpers.GetTileFromCoords(pointsToCheck[q].x, pointsToCheck[q].y);
-                    if (tileChecking != null)
-                    {
-                        chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(pointsToCheck[q]);
-                        if (toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(pointsToCheck[q], out objectToClear))
-                        {
-                            objectToClear.AdjustHealth(-99999999f);
-                        }
-
-                        tileChecking.tileType = "Mud";
-                        tileChecking.WaterData.UpdateWaterLevel(2f - (2f / (Iterations / (x + 1))));
-                    }
-                    neighbours = GetNeighboursOfPoint(pointsToCheck[q]);
-                    PointsUsed.Add(pointsToCheck[q]);
-                    for (int y = 0; y < neighbours.Count; y++)
-                    {
-                        AddPointToNextIteration(neighbours[y]);
-                    }
+                    objectToClear.AdjustHealth(-99999999f);
                 }
-                pointsToCheck = PointsToUseNextIteration;
-                PointsToUseNextIteration = new List<Vector2Int>();
             }
+        
         }
 
     }
@@ -153,4 +128,16 @@ public class Pond_MapGenerator : MapFeatureBase
         return list;
     }
 
+}
+
+public class PotentialPondTile
+{
+    public WorldTile tile;
+    public float waterLevel;
+
+    public PotentialPondTile(WorldTile tile,float waterLevel)
+    {
+        this.tile = tile;
+        this.waterLevel = waterLevel;
+    }
 }

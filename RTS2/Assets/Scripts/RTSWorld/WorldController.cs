@@ -183,7 +183,7 @@ public class WorldController : MonoBehaviour
 public class WorldTile:ISerialize
 {
     public int x,y;
-    public bool traversable = true;
+    public bool traversable = true, CanPutDecorationsOn = true;
     public string tileType;
     public float Elevation = OverworldGenerator.Instance.SeaLevel;
     public WaterData WaterData;
@@ -255,7 +255,10 @@ public class WorldTile:ISerialize
         return data;
     }
 
-
+    public void UpdateTileType(String type)
+    {
+        tileType = type;
+    }
 
 
     public SerializedData Serialize()
