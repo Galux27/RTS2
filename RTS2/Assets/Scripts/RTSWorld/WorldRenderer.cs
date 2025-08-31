@@ -85,10 +85,15 @@ public class WorldRenderer : MonoBehaviour
     Vector3Int coords;
     void AddTileToRender(WorldTile tile,int index,ref Vector3Int[] postions,ref TileBase[] tiles)
     {
+        if (!init)
+        {
+            Init();
+        }
         coords = new Vector3Int(tile.x, tile.y, 0);
         postions[index]= coords;
         if (lastTilePlaced != tile.tileType)
         {
+            Debug.Log("Placing " + tile.tileType);
             currentTile = WorldTilesManager.GetTileBase(tile.tileType);
             lastTilePlaced = tile.tileType;
             lastTileBase = currentTile;
