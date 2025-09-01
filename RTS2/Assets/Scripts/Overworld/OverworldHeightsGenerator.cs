@@ -52,7 +52,7 @@ public class OverworldHeightsGenerator : OverworldFeatureGenerator
                 coords = lakeBlobs[q].PointsInBlob[x];
                 curDist = Vector2Int.Distance(coords, lakeBlobs[q].GetCenter());
                 tileHeight = Mathf.Lerp(0, world[coords.x, coords.y].Elevation, Mathf.InverseLerp(0f, maxDistFromCenter, curDist));
-
+                world[coords.x, coords.y].AddFeatureToTile(OverworldFeature.LargeWaterBody);
                 world[coords.x, coords.y].SetElevation(tileHeight);
             }
         }
@@ -81,7 +81,7 @@ public class OverworldHeightsGenerator : OverworldFeatureGenerator
                 coords = mountainBlobs[q].PointsInBlob[x];
                 curDist = Vector2Int.Distance(coords, mountainBlobs[q].GetCenter());
                 tileHeight = Mathf.Lerp(OverworldGenerator.Instance.MaxElevation, world[coords.x, coords.y].Elevation, Mathf.InverseLerp(0f, maxDistFromCenter, curDist));
-
+                world[coords.x, coords.y].AddFeatureToTile(OverworldFeature.Mountain);
                 world[coords.x, coords.y].SetElevation(tileHeight);
             }
         }

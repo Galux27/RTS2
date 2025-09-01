@@ -41,7 +41,7 @@ public class MapGenerator : MonoBehaviour
 
         OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
         toGenerateIn.ApplyOverworldHeight(overworldTile.Elevation);
-
+        toGenerateIn.GenerateWorldTileBlends();
         if (OverworldGenerator.Instance.SeaLevel < overworldTile.Elevation)
         {
             for(int x=0;x<overworldTile.Features.Count;x++)

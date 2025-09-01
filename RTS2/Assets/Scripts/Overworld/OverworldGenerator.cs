@@ -49,25 +49,80 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
 
     }
 
-    public List<OverworldTile> GetNeighbours(Vector2Int coords)
+    public List<OverworldTile> GetNeighbours(Vector2Int coords,bool getDiagonal=false)
     {
         List<OverworldTile> retVal = new List<OverworldTile>();
 
         if (coords.x == 0) 
         {
             retVal.Add(OverworldTiles[coords.x+1, coords.y]);
+
+            if (getDiagonal)
+            {
+                if (coords.y == 0)
+                {
+                    retVal.Add(OverworldTiles[coords.x + 1, coords.y + 1]);
+                }
+                else if (coords.y >= OverworldHeight - 1)
+                {
+                    retVal.Add(OverworldTiles[coords.x + 1, coords.y - 1]);
+                }
+                else
+                {
+                    retVal.Add(OverworldTiles[coords.x + 1, coords.y + 1]);
+                    retVal.Add(OverworldTiles[coords.x + 1, coords.y - 1]);
+                }
+            }
         }
         else if (coords.x >= OverworldWidth - 1)
         {
             retVal.Add(OverworldTiles[coords.x-1, coords.y]);
+            if (getDiagonal)
+            {
+                if (coords.y == 0)
+                {
+                    retVal.Add(OverworldTiles[coords.x - 1, coords.y + 1]);
+                }
+                else if (coords.y >= OverworldHeight - 1)
+                {
+                    retVal.Add(OverworldTiles[coords.x - 1, coords.y - 1]);
+                }
+                else
+                {
+                    retVal.Add(OverworldTiles[coords.x - 1, coords.y + 1]);
+                    retVal.Add(OverworldTiles[coords.x - 1, coords.y - 1]);
+                }
+            }
         }
         else
         {
             retVal.Add(OverworldTiles[coords.x + 1, coords.y]);
             retVal.Add(OverworldTiles[coords.x - 1, coords.y]);
+            if (getDiagonal)
+            {
+                if (coords.y == 0)
+                {
+                    retVal.Add(OverworldTiles[coords.x+1, coords.y + 1]);
+                    retVal.Add(OverworldTiles[coords.x - 1, coords.y + 1]);
+
+                }
+                else if (coords.y >= OverworldHeight - 1)
+                {
+                    retVal.Add(OverworldTiles[coords.x+1, coords.y - 1]);
+                    retVal.Add(OverworldTiles[coords.x - 1, coords.y - 1]);
+
+                }
+                else
+                {
+                    retVal.Add(OverworldTiles[coords.x+1, coords.y + 1]);
+                    retVal.Add(OverworldTiles[coords.x+1, coords.y - 1]);
+                    retVal.Add(OverworldTiles[coords.x - 1, coords.y + 1]);
+                    retVal.Add(OverworldTiles[coords.x - 1, coords.y - 1]);
+                }
+            }
         }
 
-        if (coords.y == 0)
+            if (coords.y == 0)
         {
             retVal.Add(OverworldTiles[coords.x , coords.y + 1]);
         }
@@ -191,6 +246,7 @@ public class OverworldTile: ISerialize
     public int X, Y;
     public float Elevation;
     public List<OverworldFeature> Features = new List<OverworldFeature>();
+    
     public int Population = 0;
     public OverworldPathfindingNode Node;
     public string Settlement = "";
@@ -267,5 +323,7 @@ public enum OverworldFeature
     MajorRoad,
     MinorRoad,
     Backroad,
-    MiscFeature
+    MiscFeature,
+    LargeWaterBody,
+    Mountain
 }

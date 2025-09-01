@@ -12,6 +12,7 @@ public class WorldChunkBatch : MonoBehaviour
     Vector2Int UpperBound = new Vector2Int();
     public bool NeedsGeneration = true;
     public Vector2Int OverworldCoords = new Vector2Int();
+    public List<WorldTileBlend> BlendList=new List<WorldTileBlend>();
     public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords,Vector2Int overworld)
     {
         GameObject g = new GameObject();
@@ -25,7 +26,6 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void ApplyOverworldHeight(float height)
     {
-        Debug.LogError("Setting height of " + height + " for batch " + coords);
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
@@ -40,6 +40,16 @@ public class WorldChunkBatch : MonoBehaviour
                  
             }
         }
+    }
+
+    public void GenerateWorldTileBlends()
+    {
+        WorldTileBlending.OnWorldChunkBatchGenerated(this);
+    }
+
+    public void AddWorldBlend(WorldTileBlend blend)
+    {
+        BlendList.Add(blend);
     }
 
     public void SetChunksLoaded()
@@ -222,7 +232,7 @@ public class WorldChunkBatch : MonoBehaviour
      }
 
 
-        public void CheckForCleanup()
+    public void CheckForCleanup()
     {
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
