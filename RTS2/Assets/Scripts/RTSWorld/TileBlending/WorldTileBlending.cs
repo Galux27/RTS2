@@ -55,6 +55,7 @@ public class WorldTileBlend
 
 public enum WorldTileBlendType
 {
+    None,
     LandToWater,
     LandToMountain
 }
