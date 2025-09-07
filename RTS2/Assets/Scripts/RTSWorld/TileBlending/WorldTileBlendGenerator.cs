@@ -21,7 +21,7 @@ public class WorldTileBlendGenerator
         return WorldTileBlendType.None;
     }
 
-    public virtual void GenerateBlendDataForChunk(WorldChunk chunk,WorldTileBlend blend, out int endPoint, int StartOverride = -1)
+    public virtual void GenerateBlendDataForChunk(WorldChunk chunk,WorldTileBlend blend, out int endPoint, int StartOverride = -1, int forceEnd = -1)
     {
         endPoint = -1;
     }
@@ -95,22 +95,109 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
         }
         int PrevStart = -1;
         int LastStart = -1;
+        int forceEnd = -1;
         WorldTileBlendCoordData data=null;
+           
+        
         if (Generate)
         {
             if (yMin == yMax)
             {
                 for (int x = xMin; x <= xMax; x++)
                 {
-                    GenerateBlendDataForChunk(batch.Chunks[x, yMin], toBlend, out LastStart, PrevStart);
+                    if (x == xMax)
+                    {
+                        Vector2Int coords = batch.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+                        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords)) 
+                        {
+                            WorldChunkBatch adj = WorldChunkManager.Instance.ChunkBatches[coords];
+                            if (adj != null)
+                            {
+
+                                if (adj.Chunks[0, yMin].TileBlends!=null && adj.Chunks[0, yMin].TileBlends.ContainsKey(TypeIGenerate()))
+                                {
+                                    WorldTileBlendCoordData neighbourBlend = adj.Chunks[ 0,yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
+                                    if (neighbourBlend != null)
+                                    {
+                                        forceEnd = neighbourBlend.GetEdge(xMin, xMax, batch.Chunks[x, yMin].WorldCoords);
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                    else if (x == xMin)
+                    {
+                        Vector2Int coords = batch.coords - new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+                        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                        {
+                            WorldChunkBatch adj = WorldChunkManager.Instance.ChunkBatches[coords];
+                            if (adj != null)
+                            {
+                                if (adj.Chunks[WorldChunkManager.ChunkSize - 1,yMin].TileBlends.ContainsKey(TypeIGenerate()))
+                                {
+                                    WorldTileBlendCoordData neighbourBlend = adj.Chunks[WorldChunkManager.ChunkSize - 1, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
+                                    if (neighbourBlend != null)
+                                    {
+                                        PrevStart = neighbourBlend.GetEdge(xMin, xMax, batch.Chunks[x, yMin].WorldCoords);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                    GenerateBlendDataForChunk(batch.Chunks[x, yMin], toBlend, out LastStart, PrevStart,forceEnd);
                     data = batch.Chunks[x, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
                     PrevStart = batch.Chunks[x, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction).GetEdge(xMin, xMax, batch.Chunks[x, yMin].WorldCoords) ;
+                    
                 }
             }
             else if (xMin == xMax)
             {
                 for (int y = yMin; y <= yMax; y++)
                 {
+                    if (y == yMax)
+                    {
+                        Vector2Int coords = batch.coords + new Vector2Int(0,WorldChunkManager.ChunkBatchSize);
+                        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                        {
+                            WorldChunkBatch adj = WorldChunkManager.Instance.ChunkBatches[coords];
+                            if (adj != null)
+                            {
+                                if (adj.Chunks[xMin, 0].TileBlends != null && adj.Chunks[xMin, 0].TileBlends.ContainsKey(TypeIGenerate()))
+                                {
+                                    WorldTileBlendCoordData neighbourBlend = adj.Chunks[yMin, 0].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
+                                    if (neighbourBlend != null)
+                                    {
+                                        forceEnd = neighbourBlend.GetEdge(yMin, yMax, batch.Chunks[xMin, y].WorldCoords);
+                                    }
+                                    }
+                                }
+                        }
+                    }
+                    else if (y == yMin)
+                    {
+                        Vector2Int coords = batch.coords - new Vector2Int( 0, WorldChunkManager.ChunkBatchSize);
+                        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                        {
+                            WorldChunkBatch adj = WorldChunkManager.Instance.ChunkBatches[coords];
+                            if (adj != null)
+                            {
+                                if (adj.Chunks[xMin, WorldChunkManager.ChunkSize-1].TileBlends.ContainsKey(TypeIGenerate()))
+                                {
+                                    WorldTileBlendCoordData neighbourBlend = adj.Chunks[xMin, WorldChunkManager.ChunkSize - 1].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
+                                    if (neighbourBlend != null)
+                                    {
+                                        PrevStart = neighbourBlend.GetEdge(xMin, xMax, batch.Chunks[xMin, y].WorldCoords);
+                                    }
+                                    }
+                                }
+                        }
+                    }
+
+
+
                     GenerateBlendDataForChunk(batch.Chunks[xMin, y], toBlend, out LastStart, PrevStart);
                     data = batch.Chunks[xMin, y].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
                     PrevStart = batch.Chunks[xMin, y].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction).GetEdge(xMin, xMax, batch.Chunks[xMin, y].WorldCoords);
@@ -123,7 +210,7 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
         }
     }
 
-    public override void GenerateBlendDataForChunk(WorldChunk chunk, WorldTileBlend toBlend, out int endPoint, int StartOverride=-1)
+    public override void GenerateBlendDataForChunk(WorldChunk chunk, WorldTileBlend toBlend, out int endPoint, int StartOverride = -1, int forceEnd = -1)
     {
         endPoint = -1;
         //todo add data to capture the edge of the blends so that they could be lined up in the future
@@ -178,6 +265,12 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                     xStart--;
                 }
                 xStart=Mathf.Clamp(xStart,0,chunk.ChunkTiles.GetLength(0));
+                if (forceEnd>-1)
+                {
+                    xStart = Mathf.RoundToInt( Mathf.Lerp(xStart, forceEnd, Mathf.InverseLerp(yMin, yMax, y)));
+                }
+
+
                 if (StartOverride > -1)
                 {
                     xStart = StartOverride;
@@ -237,11 +330,15 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                     yStart--;
                 }
                 yStart = Mathf.Clamp(yStart, 0, chunk.ChunkTiles.GetLength(0));
-
+               
                 if (StartOverride > -1)
                 {
                     yStart = StartOverride;
                     StartOverride = -1;
+                }
+                if (forceEnd > -1)
+                {
+                    yStart = Mathf.RoundToInt(Mathf.Lerp(yStart, forceEnd, Mathf.InverseLerp(xMin, xMax, x)));
                 }
                 endPoint = yStart;
                 
