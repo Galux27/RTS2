@@ -33,34 +33,51 @@ public class OverworldRenderer : MonoBehaviour
 
         Color[,] colours = new Color[OverworldGenerator.Instance.OverworldWidth, OverworldGenerator.Instance.OverworldHeight];
 
-        for(int x = 0; x < colours.GetLength(0); x++)
+        for (int x = 0; x < colours.GetLength(0); x++)
+        {
+            for (int y = 0; y < colours.GetLength(1); y++)
+            {
+              
+                    texture.SetPixel(x, y, GetColourFromHeight(OverworldGenerator.Instance.OverworldTiles[x, y].Elevation));
+                
+            }
+        }
+
+
+        for (int x = 0; x < colours.GetLength(0); x++)
         {
             for (int y = 0; y < colours.GetLength(1); y++)
             {
                 if (HasColourByFeature(x, y))
                 {
-                    if(!HasHeightBasedFeature(x, y))
+                    if(HasNoneHeightBasedFeautre(x, y))
                     {
                         texture.SetPixel(x, y, GetColourByFeature(x, y));
 
                     }
-                    else
-                    {
-                        texture.SetPixel(x, y, GetColourFromHeight(OverworldGenerator.Instance.OverworldTiles[x, y].Elevation));
-
-                    }
-                }
-                else
-                {
-                    texture.SetPixel(x, y, GetColourFromHeight(OverworldGenerator.Instance.OverworldTiles[x, y].Elevation));
-                }
+                  
+                } 
             }
         }
         texture.Apply();
         
         DrawIn.texture = texture;
-
     }
+
+    bool HasNoneHeightBasedFeautre(int x,int y) {
+       
+        int count = OverworldGenerator.Instance.OverworldTiles[x, y].Features.Count;
+        if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.LargeWaterBody))
+        {
+            count--;
+        }
+        if (OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.Mountain))
+        {
+            count--;
+        }
+        return count>0;
+    }
+    
 
     bool HasHeightBasedFeature(int x,int y)
     {

@@ -184,7 +184,7 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                             WorldChunkBatch adj = WorldChunkManager.Instance.ChunkBatches[coords];
                             if (adj != null)
                             {
-                                if (adj.Chunks[xMin, WorldChunkManager.ChunkSize-1].TileBlends.ContainsKey(TypeIGenerate()))
+                                if (adj.Chunks[xMin, WorldChunkManager.ChunkSize - 1].TileBlends!=null && adj.Chunks[xMin, WorldChunkManager.ChunkSize-1].TileBlends.ContainsKey(TypeIGenerate()))
                                 {
                                     WorldTileBlendCoordData neighbourBlend = adj.Chunks[xMin, WorldChunkManager.ChunkSize - 1].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
                                     if (neighbourBlend != null)

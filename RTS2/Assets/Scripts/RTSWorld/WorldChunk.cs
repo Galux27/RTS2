@@ -10,6 +10,7 @@ using UnityEngine;
 /// <summary>
 /// Class to store data of objects within a given area (units, props, items etc...)
 /// </summary>
+[System.Serializable]
 public class WorldChunk:ISerialize
 {
     public List<Unit> UnitsInChunk=new List<Unit>();

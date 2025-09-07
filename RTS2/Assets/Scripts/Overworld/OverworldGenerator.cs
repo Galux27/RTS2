@@ -143,18 +143,20 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
     {
         if (!hasSetOverworldStartingCoords)
         {
+            OverworldStartingCoords = new Vector2Int(50, 50);
+
             List<OverworldTile> neighbours;
-            Vector2Int coords= new Vector2Int();    
+            Vector2Int coords=new Vector2Int();    
             for(int x=50;x< OverworldWidth-50; x++)
             {
                 for (int y = 50; y < OverworldHeight - 50; y++)
                 {
-                    //if (OverworldTiles[x, y].Features.Contains(OverworldFeature.LargeWaterBody))
-                    //{
-                    //    OverworldStartingCoords = new Vector2Int(x, y);
-                    //    hasSetOverworldStartingCoords = true;
-                    //    break ;
-                    //}
+                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.LargeWaterBody))
+                    {
+                        Debug.Log("water at " + x+","+y);
+
+                       
+                    }
                     coords = new Vector2Int(x, y);
                     neighbours = GetNeighbours(coords);
                     for (int i = 0; i < neighbours.Count; i++)
@@ -168,9 +170,10 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                     }
                     if (hasSetOverworldStartingCoords)
                     {
-                        //break;
+                        break;
                     }
                 }
+                Debug.Log("Set overworld start coords to " + OverworldStartingCoords);
             }
 
            // OverworldStartingCoords = new Vector2Int(Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)), Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)));
@@ -256,7 +259,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         throw new System.NotImplementedException();
     }
 }
-
+[System.Serializable]
 public class OverworldTile: ISerialize
 {
     public int X, Y;
@@ -277,10 +280,32 @@ public class OverworldTile: ISerialize
     public void SetElevation(float value)
     {
         Elevation = Mathf.Clamp( value,0,OverworldGenerator.Instance.MaxElevation);
+        if (Elevation < OverworldGenerator.Instance.SeaLevel)
+        {
+            if (Features.Contains(OverworldFeature.LargeWaterBody) == false)
+            {
+                AddFeatureToTile(OverworldFeature.LargeWaterBody);
+            }
+        }
+        else
+        {
+            if (Features.Contains(OverworldFeature.LargeWaterBody) )
+            {
+                Features.Remove(OverworldFeature.LargeWaterBody);
+            }
+        }
     }
 
     public void AddFeatureToTile(OverworldFeature feature)
     {
+        if (feature == OverworldFeature.LargeWaterBody)
+        {
+            if(Elevation>OverworldGenerator.Instance.SeaLevel)
+            {
+                SetElevation(OverworldGenerator.Instance.SeaLevel - 1);
+            }
+        }
+
         if (!Features.Contains(feature))
         {
             Features.Add(feature);

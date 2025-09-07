@@ -12,6 +12,7 @@ public static class WorldTileBlending
             Generators = new Dictionary<WorldTileBlendType, WorldTileBlendGenerator>();
             Generators.Add(WorldTileBlendType.LandToWater,new LandToWaterBlendGenerator());
         }
+        Debug.Log("Batch overworld coords " + batch.OverworldCoords);
         OverworldTile myTile = OverworldGenerator.Instance.OverworldTiles[batch.OverworldCoords.x,batch.OverworldCoords.y];
         List<OverworldTile> neighbours = OverworldGenerator.Instance.GetNeighbours(batch.OverworldCoords,true);
         for(int x=0;x<neighbours.Count;x++)
@@ -163,6 +164,7 @@ public class WorldTileBlendCoordData
 /// <summary>
 /// Data on the feature the given chunk needs to 
 /// </summary>
+[System.Serializable]
 public class WorldTileBlend
 {
     public Vector2Int Direction;
