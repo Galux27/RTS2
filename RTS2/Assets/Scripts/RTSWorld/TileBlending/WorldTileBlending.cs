@@ -99,6 +99,34 @@ public class WorldTileBlendCoordData
       
     }
 
+    public int GetEdge(int xMin,int xMax,Vector2Int worldCoords)
+    {
+        if (xMin == xMax)
+        {
+            if (LowEdgeCoord > worldCoords.y)
+            {
+                return LowEdgeStart;
+            }
+            else
+            {
+                return HighEdgeStart;
+            }
+        }
+        else
+        {
+            if (LowEdgeCoord > worldCoords.x)
+            {
+                return LowEdgeStart;
+            }
+            else
+            {
+                return HighEdgeStart;
+            }
+
+        }
+    }
+
+
     public void UpdateBlendData( int coord, Vector2Int coords)
     {
        

@@ -104,7 +104,7 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                 {
                     GenerateBlendDataForChunk(batch.Chunks[x, yMin], toBlend, out LastStart, PrevStart);
                     data = batch.Chunks[x, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
-                    PrevStart = LastStart;
+                    PrevStart = batch.Chunks[x, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction).GetEdge(xMin, xMax, batch.Chunks[x, yMin].WorldCoords) ;
                 }
             }
             else if (xMin == xMax)
@@ -113,7 +113,9 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                 {
                     GenerateBlendDataForChunk(batch.Chunks[xMin, y], toBlend, out LastStart, PrevStart);
                     data = batch.Chunks[xMin, y].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
-                    PrevStart = LastStart;
+                    PrevStart = batch.Chunks[xMin, y].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction).GetEdge(xMin, xMax, batch.Chunks[xMin, y].WorldCoords);
+
+                    // PrevStart = LastStart;
                 }
             }
 
@@ -182,7 +184,7 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                     StartOverride = -1;
                 }
                 endPoint = xStart;
-                chunk.AddTileBlends(toBlend.Direction, new Vector2Int(xStart, y), toBlend.BlendType, xStart, false);
+                chunk.AddTileBlends(toBlend.Direction, chunk.WorldCoords + new Vector2Int(xStart, y), toBlend.BlendType, xStart, false);
                 float waterLevel = 0f;
                     if (positive)
                     {
@@ -242,8 +244,8 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                     StartOverride = -1;
                 }
                 endPoint = yStart;
-
-                chunk.AddTileBlends(toBlend.Direction, new Vector2Int(x, yStart), toBlend.BlendType, yStart, true);
+                
+                chunk.AddTileBlends(toBlend.Direction, chunk.WorldCoords + new Vector2Int(x, yStart), toBlend.BlendType, yStart, true);
 
                 float waterLevel = 0f;
                 if (positive)
