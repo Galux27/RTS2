@@ -143,16 +143,32 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
     {
         if (!hasSetOverworldStartingCoords)
         {
-
+            List<OverworldTile> neighbours;
+            Vector2Int coords= new Vector2Int();    
             for(int x=50;x< OverworldWidth-50; x++)
             {
-                for(int y=50;y< OverworldHeight-50; y++)
+                for (int y = 50; y < OverworldHeight - 50; y++)
                 {
-                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.MajorRoad))
+                    //if (OverworldTiles[x, y].Features.Contains(OverworldFeature.LargeWaterBody))
+                    //{
+                    //    OverworldStartingCoords = new Vector2Int(x, y);
+                    //    hasSetOverworldStartingCoords = true;
+                    //    break ;
+                    //}
+                    coords = new Vector2Int(x, y);
+                    neighbours = GetNeighbours(coords);
+                    for (int i = 0; i < neighbours.Count; i++)
                     {
-                        OverworldStartingCoords = new Vector2Int(x,y);
-                        hasSetOverworldStartingCoords = true;
-                        break;
+                        if (neighbours[i].Features.Contains(OverworldFeature.LargeWaterBody))
+                        {
+                            OverworldStartingCoords = new Vector2Int(x, y);
+                            hasSetOverworldStartingCoords = true;
+                            break;
+                        }
+                    }
+                    if (hasSetOverworldStartingCoords)
+                    {
+                        //break;
                     }
                 }
             }

@@ -39,7 +39,16 @@ public class OverworldRenderer : MonoBehaviour
             {
                 if (HasColourByFeature(x, y))
                 {
-                    texture.SetPixel(x, y,GetColourByFeature(x,y));
+                    if(!HasHeightBasedFeature(x, y))
+                    {
+                        texture.SetPixel(x, y, GetColourByFeature(x, y));
+
+                    }
+                    else
+                    {
+                        texture.SetPixel(x, y, GetColourFromHeight(OverworldGenerator.Instance.OverworldTiles[x, y].Elevation));
+
+                    }
                 }
                 else
                 {
@@ -51,6 +60,11 @@ public class OverworldRenderer : MonoBehaviour
         
         DrawIn.texture = texture;
 
+    }
+
+    bool HasHeightBasedFeature(int x,int y)
+    {
+        return OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.LargeWaterBody) || OverworldGenerator.Instance.OverworldTiles[x, y].Features.Contains(OverworldFeature.Mountain);
     }
 
     bool HasColourByFeature(int x,int y)

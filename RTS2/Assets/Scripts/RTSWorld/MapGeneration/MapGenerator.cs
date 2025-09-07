@@ -42,25 +42,33 @@ public class MapGenerator : MonoBehaviour
         OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
         toGenerateIn.ApplyOverworldHeight(overworldTile.Elevation);
         toGenerateIn.GenerateWorldTileBlends();
-        if (OverworldGenerator.Instance.SeaLevel < overworldTile.Elevation)
+        if (!overworldTile.Features.Contains(OverworldFeature.LargeWaterBody))
         {
-            for(int x=0;x<overworldTile.Features.Count;x++)
+            if (OverworldGenerator.Instance.SeaLevel < overworldTile.Elevation)
             {
-
-                if (OverworldConverters.ContainsKey(overworldTile.Features[x]))
+                for (int x = 0; x < overworldTile.Features.Count; x++)
                 {
-                    OverworldConverters[overworldTile.Features[x]].GenerateFeature(toGenerateIn);
+
+                    if (OverworldConverters.ContainsKey(overworldTile.Features[x]))
+                    {
+                        OverworldConverters[overworldTile.Features[x]].GenerateFeature(toGenerateIn);
+                    }
+                }
+
+
+                for (int x = 0; x < FeaturesToGenerate; x++)
+                {
+                    featureGenerating = Random.Range(0, features.Count);
+                    features[featureGenerating].GenerateFeature(toGenerateIn);
                 }
             }
-
-
-            for (int x = 0; x < FeaturesToGenerate; x++)
-            {
-                featureGenerating = Random.Range(0, features.Count);
-                features[featureGenerating].GenerateFeature(toGenerateIn);
-            }
         }
-        
+        else
+        {
+            toGenerateIn.ApplyOverworldHeight(0);
+
+        }
+
         toGenerateIn.NeedsGeneration = false;
         toGenerateIn.SetChunksLoaded();
     }

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 /// <summary>
@@ -25,6 +26,23 @@ public class WorldChunk:ISerialize
     public Vector2Int WorldCoords;
     public bool NeedsToRender = false,IsRendered=false;
     const float CameraRenderDistance = 16*3;
+    public Dictionary<WorldTileBlendType, WorldTileBlendCoordDataStore> TileBlends;
+
+    public void AddTileBlends(Vector2Int dir,Vector2Int coords,WorldTileBlendType type,int val,bool isHorizontal)
+    {
+        if (TileBlends == null)
+        {
+            TileBlends = new Dictionary<WorldTileBlendType, WorldTileBlendCoordDataStore>();
+        }
+        if (!TileBlends.ContainsKey(type))
+        {
+            TileBlends.Add(type, new WorldTileBlendCoordDataStore(type));
+        }
+        TileBlends[type].AddBlend( dir, val,coords,isHorizontal);
+    }
+
+
+
     public bool CheckIfChunkNeedsToRender()
     {
         Vector3 cameraPos = CameraController.Instance.transform.position;
@@ -62,6 +80,16 @@ public class WorldChunk:ISerialize
         GenerateTilesForChunk();
         GenerateWallsForChunk();
         GeneratePathfindingNodes();
+    }
+
+    public void UpdateTile(int x, int y, string type)
+    {
+        ChunkTiles[x, y].UpdateTileType(type);
+    }
+
+    public void UpdateWaterLevel(int x, int y,float val)
+    {
+        ChunkTiles[x, y].UpdateWaterLevel(val);
     }
 
     void GenerateTilesForChunk()

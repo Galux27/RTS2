@@ -51,7 +51,7 @@ public class OverworldHeightsGenerator : OverworldFeatureGenerator
             {
                 coords = lakeBlobs[q].PointsInBlob[x];
                 curDist = Vector2Int.Distance(coords, lakeBlobs[q].GetCenter());
-                tileHeight = Mathf.Lerp(0, world[coords.x, coords.y].Elevation, Mathf.InverseLerp(0f, maxDistFromCenter, curDist));
+                tileHeight = Mathf.Lerp(0, OverworldGenerator.Instance.SeaLevel, Mathf.InverseLerp(0f, maxDistFromCenter, curDist));
                 world[coords.x, coords.y].AddFeatureToTile(OverworldFeature.LargeWaterBody);
                 world[coords.x, coords.y].SetElevation(tileHeight);
             }
