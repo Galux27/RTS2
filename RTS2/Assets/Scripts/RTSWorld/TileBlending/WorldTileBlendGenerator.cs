@@ -55,6 +55,7 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
         int xMin = 0, xMax = 0, yMin = 0, yMax = 0;
         bool Generate = false;
         Vector2Int cornerCoords = new Vector2Int();
+        Vector2Int Dir=new Vector2Int();
         if (toBlend.Direction.x != 0 && toBlend.Direction.y != 0)
         {
             Debug.Log("Generating blend corner data for " + batch.coords + "/" + batch.OverworldCoords + "/" + toBlend.BlendType.ToSafeString() + " dir " + toBlend.Direction);
@@ -80,7 +81,14 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                         if (toCheck.TileBlends!=null && toCheck.TileBlends.ContainsKey(WorldTileBlendType.LandToWater))
                         {
                             blend = toCheck.TileBlends[WorldTileBlendType.LandToWater];
-                            xMax= blend.Data[Vector2Int.left].HighEdgeStart;
+                            if (blend.Data.ContainsKey(Vector2Int.left))
+                            {
+                                xMax = blend.Data[Vector2Int.left].HighEdgeStart;
+                            }
+                            else
+                            {
+                                xMax = 8;
+                            }
                         }
                         else
                         {
@@ -107,7 +115,14 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                         if (toCheck.TileBlends!=null && toCheck.TileBlends.ContainsKey(WorldTileBlendType.LandToWater))
                         {
                             blend = toCheck.TileBlends[WorldTileBlendType.LandToWater];
-                            yMax = blend.Data[Vector2Int.down].HighEdgeStart;
+                            if (blend.Data.ContainsKey(Vector2Int.down))
+                            {
+                                yMax = blend.Data[Vector2Int.down].HighEdgeStart;
+                            }
+                            else
+                            {
+                                yMax = 8;
+                            }
                         }
                         else
                         {
@@ -125,7 +140,72 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                 }
                 else
                 {
-                    //bottom right
+                    //top right
+                   yMax = WorldChunkManager.ChunkSize-1;
+                    xMin = -1;
+                    Vector2Int coords = batch.coords + new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
+                    WorldChunkBatch neighbor = null;
+                    WorldChunk toCheck = null;
+                    WorldTileBlendCoordDataStore blend = null;
+                    if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                    {
+                        neighbor = WorldChunkManager.Instance.ChunkBatches[coords];
+                    }
+                    if (neighbor != null)
+                    {
+                        toCheck = neighbor.Chunks[0, 0];
+                        if (toCheck.TileBlends != null && toCheck.TileBlends.ContainsKey(WorldTileBlendType.LandToWater))
+                        {
+                            blend = toCheck.TileBlends[WorldTileBlendType.LandToWater];
+                            if (blend.Data.ContainsKey(Vector2Int.left))
+                            {
+                                xMax = blend.Data[Vector2Int.left].LowEdgeStart;
+                            }
+                            else
+                            {
+                                xMax = 8;
+                            }
+                        }
+                        else
+                        {
+                            xMax = 8;
+
+                        }
+                    }
+                    else
+                    {
+                        xMax = 8;
+                    }
+
+                    coords = batch.coords + new Vector2Int(-WorldChunkManager.ChunkBatchSize, 0);
+                    neighbor = null;
+                    toCheck = null;
+                    blend = null;
+                    if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                    {
+                        neighbor = WorldChunkManager.Instance.ChunkBatches[coords];
+                    }
+                    if (neighbor != null)
+                    {
+                        toCheck = neighbor.Chunks[neighbor.Chunks.GetLength(0)-1, 0];
+                        if (toCheck.TileBlends != null && toCheck.TileBlends.ContainsKey(WorldTileBlendType.LandToWater))
+                        {
+                            blend = toCheck.TileBlends[WorldTileBlendType.LandToWater];
+                            yMin = blend.Data[Vector2Int.up].HighEdgeStart;
+                        }
+                        else
+                        {
+                            yMin = 8;
+                        }
+                    }
+                    else
+                    {
+                        yMin = 8;
+                    }
+                    cornerCoords = new Vector2Int(0, WorldChunkManager.ChunkSize - 1);
+                    //xMax = bottom x blend
+                    //yMax = left x blend
+                    Generate = true;
                 }
             }
             else
@@ -133,10 +213,130 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                 if (toBlend.Direction.y < 0)
                 {
                     //top left
+                    yMin = -1;
+                    xMax = WorldChunkManager.ChunkSize-1;
+                    Vector2Int coords = batch.coords + new Vector2Int(0, -WorldChunkManager.ChunkBatchSize);
+                    WorldChunkBatch neighbor = null;
+                    WorldChunk toCheck = null;
+                    WorldTileBlendCoordDataStore blend = null;
+                    if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                    {
+                        neighbor = WorldChunkManager.Instance.ChunkBatches[coords];
+                    }
+                    if (neighbor != null)
+                    {
+                        toCheck = neighbor.Chunks[neighbor.Chunks.GetLength(0) - 1, neighbor.Chunks.GetLength(1) - 1];
+                        if (toCheck.TileBlends != null && toCheck.TileBlends.ContainsKey(WorldTileBlendType.LandToWater))
+                        {
+                            blend = toCheck.TileBlends[WorldTileBlendType.LandToWater];
+                            xMin = blend.Data[Vector2Int.right].HighEdgeStart;
+                        }
+                        else
+                        {
+                            xMin = 8;
+
+                        }
+                    }
+                    else
+                    {
+                        xMin = 8;
+                    }
+
+                    coords = batch.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+                    neighbor = null;
+                    toCheck = null;
+                    blend = null;
+                    if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                    {
+                        neighbor = WorldChunkManager.Instance.ChunkBatches[coords];
+                    }
+                    if (neighbor != null)
+                    {
+                        toCheck = neighbor.Chunks[0, 0];
+                        if (toCheck.TileBlends != null && toCheck.TileBlends.ContainsKey(WorldTileBlendType.LandToWater))
+                        {
+                            blend = toCheck.TileBlends[WorldTileBlendType.LandToWater];
+                            yMax = blend.Data[Vector2Int.down].LowEdgeStart;
+                        }
+                        else
+                        {
+                            yMax = 8;
+                        }
+                    }
+                    else
+                    {
+                        yMax = 8;
+                    }
+                    cornerCoords = new Vector2Int(WorldChunkManager.ChunkSize - 1, 0);
+                    //xMax = bottom x blend
+                    //yMax = left x blend
+                    Generate = true;
                 }
                 else
                 {
                     //top right
+                    yMax = WorldChunkManager.ChunkSize;
+                    xMax = WorldChunkManager.ChunkSize;
+                    Vector2Int coords = batch.coords + new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
+                    WorldChunkBatch neighbor = null;
+                    WorldChunk toCheck = null;
+                    WorldTileBlendCoordDataStore blend = null;
+                    if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                    {
+                        neighbor = WorldChunkManager.Instance.ChunkBatches[coords];
+                    }
+                    if (neighbor != null)
+                    {
+                        toCheck = neighbor.Chunks[neighbor.Chunks.GetLength(0) - 1, 0];
+                        if (toCheck.TileBlends != null && toCheck.TileBlends.ContainsKey(WorldTileBlendType.LandToWater))
+                        {
+                            blend = toCheck.TileBlends[WorldTileBlendType.LandToWater];
+                            xMin= blend.Data[Vector2Int.right].HighEdgeStart;
+                        }
+                        else
+                        {
+                            xMin = 8;
+
+                        }
+                    }
+                    else
+                    {
+                        xMin = 8;
+                    }
+
+                    coords = batch.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+                    neighbor = null;
+                    toCheck = null;
+                    blend = null;
+                    if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+                    {
+                        neighbor = WorldChunkManager.Instance.ChunkBatches[coords];
+                    }
+                    if (neighbor != null)
+                    {
+                        toCheck = neighbor.Chunks[0, neighbor.Chunks.GetLength(1)-1];
+                        if (toCheck.TileBlends != null && toCheck.TileBlends.ContainsKey(WorldTileBlendType.LandToWater))
+                        {
+                            blend = toCheck.TileBlends[WorldTileBlendType.LandToWater];
+                            if (blend.Data.ContainsKey(Vector2Int.up))
+                            {
+                                yMin = blend.Data[Vector2Int.up].LowEdgeStart;
+                            }
+                        }
+                        else
+                        {
+                            yMin = 8;
+                        }
+                    }
+                    else
+                    {
+                        yMin = 8;
+                    }
+                    cornerCoords = new Vector2Int(WorldChunkManager.ChunkSize-1, WorldChunkManager.ChunkSize - 1);
+                    Dir = new Vector2Int(-1, 1);
+                    //xMax = bottom x blend
+                    //yMax = left x blend
+                    Generate = true;
                 }
             }
         }
@@ -294,7 +494,7 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
             }
             else
             {
-                GenerateBlendDataForCorner(batch.Chunks[cornerCoords.x, cornerCoords.y], xMin, xMax, yMin, yMax, cornerCoords,new Vector2Int(-1,-1));
+                GenerateBlendDataForCorner(batch.Chunks[cornerCoords.x, cornerCoords.y], xMin, xMax, yMin, yMax, cornerCoords,toBlend.Direction);
             }
             
         }
@@ -305,6 +505,7 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
         Vector2Int coords = new Vector2Int();
         Debug.Log("Corner Blend  " + chunk.WorldCoords + " xMin " + xMin + " xMax " + xMax + " ymin " + yMin + " ymax " + yMax + "|" + corner+","+direction);
         int xStart, xEnd, xMod, yStart, yEnd, yMod;
+        bool useClampedBlend = true;
         if (direction.x < 0)
         {
             xStart = xMax;
@@ -338,9 +539,14 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
             }
             else
             {
-                yStart = yMin;
-                yEnd = yMax;
-                yMod = 1;
+                yStart = yMax;
+                yEnd = yMin;
+                yMod = -1;
+
+                xStart = xMax;
+                xEnd = xMin;
+                xMod = -1;
+                useClampedBlend = false;
             }
         }
         
@@ -348,6 +554,10 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
         for (int x = xStart; x != xEnd; x+=xMod)
             {
                 int yLocalEnd = Mathf.RoundToInt( Mathf.Lerp(yStart, yEnd, Mathf.InverseLerp(xStart, xEnd, x)));
+            if (!useClampedBlend)
+            {
+                yLocalEnd = yEnd;
+            }
                 for (int y = yStart; y != yLocalEnd; y+=yMod)
                 {
                     coords.x = x;
