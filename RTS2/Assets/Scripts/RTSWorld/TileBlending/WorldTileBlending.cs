@@ -23,7 +23,7 @@ public static class WorldTileBlending
                 batch.AddWorldBlend(new WorldTileBlend(GetDirectionBetweenOverworldTiles(neighbours[x], myTile), WorldTileBlendType.LandToMountain));
             }
 
-            if (neighbours[x].Features.Contains(OverworldFeature.LargeWaterBody) && myTile.Features.Contains(OverworldFeature.LargeWaterBody) == false)
+            if ( myTile.Features.Contains(OverworldFeature.LargeWaterBody) && neighbours[x].Features.Contains(OverworldFeature.LargeWaterBody) ==false)
             {
                 batch.AddWorldBlend(new WorldTileBlend(GetDirectionBetweenOverworldTiles(neighbours[x], myTile), WorldTileBlendType.LandToWater));
             }

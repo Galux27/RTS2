@@ -435,8 +435,8 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
 
 
                     GenerateBlendDataForChunk(batch.Chunks[x, yMin], toBlend, out LastStart, PrevStart,forceEnd);
-                    data = batch.Chunks[x, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
-                    PrevStart = batch.Chunks[x, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction).GetEdge(xMin, xMax, batch.Chunks[x, yMin].WorldCoords) ;
+                 //   data = batch.Chunks[x, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
+                 //   PrevStart = batch.Chunks[x, yMin].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction).GetEdge(xMin, xMax, batch.Chunks[x, yMin].WorldCoords) ;
                     
                 }
             }
@@ -486,8 +486,8 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
 
 
                     GenerateBlendDataForChunk(batch.Chunks[xMin, y], toBlend, out LastStart, PrevStart);
-                    data = batch.Chunks[xMin, y].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
-                    PrevStart = batch.Chunks[xMin, y].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction).GetEdge(xMin, xMax, batch.Chunks[xMin, y].WorldCoords);
+                   // data = batch.Chunks[xMin, y].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction);
+                  //  PrevStart = batch.Chunks[xMin, y].TileBlends[TypeIGenerate()].GetBlendData(toBlend.Direction).GetEdge(xMin, xMax, batch.Chunks[xMin, y].WorldCoords);
 
                     // PrevStart = LastStart;
                 }
@@ -499,85 +499,27 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
             
         }
     }
-
+    const float DistFromCornerForBlend = 6f;
     public override void GenerateBlendDataForCorner(WorldChunk chunk, int xMin, int xMax, int yMin, int yMax,Vector2Int corner,Vector2Int direction)
     {
-        Vector2Int coords = new Vector2Int();
         Debug.Log("Corner Blend  " + chunk.WorldCoords + " xMin " + xMin + " xMax " + xMax + " ymin " + yMin + " ymax " + yMax + "|" + corner+","+direction);
-        int xStart, xEnd, xMod, yStart, yEnd, yMod;
-        bool useClampedBlend = true;
-        if (direction.x < 0)
+
+        Vector2Int coords = new Vector2Int();
+        float dist = 9999f;
+        for(int x=0;x<chunk.ChunkTiles.GetLength(0);x++)
         {
-            xStart = xMax;
-            xEnd = xMin;
-            xMod = -1;
-
-            if (direction.y < 0)
+            for (int y = 0; y < chunk.ChunkTiles.GetLength(0); y++)
             {
-                yStart = yMin;
-                yEnd = yMax;
-                yMod = 1;
-            }
-            else
-            {
-                yStart = yMax;
-                yEnd = yMin;
-                yMod = -1;
-            }
-
-        }
-        else
-        {
-            xStart = xMin;
-            xEnd = xMax;
-            xMod = 1;
-            if (direction.y < 0)
-            {
-                yStart = yMax;
-                yEnd = yMin;
-                yMod = -1;
-            }
-            else
-            {
-                yStart = yMax;
-                yEnd = yMin;
-                yMod = -1;
-
-                xStart = xMax;
-                xEnd = xMin;
-                xMod = -1;
-                useClampedBlend = false;
-            }
-        }
-        
-
-        for (int x = xStart; x != xEnd; x+=xMod)
-            {
-                int yLocalEnd = Mathf.RoundToInt( Mathf.Lerp(yStart, yEnd, Mathf.InverseLerp(xStart, xEnd, x)));
-            if (!useClampedBlend)
-            {
-                yLocalEnd = yEnd;
-            }
-                for (int y = yStart; y != yLocalEnd; y+=yMod)
+                coords.x = x;
+                coords.y = y;
+                dist = Vector2Int.Distance(coords, corner);
+                if (dist < DistFromCornerForBlend)
                 {
-                    coords.x = x;
-                    coords.y = y;
-                try
-                {
-                    if (x != xStart && x != xEnd && y != yStart && y != yLocalEnd)
-                    {
-                        chunk.UpdateWaterLevel(x, y, (4));
-
-                    }
                     chunk.UpdateTile(x, y, "Sand");
-
-                }
-                catch
-                {
-
-                }
+                    chunk.UpdateWaterLevel(x, y, -99);
                 }
             }
+        }
     }
 
     public override void GenerateBlendDataForChunk(WorldChunk chunk, WorldTileBlend toBlend, out int endPoint, int StartOverride = -1, int forceEnd = -1)
@@ -625,20 +567,23 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
             int rand = 0;
             for(int y = yMin; y<= yMax; y++)
             {
-                rand = Random.Range(0, chunk.ChunkTiles.GetLength(0));
-                if (rand > xStart)
+               
+                xStart = Random.Range(5, 8);
+                if (!positive)
                 {
-                    xStart++;
+                    xStart = Random.Range(8, 12);
                 }
-                else
+                xStart =Mathf.Clamp(xStart,0,chunk.ChunkTiles.GetLength(0));
+                int xEnd = chunk.ChunkTiles.GetLength(0) - Random.Range(0, 3);
+                if (!positive)
                 {
-                    xStart--;
+                    xEnd = Random.Range(0, 3);
+                   
                 }
-                xStart=Mathf.Clamp(xStart,0,chunk.ChunkTiles.GetLength(0));
-                if (forceEnd>-1)
-                {
-                    xStart = Mathf.RoundToInt( Mathf.Lerp(xStart, forceEnd, Mathf.InverseLerp(yMin, yMax, y)));
-                }
+                //if (forceEnd>-1)
+                //{
+                //    xStart = Mathf.RoundToInt( Mathf.Lerp(xStart, forceEnd, Mathf.InverseLerp(yMin, yMax, y)));
+                //}
 
 
                 if (StartOverride > -1)
@@ -647,20 +592,20 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                     StartOverride = -1;
                 }
                 endPoint = xStart;
-                chunk.AddTileBlends(toBlend.Direction, chunk.WorldCoords + new Vector2Int(xStart, y), toBlend.BlendType, xStart, false);
+              //  chunk.AddTileBlends(toBlend.Direction, chunk.WorldCoords + new Vector2Int(xStart, y), toBlend.BlendType, xStart, false);
                 float waterLevel = 0f;
                     if (positive)
                     {
                         for (int x = xStart; x < chunk.ChunkTiles.GetLength(0); x++)
                         {
                             //set tiles to be blend
-                            if (x == xStart)
+                            //if (x == chunk.ChunkTiles.GetLength(0)-1)
+                            {
+                            if (x <= xEnd)
                             {
                                 chunk.UpdateTile(x, y, "Sand");
                             }
-                            else
-                            {
-                            waterLevel = Mathf.Lerp(0,5, Mathf.InverseLerp(xStart, chunk.ChunkTiles.GetLength(0), x));
+                             waterLevel =  Mathf.Lerp(0,-50, Mathf.InverseLerp(xStart, chunk.ChunkTiles.GetLength(0), x));
                                 chunk.UpdateWaterLevel(x,y, waterLevel);
                             }
                         }
@@ -670,13 +615,13 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                         for (int x = xStart; x >= 0; x--)
                         {
                         //set tiles to be blend
-                        if (x == xStart)
+                        //if (x == xStart)
                         {
-                            chunk.UpdateTile(x, y, "Sand");
-                        }
-                        else
-                        {
-                            waterLevel = Mathf.Lerp(0, 5, Mathf.InverseLerp(xStart, 0, x));
+                            if (x > xEnd)
+                            {
+                                chunk.UpdateTile(x, y, "Sand");
+                            }
+                            waterLevel = Mathf.Lerp(0, -50, Mathf.InverseLerp(xStart, 0, x));
                             chunk.UpdateWaterLevel(x, y, waterLevel);
                         }
                     }
@@ -690,29 +635,23 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
 
             for (int x = xMin; x <= xMax; x++)
             {
-                rand = Random.Range(0, chunk.ChunkTiles.GetLength(0));
-                if (rand > yStart)
+                yStart = Random.Range(5, 8);
+
+                if (!positive)
                 {
-                    yStart++;
+                    yStart = Random.Range(8, 12);
                 }
-                else
-                {
-                    yStart--;
-                }
+
                 yStart = Mathf.Clamp(yStart, 0, chunk.ChunkTiles.GetLength(0));
-               
-                if (StartOverride > -1)
+                int yEnd = chunk.ChunkTiles.GetLength(1) - Random.Range(0, 3);
+                if (!positive)
                 {
-                    yStart = StartOverride;
-                    StartOverride = -1;
+                    yEnd = Random.Range(0, 3);
+                   
                 }
-                if (forceEnd > -1)
-                {
-                    yStart = Mathf.RoundToInt(Mathf.Lerp(yStart, forceEnd, Mathf.InverseLerp(xMin, xMax, x)));
-                }
+
                 endPoint = yStart;
                 
-                chunk.AddTileBlends(toBlend.Direction, chunk.WorldCoords + new Vector2Int(x, yStart), toBlend.BlendType, yStart, true);
 
                 float waterLevel = 0f;
                 if (positive)
@@ -720,15 +659,18 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                     for (int y = yStart; y < chunk.ChunkTiles.GetLength(1); y++)
                     {
                         //set tiles to be blend
-                        if (y == yStart)
+
+                        if (y < yEnd)
                         {
                             chunk.UpdateTile(x, y, "Sand");
+
                         }
-                        else
-                        {
-                            waterLevel = Mathf.Lerp(0, 5, Mathf.InverseLerp(yStart, chunk.ChunkTiles.GetLength(1), y));
+
+                      
+                            waterLevel = Mathf.Lerp(0, -50, Mathf.InverseLerp(yStart, chunk.ChunkTiles.GetLength(1), y)); 
+                        //athf.Lerp(0, 5, Mathf.InverseLerp(yStart, chunk.ChunkTiles.GetLength(1), y));
                             chunk.UpdateWaterLevel(x, y, waterLevel);
-                        }
+                        
                     }
                 }
                 else
@@ -736,15 +678,15 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                     for (int y = yStart; y >= 0; y--)
                     {
                         //set tiles to be blend
-                        if (y == yStart)
+                        if (y > yEnd)
                         {
                             chunk.UpdateTile(x, y, "Sand");
+
                         }
-                        else
-                        {
-                            waterLevel = Mathf.Lerp(0, 5, Mathf.InverseLerp(yStart, 0, y));
-                            chunk.UpdateWaterLevel(x, y, waterLevel);
-                        }
+                        waterLevel = Mathf.Lerp(0, -50, Mathf.InverseLerp(yStart, 0, y));
+                        //athf.Lerp(0, 5, Mathf.InverseLerp(yStart, chunk.ChunkTiles.GetLength(1), y));
+                        chunk.UpdateWaterLevel(x, y, waterLevel);
+
                     }
                 }
             }
