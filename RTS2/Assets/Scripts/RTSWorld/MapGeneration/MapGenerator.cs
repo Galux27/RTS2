@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -26,45 +27,38 @@ public class MapGenerator : MonoBehaviour
 
 
     }
-
-    public List<MapFeatureBase> features = new List<MapFeatureBase>();
+    public List<FeatureMapGenerator> Features = new List<FeatureMapGenerator>();
+    public FeatureMapGenerator DefaultFeatures;
     public Dictionary<OverworldFeature,OverworldFeatureToWorldConverter> OverworldConverters;
-    public int FeaturesToGenerate;
     public void GenerateMap(WorldChunkBatch toGenerateIn)
     {
         if (toGenerateIn.NeedsGeneration == false)
         {
             return;
         }
-        int featureGenerating = 0;
-
 
         OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
-        toGenerateIn.ApplyOverworldHeight(overworldTile.Elevation);
-        toGenerateIn.GenerateWorldTileBlends();
+        for (int x = 0; x < overworldTile.Features.Count; x++)
+        {
+
+            if (OverworldConverters.ContainsKey(overworldTile.Features[x]))
+            {
+                OverworldConverters[overworldTile.Features[x]].GenerateFeature(toGenerateIn);
+            }
+        }
         if (!overworldTile.Features.Contains(OverworldFeature.LargeWaterBody))
         {
-            if (OverworldGenerator.Instance.SeaLevel < overworldTile.Elevation)
+            bool generated = false;
+            TryToGenerateByFeature(toGenerateIn, out generated);
+            if (!generated)
             {
-                for (int x = 0; x < overworldTile.Features.Count; x++)
-                {
-
-                    if (OverworldConverters.ContainsKey(overworldTile.Features[x]))
-                    {
-                        OverworldConverters[overworldTile.Features[x]].GenerateFeature(toGenerateIn);
-                    }
-                }
-
-
-                for (int x = 0; x < FeaturesToGenerate; x++)
-                {
-                    featureGenerating = Random.Range(0, features.Count);
-                    features[featureGenerating].GenerateFeature(toGenerateIn);
-                }
+                DefaultFeatures.GenerateForFeature(toGenerateIn);
             }
         }
         else
         {
+            toGenerateIn.ApplyOverworldHeight(overworldTile.Elevation);
+            toGenerateIn.GenerateWorldTileBlends();
             toGenerateIn.ApplyOverworldHeight(0);
 
         }
@@ -73,5 +67,78 @@ public class MapGenerator : MonoBehaviour
         toGenerateIn.SetChunksLoaded();
     }
 
+    public void TryToGenerateByFeature(WorldChunkBatch toGenerateIn,out bool generated)
+    {
+        generated = false;
+        OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
 
+        for (int x = 0; x < Features.Count; x++)
+        {
+            if (overworldTile.Features.Contains(Features[x].toGenerateFor))
+            {
+                Features[x].GenerateForFeature(toGenerateIn);
+                generated = true;
+            }
+        }
+    }
+
+}
+[System.Serializable]
+public class FeatureMapGenerator
+{
+    public OverworldFeature toGenerateFor;
+    public List<MapFeatureBase> features = new List<MapFeatureBase>();
+    public int FeaturesToGenerate;
+    public FloorTileGenerator floorTileGenerator;
+    public void GenerateForFeature(WorldChunkBatch toGenerateIn)
+    {
+
+
+
+        OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
+        toGenerateIn.ApplyOverworldHeight(overworldTile.Elevation);
+
+        if (floorTileGenerator.Use)
+        {
+            floorTileGenerator.GenerateTiles(toGenerateIn);
+        }
+
+        int featureGenerating = 0;
+        if (OverworldGenerator.Instance.SeaLevel < overworldTile.Elevation)
+        {
+            for (int x = 0; x < FeaturesToGenerate; x++)
+            {
+                featureGenerating = Random.Range(0, features.Count);
+                features[featureGenerating].GenerateFeature(toGenerateIn);
+            }
+        }
+
+        toGenerateIn.GenerateWorldTileBlends();
+
+    }
+}
+
+[System.Serializable]
+public class FloorTileGenerator
+{
+    public string TileToSet;
+    public bool Use = true;
+    public virtual void GenerateTiles(WorldChunkBatch toSetIn)
+    {
+        WorldChunk setTilesIn = null;
+        for(int x = 0; x < toSetIn.Chunks.GetLength(0); x++)
+        {
+            for(int y = 0; y < toSetIn.Chunks.GetLength(1); y++)
+            {
+                setTilesIn = toSetIn.Chunks[x, y];
+                for(int x1=0;x1<setTilesIn.ChunkTiles.GetLength(0); x1++)
+                {
+                    for (int y1 = 0; y1 < setTilesIn.ChunkTiles.GetLength(1); y1++)
+                    {
+                        setTilesIn.UpdateTile(x1, y1, TileToSet);
+                    }
+                }
+            }
+        }
+    }
 }

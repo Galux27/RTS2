@@ -11,6 +11,7 @@ public static class WorldTileBlending
         {
             Generators = new Dictionary<WorldTileBlendType, WorldTileBlendGenerator>();
             Generators.Add(WorldTileBlendType.LandToWater,new LandToWaterBlendGenerator());
+            Generators.Add(WorldTileBlendType.LandToMountain, new LandToMountainGenerator());
         }
         Debug.Log("Batch overworld coords " + batch.OverworldCoords);
         OverworldTile myTile = OverworldGenerator.Instance.OverworldTiles[batch.OverworldCoords.x,batch.OverworldCoords.y];

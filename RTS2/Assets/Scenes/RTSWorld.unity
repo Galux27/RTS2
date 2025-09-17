@@ -1933,12 +1933,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b3534725866044487293b7d639dd3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  features:
-  - {fileID: 11400000, guid: 78c7732265362a9438197807f58d9360, type: 2}
-  - {fileID: 11400000, guid: d5bc94e3ecb71814ab2f0d9b2c37154b, type: 2}
-  - {fileID: 11400000, guid: 2516cede25602904fba4da26388db422, type: 2}
-  - {fileID: 11400000, guid: fd276b50c9199ec4db9e7960f1bcadec, type: 2}
-  FeaturesToGenerate: 100
+  Features:
+  - toGenerateFor: 7
+    features:
+    - {fileID: 11400000, guid: 6edbc6166985b3940903208b35abd114, type: 2}
+    FeaturesToGenerate: 100
+    floorTileGenerator:
+      TileToSet: Mountain
+      Use: 1
+  DefaultFeatures:
+    toGenerateFor: 0
+    features:
+    - {fileID: 11400000, guid: 78c7732265362a9438197807f58d9360, type: 2}
+    - {fileID: 11400000, guid: d5bc94e3ecb71814ab2f0d9b2c37154b, type: 2}
+    - {fileID: 11400000, guid: 2516cede25602904fba4da26388db422, type: 2}
+    - {fileID: 11400000, guid: fd276b50c9199ec4db9e7960f1bcadec, type: 2}
+    FeaturesToGenerate: 100
+    floorTileGenerator:
+      TileToSet: Grass
+      Use: 1
 --- !u!114 &247636658
 MonoBehaviour:
   m_ObjectHideFlags: 0

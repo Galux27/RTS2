@@ -151,29 +151,33 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
             {
                 for (int y = 50; y < OverworldHeight - 50; y++)
                 {
-                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.LargeWaterBody))
-                    {
-                        Debug.Log("water at " + x+","+y);
+                    //coords = new Vector2Int(x, y);
 
-                       
-                    }
-                    coords = new Vector2Int(x, y);
-                    neighbours = GetNeighbours(coords);
-                    for (int i = 0; i < neighbours.Count; i++)
+                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.Mountain))
                     {
-                        if (neighbours[i].Features.Contains(OverworldFeature.LargeWaterBody))
-                        {
-                            OverworldStartingCoords = new Vector2Int(x, y);
-                            hasSetOverworldStartingCoords = true;
-                            break;
-                        }
+                        Debug.Log("water at " + x + "," + y);
+
+                        OverworldStartingCoords = new Vector2Int(x, y);
+                        hasSetOverworldStartingCoords = true;
                     }
+                   // neighbours = GetNeighbours(coords);
+                    //for (int i = 0; i < neighbours.Count; i++)
+                    //{
+                    //    if (neighbours[i].Features.Contains(OverworldFeature.Mountain) && !OverworldTiles[x, y].Features.Contains(OverworldFeature.Mountain))
+                    //    {
+                    //        hasSetOverworldStartingCoords = true;
+
+                    //        OverworldStartingCoords = new Vector2Int(x, y);
+                    //        Debug.Log("Set overworld start coords to " + OverworldStartingCoords);
+                    //        return OverworldStartingCoords;
+                    //        break;
+                    //    }
+                    //}
                     if (hasSetOverworldStartingCoords)
                     {
                         break;
                     }
                 }
-                Debug.Log("Set overworld start coords to " + OverworldStartingCoords);
             }
 
            // OverworldStartingCoords = new Vector2Int(Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)), Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)));

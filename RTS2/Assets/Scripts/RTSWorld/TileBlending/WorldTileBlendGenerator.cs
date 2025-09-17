@@ -37,6 +37,55 @@ public class WorldTileBlendGenerator
     }
 }
 
+public class LandToMountainGenerator : WorldTileBlendGenerator
+{
+    public override WorldTileBlendType TypeIGenerate()
+    {
+        return WorldTileBlendType.LandToMountain;
+    }
+    public override void GenerateBlend(WorldChunkBatch batch)
+    {
+        // base.GenerateBlend(batch);
+        for (int x = 0; x < batch.BlendList.Count; x++)
+        {
+            if (batch.BlendList[x].BlendType == TypeIGenerate())
+            {
+                GenerateBlendData(batch.BlendList[x], batch);
+            }
+        }
+    }
+    public override void GenerateBlendData(WorldTileBlend toBlend, WorldChunkBatch batch)
+    {
+        int output = 0;
+        for(int x = 0; x < batch.Chunks.GetLength(0); x++)
+        {
+            for(int y = 0; y < batch.Chunks.GetLength(1); y++)
+            {
+                GenerateBlendDataForChunk(batch.Chunks[x, y], toBlend, out output);
+            }
+        }
+    }
+    public override void GenerateBlendDataForChunk(WorldChunk chunk, WorldTileBlend blend, out int endPoint, int StartOverride = -1, int forceEnd = -1)
+    {
+        endPoint = 0;
+        int rand = 0;
+        //base.GenerateBlendDataForChunk(chunk, blend, out endPoint, StartOverride, forceEnd);
+        for(int x=0;x<chunk.ChunkTiles.GetLength(0); x++)
+        {
+            for(int y = 0; y < chunk.ChunkTiles.GetLength(1); y++)
+            {
+                rand = UnityEngine.Random.Range(0, 100);
+                if (rand < 20)
+                {
+                    chunk.UpdateTile(x, y, "Mountain");
+                }
+               
+            }
+        }
+    }
+}
+
+
 public class LandToWaterBlendGenerator : WorldTileBlendGenerator
 {
     public override void GenerateBlend(WorldChunkBatch batch)
