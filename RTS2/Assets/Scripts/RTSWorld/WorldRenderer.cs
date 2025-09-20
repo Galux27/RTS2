@@ -21,7 +21,7 @@ public class WorldRenderer : MonoBehaviour
         } 
     }
 
-    public Tilemap WorldTilemap,WaterTilemap;
+    public Tilemap WorldTilemap,WaterTilemap,HillTilemap;
     public WorldTiles WorldTiles;
     WorldTilesManager WorldTilesManager;
 
@@ -50,10 +50,25 @@ public class WorldRenderer : MonoBehaviour
             {
                 //RenderTile(tiles[x, y]);
                 AddTileToRender(tiles[x, y], index, ref positionArray, ref tileArray);
+                tiles[x, y].Elevation.Render();
+
                 index++;
             }
         }
         WorldTilemap.SetTiles(positionArray,tileArray);
+
+        //positionArray = new Vector3Int[tiles.GetLength(0) * tiles.GetLength(1)];
+        //tileArray = new TileBase[positionArray.Length];
+        //index = 0;
+        //for (int x = 0; x < tiles.GetLength(0); x++)
+        //{
+        //    for (int y = 0; y < tiles.GetLength(1); y++)
+        //    {
+        //        //RenderTile(tiles[x, y]);
+        //        //AddElevationToRender(tiles[x, y].Elevation, index, ref positionArray, ref tileArray);
+        //        index++;
+        //    }
+        //}
     }
 
     public void UnrenderChunk(WorldTile[,] tiles)
@@ -67,18 +82,40 @@ public class WorldRenderer : MonoBehaviour
         {
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
+                tiles[x, y].Elevation.Cleanup();
                 coords = new Vector3Int(tiles[x, y].x, tiles[x, y].y, 0);
                 positionArray[index] = coords;
-                tileArray[index] = null;
-               
+                tileArray[index] = null;             
                 index++;
             }
         }
         WorldTilemap.SetTiles(positionArray, tileArray);
         WaterTilemap.SetTiles(positionArray, tileArray);
+        HillTilemap.SetTiles(positionArray, tileArray);
         WorldController.Instance.BuildingTilemap.SetTiles(positionArray, tileArray);
         
     }
+
+    void AddElevationToRender(ElevationTile tile,int index, ref Vector3Int[] postions, ref TileBase[] tiles)
+    {
+        coords = new Vector3Int(tile.coords.x, tile.coords.y, 0);
+        postions[index] = coords;
+        if (lastTilePlaced != tile.Tile.ToString())
+        {
+            currentTile = ElevationController.Instance.Tiles.GetTile(tile.Tile);
+            lastTilePlaced = tile.Tile.ToString();
+            lastTileBase = currentTile;
+            tiles[index] = currentTile;
+        }
+        else
+        {
+            currentTile = lastTileBase;
+            tiles[index] = currentTile;
+        }
+       
+    }
+
+
     string lastTilePlaced;
     TileBase lastTileBase;
     TileBase currentTile;

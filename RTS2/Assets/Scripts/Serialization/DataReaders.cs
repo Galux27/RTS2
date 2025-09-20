@@ -141,6 +141,7 @@ public static class DataReaders
             case DataKeys.WaterLevel:
             case DataKeys.CameraZoom:
             case DataKeys.OverElevation:
+            case DataKeys.Elevation:
                 return ParseFloat(data);
                 break;        
             case DataKeys.Pos:

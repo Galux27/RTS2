@@ -1594,6 +1594,240 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   popDisplayPrefab: {fileID: 6508783308667136907, guid: c399661472fdae740996857519dc35ff, type: 3}
   popDisplayParent: {fileID: 1945074780}
+--- !u!1 &234982189
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 234982190}
+  - component: {fileID: 234982192}
+  - component: {fileID: 234982191}
+  - component: {fileID: 234982193}
+  m_Layer: 0
+  m_Name: HillTilemap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &234982190
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234982189}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1715187093}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!483693784 &234982191
+TilemapRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234982189}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1601566059
+  m_SortingLayer: -2
+  m_SortingOrder: 3
+  m_ChunkSize: {x: 32, y: 32, z: 32}
+  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_MaxChunkCount: 16
+  m_MaxFrameAge: 16
+  m_SortOrder: 0
+  m_Mode: 0
+  m_DetectChunkCullingBounds: 0
+  m_MaskInteraction: 0
+--- !u!1839735485 &234982192
+Tilemap:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234982189}
+  m_Enabled: 1
+  m_Tiles: {}
+  m_AnimatedTiles: {}
+  m_TileAssetArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileSpriteArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileMatrixArray:
+  - m_RefCount: 0
+    m_Data:
+      e00: 4.596e-42
+      e01: 0
+      e02: -7.787968e-39
+      e03: -7.787968e-39
+      e10: 0
+      e11: 0
+      e12: 5.96e-43
+      e13: 5.96e-43
+      e20: -2.4776264e-11
+      e21: -2.0670899e+14
+      e22: 6.3586936e-29
+      e23: 4.753735e-10
+      e30: 4.5905e-41
+      e31: 5.98e-43
+      e32: 5.97e-43
+      e33: 6e-43
+  - m_RefCount: 0
+    m_Data:
+      e00: 2.7479712e+38
+      e01: 4e-45
+      e02: -5.3416977
+      e03: 0
+      e10: 2.84e-43
+      e11: 3e-45
+      e12: 4.5905e-41
+      e13: 0
+      e20: NaN
+      e21: 0
+      e22: 2.747968e+38
+      e23: 0
+      e30: 0
+      e31: 7.34684e-40
+      e32: 2.84e-43
+      e33: 1
+  - m_RefCount: 0
+    m_Data:
+      e00: -2.1876684e-13
+      e01: 0
+      e02: 2.5749183e+29
+      e03: 2.5749183e+29
+      e10: 9.18e-43
+      e11: 0
+      e12: 9.15e-43
+      e13: 9.15e-43
+      e20: -3.729119e+23
+      e21: -2.4323772e-13
+      e22: -0.0000000018516149
+      e23: -1.8096179e+15
+      e30: 4.5905e-41
+      e31: 9.18e-43
+      e32: 9.15e-43
+      e33: 9.15e-43
+  m_TileColorArray:
+  - m_RefCount: 0
+    m_Data: {r: 4.1529e-41, g: 4.1529e-41, b: 4.1529e-41, a: 4.1529e-41}
+  m_TileObjectToInstantiateArray: []
+  m_AnimationFrameRate: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Origin: {x: -15, y: -25, z: 0}
+  m_Size: {x: 80, y: 57, z: 1}
+  m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
+  m_TileOrientation: 0
+  m_TileOrientationMatrix:
+    e00: 1
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 1
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 1
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
+--- !u!114 &234982193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234982189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e63c9759def997d4c918b9b1fd4c6cb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Tiles:
+    Above: {fileID: 11400000, guid: 5c410f70bad441144b3ee1c70e8f5f25, type: 2}
+    Below: {fileID: 11400000, guid: 07af7e5e10e6ae34a94be028ac3d11bc, type: 2}
+    Left: {fileID: 11400000, guid: fd38db735251011489286d09069b27da, type: 2}
+    Right: {fileID: 11400000, guid: 4d5bd46dad8673e4d8d3fa59ad7e8ced, type: 2}
+    TopLeftOuter: {fileID: 11400000, guid: 318886d29e74e444c8b35a71e323eb30, type: 2}
+    TopRightOuter: {fileID: 11400000, guid: ef0a326b321398e41932b85ed5fe6a52, type: 2}
+    BottomLeftOuter: {fileID: 11400000, guid: 3628504ed4cdda948adf5cfb40570c52, type: 2}
+    BottomRightOuter: {fileID: 11400000, guid: 8e0c448f8c220424e9a73667c6f18159, type: 2}
+    TopLeftInner: {fileID: 11400000, guid: 5d5779aedb179bf49bdff260e0637c2e, type: 2}
+    TopRightInner: {fileID: 11400000, guid: 300c1e933f9141c4aaa886a7c3aa931d, type: 2}
+    BottomLeftInner: {fileID: 11400000, guid: 2f9517c37a6d06b4dad529982998fdee, type: 2}
+    BottomRightInner: {fileID: 11400000, guid: aaad0e7dabde7614fbc11f9183353d4a, type: 2}
 --- !u!1 &245280518
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,6 +1933,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WorldTilemap: {fileID: 1063618433}
   WaterTilemap: {fileID: 1721579405}
+  HillTilemap: {fileID: 234982192}
   WorldTiles: {fileID: 11400000, guid: fb375e3e1746cb049bd517b4a63fd84f, type: 2}
 --- !u!4 &247636642
 Transform:
@@ -8473,7 +8708,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 4
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -11169,6 +11404,7 @@ Transform:
   m_Children:
   - {fileID: 1063618431}
   - {fileID: 1721579403}
+  - {fileID: 234982190}
   - {fileID: 1289217258}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11245,7 +11481,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1601566059
   m_SortingLayer: -2
-  m_SortingOrder: 1
+  m_SortingOrder: 6
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16

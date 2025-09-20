@@ -186,9 +186,8 @@ public class WorldTile:ISerialize
     public int x,y;
     public bool traversable = true, CanPutDecorationsOn = true;
     public string tileType;
-    public float Elevation = OverworldGenerator.Instance.SeaLevel;
     public WaterData WaterData;
-    
+    public ElevationTile Elevation;
     public Vector2Int Coords()
     {
         return new Vector2Int(x, y);
@@ -201,12 +200,13 @@ public class WorldTile:ISerialize
         this.y = y;
         tileType = "Ground";
         WaterData = new WaterData(0f);
+        Elevation = new ElevationTile(new Vector3Int(x, y, 0));
     }
 
     public void SetElevation(float value)
     {
-        Elevation = value;
-        if (Elevation < OverworldGenerator.Instance.SeaLevel)
+        Elevation.SetElevation(value);// = value;
+        if (Elevation.GetElevation() < OverworldGenerator.Instance.SeaLevel)
         {
             UpdateWaterLevel(10f);
         }
@@ -252,7 +252,7 @@ public class WorldTile:ISerialize
         data.AddDataToSerialize(DataKeys.Coords, new Vector2Int(x, y));
         data.AddDataToSerialize(DataKeys.TileType, tileType);
         data.AddDataToSerialize(DataKeys.WaterLevel, WaterData.WaterLevel);
-
+        data.AddDataToSerialize(DataKeys.Elevation, Elevation.GetElevation());
         return data;
     }
 

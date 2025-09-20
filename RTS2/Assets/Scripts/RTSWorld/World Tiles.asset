@@ -31,6 +31,8 @@ MonoBehaviour:
     tileBase: {fileID: 11400000, guid: 205c783b9dfbfce428dc7cd453f12cff, type: 2}
   - tileType: Mountain
     tileBase: {fileID: 11400000, guid: ec17251473f483044bcc795ec3991975, type: 2}
+  - tileType: Grass
+    tileBase: {fileID: 11400000, guid: ed4259f1813cad549b82fc17541f0857, type: 2}
   WaterTiles:
   - WaterHeight: 1
     Tiles:

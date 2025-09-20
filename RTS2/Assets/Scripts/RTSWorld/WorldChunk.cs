@@ -1,10 +1,4 @@
-using JetBrains.Annotations;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 
 /// <summary>
@@ -81,6 +75,17 @@ public class WorldChunk:ISerialize
         GenerateTilesForChunk();
         GenerateWallsForChunk();
         GeneratePathfindingNodes();
+    }
+
+    public void UpdateElevationType(WorldChunkBatch myBatch)
+    {
+        for(int x = 0; x < WorldChunkManager.ChunkSize; x++)
+        {
+            for(int y=0;y < WorldChunkManager.ChunkSize; y++)
+            {
+                ChunkTiles[x, y].Elevation.CalculateElevation(this,x,y,myBatch);
+            }
+        }
     }
 
     public void UpdateTile(int x, int y, string type)

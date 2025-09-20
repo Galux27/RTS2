@@ -338,6 +338,7 @@ public class DataKeys
     public const string Pos = "POS";
     public const string TileType = "TT";
     public const string WaterLevel = "WLL";
+    public const string Elevation = "ELL";
     public const string ChunkTiles = "CT";//todo
     public const string WallType = "WTY";
     public const string WallVisual = "WV";
@@ -476,7 +477,7 @@ public static class SerializeDataHelpers
             return CombineStrings( key, KEY_OBJECT_SPLIT.ToString(), combined, DATA_ELEMENT_SPLIT.ToString());
 
         }
-        else if (key == DataKeys.TileType || key == DataKeys.WaterLevel || key == DataKeys.WallType
+        else if (key == DataKeys.TileType || key == DataKeys.WaterLevel || key == DataKeys.WallType||key==DataKeys.Elevation
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
