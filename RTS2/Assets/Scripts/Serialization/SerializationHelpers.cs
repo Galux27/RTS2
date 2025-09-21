@@ -377,6 +377,7 @@ public class DataKeys
     public const string OverPop = "O_POP";
     public const string OverSettlement = "O_SET";
     public const string Overworld = "OVER";
+    public const string OverRiverCoords = "OVR_RI";
 }
 
 public enum DataType
@@ -453,7 +454,7 @@ public static class SerializeDataHelpers
     public const char INVENTORY_SPLIT_TWO = ']';
     public static string SerializeData(string key,object value)
     {
-        if (key == DataKeys.Coords||key==DataKeys.LocalCoords)
+        if (key == DataKeys.Coords||key==DataKeys.LocalCoords||key==DataKeys.OverRiverCoords)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector2Int(value), DATA_ELEMENT_SPLIT.ToString());
         }

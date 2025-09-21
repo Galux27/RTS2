@@ -53,6 +53,7 @@ public static class MiscDataSerialization
         {
             retVal.Features = (List<OverworldFeature>)deserializedData[DataKeys.OverFeature];
         }
+        retVal.RiverPoint = (Vector2Int)deserializedData[DataKeys.OverRiverCoords];
             return retVal;
     }
 

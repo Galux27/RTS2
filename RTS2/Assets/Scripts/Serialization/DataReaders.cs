@@ -129,6 +129,7 @@ public static class DataReaders
         {
             case DataKeys.Coords:
             case DataKeys.LocalCoords:
+            case DataKeys.OverRiverCoords:
                 return ParseVector2Int(data);
                 break;
             case DataKeys.ChunkTiles:
@@ -590,11 +591,14 @@ public static class DataReaders
         keyObjectSplit = objects[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         float waterLevel = (float)ParseDataObject(keyObjectSplit[0], keyObjectSplit[1]);
 
+        keyObjectSplit = objects[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+        float elevation = (float)ParseDataObject(keyObjectSplit[0], keyObjectSplit[1]);
 
         //CHUNK_TILES;COORDS;144,144::TILE_TYPE;Ground::WATER_LEVEL;0::`
         WorldTile retVal = new WorldTile(coords.x,coords.y);
         retVal.tileType = tileType;
         retVal.WaterData = new WaterData(waterLevel);
+        retVal.Elevation = new ElevationTile(new Vector3Int(coords.x, coords.y, 0), elevation);
         return retVal;
     }
 }

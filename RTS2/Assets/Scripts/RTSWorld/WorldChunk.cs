@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -110,27 +111,6 @@ public class WorldChunk:ISerialize
                 xEnd = Random.Range(xStart - 1, xStart - 5);
             }
         }
-
-
-        //Vector2Int corner = dirComingFrom * WorldChunkManager.ChunkSize;
-        //float maxDist = Vector2Int.Distance(new Vector2Int(WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize), Vector2Int.zero);
-        //Vector2Int coords = new Vector2Int();
-        //float dist = 0f;
-        //float rand = 0f;
-        //for(int x = 0; x < ChunkTiles.GetLength(0); x++)
-        //{
-        //    for (int y = 0; y < ChunkTiles.GetLength(1); y++)
-        //    {
-        //        coords.x = x;
-        //        coords.y = y;
-        //        dist = Vector2Int.Distance(coords, corner);
-        //        rand = UnityEngine.Random.Range(0f, maxDist);
-        //        if (rand < dist)
-        //        {
-        //            ChunkTiles[x, y].Elevation.SetElevation(Mathf.Lerp(newHeight, ChunkTiles[x, y].Elevation.GetElevation(), Mathf.InverseLerp(0f, maxDist, dist)));
-        //        }
-        //        }
-        //    }
     }
 
     public void ClearElevationMarkers()
@@ -170,6 +150,17 @@ public class WorldChunk:ISerialize
             for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
             {
                 ChunkTiles[x, y].Elevation.FinalBlend(this, x, y, myBatch);
+            }
+        }
+
+        for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                if (PathfindingNodes[x, y].IsPassable && ChunkTiles[x,y].Elevation.IsCornerOrEdge(default))
+                {
+                    PathfindingNodes[x, y].IsPassable = false;
+                }
             }
         }
     }

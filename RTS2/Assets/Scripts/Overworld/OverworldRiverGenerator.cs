@@ -63,6 +63,7 @@ public class OverworldRiverGenerator : OverworldFeatureGenerator
             {
                 coords = rivers[x].TilesInRiver[q];
                 world[coords.x, coords.y].AddFeatureToTile(OverworldFeature.River);
+                world[coords.x, coords.y].SetRiverPoint(q,rivers[x].RiverLength);
             }
         }
 
@@ -175,6 +176,7 @@ public class River
     public float CurrentHeight;
     public List<Vector2Int> TilesInRiver=new List<Vector2Int>();
     public bool CanExpand = true;
+    public int RiverLength = 0;
     public River(Vector2Int coords,float height)
     {
         currentCoords = coords;
@@ -186,5 +188,6 @@ public class River
         TilesInRiver.Add(currentCoords);
         currentCoords = newPos;
         CurrentHeight = newHeight;
+        RiverLength++;
     }
 }

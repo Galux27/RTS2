@@ -153,9 +153,9 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                 {
                     //coords = new Vector2Int(x, y);
 
-                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.Mountain))
+                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.River) && OverworldTiles[x, y].RiverPoint.x > OverworldTiles[x, y].RiverPoint.y-10)
                     {
-                        Debug.Log("water at " + x + "," + y);
+                        Debug.Log("water at " + x + "," + y +" river coords " + OverworldTiles[x, y].RiverPoint);
 
                         OverworldStartingCoords = new Vector2Int(x, y);
                         hasSetOverworldStartingCoords = true;
@@ -300,6 +300,14 @@ public class OverworldTile: ISerialize
         }
     }
 
+    public Vector2Int RiverPoint;
+
+    public void SetRiverPoint(int index,int length)
+    {
+        RiverPoint = new Vector2Int(index, length);
+    }
+
+
     public void AddFeatureToTile(OverworldFeature feature)
     {
         if (feature == OverworldFeature.LargeWaterBody)
@@ -335,6 +343,7 @@ public class OverworldTile: ISerialize
         retVal.AddDataToSerialize(DataKeys.OverFeature, Features);
         retVal.AddDataToSerialize(DataKeys.OverPop, Population);
         retVal.AddDataToSerialize(DataKeys.OverSettlement, Settlement);
+        retVal.AddDataToSerialize(DataKeys.OverRiverCoords, RiverPoint);
         return retVal;
     }
 
