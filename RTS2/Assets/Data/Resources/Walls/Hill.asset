@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76ae18e6de6743a4a8a6a3da359e62e6, type: 3}
+  m_Name: Hill
+  m_EditorClassIdentifier: 
+  NoNeighbours: {fileID: 11400000, guid: 679d930d344c1f540b9c00bcc2cd7a9b, type: 2}
+  Left: {fileID: 11400000, guid: 80f740c39d16e25408e091dc93010ffe, type: 2}
+  Right: {fileID: 11400000, guid: fde1fab9c1afb22478e2de08a07e2b14, type: 2}
+  Above: {fileID: 11400000, guid: 103f8e63381f247409a6f577d32b7cbd, type: 2}
+  Below: {fileID: 11400000, guid: 076340dd99be9b948b8ad6e27331098d, type: 2}
+  LeftBelow: {fileID: 11400000, guid: 6d9c3acd377505a419b0a7f49141f28c, type: 2}
+  LeftAbove: {fileID: 11400000, guid: 6ce7fd8c2c3c2d543b598793fa41e5d0, type: 2}
+  RightBelow: {fileID: 11400000, guid: 8546c7590cd95904f9d1a1618584cd2c, type: 2}
+  RightAbove: {fileID: 11400000, guid: d1b6149375c009e4dbd9fd8e5903f58c, type: 2}
+  LeftRight: {fileID: 11400000, guid: 938b19fe21af0c2408062e0d685c7770, type: 2}
+  UpDown: {fileID: 11400000, guid: 38e571ce03448a742a07057e868f65b9, type: 2}
+  LeftRightBelow: {fileID: 11400000, guid: b26e0fd01a9214248937cff34d8b4e62, type: 2}
+  LeftRightAbove: {fileID: 11400000, guid: 877cd7e06da652549a917776c157ad84, type: 2}
+  TopBottomLeft: {fileID: 11400000, guid: b9d8c85b29e48df4688ee957ff92fe7b, type: 2}
+  TopBottomRight: {fileID: 11400000, guid: d5635cf37f2793d4bb46d09dcb974bf4, type: 2}
+  Cross: {fileID: 11400000, guid: 972bac4b5f546544cb2347be8be6ba60, type: 2}
+  WallName: Hill
+  Health: 1
+  RequirementsToBuild: []

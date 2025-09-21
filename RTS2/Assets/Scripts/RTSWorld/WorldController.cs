@@ -181,6 +181,7 @@ public class WorldController : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public class WorldTile:ISerialize
 {
     public int x,y;

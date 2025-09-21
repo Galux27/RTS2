@@ -1605,9 +1605,8 @@ GameObject:
   - component: {fileID: 234982190}
   - component: {fileID: 234982192}
   - component: {fileID: 234982191}
-  - component: {fileID: 234982193}
   m_Layer: 0
-  m_Name: HillTilemap
+  m_Name: AboveElevation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1803,31 +1802,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &234982193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 234982189}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e63c9759def997d4c918b9b1fd4c6cb3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Tiles:
-    Above: {fileID: 11400000, guid: 5c410f70bad441144b3ee1c70e8f5f25, type: 2}
-    Below: {fileID: 11400000, guid: 07af7e5e10e6ae34a94be028ac3d11bc, type: 2}
-    Left: {fileID: 11400000, guid: fd38db735251011489286d09069b27da, type: 2}
-    Right: {fileID: 11400000, guid: 4d5bd46dad8673e4d8d3fa59ad7e8ced, type: 2}
-    TopLeftOuter: {fileID: 11400000, guid: 318886d29e74e444c8b35a71e323eb30, type: 2}
-    TopRightOuter: {fileID: 11400000, guid: ef0a326b321398e41932b85ed5fe6a52, type: 2}
-    BottomLeftOuter: {fileID: 11400000, guid: 3628504ed4cdda948adf5cfb40570c52, type: 2}
-    BottomRightOuter: {fileID: 11400000, guid: 8e0c448f8c220424e9a73667c6f18159, type: 2}
-    TopLeftInner: {fileID: 11400000, guid: 5d5779aedb179bf49bdff260e0637c2e, type: 2}
-    TopRightInner: {fileID: 11400000, guid: 300c1e933f9141c4aaa886a7c3aa931d, type: 2}
-    BottomLeftInner: {fileID: 11400000, guid: 2f9517c37a6d06b4dad529982998fdee, type: 2}
-    BottomRightInner: {fileID: 11400000, guid: aaad0e7dabde7614fbc11f9183353d4a, type: 2}
 --- !u!1 &245280518
 GameObject:
   m_ObjectHideFlags: 0
@@ -1933,7 +1907,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WorldTilemap: {fileID: 1063618433}
   WaterTilemap: {fileID: 1721579405}
-  HillTilemap: {fileID: 234982192}
   WorldTiles: {fileID: 11400000, guid: fb375e3e1746cb049bd517b4a63fd84f, type: 2}
 --- !u!4 &247636642
 Transform:
@@ -2172,10 +2145,12 @@ MonoBehaviour:
   - toGenerateFor: 7
     features:
     - {fileID: 11400000, guid: 6edbc6166985b3940903208b35abd114, type: 2}
+    - {fileID: 11400000, guid: 7b01f63a9ef63a44cad98f88b9b1fb9b, type: 2}
     FeaturesToGenerate: 100
     floorTileGenerator:
       TileToSet: Mountain
       Use: 1
+    RefreshElevationOnGenerate: 1
   DefaultFeatures:
     toGenerateFor: 0
     features:
@@ -2187,6 +2162,7 @@ MonoBehaviour:
     floorTileGenerator:
       TileToSet: Grass
       Use: 1
+    RefreshElevationOnGenerate: 0
 --- !u!114 &247636658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4257,6 +4233,18 @@ MonoBehaviour:
     Features: 
     Population: 0
     Settlement: 
+  TileImIn:
+    x: 0
+    y: 0
+    traversable: 0
+    CanPutDecorationsOn: 0
+    tileType: 
+    Elevation:
+      DirectionsForEdge: 
+      coords: {x: 0, y: 0, z: 0}
+      IsCorner: 0
+      IsEdge: 0
+      isDrawn: 0
 --- !u!1 &547945194
 GameObject:
   m_ObjectHideFlags: 0
@@ -11370,6 +11358,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1715187093}
   - component: {fileID: 1715187092}
+  - component: {fileID: 1715187094}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -11408,6 +11397,20 @@ Transform:
   - {fileID: 1289217258}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1715187094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1715187091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e63c9759def997d4c918b9b1fd4c6cb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ElevationWallTiles: {fileID: 11400000, guid: 400c7e04d7521b44f8e569a935c436e2, type: 2}
+  ElevationTilemap: {fileID: 234982192}
 --- !u!1 &1721579402
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 /// <summary>
@@ -77,13 +78,43 @@ public class WorldChunk:ISerialize
         GeneratePathfindingNodes();
     }
 
+    public void ClearElevationMarkers()
+    {
+        for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                ChunkTiles[x, y].Elevation.IsCorner=false;
+                ChunkTiles[x, y].Elevation.IsEdge = false;
+                ChunkTiles[x, y].Elevation.DirectionsForEdge.Clear();
+            }
+        }
+    }
+
+
     public void UpdateElevationType(WorldChunkBatch myBatch)
     {
         for(int x = 0; x < WorldChunkManager.ChunkSize; x++)
         {
             for(int y=0;y < WorldChunkManager.ChunkSize; y++)
             {
-                ChunkTiles[x, y].Elevation.CalculateElevation(this,x,y,myBatch);
+                ChunkTiles[x, y].Elevation.WorkOutStartingEdges(this,x,y,myBatch);
+            }
+        }
+
+        for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                ChunkTiles[x, y].Elevation.WorkOutCorners(this, x, y, myBatch);
+            }
+        }
+
+        for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                ChunkTiles[x, y].Elevation.FinalBlend(this, x, y, myBatch);
             }
         }
     }

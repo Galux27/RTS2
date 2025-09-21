@@ -8,7 +8,7 @@ public class CamerDebugInfo : MonoBehaviour
     public WorldChunkBatch BatchImIn;
     public WorldChunk ChunkImIn;
     public OverworldTile OverworldTileImIn;
-   
+    public WorldTile TileImIn;
 
     // Update is called once per frame
     void Update()
@@ -20,6 +20,11 @@ public class CamerDebugInfo : MonoBehaviour
 
             Vector2Int coords = BatchImIn.GetChunkCoordsFromWorldPos(this.transform.position);
             ChunkImIn = BatchImIn.Chunks[coords.x, coords.y];
+            TileImIn = BatchImIn.GetTileFromPosition(this.transform.position);
+            if (TileImIn != null)
+            {
+                Debug.DrawLine(this.transform.position, new Vector3(TileImIn.Coords().x, TileImIn.Coords().y, 0), Color.cyan);
+            }
         }
         else
         {

@@ -90,6 +90,7 @@ public class FeatureMapGenerator
     public List<MapFeatureBase> features = new List<MapFeatureBase>();
     public int FeaturesToGenerate;
     public FloorTileGenerator floorTileGenerator;
+    public bool RefreshElevationOnGenerate = false;
     public void GenerateForFeature(WorldChunkBatch toGenerateIn)
     {
 
@@ -112,7 +113,11 @@ public class FeatureMapGenerator
                 features[featureGenerating].GenerateFeature(toGenerateIn);
             }
         }
+        if (RefreshElevationOnGenerate)
+        {
+            toGenerateIn.RefreshElevationTiles();
 
+        }
         toGenerateIn.GenerateWorldTileBlends();
 
     }

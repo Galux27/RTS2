@@ -225,6 +225,26 @@ public class WorldChunkBatch : MonoBehaviour
         return true;
     }
 
+
+    public void RefreshElevationTiles()
+    {
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].ClearElevationMarkers();
+            }
+        }
+
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].UpdateElevationType(this);
+            }
+        }
+    }
+
     public void RefreshGroundTiles()
     {
         if (!IsRendered)

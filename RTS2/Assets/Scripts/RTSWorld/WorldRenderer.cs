@@ -21,7 +21,7 @@ public class WorldRenderer : MonoBehaviour
         } 
     }
 
-    public Tilemap WorldTilemap,WaterTilemap,HillTilemap;
+    public Tilemap WorldTilemap,WaterTilemap;
     public WorldTiles WorldTiles;
     WorldTilesManager WorldTilesManager;
 
@@ -91,30 +91,11 @@ public class WorldRenderer : MonoBehaviour
         }
         WorldTilemap.SetTiles(positionArray, tileArray);
         WaterTilemap.SetTiles(positionArray, tileArray);
-        HillTilemap.SetTiles(positionArray, tileArray);
         WorldController.Instance.BuildingTilemap.SetTiles(positionArray, tileArray);
         
     }
 
-    void AddElevationToRender(ElevationTile tile,int index, ref Vector3Int[] postions, ref TileBase[] tiles)
-    {
-        coords = new Vector3Int(tile.coords.x, tile.coords.y, 0);
-        postions[index] = coords;
-        if (lastTilePlaced != tile.Tile.ToString())
-        {
-            currentTile = ElevationController.Instance.Tiles.GetTile(tile.Tile);
-            lastTilePlaced = tile.Tile.ToString();
-            lastTileBase = currentTile;
-            tiles[index] = currentTile;
-        }
-        else
-        {
-            currentTile = lastTileBase;
-            tiles[index] = currentTile;
-        }
-       
-    }
-
+   
 
     string lastTilePlaced;
     TileBase lastTileBase;
