@@ -251,8 +251,21 @@ public struct ElevationTile
         }
         else if (chunk.LocalXCoord == WorldChunkManager.ChunksPerBatch - 1 && x == chunk.ChunkTiles.GetLength(0)-1)
         {
-            OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords + Vector2Int.right);
-            rightElevation = overworldTile.Elevation;
+            Vector2Int newBatch = batch.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+            WorldChunkBatch neighbour = null;
+            bool RightCorner = false;
+            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
+            {
+                neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
+                rightElevation = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.GetElevation();
+                RightCorner = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.IsCornerOrEdge();
+            }
+            if (RightCorner)
+            {
+                SetTile(ElevationTileType.Right);
+                UpdateExistingNeighbour(neighbour.Chunks[0, chunk.LocalYCoord], ElevationTileType.Left, neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation);
+                neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.SetTile(ElevationTileType.Left);
+            }
         }
 
 
@@ -266,8 +279,21 @@ public struct ElevationTile
         }
         else if (chunk.LocalXCoord == 0 && x == 0)
         {
-            OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords + Vector2Int.left);
-            leftElevation = overworldTile.Elevation;
+            Vector2Int newBatch = batch.coords - new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+            WorldChunkBatch neighbour = null;
+            bool LeftCorner = false;
+            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
+            {
+                neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
+                leftElevation = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.GetElevation();
+                LeftCorner = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.IsCornerOrEdge();
+            }
+
+            if (LeftCorner)
+            {
+                SetTile(ElevationTileType.Left);
+                UpdateExistingNeighbour(neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord], ElevationTileType.Right, neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation);
+            }
         }
 
 
@@ -278,12 +304,25 @@ public struct ElevationTile
         }
         else if (chunk.LocalYCoord < WorldChunkManager.ChunksPerBatch - 1 && y == chunk.ChunkTiles.GetLength(1)-1)
         {
-            aboveElevation = batch.Chunks[chunk.LocalYCoord , chunk.LocalYCoord + 1].ChunkTiles[x, 0].Elevation.GetElevation();
+            aboveElevation = batch.Chunks[chunk.LocalXCoord , chunk.LocalYCoord + 1].ChunkTiles[x, 0].Elevation.GetElevation();
         }
         else if (chunk.LocalYCoord == WorldChunkManager.ChunksPerBatch - 1 && y == chunk.ChunkTiles.GetLength(1)-1)
         {
-            OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords + Vector2Int.up);
-            aboveElevation = overworldTile.Elevation;
+            Vector2Int newBatch = batch.coords + new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
+            WorldChunkBatch neighbour = null;
+            bool AboveCorner = false;
+            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
+            {
+                neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
+                leftElevation = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.GetElevation();
+                AboveCorner = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.IsCornerOrEdge();
+            }
+
+            if (AboveCorner)
+            {
+                SetTile(ElevationTileType.Above);
+                UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, 0], ElevationTileType.Below, neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation);
+            }
         }
 
 
@@ -293,41 +332,54 @@ public struct ElevationTile
         }
         else if (chunk.LocalYCoord > 0 && y == 0)
         {
-            belowElevation = batch.Chunks[chunk.LocalYCoord - 1, chunk.LocalYCoord].ChunkTiles[x,chunk.ChunkTiles.GetLength(1)-1].Elevation.GetElevation();
+            belowElevation = batch.Chunks[chunk.LocalXCoord, chunk.LocalYCoord - 1].ChunkTiles[x,chunk.ChunkTiles.GetLength(1)-1].Elevation.GetElevation();
         }
         else if (chunk.LocalYCoord == 0 && y == 0)
         {
-            OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords + Vector2Int.down);
-            belowElevation = overworldTile.Elevation;
+            Vector2Int newBatch = batch.coords - new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
+            WorldChunkBatch neighbour = null;
+            bool BelowCorner = false;
+            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
+            {
+                neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
+                belowElevation = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.GetElevation();
+                BelowCorner = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.IsCornerOrEdge();
+
+
+            }
+            if (BelowCorner)
+            {
+                SetTile(ElevationTileType.Below);
+                UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1], ElevationTileType.Above, neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation);
+            }
         }
 
 
-        elevation = Mathf.Round(elevation);
        
 
        
-            if (Mathf.Round(aboveElevation) > elevation)
+            if ((aboveElevation) > elevation)
             {
             //SetTile(ElevationTileType.Above);
                 IsEdge = true;
 
             }
 
-        if (Mathf.Round(belowElevation) > elevation)
+        if ((belowElevation) > elevation)
             {
             //SetTile(ElevationTileType.Below);
             IsEdge = true;
 
         }
 
-        if (Mathf.Round(rightElevation) > elevation)
+        if ((rightElevation) > elevation)
             {
             //SetTile(ElevationTileType.Right);
             IsEdge = true;
 
         }
 
-        if (Mathf.Round(leftElevation) > elevation)
+        if ((leftElevation) > elevation)
             {
             //SetTile(ElevationTileType.Left);
             IsEdge = true;
@@ -403,7 +455,6 @@ public struct ElevationTile
             if ( LeftCorner)
             {
                 SetTile(ElevationTileType.Left);
-               // chunk.ChunkTiles[x - 1, y].Elevation.SetTile(ElevationTileType.Right);
             }
         }
         else if (chunk.LocalXCoord > 0 && x == 0)
@@ -414,8 +465,6 @@ public struct ElevationTile
             if (LeftCorner)
             {
                 SetTile(ElevationTileType.Left);
-             //   batch.Chunks[chunk.LocalXCoord - 1, chunk.LocalYCoord].ChunkTiles[chunk.ChunkTiles.GetLength(0) - 1, y].Elevation.SetTile(ElevationTileType.Right);
-
                 UpdateExistingNeighbour(batch.Chunks[chunk.LocalXCoord - 1, chunk.LocalYCoord], ElevationTileType.Right, batch.Chunks[chunk.LocalXCoord - 1, chunk.LocalYCoord].ChunkTiles[chunk.ChunkTiles.GetLength(0) - 1, y].Elevation);
             }
         }
@@ -434,13 +483,6 @@ public struct ElevationTile
             {
                 SetTile(ElevationTileType.Left);            
                 UpdateExistingNeighbour(neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord], ElevationTileType.Right, neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation);
-
-                //neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.SetTile(ElevationTileType.Right);
-                
-                //if(neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].IsRendered)
-                //{
-                //    neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.Render();
-                //}
             }
         }
 
@@ -475,23 +517,14 @@ public struct ElevationTile
             {
                 neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
                 leftElevation = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.GetElevation();
-                LeftCorner = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.IsCornerOrEdge();
+                AboveCorner = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.IsCornerOrEdge();
             }
 
             if ( AboveCorner)
             {
                 SetTile(ElevationTileType.Above);
-              //  neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.SetTile(ElevationTileType.Below);
-                UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, 0], ElevationTileType.Below, neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation);
-                //if (neighbour.Chunks[chunk.LocalXCoord, 0].IsRendered)
-                //{
-                //    neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.Render();
-
-                //}
+                UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, 0], ElevationTileType.Below, neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation);         
             }
-
-            //  OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords + Vector2Int.up);
-            //  aboveElevation = overworldTile.Elevation;
         }
 
 
@@ -533,16 +566,7 @@ public struct ElevationTile
             {
                 SetTile(ElevationTileType.Below);
                 UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1], ElevationTileType.Above, neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation);
-                //neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.SetTile(ElevationTileType.Above);
-                //if (neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].IsRendered)
-                //{
-                //    neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.Render();
-
-                //}
             }
-
-            //OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords + Vector2Int.down);
-            // belowElevation = overworldTile.Elevation;
         }
 
 
