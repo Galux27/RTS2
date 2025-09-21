@@ -238,17 +238,25 @@ public class WorldChunkBatch : MonoBehaviour
         float belowElevation = belowTile.Elevation;
 
 
-
+        int r = Random.Range(0, 100);
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
-           // Chunks[x, 0].BlendHeight(belowElevation, Vector2Int.down);
-            Chunks[x, Chunks.GetLength(1)-1].BlendHeight(aboveElevation, Vector2Int.up);
+            if (r < 80)
+            {
+                // Chunks[x, 0].BlendHeight(belowElevation, Vector2Int.down);
+                Chunks[x, Chunks.GetLength(1) - 1].BlendHeight(aboveElevation, Vector2Int.up);
+            }
+            r = Random.Range(0, 100);
         }
 
-        for(int y = 0; y < Chunks.GetLength(1); y++)
+         for (int y = 0; y < Chunks.GetLength(1); y++)
         {
-           // Chunks[0, y].BlendHeight(leftElevation, Vector2Int.left);
-            Chunks[Chunks.GetLength(0)-1,y].BlendHeight(rightElevation, Vector2Int.right);
+            if (r <80)
+            {
+                // Chunks[0, y].BlendHeight(leftElevation, Vector2Int.left);
+                Chunks[Chunks.GetLength(0) - 1, y].BlendHeight(rightElevation, Vector2Int.right);
+            }
+            r = Random.Range(0, 100);
         }
     }
 
