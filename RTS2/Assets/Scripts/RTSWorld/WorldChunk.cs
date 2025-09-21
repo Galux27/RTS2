@@ -78,6 +78,61 @@ public class WorldChunk:ISerialize
         GeneratePathfindingNodes();
     }
 
+
+    public void BlendHeight(float newHeight,Vector2Int dirComingFrom)
+    {
+        if (dirComingFrom.y > 0)
+        {
+            int yStart = ChunkTiles.GetLength(1) - 1;// Random.Range(ChunkTiles.GetLength(1) - 1, Mathf.RoundToInt(ChunkTiles.GetLength(1) * .75f));
+            int yEnd = Random.Range(yStart-1, yStart-5);
+
+            for (int x = 0; x < ChunkTiles.GetLength(0); x++)
+            {
+                for(int y = yStart; y > yEnd; y--)
+                {
+                    ChunkTiles[x, y].SetElevation(newHeight);
+                }
+                yStart = ChunkTiles.GetLength(1) - 1;//Random.Range(ChunkTiles.GetLength(1) - 1, Mathf.RoundToInt(ChunkTiles.GetLength(1) * .75f));
+                yEnd =  Random.Range(yStart - 1, yStart - 5);
+            }
+        }else if (dirComingFrom.x > 0)
+        {
+            int xStart = ChunkTiles.GetLength(0) - 1;//Random.Range(ChunkTiles.GetLength(0) - 1, Mathf.RoundToInt(ChunkTiles.GetLength(0) * .75f));
+            int xEnd = Random.Range(xStart-1,xStart-5);
+            for (int y = 0; y < ChunkTiles.GetLength(1); y++)
+            {
+                for(int x = xStart; x > xEnd; x--)
+                {
+                    ChunkTiles[x, y].SetElevation(newHeight);
+
+                }
+                xStart = ChunkTiles.GetLength(0) - 1;//Random.Range(ChunkTiles.GetLength(0) - 1, Mathf.RoundToInt(ChunkTiles.GetLength(0) * .75f));
+                xEnd = Random.Range(xStart - 1, xStart - 5);
+            }
+        }
+
+
+        //Vector2Int corner = dirComingFrom * WorldChunkManager.ChunkSize;
+        //float maxDist = Vector2Int.Distance(new Vector2Int(WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize), Vector2Int.zero);
+        //Vector2Int coords = new Vector2Int();
+        //float dist = 0f;
+        //float rand = 0f;
+        //for(int x = 0; x < ChunkTiles.GetLength(0); x++)
+        //{
+        //    for (int y = 0; y < ChunkTiles.GetLength(1); y++)
+        //    {
+        //        coords.x = x;
+        //        coords.y = y;
+        //        dist = Vector2Int.Distance(coords, corner);
+        //        rand = UnityEngine.Random.Range(0f, maxDist);
+        //        if (rand < dist)
+        //        {
+        //            ChunkTiles[x, y].Elevation.SetElevation(Mathf.Lerp(newHeight, ChunkTiles[x, y].Elevation.GetElevation(), Mathf.InverseLerp(0f, maxDist, dist)));
+        //        }
+        //        }
+        //    }
+    }
+
     public void ClearElevationMarkers()
     {
         for (int x = 0; x < WorldChunkManager.ChunkSize; x++)

@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
-using UnityEngine.XR;
 
 public class ElevationController : MonoBehaviour
 {
@@ -77,7 +75,7 @@ public struct ElevationTile
 {
     public List<ElevationTileType> DirectionsForEdge;
     public Vector3Int coords;
-    public bool IsCorner, IsEdge;
+    public bool IsCorner, IsEdge,IsGoingUp;
     public float Elevation;
     public ElevationTile(Vector3Int coords, float elevation = 0f)
     {
@@ -88,7 +86,15 @@ public struct ElevationTile
         IsCorner = false;
         elevation = 0f;
         isDrawn = false;
+        IsGoingUp = true;
     }
+
+    public void SetIsEdge(bool val,float adjHeight)
+    {
+        IsEdge = val;
+        IsGoingUp = adjHeight > Elevation;
+    }
+
 
     public void SetTile(ElevationTileType tile)
     {
@@ -118,7 +124,7 @@ public struct ElevationTile
         return DirectionCount() > 0 && !IsCorner;
     }
 
-    public bool IsCornerOrEdge()
+    public bool IsCornerOrEdge(ElevationTile tile)
     {
         return IsCorner || IsEdge;
     }
@@ -230,9 +236,12 @@ public struct ElevationTile
        
     }
 
+
+
+
     public void WorkOutStartingEdges(WorldChunk chunk,int x,int y,WorldChunkBatch batch)
     {
-        float elevation = GetElevation();
+        float elevation = Mathf.Round( GetElevation());
         float aboveElevation = GetElevation();
         float belowElevation =  GetElevation();
         float leftElevation = GetElevation();
@@ -251,21 +260,21 @@ public struct ElevationTile
         }
         else if (chunk.LocalXCoord == WorldChunkManager.ChunksPerBatch - 1 && x == chunk.ChunkTiles.GetLength(0)-1)
         {
-            Vector2Int newBatch = batch.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
-            WorldChunkBatch neighbour = null;
-            bool RightCorner = false;
-            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
-            {
-                neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
-                rightElevation = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.GetElevation();
-                RightCorner = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.IsCornerOrEdge();
-            }
-            if (RightCorner)
-            {
-                SetTile(ElevationTileType.Right);
-                UpdateExistingNeighbour(neighbour.Chunks[0, chunk.LocalYCoord], ElevationTileType.Left, neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation);
-                neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.SetTile(ElevationTileType.Left);
-            }
+            //Vector2Int newBatch = batch.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+            //WorldChunkBatch neighbour = null;
+            //bool RightCorner = false;
+            //if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
+            //{
+            //    neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
+            //    rightElevation = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.GetElevation();
+            //    RightCorner = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.IsCornerOrEdge();
+            //}
+            //if (RightCorner)
+            //{
+            //    SetTile(ElevationTileType.Right);
+            //    UpdateExistingNeighbour(neighbour.Chunks[0, chunk.LocalYCoord], ElevationTileType.Left, neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation);
+            //    neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.SetTile(ElevationTileType.Left);
+            //}
         }
 
 
@@ -279,21 +288,21 @@ public struct ElevationTile
         }
         else if (chunk.LocalXCoord == 0 && x == 0)
         {
-            Vector2Int newBatch = batch.coords - new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
-            WorldChunkBatch neighbour = null;
-            bool LeftCorner = false;
-            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
-            {
-                neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
-                leftElevation = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.GetElevation();
-                LeftCorner = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.IsCornerOrEdge();
-            }
+            //Vector2Int newBatch = batch.coords - new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+            //WorldChunkBatch neighbour = null;
+            //bool LeftCorner = false;
+            //if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
+            //{
+            //    neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
+            //    leftElevation = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.GetElevation();
+            //    LeftCorner = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.IsCornerOrEdge();
+            //}
 
-            if (LeftCorner)
-            {
-                SetTile(ElevationTileType.Left);
-                UpdateExistingNeighbour(neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord], ElevationTileType.Right, neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation);
-            }
+            //if (LeftCorner)
+            //{
+            //    SetTile(ElevationTileType.Left);
+            //    UpdateExistingNeighbour(neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord], ElevationTileType.Right, neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation);
+            //}
         }
 
 
@@ -308,21 +317,21 @@ public struct ElevationTile
         }
         else if (chunk.LocalYCoord == WorldChunkManager.ChunksPerBatch - 1 && y == chunk.ChunkTiles.GetLength(1)-1)
         {
-            Vector2Int newBatch = batch.coords + new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
-            WorldChunkBatch neighbour = null;
-            bool AboveCorner = false;
-            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
-            {
-                neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
-                leftElevation = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.GetElevation();
-                AboveCorner = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.IsCornerOrEdge();
-            }
+            //Vector2Int newBatch = batch.coords + new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
+            //WorldChunkBatch neighbour = null;
+            //bool AboveCorner = false;
+            //if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
+            //{
+            //    neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
+            //    leftElevation = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.GetElevation();
+            //    AboveCorner = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.IsCornerOrEdge();
+            //}
 
-            if (AboveCorner)
-            {
-                SetTile(ElevationTileType.Above);
-                UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, 0], ElevationTileType.Below, neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation);
-            }
+            //if (AboveCorner)
+            //{
+            //    SetTile(ElevationTileType.Above);
+            //    UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, 0], ElevationTileType.Below, neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation);
+            //}
         }
 
 
@@ -336,54 +345,54 @@ public struct ElevationTile
         }
         else if (chunk.LocalYCoord == 0 && y == 0)
         {
-            Vector2Int newBatch = batch.coords - new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
-            WorldChunkBatch neighbour = null;
-            bool BelowCorner = false;
-            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
-            {
-                neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
-                belowElevation = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.GetElevation();
-                BelowCorner = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.IsCornerOrEdge();
+            //Vector2Int newBatch = batch.coords - new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
+            //WorldChunkBatch neighbour = null;
+            //bool BelowCorner = false;
+            //if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(newBatch))
+            //{
+            //    neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
+            //    belowElevation = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.GetElevation();
+            //    BelowCorner = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.IsCornerOrEdge();
 
 
-            }
-            if (BelowCorner)
-            {
-                SetTile(ElevationTileType.Below);
-                UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1], ElevationTileType.Above, neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation);
-            }
+            //}
+            //if (BelowCorner)
+            //{
+            //    SetTile(ElevationTileType.Below);
+            //    UpdateExistingNeighbour(neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1], ElevationTileType.Above, neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation);
+            //}
         }
 
 
        
 
        
-            if ((aboveElevation) > elevation)
+            if (Mathf.Round(aboveElevation) != elevation)
             {
             //SetTile(ElevationTileType.Above);
-                IsEdge = true;
+            SetIsEdge(true, aboveElevation);
 
             }
 
-        if ((belowElevation) > elevation)
+        if (Mathf.Round(belowElevation) != elevation)
             {
             //SetTile(ElevationTileType.Below);
-            IsEdge = true;
+            SetIsEdge(true, GetElevation());
 
         }
 
-        if ((rightElevation) > elevation)
+        if (Mathf.Round(rightElevation) != elevation)
             {
             //SetTile(ElevationTileType.Right);
             IsEdge = true;
-
+            SetIsEdge(true, GetElevation());
         }
 
-        if ((leftElevation) > elevation)
-            {
+        if (Mathf.Round(leftElevation) != elevation)
+        {
             //SetTile(ElevationTileType.Left);
             IsEdge = true;
-
+            SetIsEdge(true, GetElevation());
         }
     }
 
@@ -406,7 +415,7 @@ public struct ElevationTile
         if (x < chunk.ChunkTiles.GetLength(0) - 1)
         {
             rightElevation = chunk.ChunkTiles[x + 1, y].Elevation.GetElevation();
-            RightCorner = chunk.ChunkTiles[x + 1, y].Elevation.IsCornerOrEdge();
+            RightCorner = chunk.ChunkTiles[x + 1, y].Elevation.IsCornerOrEdge(this);
             if ( RightCorner)
             {
                 SetTile(ElevationTileType.Right);
@@ -416,7 +425,7 @@ public struct ElevationTile
         else if (chunk.LocalXCoord < WorldChunkManager.ChunksPerBatch - 1 && x == chunk.ChunkTiles.GetLength(0) - 1)
         {
             rightElevation = batch.Chunks[chunk.LocalXCoord + 1, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.GetElevation();
-            RightCorner = batch.Chunks[chunk.LocalXCoord + 1, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.IsCornerOrEdge();
+            RightCorner = batch.Chunks[chunk.LocalXCoord + 1, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.IsCornerOrEdge(this);
             if ( RightCorner)
             {
                 SetTile(ElevationTileType.Right);
@@ -432,7 +441,7 @@ public struct ElevationTile
             {
                 neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
                 rightElevation = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.GetElevation();
-                RightCorner = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.IsCornerOrEdge() ;
+                RightCorner = neighbour.Chunks[0, chunk.LocalYCoord].ChunkTiles[0, y].Elevation.IsCornerOrEdge(this) ;
             }
             if ( RightCorner)
             {
@@ -450,7 +459,7 @@ public struct ElevationTile
         if (x > 0)
         {
             leftElevation = chunk.ChunkTiles[x - 1, y].Elevation.GetElevation();
-            LeftCorner = chunk.ChunkTiles[x - 1, y].Elevation.IsCornerOrEdge();
+            LeftCorner = chunk.ChunkTiles[x - 1, y].Elevation.IsCornerOrEdge(this);
 
             if ( LeftCorner)
             {
@@ -460,7 +469,7 @@ public struct ElevationTile
         else if (chunk.LocalXCoord > 0 && x == 0)
         {
             leftElevation = batch.Chunks[chunk.LocalXCoord - 1, chunk.LocalYCoord].ChunkTiles[chunk.ChunkTiles.GetLength(0) - 1, y].Elevation.GetElevation();
-            LeftCorner = batch.Chunks[chunk.LocalXCoord - 1, chunk.LocalYCoord].ChunkTiles[chunk.ChunkTiles.GetLength(0) - 1, y].Elevation.IsCornerOrEdge();
+            LeftCorner = batch.Chunks[chunk.LocalXCoord - 1, chunk.LocalYCoord].ChunkTiles[chunk.ChunkTiles.GetLength(0) - 1, y].Elevation.IsCornerOrEdge(this);
 
             if (LeftCorner)
             {
@@ -476,7 +485,7 @@ public struct ElevationTile
             {
                 neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
                 leftElevation = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.GetElevation();
-                LeftCorner = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.IsCornerOrEdge();
+                LeftCorner = neighbour.Chunks[neighbour.Chunks.GetLength(0) - 1, chunk.LocalYCoord].ChunkTiles[WorldChunkManager.ChunkSize - 1, y].Elevation.IsCornerOrEdge(this);
             }
 
             if ( LeftCorner)
@@ -491,7 +500,7 @@ public struct ElevationTile
         if (y < chunk.ChunkTiles.GetLength(1) - 1)
         {
             aboveElevation = chunk.ChunkTiles[x, y + 1].Elevation.GetElevation();
-            AboveCorner = chunk.ChunkTiles[x, y + 1].Elevation.IsCornerOrEdge();
+            AboveCorner = chunk.ChunkTiles[x, y + 1].Elevation.IsCornerOrEdge(this);
 
             if ( AboveCorner)
             {
@@ -501,7 +510,7 @@ public struct ElevationTile
         else if (chunk.LocalYCoord < WorldChunkManager.ChunksPerBatch - 1 && y == chunk.ChunkTiles.GetLength(1) - 1)
         {
             aboveElevation = batch.Chunks[chunk.LocalXCoord, chunk.LocalYCoord + 1].ChunkTiles[x, 0].Elevation.GetElevation();
-            AboveCorner = batch.Chunks[chunk.LocalXCoord, chunk.LocalYCoord + 1].ChunkTiles[x, 0].Elevation.IsCornerOrEdge();
+            AboveCorner = batch.Chunks[chunk.LocalXCoord, chunk.LocalYCoord + 1].ChunkTiles[x, 0].Elevation.IsCornerOrEdge(this);
 
             if (AboveCorner)
             {
@@ -517,7 +526,7 @@ public struct ElevationTile
             {
                 neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
                 leftElevation = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.GetElevation();
-                AboveCorner = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.IsCornerOrEdge();
+                AboveCorner = neighbour.Chunks[chunk.LocalXCoord, 0].ChunkTiles[x, 0].Elevation.IsCornerOrEdge(this);
             }
 
             if ( AboveCorner)
@@ -531,7 +540,7 @@ public struct ElevationTile
         if (y > 0)
         {
             belowElevation = chunk.ChunkTiles[x, y - 1].Elevation.GetElevation();
-            BelowCorner = chunk.ChunkTiles[x, y - 1].Elevation.IsCornerOrEdge();
+            BelowCorner = chunk.ChunkTiles[x, y - 1].Elevation.IsCornerOrEdge(this);
             if ( BelowCorner)
             {
                 SetTile(ElevationTileType.Below);
@@ -542,7 +551,7 @@ public struct ElevationTile
         else if (chunk.LocalYCoord > 0 && y == 0)
         {
             belowElevation = batch.Chunks[chunk.LocalXCoord, chunk.LocalYCoord - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.GetElevation();
-            BelowCorner = batch.Chunks[chunk.LocalXCoord, chunk.LocalYCoord - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.IsCornerOrEdge();
+            BelowCorner = batch.Chunks[chunk.LocalXCoord, chunk.LocalYCoord - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.IsCornerOrEdge(this);
             if ( BelowCorner)
             {
                 SetTile(ElevationTileType.Below);
@@ -558,7 +567,7 @@ public struct ElevationTile
             {
                 neighbour = WorldChunkManager.Instance.ChunkBatches[newBatch];
                belowElevation = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.GetElevation();
-                BelowCorner = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.IsCornerOrEdge();
+                BelowCorner = neighbour.Chunks[chunk.LocalXCoord, neighbour.Chunks.GetLength(1) - 1].ChunkTiles[x, chunk.ChunkTiles.GetLength(1) - 1].Elevation.IsCornerOrEdge(this);
             
                 
             }
@@ -684,35 +693,35 @@ public struct ElevationTile
         {
             edgeCount++;
         }
-       if (edgeCount <4)
-        {
-            if (hasAbove)
-            {
-                IsCorner = true;
-               // SetTile(ElevationTileType.Above);
-            }
+       //if (edgeCount <4)
+       // {
+       //     if (hasAbove)
+       //     {
+       //         IsCorner = true;
+       //        // SetTile(ElevationTileType.Above);
+       //     }
 
-            if (hasBelow)
-            {
-                IsCorner = true;
+       //     if (hasBelow)
+       //     {
+       //         IsCorner = true;
 
-              //  SetTile(ElevationTileType.Below);
+       //       //  SetTile(ElevationTileType.Below);
 
-            }
+       //     }
 
-            if (hasLeft)
-            {
-                IsCorner = true;
+       //     if (hasLeft)
+       //     {
+       //         IsCorner = true;
 
-              //  SetTile(ElevationTileType.Left);
-            }
+       //       //  SetTile(ElevationTileType.Left);
+       //     }
 
-            if (hasRight)
-            {
-                IsCorner = true;
+       //     if (hasRight)
+       //     {
+       //         IsCorner = true;
 
-              //  SetTile(ElevationTileType.Right);
-            }
-        }
+       //       //  SetTile(ElevationTileType.Right);
+       //     }
+       // }
         }
     }

@@ -41,7 +41,7 @@ public class WorldChunkBatch : MonoBehaviour
                  
             }
         }
-
+        BlendEdgeElevations();
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
@@ -223,6 +223,33 @@ public class WorldChunkBatch : MonoBehaviour
         }
         IsRendered = (count==Chunks.GetLength(0)*Chunks.GetLength(1));
         return true;
+    }
+
+    void BlendEdgeElevations()
+    {
+        OverworldTile leftTile = OverworldGenerator.Instance.GetOverworldTile(OverworldCoords - new Vector2Int(1, 0));
+        OverworldTile rightTile = OverworldGenerator.Instance.GetOverworldTile(OverworldCoords + new Vector2Int(1, 0));
+        OverworldTile aboveTile = OverworldGenerator.Instance.GetOverworldTile(OverworldCoords + new Vector2Int(0, 1));
+        OverworldTile belowTile = OverworldGenerator.Instance.GetOverworldTile(OverworldCoords - new Vector2Int(0, 1));
+        OverworldTile myTile = OverworldGenerator.Instance.GetOverworldTile(OverworldCoords);
+        float leftElevation = leftTile.Elevation;
+        float rightElevation = rightTile.Elevation;
+        float aboveElevation = aboveTile.Elevation;
+        float belowElevation = belowTile.Elevation;
+
+
+
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+           // Chunks[x, 0].BlendHeight(belowElevation, Vector2Int.down);
+            Chunks[x, Chunks.GetLength(1)-1].BlendHeight(aboveElevation, Vector2Int.up);
+        }
+
+        for(int y = 0; y < Chunks.GetLength(1); y++)
+        {
+           // Chunks[0, y].BlendHeight(leftElevation, Vector2Int.left);
+            Chunks[Chunks.GetLength(0)-1,y].BlendHeight(rightElevation, Vector2Int.right);
+        }
     }
 
 
