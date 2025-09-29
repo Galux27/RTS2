@@ -14,11 +14,12 @@ public class DebugPathTesting : MonoBehaviour
     {
         
     }
-
+    public Vector2 batchCoords,TestCoords;
     void DrawNodesAroundPosition(Vector3 center)
     {
         Vector3 p = center;
         PathfindingNode node = null;
+        batchCoords = new Vector2(WorldChunkManager.NewCalculateBatchCoords(TestCoords.x), WorldChunkManager.NewCalculateBatchCoords( TestCoords.y));
         for(int x=-5;x<=5;x++)
         {
             for(int y=-5;y<=5;y++)

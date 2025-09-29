@@ -87,6 +87,7 @@ public struct ElevationTile
         elevation = 0f;
         isDrawn = false;
         IsGoingUp = true;
+        Passible = true;
     }
 
     public void SetIsEdge(bool val,float adjHeight)
@@ -94,12 +95,20 @@ public struct ElevationTile
         IsEdge = val;
         IsGoingUp = adjHeight > Elevation;
     }
-
+    bool Passible;
+    public bool IsPassible()
+    {
+        return Passible;
+    }
 
     public void SetTile(ElevationTileType tile)
     {
         if (!DirectionsForEdge.Contains(tile))
         {
+            if (tile != ElevationTileType.None)
+            {
+                Passible = false;
+            }
             DirectionsForEdge.Add(tile);
         }
     }

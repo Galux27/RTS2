@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Road : OverworldFeatureToWorldConverter
@@ -56,65 +55,85 @@ public class Road : OverworldFeatureToWorldConverter
                 target = center - new Vector2Int(0, 16 + WorldChunkManager.ChunkBatchSize / 2);
 
             }
-            Vector3 pos = new Vector3();
+            Vector2 pos = new Vector2();
 
-            if (center.x < target.x)
+            float dist = Vector3.Distance(pos, new Vector2(target.x,target.y));
+            Vector2 perpDir = Vector2.Perpendicular(target - pos) * (width/2f);
+            float inc = 1f / dist;
+            Vector2 leftEdge = Vector2.zero;
+            Vector2 rightEdge = Vector2.zero;
+            Vector2 curPos = new Vector2();
+            Vector2 finalPos = new Vector2();
+            for (float f = 0f; f < 1f; f += inc)
             {
-                for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
+                curPos = Vector2.Lerp(pos, target, f);
+                leftEdge = curPos + perpDir;
+                rightEdge=curPos + (perpDir*-1f);
+                for (float a = 0f; a < 1f; a += (1f / width))
                 {
-                    pos.y = y1;
-                    for (int x1 = center.x; x1 < target.x; x1++)
-                    {
-                        pos.x = x1;
-
-                        UpdateTile(toGenerateIn, pos, Key);
-                    }
+                    finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
+                    UpdateTile(toGenerateIn, finalPos, Key);
                 }
             }
-            else if (center.x > target.x)
-            {
-                for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
-                {
-                    pos.y = y1;
-                    for (int x1 = target.x; x1 < center.x; x1++)
-                    {
-                        pos.x = x1;
 
-                        UpdateTile(toGenerateIn, pos, Key);
-                    }
-                }
-            }
-            else
-            {
-                if (center.y < target.y)
-                {
-                    for (int x1 = center.x - HalfWidth(); x1 < center.x + HalfWidth(); x1++)
-                    {
-                        pos.x = x1;
 
-                        for (int y1 = center.y; y1 < target.y; y1++)
-                        {
-                            pos.y = y1;
-                            UpdateTile(toGenerateIn, pos, Key);
+            //if (center.x < target.x)
+            //{
+            //    for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
+            //    {
+            //        pos.y = y1;
+            //        for (int x1 = center.x; x1 < target.x; x1++)
+            //        {
+            //            pos.x = x1;
 
-                        }
-                    }
-                }
-                else if (center.y > target.y)
-                {
-                    for (int x1 = center.x - HalfWidth(); x1 < center.x + HalfWidth(); x1++)
-                    {
-                        pos.x = x1;
+            //            UpdateTile(toGenerateIn, pos, Key);
+            //        }
+            //    }
+            //}
+            //else if (center.x > target.x)
+            //{
+            //    for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
+            //    {
+            //        pos.y = y1;
+            //        for (int x1 = target.x; x1 < center.x; x1++)
+            //        {
+            //            pos.x = x1;
 
-                        for (int y1 = target.y; y1 < center.y; y1++)
-                        {
-                            pos.y = y1;
-                            UpdateTile(toGenerateIn, pos, Key);
+            //            UpdateTile(toGenerateIn, pos, Key);
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    if (center.y < target.y)
+            //    {
+            //        for (int x1 = center.x - HalfWidth(); x1 < center.x + HalfWidth(); x1++)
+            //        {
+            //            pos.x = x1;
 
-                        }
-                    }
-                    }
-                }
+            //            for (int y1 = center.y; y1 < target.y; y1++)
+            //            {
+            //                pos.y = y1;
+            //                UpdateTile(toGenerateIn, pos, Key);
+
+            //            }
+            //        }
+            //    }
+            //    else if (center.y > target.y)
+            //    {
+            //        for (int x1 = center.x - HalfWidth(); x1 < center.x + HalfWidth(); x1++)
+            //        {
+            //            pos.x = x1;
+
+            //            for (int y1 = target.y; y1 < center.y; y1++)
+            //            {
+            //                pos.y = y1;
+            //                UpdateTile(toGenerateIn, pos, Key);
+
+            //            }
+            //        }
+            //        }
+            //    }
         }
         toGenerateIn.RefreshGroundTiles();
     }

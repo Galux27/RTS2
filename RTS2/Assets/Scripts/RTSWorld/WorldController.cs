@@ -176,7 +176,7 @@ public class WorldController : MonoBehaviour
            // Debug.Log("Furniture Click: tile at " + x + "," + y + " was null");
             return false;
         }
-            return tile.traversable;
+        return tile.TileTraversable();
 
     }
 }
@@ -211,28 +211,22 @@ public class WorldTile:ISerialize
         {
             UpdateWaterLevel(10f);
         }
+        else
+        {
+            Pathfinding.UpdateNodeData(x, y, TileTraversable());
+        }
     }
+
+    public bool TileTraversable()
+    {
+        return traversable && Elevation.IsPassible() && WaterData.WaterLevel<1f;
+    }
+
 
     public void UpdateWaterLevel(float val)
     {
         WaterData.UpdateWaterLevel(val);
-        if (traversable)
-        {
-            if (WaterData.WaterLevel > 1f)
-            {
-                traversable = false;
-
-            }
-            else
-            {
-                traversable = true;
-            }
-        }
-        if (!traversable)
-        {
-            Pathfinding.UpdateNodeData(x, y, false); 
-        }
-
+        Pathfinding.UpdateNodeData(x, y, TileTraversable());
     }
 
 

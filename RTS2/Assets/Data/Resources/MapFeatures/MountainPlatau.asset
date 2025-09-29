@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: MountainPlatau
   m_EditorClassIdentifier: 
   FeatureName: Mountain Platau
-  MinWidth: 5
-  MaxWidth: 10
+  MinWidth: 12
+  MaxWidth: 19
   MinHeight: 3
   MaxHeight: 10
   Iterations: 6

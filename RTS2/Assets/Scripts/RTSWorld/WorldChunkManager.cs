@@ -299,6 +299,39 @@ public class WorldChunkManager : MonoBehaviour
         GetWorldChunkBatchFromPosition(bs.GetPosition()).OnBuildableFinished(bs);
        
     }
+
+   public static int NewCalculateBatchCoords(float val)
+    {
+        bool isNegative = val < 0;
+        
+       
+        if (isNegative)
+        {
+            int retVal = 0;
+            while (retVal > val)
+            {
+                retVal -= WorldChunkManager.ChunkBatchSize;
+            }
+            return retVal;
+        }
+        else
+        {
+            float chunkCoord = RoundToMultiple(val, WorldChunkManager.ChunkBatchSize);
+            if (chunkCoord > val)
+            {
+                chunkCoord -= ChunkBatchSize;
+            }
+            return Mathf.FloorToInt(chunkCoord);
+
+        }
+    }
+
+    static float RoundToMultiple(float value, float roundTo)
+    {
+        return  Mathf.Floor(value / roundTo) * roundTo;
+    }
+
+
     int localX = 0, localY = 0;
     int BatchCoordsX = 0, BatchCoordsY = 0;
     int ChunkCoordsX = 0, ChunkCoordsY = 0;
@@ -354,7 +387,7 @@ public class WorldChunkManager : MonoBehaviour
         ChunkCoordsY = Mathf.CeilToInt(localY / WorldChunkManager.ChunkSize);
         localY -= WorldChunkManager.ChunkSize * ChunkCoordsY;
 
-        chunkBatch = new Vector2Int(BatchCoordsX, BatchCoordsY);
+        chunkBatch = new Vector2Int(NewCalculateBatchCoords(x), NewCalculateBatchCoords(y));
         chunkCoords = new Vector2Int(Mathf.Clamp( ChunkCoordsX,0, WorldChunkManager.ChunkSize - 1), Mathf.Clamp(ChunkCoordsY, 0, WorldChunkManager.ChunkSize - 1));
         coords = new Vector2Int(Mathf.Clamp(localX, 0, WorldChunkManager.ChunkSize-1), Mathf.Clamp(localY, 0, WorldChunkManager.ChunkSize - 1));
     }
