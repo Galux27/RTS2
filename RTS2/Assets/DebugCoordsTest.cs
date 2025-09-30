@@ -13,6 +13,7 @@ public class DebugCoordsTest : MonoBehaviour
     public int inBatchX, inBatchY;
     public int BatchCoordsX, BatchCoordsY;
     public int ChunkCoordsX, ChunkCoordsY;
+    public int NewBatchX,NewBatchY;
     // Update is called once per frame
     void Update()
     {
@@ -38,6 +39,8 @@ public class DebugCoordsTest : MonoBehaviour
         }
         ChunkCoordsY = Mathf.CeilToInt(inBatchY / WorldChunkManager.ChunkSize);
         inBatchY -= WorldChunkManager.ChunkSize * ChunkCoordsY;
+        NewBatchX = WorldChunkManager.NewCalculateBatchCoords(this.transform.position.x);
+        NewBatchY = WorldChunkManager.NewCalculateBatchCoords(this.transform.position.y);
 
     }
 

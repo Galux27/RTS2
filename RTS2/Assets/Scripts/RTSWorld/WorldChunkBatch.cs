@@ -25,6 +25,12 @@ public class WorldChunkBatch : MonoBehaviour
 
     }
 
+    public Vector2Int Center()
+    {
+        return coords+new Vector2Int(WorldChunkManager.ChunkBatchSize/2, WorldChunkManager.ChunkBatchSize/2);
+    }
+
+
     public void ApplyOverworldHeight(float height)
     {
         for (int x = 0; x < Chunks.GetLength(0); x++)
@@ -492,6 +498,12 @@ public class WorldChunkBatch : MonoBehaviour
     }
 
     Vector2Int chunkBatch, chunk, local;
+    public string GetDebugOut()
+    {
+        return chunkBatch.ToString() + "::" + chunk.ToString() + "::" + local.ToString();
+    }
+
+
     public WorldTile GetTileFromPosition(Vector3 pos)
     {
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out chunkBatch, out chunk, out local);

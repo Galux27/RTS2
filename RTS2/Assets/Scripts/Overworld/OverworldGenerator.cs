@@ -153,7 +153,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                 {
                     //coords = new Vector2Int(x, y);
 
-                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.River) && OverworldTiles[x, y].RiverPoint.x > OverworldTiles[x, y].RiverPoint.y-10)
+                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.MajorRoad))
                     {
                         Debug.Log("water at " + x + "," + y +" river coords " + OverworldTiles[x, y].RiverPoint);
 

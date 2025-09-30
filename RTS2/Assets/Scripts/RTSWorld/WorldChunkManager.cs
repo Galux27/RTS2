@@ -352,17 +352,17 @@ public class WorldChunkManager : MonoBehaviour
         ChunkCoordsX = Mathf.CeilToInt(localX / WorldChunkManager.ChunkSize);
         if (xMod != 0)
         {
-            BatchCoordsX = Mathf.FloorToInt(x - localX);
+            BatchCoordsX = NewCalculateBatchCoords(x);
             if (x < 0)
             {
-                BatchCoordsX -= WorldChunkManager.ChunkBatchSize;
+              //  BatchCoordsX -= WorldChunkManager.ChunkBatchSize;
                 localX = WorldChunkManager.ChunkBatchSize + localX;
 
             }
         }
         else
         {
-            BatchCoordsX = Mathf.RoundToInt( x);
+            BatchCoordsX = NewCalculateBatchCoords(x);
         }
        
         ChunkCoordsX = Mathf.CeilToInt(localX / WorldChunkManager.ChunkSize);
@@ -372,22 +372,22 @@ public class WorldChunkManager : MonoBehaviour
         localY = yMod;
         if (yMod != 0)
         {
-            BatchCoordsY = Mathf.FloorToInt(y - localY);
+            BatchCoordsY = NewCalculateBatchCoords(y);
             if (y < 0)
             {
-                BatchCoordsY -= WorldChunkManager.ChunkBatchSize;
+               // BatchCoordsY -= WorldChunkManager.ChunkBatchSize;
                 localY = WorldChunkManager.ChunkBatchSize + localY;
             }
         }
         else
         {
-            BatchCoordsY = Mathf.RoundToInt(y);
+            BatchCoordsY = NewCalculateBatchCoords(y);
         }
        
         ChunkCoordsY = Mathf.CeilToInt(localY / WorldChunkManager.ChunkSize);
         localY -= WorldChunkManager.ChunkSize * ChunkCoordsY;
 
-        chunkBatch = new Vector2Int(NewCalculateBatchCoords(x), NewCalculateBatchCoords(y));
+        chunkBatch = new Vector2Int(BatchCoordsX, BatchCoordsY);
         chunkCoords = new Vector2Int(Mathf.Clamp( ChunkCoordsX,0, WorldChunkManager.ChunkSize - 1), Mathf.Clamp(ChunkCoordsY, 0, WorldChunkManager.ChunkSize - 1));
         coords = new Vector2Int(Mathf.Clamp(localX, 0, WorldChunkManager.ChunkSize-1), Mathf.Clamp(localY, 0, WorldChunkManager.ChunkSize - 1));
     }
