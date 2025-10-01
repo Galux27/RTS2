@@ -63,6 +63,7 @@ public class MapGenerator : MonoBehaviour
                 OverworldConverters[overworldTile.Features[x]].GenerateFeature(toGenerateIn);
             }
         }
+        toGenerateIn.GenerateRoads();
         toGenerateIn.NeedsGeneration = false;
         toGenerateIn.SetChunksLoaded();
     }

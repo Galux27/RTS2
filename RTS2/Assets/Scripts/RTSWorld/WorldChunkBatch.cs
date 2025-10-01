@@ -14,6 +14,8 @@ public class WorldChunkBatch : MonoBehaviour
     public bool NeedsGeneration = true;
     public Vector2Int OverworldCoords = new Vector2Int();
     public List<WorldTileBlend> BlendList=new List<WorldTileBlend>();
+    public List<BatchRoad> Roads = new List<BatchRoad>();
+
     public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords,Vector2Int overworld)
     {
         GameObject g = new GameObject();
@@ -60,6 +62,24 @@ public class WorldChunkBatch : MonoBehaviour
     public void GenerateWorldTileBlends()
     {
         WorldTileBlending.OnWorldChunkBatchGenerated(this);
+    }
+
+    public void AddRoad(BatchRoad road)
+    {
+        Roads.Add(road);
+    }
+
+    public void GenerateRoads()
+    {
+        for(int x = 0; x < Roads.Count; x++)
+        {
+            Roads[x].GenerateRoad();
+        }
+
+        for (int x = 0; x < Roads.Count; x++)
+        {
+            Roads[x].RenderRoad(this);
+        }
     }
 
     public void AddWorldBlend(WorldTileBlend blend)
@@ -497,7 +517,7 @@ public class WorldChunkBatch : MonoBehaviour
         return GetTileFromPosition(new Vector3(pos.x, pos.y));
     }
 
-    Vector2Int chunkBatch, chunk, local;
+    public static Vector2Int chunkBatch, chunk, local;
     public string GetDebugOut()
     {
         return chunkBatch.ToString() + "::" + chunk.ToString() + "::" + local.ToString();

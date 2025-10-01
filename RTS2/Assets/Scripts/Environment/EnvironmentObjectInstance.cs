@@ -125,7 +125,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         return position;
     }
 
-    void DestroyInstance()
+    public void DestroyInstance()
     {
         //if (Drawn)
         //{

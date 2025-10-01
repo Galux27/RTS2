@@ -59,94 +59,32 @@ public class Road : OverworldFeatureToWorldConverter
 
             }
             Vector2 pos = center;
-            float dist = Vector2.Distance(pos, new Vector2(target.x,target.y));
-            Vector2 dir = target - pos;
-            dir = dir.normalized;
-            Vector2 perpDir = Vector2.Perpendicular(target - pos).normalized * HalfWidth();
-            float inc = 1f / dist;
-            Vector2 leftEdge = Vector2.zero;
-            Vector2 rightEdge = Vector2.zero;
-            Vector2 curPos = new Vector2();
-            Vector2 finalPos = new Vector2();
-            int count = 0, success = 0;
-            for (float f = 0f; f < 1f; f += inc)
-            {
-                curPos = Vector2.Lerp(pos, target, f);
-                leftEdge = curPos + perpDir;
-                rightEdge=curPos + (perpDir*-1f);
-                //if(UpdateTile(toGenerateIn, curPos, Key))
-                //{
-                //    success++;
-                //}
-                //count++;
-                for (float a = 0f; a < 1f; a += (1f / (float)width))
-                {
-                    finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
-                    UpdateTile(toGenerateIn, finalPos, Key);
-                }
-            }
-            Debug.Log("Generating road from " + pos + " to " + target + " in batch " + toGenerateIn.coords + " inc " + inc+" count "+ count+"/"+success+" dir "+ dir+" perp "+ perpDir);
+            toGenerateIn.AddRoad(new BatchRoad(GetRoadTypeFromOverworldFeature(myFeature), pos, target,Key,width));
+            Debug.Log("Generating road from " + pos + " to " + target + " in batch " + toGenerateIn.coords);
 
-
-            //if (center.x < target.x)
-            //{
-            //    for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
-            //    {
-            //        pos.y = y1;
-            //        for (int x1 = center.x; x1 < target.x; x1++)
-            //        {
-            //            pos.x = x1;
-
-            //            UpdateTile(toGenerateIn, pos, Key);
-            //        }
-            //    }
-            //}
-            //else if (center.x > target.x)
-            //{
-            //    for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
-            //    {
-            //        pos.y = y1;
-            //        for (int x1 = target.x; x1 < center.x; x1++)
-            //        {
-            //            pos.x = x1;
-
-            //            UpdateTile(toGenerateIn, pos, Key);
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    if (center.y < target.y)
-            //    {
-            //        for (int x1 = center.x - HalfWidth(); x1 < center.x + HalfWidth(); x1++)
-            //        {
-            //            pos.x = x1;
-
-            //            for (int y1 = center.y; y1 < target.y; y1++)
-            //            {
-            //                pos.y = y1;
-            //                UpdateTile(toGenerateIn, pos, Key);
-
-            //            }
-            //        }
-            //    }
-            //    else if (center.y > target.y)
-            //    {
-            //        for (int x1 = center.x - HalfWidth(); x1 < center.x + HalfWidth(); x1++)
-            //        {
-            //            pos.x = x1;
-
-            //            for (int y1 = target.y; y1 < center.y; y1++)
-            //            {
-            //                pos.y = y1;
-            //                UpdateTile(toGenerateIn, pos, Key);
-
-            //            }
-            //        }
-            //        }
-            //    }
         }
         toGenerateIn.RefreshGroundTiles();
+    }
+
+    RoadType GetRoadTypeFromOverworldFeature(OverworldFeature overworldFeature)
+    {
+        if (overworldFeature == OverworldFeature.MajorRoad)
+        {
+            return RoadType.MajorRoad;
+        }else if (overworldFeature == OverworldFeature.MinorRoad)
+        {
+            return RoadType.MinorRoad;
+
+        }
+        else if (overworldFeature == OverworldFeature.Backroad)
+        {
+            return RoadType.Backroad;
+
+        }
+        else
+        {
+            return RoadType.None;
+        }
     }
 
     bool UpdateTile(WorldChunkBatch toGenerateIn,Vector3 pos, string type)

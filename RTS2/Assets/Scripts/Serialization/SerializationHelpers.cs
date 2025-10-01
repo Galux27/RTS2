@@ -187,13 +187,7 @@ public static class SerializationHelpers
         }
         List<string> dataWriting = new List<string>();
         string name = "_" + wb.coords.x + "_" + wb.coords.y + WorldSectionExtension;
-        for (int x = 0; x < wb.Chunks.GetLength(0); x++)
-        {
-            for (int y = 0; y < wb.Chunks.GetLength(1); y++)
-            {
-                dataWriting.Add(wb.Chunks[x, y].Serialize().Data);
-            }
-        }
+        SerializeWorldBatch(wb, ref dataWriting); 
         WriteToFile(path, name, dataWriting);
         WorldChunkManager.Instance.AddChunkStoredInWorkingCopy(wb.coords);
     }
@@ -209,21 +203,24 @@ public static class SerializationHelpers
             if (WorldChunkManager.Instance.DoesChunkExistInWorkingCopy(kvp.Key) == false)
             {
                 name = "_" + kvp.Value.coords.x + "_" + kvp.Value.coords.y + WorldSectionExtension;
-                for (int x = 0; x < kvp.Value.Chunks.GetLength(0); x++)
-                {
-                    for (int y = 0; y < kvp.Value.Chunks.GetLength(1); y++)
-                    {
-                        dataWriting.Add(kvp.Value.Chunks[x, y].Serialize().Data);
-                    }
-                }
+                SerializeWorldBatch(kvp.Value,ref dataWriting);
                 WriteToFile(path, name, dataWriting);
                 dataWriting.Clear();
             }
         }
-
-
-            EasyStopwatch.StopStopwatch();
+        EasyStopwatch.StopStopwatch();
         Debug.Log("Saving Chunks took " + EasyStopwatch.GetStopwatchElapsedTime());
+    }
+
+    static void SerializeWorldBatch(WorldChunkBatch toSerialize,ref List<string> toPopulate)
+    {
+        for (int x = 0; x < toSerialize.Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < toSerialize.Chunks.GetLength(1); y++)
+            {
+                toPopulate.Add(toSerialize.Chunks[x, y].Serialize().Data);
+            }
+        }
     }
 
     public static List<string> ReadFile(string path)
