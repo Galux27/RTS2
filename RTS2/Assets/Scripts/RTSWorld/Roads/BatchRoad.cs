@@ -41,6 +41,9 @@ public class BatchRoad : ISerialize
             dir = dir.normalized;
             Vector2 perpDir = Vector2.Perpendicular(target - pos).normalized * HalfWidth();
             float inc = 1f / dist;
+            inc /= 2f;
+            float widthInc = 1f / Width;
+            widthInc /= 2f;
             Vector2 leftEdge = Vector2.zero;
             Vector2 rightEdge = Vector2.zero;
             Vector2 curPos = new Vector2();
@@ -51,7 +54,7 @@ public class BatchRoad : ISerialize
                 leftEdge = curPos + perpDir;
                 rightEdge = curPos + (perpDir * -1f);
                
-                for (float a = 0f; a < 1f; a += (1f / (float)Width))
+                for (float a = 0f; a < 1f; a += widthInc)
                 {
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
                     UpdateTile(batch, finalPos, Key);
@@ -104,6 +107,32 @@ public class BatchRoad : ISerialize
     {
         throw new System.NotImplementedException();
     }
+}
+
+public class Backroad : BatchRoad
+{
+    public Backroad(RoadType type, Vector2 start,Vector2 end,string key,int width): base(type, start, end, key, width)
+    {
+        
+    }
+
+    public override void GenerateRoad()
+    {
+        Segments = new List<RoadSegment>();
+        List<PathfindingNode> path = Pathfinding.FindPath(RoadStart, RoadEnd);
+        if (path != null && path.Count > 0)
+        {
+            for (int x = 0; x < path.Count - 1; x++)
+            {
+                Segments.Add(new RoadSegment(path[x].worldPos, path[x + 1].worldPos));
+            }
+        }
+        else
+        {
+            base.GenerateRoad();
+        }
+    }
+
 }
 
 public enum RoadType

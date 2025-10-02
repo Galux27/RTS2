@@ -41,25 +41,25 @@ public class Road : OverworldFeatureToWorldConverter
             
             if (AdjacentWithSameFeature[x].X > toGenerateIn.OverworldCoords.x)
             {
-                target = center + new Vector2Int(WorldChunkManager.ChunkSize + (WorldChunkManager.ChunkBatchSize / 2), 0);
+                target = center + new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2)-1, 0);
             }
             else if (AdjacentWithSameFeature[x].X < toGenerateIn.OverworldCoords.x)
             {
-                target = center - new Vector2Int(WorldChunkManager.ChunkSize + (WorldChunkManager.ChunkBatchSize / 2), 0);
+                target = center - new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2)-1, 0);
 
             }
             else if (AdjacentWithSameFeature[x].Y > toGenerateIn.OverworldCoords.y)
             {
-                target = center + new Vector2Int(0,WorldChunkManager.ChunkSize+( WorldChunkManager.ChunkBatchSize / 2));
+                target = center + new Vector2Int(0,( WorldChunkManager.ChunkBatchSize / 2)-1);
 
             }
             else if (AdjacentWithSameFeature[x].Y < toGenerateIn.OverworldCoords.y)
             {
-                target = center - new Vector2Int(0, WorldChunkManager.ChunkSize + (WorldChunkManager.ChunkBatchSize / 2));
+                target = center - new Vector2Int(0,  (WorldChunkManager.ChunkBatchSize / 2)-1);
 
             }
             Vector2 pos = center;
-            toGenerateIn.AddRoad(new BatchRoad(GetRoadTypeFromOverworldFeature(myFeature), pos, target,Key,width));
+            toGenerateIn.AddRoad(new Backroad(GetRoadTypeFromOverworldFeature(myFeature), pos, target,Key,width));
             Debug.Log("Generating road from " + pos + " to " + target + " in batch " + toGenerateIn.coords);
 
         }

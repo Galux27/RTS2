@@ -162,6 +162,8 @@ public static class Pathfinding
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos);
+        Debug.Log("Starting path from " + startPos + " to " + targetPos + " start null " + (seekerNode == null) + "," + (targetNode == null));
+
         openSet.Clear();
         closedSet.Clear();
 
