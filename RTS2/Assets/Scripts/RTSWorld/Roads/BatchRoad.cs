@@ -72,10 +72,9 @@ public class BatchRoad : ISerialize
             {
                 OnTile.DestroyInstance();
             }
-
-            
+            OverworldTile tile= OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
+            toEdit.Elevation.SetTileToWalkable(tile.Elevation);
             toEdit.UpdateWaterLevel(toEdit.WaterData.WaterLevel * -1f);
-
             toEdit.UpdateTileType(type);
             toEdit.CanPutDecorationsOn = false;
             return true;
@@ -134,6 +133,59 @@ public class Backroad : BatchRoad
     }
 
 }
+
+public class MinorRoad : BatchRoad
+{
+    public MinorRoad(RoadType type, Vector2 start, Vector2 end, string key, int width) : base(type, start, end, key, width)
+    {
+
+    }
+
+    public override void GenerateRoad()
+    {
+        Segments = new List<RoadSegment>();
+        List<PathfindingNode> path = Pathfinding.FindPath(RoadStart, RoadEnd);
+
+        if (path != null && path.Count > 0)
+        {
+            for (float f = 0f; f < 1f; f += .1f)
+            {
+                int startIndex = (int)Mathf.Lerp(0, path.Count - 1, f);
+                int endIndex = (int)Mathf.Lerp(0, path.Count - 1, f + .1f);
+                Segments.Add(new RoadSegment(path[startIndex].worldPos, path[endIndex].worldPos));
+            }
+        }
+        else
+        {
+            base.GenerateRoad();
+        }
+    }
+
+    public override void RenderRoad(WorldChunkBatch batch)
+    {
+        base.RenderRoad(batch);
+    }
+}
+
+public class MajorRoad : BatchRoad
+{
+    public MajorRoad(RoadType type, Vector2 start, Vector2 end, string key, int width) : base(type, start, end, key, width)
+    {
+
+    }
+
+    public override void GenerateRoad()
+    {
+        base.GenerateRoad();
+    }
+
+    public override void RenderRoad(WorldChunkBatch batch)
+    {
+        base.RenderRoad(batch);
+    }
+}
+
+
 
 public enum RoadType
 {

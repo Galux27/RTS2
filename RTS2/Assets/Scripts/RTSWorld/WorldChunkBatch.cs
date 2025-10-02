@@ -80,6 +80,8 @@ public class WorldChunkBatch : MonoBehaviour
         {
             Roads[x].RenderRoad(this);
         }
+        RefreshElevationTiles();
+        
     }
 
     public void AddWorldBlend(WorldTileBlend blend)

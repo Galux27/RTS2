@@ -41,30 +41,54 @@ public class Road : OverworldFeatureToWorldConverter
             
             if (AdjacentWithSameFeature[x].X > toGenerateIn.OverworldCoords.x)
             {
-                target = center + new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2)-1, 0);
+                target = center + new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2), 0);
             }
             else if (AdjacentWithSameFeature[x].X < toGenerateIn.OverworldCoords.x)
             {
-                target = center - new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2)-1, 0);
+                target = center - new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2), 0);
 
             }
             else if (AdjacentWithSameFeature[x].Y > toGenerateIn.OverworldCoords.y)
             {
-                target = center + new Vector2Int(0,( WorldChunkManager.ChunkBatchSize / 2)-1);
+                target = center + new Vector2Int(0,( WorldChunkManager.ChunkBatchSize / 2));
 
             }
             else if (AdjacentWithSameFeature[x].Y < toGenerateIn.OverworldCoords.y)
             {
-                target = center - new Vector2Int(0,  (WorldChunkManager.ChunkBatchSize / 2)-1);
+                target = center - new Vector2Int(0,  (WorldChunkManager.ChunkBatchSize / 2));
 
             }
             Vector2 pos = center;
-            toGenerateIn.AddRoad(new Backroad(GetRoadTypeFromOverworldFeature(myFeature), pos, target,Key,width));
+            AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), pos, target, Key, width);
             Debug.Log("Generating road from " + pos + " to " + target + " in batch " + toGenerateIn.coords);
 
         }
         toGenerateIn.RefreshGroundTiles();
     }
+
+    void AddRoad(WorldChunkBatch toAddTo,RoadType type,Vector2 start,Vector2 end,string key,int width)
+    {
+        switch (type)
+        {
+            case RoadType.None:
+                break;
+            case RoadType.MajorRoad:
+                toAddTo.AddRoad(new MajorRoad(type, start, end, Key, width));
+
+                break;
+            case RoadType.MinorRoad:
+                toAddTo.AddRoad(new MinorRoad(type, start, end, Key, width));
+
+                break;
+            case RoadType.Backroad:
+                toAddTo.AddRoad(new Backroad(type, start, end, Key, width));
+
+                break;
+            default:
+                break;
+        }
+    }
+
 
     RoadType GetRoadTypeFromOverworldFeature(OverworldFeature overworldFeature)
     {

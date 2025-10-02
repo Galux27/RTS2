@@ -101,6 +101,15 @@ public struct ElevationTile
         return Passible;
     }
 
+    public void SetTileToWalkable(float elevation)
+    {
+        DirectionsForEdge.Clear();
+        SetTile(ElevationTileType.None);
+        Passible = true;
+        Elevation = elevation;
+    }
+
+
     public void SetTile(ElevationTileType tile)
     {
         if (!DirectionsForEdge.Contains(tile))
