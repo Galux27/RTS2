@@ -441,7 +441,13 @@ public class WorldChunkBatch : MonoBehaviour
 
             }
         }
-
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].UpdateElevationType(this);
+            }
+        }
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
@@ -499,6 +505,15 @@ public class WorldChunkBatch : MonoBehaviour
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
+                Chunks[x, y].UpdateElevationType(this);
+            }
+        }
+
+
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
                 Chunks[x, y].HasChunkFinishedLoading = true;
             }
         }
@@ -526,6 +541,7 @@ public class WorldChunkBatch : MonoBehaviour
 
                 //RDT; 1 ^ RDE; 128,384,128,384,^
             }
+
 
         }
 

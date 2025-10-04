@@ -419,9 +419,9 @@ public class WorldChunk:ISerialize
                 }else if (WallSegments[x, y].HasDoor)
                 {
                     PathfindingNodes[x, y].AddModifier(new PathNodeModifier_Door());
-                }else if (ChunkTiles[x, y].TileTraversable())
+                }else
                 {
-                    PathfindingNodes[x, y].UpdatePassable(false);
+                    PathfindingNodes[x, y].UpdatePassable(ChunkTiles[x, y].TileTraversable());
                 }
             }
         }

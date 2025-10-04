@@ -40,6 +40,8 @@ public class BatchRoad : ISerialize
         RoadStart = start;
         RoadEnd = end;
         this.Width= width;
+        Segments = new List<RoadSegment>();
+        Segments.Add(new RoadSegment(start, end));
     }
 
 

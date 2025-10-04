@@ -145,6 +145,17 @@ public static class Pathfinding
     }
 
 
+    public static WorldTile GetTileFromPosition(Vector3 Position, Unit performing = null, bool debug = false)
+    {
+
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(Position.x, Position.y, out batch, out chunk, out local);
+        if (!ValidateCoords())
+        {
+            return null;
+        }
+        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[local.x, local.y];
+    }
+
     public static List<PathfindingNode> FindPath(Vector2Int start,Vector2Int end)
     {
         return FindPath(new Vector3(start.x, start.y, 0), new Vector3(end.x, end.y, 0));

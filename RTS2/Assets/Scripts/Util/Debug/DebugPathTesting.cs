@@ -18,26 +18,47 @@ public class DebugPathTesting : MonoBehaviour
     void DrawNodesAroundPosition(Vector3 center)
     {
         Vector3 p = center;
-        PathfindingNode node = null;
+       WorldTile node = null;
+        PathfindingNode pathNode = null;
         batchCoords = new Vector2(WorldChunkManager.NewCalculateBatchCoords(TestCoords.x), WorldChunkManager.NewCalculateBatchCoords( TestCoords.y));
         for(int x=-5;x<=5;x++)
         {
             for(int y=-5;y<=5;y++)
             {
                 p = center + new Vector3(x, y, 0);
-                node = Pathfinding.GetNodeFromPosition(p);
+              
+                node = Pathfinding.GetTileFromPosition(p);
+                pathNode = Pathfinding.GetNodeFromPosition(p);
                 if(node != null)
                 {
-                    for (int i = 0; i < node.neighbours.Count; i++)
+                    
+                    for (int i = 0; i < pathNode.neighbours.Count; i++)
                     {
-                        if (node.IsPassable)
+                        if (node.TileTraversable())
                         {
-                            Debug.DrawLine(node.worldPos, node.neighbours[i].worldPos, Color.blue);
+                            if (pathNode.IsPassable == false)
+                            {
+                                Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].worldPos, Color.green);
+
+                            }
+                            else
+                            {
+                                Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].worldPos, Color.blue);
+
+                            }
                         }
                         else
                         {
-                            Debug.DrawLine(node.worldPos, node.neighbours[i].worldPos, Color.magenta);
+                            if (node.Elevation.IsPassible())
+                            {
+                                Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].worldPos, Color.red);
 
+                            }
+                            else
+                            {
+                                Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].worldPos, Color.magenta);
+
+                            }
                         }
                     }
                 }

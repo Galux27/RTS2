@@ -61,6 +61,7 @@ public static class DataReaders
                 }
             }
         }
+        chunk.UpdateTileWalkable();
         
 
         keyValueSplit = splitListFromData[3].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
@@ -599,6 +600,7 @@ public static class DataReaders
         retVal.tileType = tileType;
         retVal.WaterData = new WaterData(waterLevel);
         retVal.Elevation = new ElevationTile(new Vector3Int(coords.x, coords.y, 0), elevation);
+        retVal.SetElevation(elevation);
         return retVal;
     }
 }
