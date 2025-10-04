@@ -221,6 +221,12 @@ public static class SerializationHelpers
                 toPopulate.Add(toSerialize.Chunks[x, y].Serialize().Data);
             }
         }
+
+        for(int x = 0; x < toSerialize.Roads.Count; x++)
+        {
+            toPopulate.Add(toSerialize.Roads[x].Serialize().Data);
+        }
+
     }
 
     public static List<string> ReadFile(string path)
@@ -368,6 +374,11 @@ public class DataKeys
     public const string IDMax = "ID_MAX";
     public const string InventoryUID = "INVID";
     public const string Inventory = "INV";
+    public const string Road = "RD";
+    public const string RoadType = "RDT";
+    public const string RoadElement = "RDE";
+    public const string RoadWidth = "RDW";
+
 
     public const string OverElevation = "O_ELE";
     public const string OverFeature = "O_FET";
@@ -496,6 +507,28 @@ public static class SerializeDataHelpers
             }
             stored.Add(DATA_ELEMENT_SPLIT.ToString());
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), stored);
+        }
+        else if (key == DataKeys.RoadType)
+        {
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), ((int)(RoadType)value).ToString());
+        }
+        else if (key == DataKeys.RoadWidth)
+        {
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString());
+        }
+        else if (key == DataKeys.RoadElement)
+        {
+            List<string> data = new List<string>();
+
+            List<RoadSegment> segments = (List<RoadSegment>)value;
+            for(int x = 0; x < segments.Count; x++)
+            {
+                data.Add(SerializeVector2Int(segments[x].StartInt()));
+                data.Add(DATA_SPLIT.ToString());
+                data.Add(SerializeVector2Int(segments[x].EndInt()));
+                data.Add(DATA_SPLIT.ToString());
+            }
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), data);
         }
         else if (key == DataKeys.Behaviour)
         {

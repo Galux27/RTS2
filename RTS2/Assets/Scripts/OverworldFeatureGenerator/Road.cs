@@ -59,29 +59,29 @@ public class Road : OverworldFeatureToWorldConverter
 
             }
             Vector2 pos = center;
-            AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), pos, target, Key, width);
+            AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), pos, target, width);
             Debug.Log("Generating road from " + pos + " to " + target + " in batch " + toGenerateIn.coords);
 
         }
         toGenerateIn.RefreshGroundTiles();
     }
 
-    void AddRoad(WorldChunkBatch toAddTo,RoadType type,Vector2 start,Vector2 end,string key,int width)
+    void AddRoad(WorldChunkBatch toAddTo,RoadType type,Vector2 start,Vector2 end,int width)
     {
         switch (type)
         {
             case RoadType.None:
                 break;
             case RoadType.MajorRoad:
-                toAddTo.AddRoad(new MajorRoad(type, start, end, Key, width));
+                toAddTo.AddRoad(new MajorRoad(type, start, end, width));
 
                 break;
             case RoadType.MinorRoad:
-                toAddTo.AddRoad(new MinorRoad(type, start, end, Key, width));
+                toAddTo.AddRoad(new MinorRoad(type, start, end, width));
 
                 break;
             case RoadType.Backroad:
-                toAddTo.AddRoad(new Backroad(type, start, end, Key, width));
+                toAddTo.AddRoad(new Backroad(type, start, end, width));
 
                 break;
             default:

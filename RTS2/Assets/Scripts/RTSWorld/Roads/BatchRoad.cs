@@ -10,17 +10,36 @@ public class BatchRoad : ISerialize
     public int Width;
     public string Key;
     public RoadType type;
+    public string GetRoadTileType()
+    {
+        switch (type)
+        {
+            case RoadType.MajorRoad:
+                return "MajorRoad";
+                break;
+            case RoadType.MinorRoad:
+                return "MinorRoad";
+                break;
+            case RoadType.Backroad:
+                return "Mud";
+                break;
+            default:
+                break;
+        }
+        return "Error";
+    }
+
+
     int HalfWidth()
     {
         return Mathf.Max(1, Width / 2);
     }
-    public BatchRoad(RoadType type,Vector2 start,Vector2 end,string key,int width)
+    public BatchRoad(RoadType type,Vector2 start,Vector2 end,int width)
     {
         this.type = type;
         RoadStart = start;
         RoadEnd = end;
         this.Width= width;
-        this.Key = key;
     }
 
 
@@ -57,7 +76,7 @@ public class BatchRoad : ISerialize
                 for (float a = 0f; a < 1f; a += widthInc)
                 {
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
-                    UpdateTile(batch, finalPos, Key);
+                    UpdateTile(batch, finalPos, GetRoadTileType());
                 }
             }
         }
@@ -89,7 +108,11 @@ public class BatchRoad : ISerialize
 
     public DataToSerialize GetDataToSerialize()
     {
-        throw new System.NotImplementedException();
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.RoadType, type);
+        retVal.AddDataToSerialize(DataKeys.RoadWidth, Width);
+        retVal.AddDataToSerialize(DataKeys.RoadElement, Segments);
+        return retVal;
     }
 
     public UID GetMyUID()
@@ -99,7 +122,7 @@ public class BatchRoad : ISerialize
 
     public SerializedData Serialize()
     {
-        throw new System.NotImplementedException();
+        return new SerializedData(GetDataToSerialize());
     }
 
     public void SetMyUID(ulong uid)
@@ -110,7 +133,7 @@ public class BatchRoad : ISerialize
 
 public class Backroad : BatchRoad
 {
-    public Backroad(RoadType type, Vector2 start,Vector2 end,string key,int width): base(type, start, end, key, width)
+    public Backroad(RoadType type, Vector2 start,Vector2 end,int width): base(type, start, end, width)
     {
         
     }
@@ -136,7 +159,7 @@ public class Backroad : BatchRoad
 
 public class MinorRoad : BatchRoad
 {
-    public MinorRoad(RoadType type, Vector2 start, Vector2 end, string key, int width) : base(type, start, end, key, width)
+    public MinorRoad(RoadType type, Vector2 start, Vector2 end, int width) : base(type, start, end, width)
     {
 
     }
@@ -169,7 +192,7 @@ public class MinorRoad : BatchRoad
 
 public class MajorRoad : BatchRoad
 {
-    public MajorRoad(RoadType type, Vector2 start, Vector2 end, string key, int width) : base(type, start, end, key, width)
+    public MajorRoad(RoadType type, Vector2 start, Vector2 end, int width) : base(type, start, end, width)
     {
 
     }
@@ -202,5 +225,15 @@ public class RoadSegment
     {
         Start = start;
         End = end;  
+    }
+
+    public Vector2Int StartInt()
+    {
+        return new Vector2Int(Mathf.RoundToInt( Start.x),Mathf.RoundToInt( Start.y));
+    }
+
+    public Vector2Int EndInt()
+    {
+        return new Vector2Int(Mathf.RoundToInt(End.x), Mathf.RoundToInt(Start.y));
     }
 }

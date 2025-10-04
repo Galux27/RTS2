@@ -458,12 +458,12 @@ public class WorldChunkBatch : MonoBehaviour
         string path = SerializationHelpers.GetWorldChunkBatchFilePath(coords, name);
         Debug.Log("World Load: loading from path " + path);
         List<string> dataFromFile = SerializationHelpers.ReadFile(path);
-        for (int q = 0; q < dataFromFile.Count; q++)
+        int endPointForChunkData = WorldChunkManager.ChunksPerBatch * WorldChunkManager.ChunksPerBatch;
+        for (int q = 0; q < endPointForChunkData; q++)
         {
             WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
             int x = wc.LocalXCoord; int y = wc.LocalYCoord;
             Chunks[x, y] = wc;
-
         }
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
@@ -502,8 +502,54 @@ public class WorldChunkBatch : MonoBehaviour
                 Chunks[x, y].HasChunkFinishedLoading = true;
             }
         }
-    }
 
+        string[] RoadPoints = null;
+        string[] RoadSplit = null;
+        string type="";
+        for(int q = endPointForChunkData; q < dataFromFile.Count; q++)
+        {
+            Debug.Log("Road Data Found in " + name + " was " + dataFromFile[q]);
+            RoadSplit = dataFromFile[q].Split(SerializeDataHelpers.DATA_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+            type = RoadSplit[0].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries)[1];
+            RoadType rtype = (RoadType)int.Parse(type);
+            int width = int.Parse(RoadSplit[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries)[1]);
+            List<RoadSegment> segments = new List<RoadSegment>();
+          
+                RoadPoints = RoadSplit[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries)[1].Split(SerializeDataHelpers.DATA_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
+                for (int x = 0; x < RoadPoints.Length; x += 4)
+                {
+                    RoadSegment segment = new RoadSegment(new Vector2(int.Parse(RoadPoints[0]), int.Parse(RoadPoints[1]))
+                        , new Vector2(int.Parse(RoadPoints[2]), int.Parse(RoadPoints[3])));
+                    segments.Add(segment);
+                }
+            AddSerializedRoad(rtype, width, segments);
+
+                //RDT; 1 ^ RDE; 128,384,128,384,^
+            }
+
+        }
+
+    void AddSerializedRoad(RoadType type,int width,List<RoadSegment> segments)
+    {
+        switch (type)
+        {
+            case RoadType.None:
+                break;
+            case RoadType.MajorRoad:
+                AddRoad(new MajorRoad(type, segments[0].Start, segments[segments.Count - 1].End, width));
+                break;
+            case RoadType.MinorRoad:
+                AddRoad(new MinorRoad(type, segments[0].Start, segments[segments.Count - 1].End, width));
+
+                break;
+            case RoadType.Backroad:
+                AddRoad(new Backroad(type, segments[0].Start, segments[segments.Count - 1].End, width));
+
+                break;
+            default:
+                break;
+        }
+    }
 
     public void OnBuildableFinished(BuildableStructure bs)
     {
