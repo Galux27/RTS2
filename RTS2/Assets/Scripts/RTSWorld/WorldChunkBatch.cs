@@ -44,7 +44,7 @@ public class WorldChunkBatch : MonoBehaviour
                 {
                     for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(1); y1++)
                     {
-                        Chunks[x, y].ChunkTiles[x1, y1].SetElevation(height);
+                        Chunks[x, y].ChunkTiles[x1, y1].SetElevation(height,false);
                     }
                 }
                  
@@ -56,6 +56,20 @@ public class WorldChunkBatch : MonoBehaviour
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
                 Chunks[x, y].UpdateElevationType(this);
+            }
+        }
+
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                for (int x1 = 0; x1 < Chunks[x, y].ChunkTiles.GetLength(0); x1++)
+                {
+                    for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(1); y1++)
+                    {
+                        Chunks[x, y].PathfindingNodes[x1, y1].UpdatePassable(Chunks[x, y].ChunkTiles[x1, y1].TileTraversable());
+                    }
+                }
             }
         }
     }
