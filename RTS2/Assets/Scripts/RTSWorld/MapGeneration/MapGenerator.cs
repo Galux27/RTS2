@@ -22,8 +22,8 @@ public class MapGenerator : MonoBehaviour
     {
         OverworldConverters = new Dictionary<OverworldFeature, OverworldFeatureToWorldConverter>();
         OverworldConverters.Add(OverworldFeature.Backroad, new Road(OverworldFeature.Backroad, "BackRoad", 2));
-        OverworldConverters.Add(OverworldFeature.MinorRoad, new Road(OverworldFeature.MinorRoad, "MinorRoad", 5));
-        OverworldConverters.Add(OverworldFeature.MajorRoad, new Road(OverworldFeature.MajorRoad,"MajorRoad",10));
+        OverworldConverters.Add(OverworldFeature.MinorRoad, new Road(OverworldFeature.MinorRoad, "MinorRoad", 7));
+        OverworldConverters.Add(OverworldFeature.MajorRoad, new Road(OverworldFeature.MajorRoad,"MajorRoad",31));
         OverworldConverters.Add(OverworldFeature.River, new FeatureRiver(OverworldFeature.River, "River", 5));
 
     }
@@ -63,7 +63,13 @@ public class MapGenerator : MonoBehaviour
                 OverworldConverters[overworldTile.Features[x]].GenerateFeature(toGenerateIn);
             }
         }
-        toGenerateIn.GenerateRoads();
+        toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
+        toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
+        toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);
+
+        toGenerateIn.GenerateRoads(RoadType.Backroad);
+        toGenerateIn.GenerateRoads(RoadType.MinorRoad);
+        toGenerateIn.GenerateRoads(RoadType.MajorRoad) ;
         toGenerateIn.NeedsGeneration = false;
         toGenerateIn.SetChunksLoaded();
     }

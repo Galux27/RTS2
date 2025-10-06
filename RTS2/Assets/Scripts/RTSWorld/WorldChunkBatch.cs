@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -69,18 +70,40 @@ public class WorldChunkBatch : MonoBehaviour
         Roads.Add(road);
     }
 
-    public void GenerateRoads()
+    public void GenerateRoadBlends(RoadType toGen)
+    {
+        List<BatchRoad> toGenerateBlendFor = new List<BatchRoad>();
+        for (int x = 0; x < Roads.Count; x++)
+        {
+            if (Roads[x].type == toGen)
+            {
+                toGenerateBlendFor.Add(Roads[x]);
+            }
+        }
+        if (toGenerateBlendFor.Count > 1)
+        {
+            AddRoad(new BatchRoadBlend(toGen, Center(), toGenerateBlendFor[0].RoadEnd, toGenerateBlendFor[0].Width,toGenerateBlendFor));
+        }
+    }
+
+    public void GenerateRoads(RoadType toGen)
     {
         for(int x = 0; x < Roads.Count; x++)
         {
-            Roads[x].GenerateRoad();
+            if (Roads[x].type == toGen)
+            {
+                Roads[x].GenerateRoad();
+            }
         }
 
         for (int x = 0; x < Roads.Count; x++)
         {
-            Roads[x].RenderRoad(this);
+            if (Roads[x].type == toGen)
+            {
+                Roads[x].RenderRoad(this);
+            }
         }
-        RefreshElevationTiles();
+            RefreshElevationTiles();
         
     }
 

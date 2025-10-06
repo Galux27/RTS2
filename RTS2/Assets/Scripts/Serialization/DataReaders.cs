@@ -601,6 +601,7 @@ public static class DataReaders
         retVal.WaterData = new WaterData(waterLevel);
         retVal.Elevation = new ElevationTile(new Vector3Int(coords.x, coords.y, 0), elevation);
         retVal.SetElevation(elevation);
+
         return retVal;
     }
 }

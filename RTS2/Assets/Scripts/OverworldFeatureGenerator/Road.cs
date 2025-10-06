@@ -36,31 +36,39 @@ public class Road : OverworldFeatureToWorldConverter
         Vector2Int center = toGenerateIn.Center();//centerChunk.ChunkTiles[centerChunk.ChunkTiles.GetLength(0)/2,centerChunk.ChunkTiles.GetLength(1)/2].Coords();
         List<PathfindingNode> path = null;
         Vector2Int target = Vector2Int.zero;
+        Vector2Int offCenter = center;
+        int mod = 0;
+        if (GetFeatureIGenerate() != OverworldFeature.MajorRoad)
+        {
+            mod = -1;
+        }
+
         for(int x = 0; x < AdjacentWithSameFeature.Count; x++)
         {
             
             if (AdjacentWithSameFeature[x].X > toGenerateIn.OverworldCoords.x)
             {
-                target = center + new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2), 0);
+                target = center + new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2)+mod, 0);
             }
             else if (AdjacentWithSameFeature[x].X < toGenerateIn.OverworldCoords.x)
             {
-                target = center - new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2), 0);
+                target = center - new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2) + mod, 0);
 
             }
             else if (AdjacentWithSameFeature[x].Y > toGenerateIn.OverworldCoords.y)
             {
-                target = center + new Vector2Int(0,( WorldChunkManager.ChunkBatchSize / 2));
+                target = center + new Vector2Int(0,( WorldChunkManager.ChunkBatchSize / 2) + mod);
 
             }
             else if (AdjacentWithSameFeature[x].Y < toGenerateIn.OverworldCoords.y)
             {
-                target = center - new Vector2Int(0,  (WorldChunkManager.ChunkBatchSize / 2));
+                target = center - new Vector2Int(0,  (WorldChunkManager.ChunkBatchSize / 2) + mod);
 
             }
-            Vector2 pos = center;
-            AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), pos, target, width);
-            Debug.Log("Generating road from " + pos + " to " + target + " in batch " + toGenerateIn.coords);
+            offCenter = new Vector2Int((int)Mathf.Lerp(center.x, target.x, .25f), (int)Mathf.Lerp(center.y, target.y, .25f));
+
+            AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), offCenter, target, width);
+            Debug.Log("Generating road from " + offCenter + " to " + target + " in batch " + toGenerateIn.coords);
 
         }
         toGenerateIn.RefreshGroundTiles();

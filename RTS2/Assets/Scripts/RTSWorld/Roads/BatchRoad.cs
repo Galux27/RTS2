@@ -30,7 +30,7 @@ public class BatchRoad : ISerialize
     }
 
 
-    int HalfWidth()
+    protected int HalfWidth()
     {
         return Mathf.Max(1, Width / 2);
     }
@@ -83,7 +83,7 @@ public class BatchRoad : ISerialize
             }
         }
     }
-    bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type)
+    protected bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type)
     {
         WorldTile toEdit = toGenerateIn.GetTileFromPosition(pos);
         if (toEdit != null)
@@ -101,6 +101,34 @@ public class BatchRoad : ISerialize
             return true;
         }
         return false;
+    }
+
+    protected bool IsNextIncrementGoingOverPoint(float val,float inc,float target)
+    {
+        if (val <= target && val + inc > target)
+        {
+            Debug.Log("Half way point " + val + "+" + inc);
+            return true;
+        }
+        return false;
+    }
+
+
+    protected bool IsFirstIncrementOrLast(float val, float inc)
+    {
+        if (val <= inc || val + inc >= 1f-inc)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    protected string GetEdgeTile()
+    {
+        return "Tiled";
     }
 
     public void Deserialize(SerializedData data)
@@ -186,9 +214,49 @@ public class MinorRoad : BatchRoad
         }
     }
 
+   
+
+
     public override void RenderRoad(WorldChunkBatch batch)
     {
-        base.RenderRoad(batch);
+        for (int x = 0; x < Segments.Count; x++)
+        {
+            Vector2 pos = Segments[x].Start;
+            Vector2 target = Segments[x].End;
+            float dist = Vector2.Distance(pos, new Vector2(target.x, target.y));
+            Vector2 dir = target - pos;
+            dir = dir.normalized;
+            Vector2 perpDir = Vector2.Perpendicular(target - pos).normalized * HalfWidth();
+            float inc = 1f / dist;
+            inc /= 2f;
+            float widthInc = 1f / Width;
+            widthInc /= 2f;
+            Vector2 leftEdge = Vector2.zero;
+            Vector2 rightEdge = Vector2.zero;
+            Vector2 curPos = new Vector2();
+            Vector2 finalPos = new Vector2();
+            for (float f = 0f; f < 1f; f += inc)
+            {
+                curPos = Vector2.Lerp(pos, target, f);
+                leftEdge = curPos + perpDir;
+                rightEdge = curPos + (perpDir * -1f);
+
+                for (float a = 0f; a < 1f; a += widthInc)
+                {
+                    finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
+                    if (IsFirstIncrementOrLast(a, widthInc))
+                    {
+                        UpdateTile(batch, finalPos, GetEdgeTile());
+
+                    }
+                    else
+                    {
+                        UpdateTile(batch, finalPos, GetRoadTileType());
+
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -206,10 +274,177 @@ public class MajorRoad : BatchRoad
 
     public override void RenderRoad(WorldChunkBatch batch)
     {
-        base.RenderRoad(batch);
+        for (int x = 0; x < Segments.Count; x++)
+        {
+            Vector2 pos = Segments[x].Start;
+            Vector2 target = Segments[x].End;
+            float dist = Vector2.Distance(pos, new Vector2(target.x, target.y));
+            Vector2 dir = target - pos;
+            dir = dir.normalized;
+            Vector2 perpDir = Vector2.Perpendicular(target - pos).normalized * HalfWidth();
+            float inc = 1f / dist;
+            inc /= 2f;
+            float widthInc = 1f / Width;
+            widthInc /= 2f;
+            Vector2 leftEdge = Vector2.zero;
+            Vector2 rightEdge = Vector2.zero;
+            Vector2 curPos = new Vector2();
+            Vector2 finalPos = new Vector2();
+            for (float f = 0f; f < 1f; f += inc)
+            {
+                curPos = Vector2.Lerp(pos, target, f);
+                leftEdge = curPos + perpDir;
+                rightEdge = curPos + (perpDir * -1f);
+
+                //base road
+                for (float a = 0f; a < 1f; a += widthInc)
+                {
+                    finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
+                    if (IsFirstIncrementOrLast(a, widthInc))
+                    {
+                        UpdateTile(batch, finalPos, GetEdgeTile());
+
+                    }
+                    else
+                    {
+                        UpdateTile(batch, finalPos, GetRoadTileType());
+
+                    }
+                }
+                // ||
+                //edges
+                for (float a = 0f; a < 1f; a += widthInc)
+                {
+                    finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
+                    if ( IsNextIncrementGoingOverPoint(a, widthInc, .5f))
+                    {
+                        UpdateTile(batch, finalPos, GetEdgeTile());
+
+                    }
+                    
+                }
+            }
+        }
     }
 }
 
+
+public class BatchRoadBlend : BatchRoad
+{
+    List<BatchRoad> toLink;
+    public BatchRoadBlend(RoadType type, Vector2 start, Vector2 end, int width,List<BatchRoad> roadsToLink) : base(type, start, end, width)
+    {
+        toLink = roadsToLink;
+    }
+
+    public override void GenerateRoad()
+    {
+        Segments = new List<RoadSegment>();
+        Vector2 startPoint = Vector2.zero;
+        Vector2 endPoint = Vector2.zero;
+        Vector2 finalStartPoint = Vector2.zero;
+        Vector2 finalEndPoint = Vector2.zero;
+        
+        for (int x = 0; x < toLink.Count; x++)
+        {
+
+
+
+           // Segments.Add(new RoadSegment(RoadStart, toLink[x].RoadStart));
+            if (x < toLink.Count - 1)
+            {
+                startPoint = toLink[x].RoadStart;
+                endPoint =  toLink[x + 1].RoadStart;
+                
+                for(float f = 0f; f < 1f; f += .05f)
+                {
+
+
+                    finalEndPoint = Vector2.Lerp(RoadStart, endPoint, f);
+                    finalStartPoint =Vector2.Lerp(startPoint, RoadStart, f);
+
+                    Vector2 p1 = Vector2.Lerp(finalStartPoint, finalEndPoint, f);
+                    Vector2 p2 = Vector2.Lerp(finalStartPoint, finalEndPoint, f + .1f);
+
+                   // finalStartPoint = Vector2.Lerp(startPoint, endPoint, f);
+                    Segments.Add(new RoadSegment(p1,p2));
+
+                }
+
+
+            }
+            else
+            {
+                startPoint =  toLink[x].RoadStart;
+                endPoint = toLink[0].RoadStart;
+
+                for (float f = 0f; f < 1f; f += .05f)
+                {
+
+
+                    finalEndPoint = Vector2.Lerp(RoadStart, endPoint, f);
+                    finalStartPoint = Vector2.Lerp(startPoint, RoadStart, f);
+
+                    Vector2 p1 = Vector2.Lerp(finalStartPoint, finalEndPoint, f);
+                    Vector2 p2 = Vector2.Lerp(finalStartPoint, finalEndPoint, f + .1f);
+
+                    // finalStartPoint = Vector2.Lerp(startPoint, endPoint, f);
+                    Segments.Add(new RoadSegment(p1, p2));
+
+                }
+            }
+        }
+    }
+
+
+
+    public override void RenderRoad(WorldChunkBatch batch)
+    {
+        for (int x = 0; x < Segments.Count; x++)
+        {
+            Vector2 pos = Segments[x].Start;
+            Vector2 target = Segments[x].End;
+            float dist = Vector2.Distance(pos, new Vector2(target.x, target.y));
+            Vector2 dir = target - pos;
+            dir = dir.normalized;
+            Vector2 perpDir = Vector2.Perpendicular(target - pos).normalized * HalfWidth();
+            float inc = 1f / dist;
+            inc /= 2f;
+            float widthInc = 1f / Width;
+            widthInc /= 2f;
+            Vector2 leftEdge = Vector2.zero;
+            Vector2 rightEdge = Vector2.zero;
+            Vector2 curPos = new Vector2();
+            Vector2 finalPos = new Vector2();
+            for (float f = 0f; f < 1f; f += inc)
+            {
+                curPos = Vector2.Lerp(pos, target, f);
+                leftEdge = curPos + perpDir;
+                rightEdge = curPos + (perpDir * -1f);
+
+                //base road
+                for (float a = 0f; a < 1f; a += widthInc)
+                {
+                    finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
+                    UpdateTile(batch, finalPos, GetRoadTileType());
+
+                }
+                // ||
+                //edges
+                //for (float a = 0f; a < 1f; a += widthInc)
+                //{
+                //    finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
+                //    if (IsNextIncrementGoingOverPoint(a, widthInc, .5f))
+                //    {
+                //        UpdateTile(batch, finalPos, GetEdgeTile());
+
+                //    }
+
+                //}
+            }
+        }
+    }
+}
 
 
 public enum RoadType

@@ -252,11 +252,7 @@ public class WorldTile:ISerialize
     }
 
     public void UpdateTileType(String type)
-    {
-        if(tileType== "MajorRoad")
-        {
-            Debug.Log("Replacing " + tileType + " with " + type);
-        }
+    {      
         tileType = type;
     }
 
