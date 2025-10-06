@@ -92,15 +92,23 @@ public class WorldChunkManager : MonoBehaviour
         List<Vector2Int> coords = GetAdjacentBatchCoords(cameraCoords);
         coords.Add(cameraCoords);
         bool needToRender = false;
+        int count = 0;
+
         for(int x = 0; x < coords.Count; x++)
         {
             if (!ChunkBatches.ContainsKey(coords[x]))
             {
                 CreateChunkBatch(coords[x]);
                 needToRender = true;
+                count++;
+            }
+            if (count > 0)
+            {
+                break;
             }
         }
-        if (needToRender||DoWeHaveUndrawnChunks())
+       
+            if (needToRender||DoWeHaveUndrawnChunks())
         {
             RenderWorldChunks();
         }

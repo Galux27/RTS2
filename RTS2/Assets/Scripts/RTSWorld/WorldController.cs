@@ -204,16 +204,19 @@ public class WorldTile:ISerialize
         Elevation = new ElevationTile(new Vector3Int(x, y, 0));
     }
 
-    public void SetElevation(float value)
+    public void SetElevation(float value,bool updatePathfinding=true)
     {
         Elevation.SetElevation(value);// = value;
         if (Elevation.GetElevation() < OverworldGenerator.Instance.SeaLevel)
         {
-            UpdateWaterLevel(10f);
+            UpdateWaterLevel(10f,updatePathfinding);
         }
         else
         {
-            Pathfinding.UpdateNodeData(x, y, TileTraversable());
+            if (updatePathfinding)
+            {
+                Pathfinding.UpdateNodeData(x, y, TileTraversable());
+            }
         }
     }
 
@@ -223,14 +226,17 @@ public class WorldTile:ISerialize
     }
 
 
-    public void UpdateWaterLevel(float val)
+    public void UpdateWaterLevel(float val,bool updatePathfindingNode=true)
     {
         WaterData.UpdateWaterLevel(val);
-        Pathfinding.UpdateNodeData(x, y, TileTraversable());
-    }
+        if (updatePathfindingNode)
+        {
+            Pathfinding.UpdateNodeData(x, y, TileTraversable());
+        }
+        }
 
 
-    public void OnTileEntered(Vector2Int vector2Int)
+        public void OnTileEntered(Vector2Int vector2Int)
     {
 
     }
