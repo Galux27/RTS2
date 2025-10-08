@@ -87,14 +87,31 @@ public class Pond_MapGenerator : MapFeatureBase
             EnvironmentObjectInstance objectToClear = null;
             foreach(KeyValuePair<Vector2Int,PotentialPondTile> kvp in tiles)
             {
-                kvp.Value.tile.UpdateWaterLevel(kvp.Value.waterLevel);
+                kvp.Value.tile.UpdateWaterLevel(kvp.Value.waterLevel,false);
                 chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(kvp.Key);
                 if (toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(kvp.Key, out objectToClear))
                 {
                     objectToClear.AdjustHealth(-99999999f);
                 }
             }
-        
+
+            List<Vector2Int> chunkCoordsUpdated = new List<Vector2Int>();
+            foreach (KeyValuePair<Vector2Int, PotentialPondTile> kvp in tiles)
+            {
+               // kvp.Value.tile.UpdateWaterLevel(kvp.Value.waterLevel, false);
+                chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(kvp.Key);
+                if (!chunkCoordsUpdated.Contains(chunkCoords))
+                {
+                    for(int x = 0; x < WorldChunkManager.ChunkSize; x++)
+                    {
+                        for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+                        {
+                            toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].PathfindingNodes[x, y].UpdatePassable(toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].ChunkTiles[x, y].TileTraversable());
+                        }
+                    }
+                    chunkCoordsUpdated.Add(chunkCoords);
+                }
+            }
         }
 
     }

@@ -29,6 +29,43 @@ public class BatchRoad : ISerialize
         return "Error";
     }
 
+    public bool SeperateLanes()
+    {
+        switch (type)
+        {
+            case RoadType.MajorRoad:
+                return true;
+                break;
+            case RoadType.MinorRoad:
+                return false;
+                break;
+            case RoadType.Backroad:
+                return false;
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    public bool GenerateEdge()
+    {
+        switch (type)
+        {
+            case RoadType.MajorRoad:
+                return true;
+                break;
+            case RoadType.MinorRoad:
+                return true;
+                break;
+            case RoadType.Backroad:
+                return false;
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
 
     protected int HalfWidth()
     {
@@ -83,11 +120,45 @@ public class BatchRoad : ISerialize
             }
         }
     }
-    protected bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type)
+
+
+    public bool IsAlreadyRoadTile(string type,string newType, RoadType Generating)
+    {
+        if (newType == "Tiled")
+        {
+            return type == "MajorRoad" || type == "Tiled" || type == "MinorRoad" || type == "Backroad";
+
+        }
+        switch (Generating)
+        {
+            case RoadType.None:
+                return type == "MajorRoad" || type== "Tiled" || type == "MinorRoad" || type == "Backroad";
+                break;
+            case RoadType.MajorRoad:
+                return type == "MajorRoad";
+                break;
+            case RoadType.MinorRoad:
+                return type == "MajorRoad"|| type == "MinorRoad";
+                break;
+            case RoadType.Backroad:
+                return type == "MajorRoad" || type == "MinorRoad" || type == "Backroad";
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
+
+    protected bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type, bool CareAboutOverwrite = true)
     {
         WorldTile toEdit = toGenerateIn.GetTileFromPosition(pos);
         if (toEdit != null)
         {
+            if (IsAlreadyRoadTile(toEdit.tileType,type, this.type)&&CareAboutOverwrite)
+            {
+                return false;
+            }
             EnvironmentObjectInstance OnTile = null;
             if(WorldChunkManager.Instance.ChunkBatches[WorldChunkBatch.chunkBatch].Chunks[WorldChunkBatch.chunk.x, WorldChunkBatch.chunk.y].DoesAnyObjectExistAtCoords(toEdit.Coords(), out OnTile))
             {
@@ -198,20 +269,43 @@ public class MinorRoad : BatchRoad
     {
         Segments = new List<RoadSegment>();
         List<PathfindingNode> path = Pathfinding.FindPath(RoadStart, RoadEnd);
-
+        Vector2 startPoint = Vector2.zero;
+        Vector2 endPoint = Vector2.zero;
+        Vector2 finalEndPoint = Vector2.zero;
+        Vector2 finalStartPoint = Vector2.zero;
         if (path != null && path.Count > 0)
         {
-            for (float f = 0f; f < 1f; f += .1f)
+            for (int x=0;x<path.Count-1;x++)
             {
-                int startIndex = (int)Mathf.Lerp(0, path.Count - 1, f);
-                int endIndex = (int)Mathf.Lerp(0, path.Count - 1, f + .1f);
-                Segments.Add(new RoadSegment(path[startIndex].worldPos, path[endIndex].worldPos));
+               
+                startPoint = path[x].worldPos;
+                endPoint = path[x+1].worldPos;
+
+                for (float q = 0f;q < 1f; q += .05f)
+                {
+
+
+                    finalEndPoint = Vector2.Lerp(RoadStart, endPoint, q);
+                    finalStartPoint = Vector2.Lerp(startPoint, RoadStart, q);
+
+                    Vector2 p1 = Vector2.Lerp(finalStartPoint, finalEndPoint, q);
+                    Vector2 p2 = Vector2.Lerp(finalStartPoint, finalEndPoint, q + .1f);
+
+                    // finalStartPoint = Vector2.Lerp(startPoint, endPoint, f);
+                    Segments.Add(new RoadSegment(p1, p2));
+
+                }
             }
+            Vector3 dir = (endPoint - startPoint).normalized;
+            Segments.Add(new RoadSegment(path[path.Count - 1].worldPos, path[path.Count - 1].worldPos + (dir * 4)));
         }
         else
         {
             base.GenerateRoad();
         }
+
+       
+        
     }
 
    
@@ -244,17 +338,17 @@ public class MinorRoad : BatchRoad
                 for (float a = 0f; a < 1f; a += widthInc)
                 {
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
-                    if (IsFirstIncrementOrLast(a, widthInc))
-                    {
-                        UpdateTile(batch, finalPos, GetEdgeTile());
+                   
+                    UpdateTile(batch, finalPos, GetRoadTileType());
 
-                    }
-                    else
-                    {
-                        UpdateTile(batch, finalPos, GetRoadTileType());
-
-                    }
+                    
                 }
+                finalPos = Vector2.Lerp(leftEdge, rightEdge, 0f);
+                UpdateTile(batch, finalPos, GetEdgeTile());
+                finalPos = Vector2.Lerp(leftEdge, rightEdge, 1f);
+                UpdateTile(batch, finalPos, GetEdgeTile());
+
+              
             }
         }
     }
@@ -422,27 +516,41 @@ public class BatchRoadBlend : BatchRoad
                 leftEdge = curPos + perpDir;
                 rightEdge = curPos + (perpDir * -1f);
 
+
+               
+
                 //base road
                 for (float a = 0f; a < 1f; a += widthInc)
                 {
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
-                    UpdateTile(batch, finalPos, GetRoadTileType());
+                    if (IsFirstIncrementOrLast(a, widthInc) && GenerateEdge())
+                    {
+                        UpdateTile(batch, finalPos, GetEdgeTile());
 
+                    }
+                    else
+                    {
+                        UpdateTile(batch, finalPos, GetRoadTileType());
+
+                    }
                 }
                 // ||
                 //edges
-                //for (float a = 0f; a < 1f; a += widthInc)
-                //{
-                //    finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
-                //    if (IsNextIncrementGoingOverPoint(a, widthInc, .5f))
-                //    {
-                //        UpdateTile(batch, finalPos, GetEdgeTile());
+                if (SeperateLanes())
+                {
+                    for (float a = 0f; a < 1f; a += widthInc)
+                    {
+                        finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
+                        if (IsNextIncrementGoingOverPoint(a, widthInc, .5f))
+                        {
+                            UpdateTile(batch, finalPos, GetEdgeTile());
 
-                //    }
+                        }
 
-                //}
+                    }
+                }
+                }
             }
-        }
     }
 }
 

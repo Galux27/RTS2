@@ -31,7 +31,7 @@ public class Road : OverworldFeatureToWorldConverter
                 AdjacentWithSameFeature.Add(AdjacentTiles[x]);
             }
         }
-
+        Dictionary<RoadType, List<Vector2Int>> Roads = new Dictionary<RoadType, List<Vector2Int>>();
         //WorldChunk centerChunk = toGenerateIn.Chunks[toGenerateIn.Chunks.GetLength(0) / 2, toGenerateIn.Chunks.GetLength(1) / 2];
         Vector2Int center = toGenerateIn.Center();//centerChunk.ChunkTiles[centerChunk.ChunkTiles.GetLength(0)/2,centerChunk.ChunkTiles.GetLength(1)/2].Coords();
         List<PathfindingNode> path = null;
@@ -74,8 +74,27 @@ public class Road : OverworldFeatureToWorldConverter
         toGenerateIn.RefreshGroundTiles();
     }
 
+    bool CheckIfRoadExists(WorldChunkBatch toAddTo,RoadType type,Vector2 end)
+    {
+        for(int x = 0; x < toAddTo.Roads.Count; x++)
+        {
+            if (toAddTo.Roads[x].type == type)
+            {
+                if (toAddTo.Roads[x].RoadEnd == end)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     void AddRoad(WorldChunkBatch toAddTo,RoadType type,Vector2 start,Vector2 end,int width)
     {
+        if (CheckIfRoadExists(toAddTo, type, end))
+        {
+            return;
+        }
         switch (type)
         {
             case RoadType.None:

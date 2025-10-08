@@ -102,7 +102,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
             {
                 if (coords.y == 0)
                 {
-                    retVal.Add(OverworldTiles[coords.x+1, coords.y + 1]);
+                    retVal.Add(OverworldTiles[coords.x + 1, coords.y + 1]);
                     retVal.Add(OverworldTiles[coords.x - 1, coords.y + 1]);
 
                 }
@@ -122,7 +122,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
             }
         }
 
-            if (coords.y == 0)
+        if (coords.y == 0)
         {
             retVal.Add(OverworldTiles[coords.x , coords.y + 1]);
         }
@@ -151,28 +151,40 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
             {
                 for (int y = 50; y < OverworldHeight - 50; y++)
                 {
-                    //coords = new Vector2Int(x, y);
+                    coords = new Vector2Int(x, y);
 
-                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.MajorRoad) && OverworldTiles[x, y].Features.Contains(OverworldFeature.Mountain))
+                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.MinorRoad) 
+                       )
                     {
-                        Debug.Log("water at " + x + "," + y +" river coords " + OverworldTiles[x, y].RiverPoint);
+                        int count = 0;
+                        neighbours = GetNeighbours(coords);
+                        for (int i = 0; i < neighbours.Count; i++)
+                        {
+                            if (neighbours[i].Features.Contains(OverworldFeature.MinorRoad))
+                            {
+                                count++;
+                                //hasSetOverworldStartingCoords = true;
 
-                        OverworldStartingCoords = new Vector2Int(x, y);
-                        hasSetOverworldStartingCoords = true;
+                                //OverworldStartingCoords = new Vector2Int(x, y);
+                                //Debug.Log("Set overworld start coords to " + OverworldStartingCoords);
+                                //return OverworldStartingCoords;
+
+                            }
+                        }
+                        if (count>2)
+                        {
+                            hasSetOverworldStartingCoords = true;
+
+                            OverworldStartingCoords = new Vector2Int(x, y);
+                            Debug.Log("Set overworld starting coords " + OverworldStartingCoords);
+                            break;
+                        }
+                        else
+                        {
+                            Debug.Log("Set overworld starting coords false " + count+"/"+neighbours.Count);
+                        }
                     }
-                   // neighbours = GetNeighbours(coords);
-                    //for (int i = 0; i < neighbours.Count; i++)
-                    //{
-                    //    if (neighbours[i].Features.Contains(OverworldFeature.Mountain) && !OverworldTiles[x, y].Features.Contains(OverworldFeature.Mountain))
-                    //    {
-                    //        hasSetOverworldStartingCoords = true;
-
-                    //        OverworldStartingCoords = new Vector2Int(x, y);
-                    //        Debug.Log("Set overworld start coords to " + OverworldStartingCoords);
-                    //        return OverworldStartingCoords;
-                    //        break;
-                    //    }
-                    //}
+                  
                     if (hasSetOverworldStartingCoords)
                     {
                         break;

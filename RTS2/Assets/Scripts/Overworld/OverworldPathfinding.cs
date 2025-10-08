@@ -127,7 +127,7 @@ public static class OverworldPathfinding
         }
         else
         {
-            retVal = FindPath(startPos, targetPos, world);
+            retVal = FindPath(startPos, targetPos, world,false);
         }
         return retVal;
     }
@@ -153,9 +153,9 @@ public static class OverworldPathfinding
         return pos;
     }
 
-    
-    
-    public static List<OverworldPathfindingNode> FindPath(Vector2Int startPos, Vector2Int targetPos, OverworldTile[,] world,Vector2Int offset)
+
+
+    public static List<OverworldPathfindingNode> FindPath(Vector2Int startPos, Vector2Int targetPos, OverworldTile[,] world, Vector2Int offset, bool ImpassibleStopsPath = true)
     {
         //get player and target position in grid coords
         OverworldPathfindingNode seekerNode = world[startPos.x, startPos.y].Node;
@@ -194,7 +194,7 @@ public static class OverworldPathfinding
             //adds neighbor nodes to openSet
             foreach (OverworldTile neighbour in node.Neighbours)
             {
-                if (neighbour.Node.IsPassible == false || closedSet.Contains(neighbour.Node)||neighbour.Node.coords.x-offset.x<0||neighbour.Node.coords.y-offset.y<0||
+                if (neighbour.Node.IsPassible == false && ImpassibleStopsPath || closedSet.Contains(neighbour.Node)||neighbour.Node.coords.x-offset.x<0||neighbour.Node.coords.y-offset.y<0||
                     neighbour.Node.coords.x - offset.x > world.GetLength(0)-1 || neighbour.Node.coords.y - offset.y > world.GetLength(1)-1)
                 {
                     continue;
@@ -217,7 +217,7 @@ public static class OverworldPathfinding
     }
 
 
-    public static List<OverworldPathfindingNode> FindPath(Vector2Int startPos, Vector2Int targetPos, OverworldTile[,] world)
+    public static List<OverworldPathfindingNode> FindPath(Vector2Int startPos, Vector2Int targetPos, OverworldTile[,] world,bool ImpassibleStopsPath=true)
     {
         //get player and target position in grid coords
         OverworldPathfindingNode seekerNode = world[startPos.x,startPos.y].Node;
@@ -256,7 +256,7 @@ public static class OverworldPathfinding
             //adds neighbor nodes to openSet
             foreach (OverworldTile neighbour in node.Neighbours)
             {
-                if (neighbour.Node.IsPassible == false || closedSet.Contains(neighbour.Node))
+                if (neighbour.Node.IsPassible == false && ImpassibleStopsPath || closedSet.Contains(neighbour.Node))
                 {
                     continue;
                 }
