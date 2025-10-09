@@ -5,6 +5,30 @@ using UnityEngine;
 public static class WorldTileHelpers
 {
     static Vector2Int coordsCache;
+    static bool InChunkRange(Vector2 coords)
+    {
+        if (coords.x >= 0 && coords.y >= 0 && coords.x < WorldChunkManager.ChunkSize && coords.y < WorldChunkManager.ChunkSize)
+        {
+            return true;
+        }
+        return false;
+    }
+    public static WorldTile GetTileNearExisting(WorldTile current,WorldChunkBatch toGetFrom,Vector2 pos)
+    {
+        if (current != null)
+        {
+            Vector2 dir = new Vector2(pos.x - current.x, pos.y - current.y);
+            Vector2 local = current.Local + dir;
+            int localX = Mathf.FloorToInt(local.x);
+            int localY = Mathf.FloorToInt(local.y);
+            if (InChunkRange(local))
+            {
+                return WorldChunkManager.Instance.ChunkBatches[current.Batch].Chunks[current.Chunk.x, current.Chunk.y].ChunkTiles[localX, localY];
+            }
+        }
+        return toGetFrom.GetTileFromPosition(pos);
+    }
+
 
     public static WorldTile GetTileFromCoords(int x, int y)
     {

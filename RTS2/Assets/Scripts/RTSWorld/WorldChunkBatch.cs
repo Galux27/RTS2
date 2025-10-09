@@ -115,6 +115,7 @@ public class WorldChunkBatch : MonoBehaviour
             if (Roads[x].type == toGen)
             {
                 Roads[x].RenderRoad(this);
+                Roads[x].LogCount();
             }
         }
             RefreshElevationTiles();
@@ -168,7 +169,7 @@ public class WorldChunkBatch : MonoBehaviour
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
                 {
-                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y);
+                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y,coords);
                 }
             }
 
@@ -202,7 +203,7 @@ public class WorldChunkBatch : MonoBehaviour
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
                 {
-                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y);
+                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, coords);
                 }
             }
 
@@ -236,7 +237,7 @@ public class WorldChunkBatch : MonoBehaviour
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
                 {
-                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y);
+                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, this.coords);
                 }
             }
 
@@ -439,7 +440,10 @@ public class WorldChunkBatch : MonoBehaviour
         for (int q = 0; q < dataFromFile.Count; q++)
         {
             WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
-            int x = wc.LocalXCoord; int y = wc.LocalYCoord;
+            int x = wc.LocalXCoord; 
+            int y = wc.LocalYCoord;
+            wc.SetAllChunkBatches(this.coords);
+
             Chunks[x, y] = wc;
 
         }
@@ -448,7 +452,6 @@ public class WorldChunkBatch : MonoBehaviour
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
                 Chunks[x, y].InitPathfindingNodes();
-
                 for (int x1 = 0; x1 < Chunks[x, y].ChunkTiles.GetLength(0); x1++)
                 {
                     for (int y1 = 0; y1 < Chunks[x, y].ChunkTiles.GetLength(0); y1++)
@@ -505,7 +508,9 @@ public class WorldChunkBatch : MonoBehaviour
         for (int q = 0; q < endPointForChunkData; q++)
         {
             WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
-            int x = wc.LocalXCoord; int y = wc.LocalYCoord;
+            int x = wc.LocalXCoord; 
+            int y = wc.LocalYCoord;
+            wc.SetAllChunkBatches(this.coords);
             Chunks[x, y] = wc;
         }
         for (int x = 0; x < Chunks.GetLength(0); x++)

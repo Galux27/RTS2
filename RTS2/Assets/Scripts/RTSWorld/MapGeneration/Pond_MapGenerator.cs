@@ -61,7 +61,7 @@ public class Pond_MapGenerator : MapFeatureBase
                     dist = Vector2Int.Distance(curCoords, startCoords);
                     if (dist < MaxDistForWater)
                     {
-                        toAdd = toGenerateIn.GetWorldTileFromVec2Int(curCoords);
+                        toAdd = WorldTileHelpers.GetTileNearExisting(toAdd, toGenerateIn, curCoords);//toGenerateIn.GetWorldTileFromVec2Int(curCoords);
                         if (toAdd != null)
                         {
                             if (toAdd.CanPutDecorationsOn == false)
@@ -83,13 +83,12 @@ public class Pond_MapGenerator : MapFeatureBase
             }
 
             startCoords = originalStart + new Vector2Int(Random.Range(-MaxDistForWater, MaxDistForWater), Random.Range(-MaxDistForWater, MaxDistForWater));
-            Vector2Int chunkCoords = new Vector2Int();
             EnvironmentObjectInstance objectToClear = null;
             foreach(KeyValuePair<Vector2Int,PotentialPondTile> kvp in tiles)
             {
                 kvp.Value.tile.UpdateWaterLevel(kvp.Value.waterLevel,false);
-                chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(kvp.Key);
-                if (toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].DoesAnyObjectExistAtCoords(kvp.Key, out objectToClear))
+                //chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(kvp.Key);
+                if (toGenerateIn.Chunks[kvp.Value.tile.Chunk.x, kvp.Value.tile.Chunk.y].DoesAnyObjectExistAtCoords(kvp.Key, out objectToClear))
                 {
                     objectToClear.AdjustHealth(-99999999f);
                 }
@@ -99,17 +98,16 @@ public class Pond_MapGenerator : MapFeatureBase
             foreach (KeyValuePair<Vector2Int, PotentialPondTile> kvp in tiles)
             {
                // kvp.Value.tile.UpdateWaterLevel(kvp.Value.waterLevel, false);
-                chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(kvp.Key);
-                if (!chunkCoordsUpdated.Contains(chunkCoords))
+                if (!chunkCoordsUpdated.Contains(kvp.Value.tile.Chunk))
                 {
                     for(int x = 0; x < WorldChunkManager.ChunkSize; x++)
                     {
                         for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
                         {
-                            toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].PathfindingNodes[x, y].UpdatePassable(toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y].ChunkTiles[x, y].TileTraversable());
+                            toGenerateIn.Chunks[kvp.Value.tile.Chunk.x, kvp.Value.tile.Chunk.y].PathfindingNodes[x, y].UpdatePassable(toGenerateIn.Chunks[kvp.Value.tile.Chunk.x, kvp.Value.tile.Chunk.y].ChunkTiles[x, y].TileTraversable());
                         }
                     }
-                    chunkCoordsUpdated.Add(chunkCoords);
+                    chunkCoordsUpdated.Add(kvp.Value.tile.Chunk);
                 }
             }
         }

@@ -119,8 +119,14 @@ public class BatchRoad : ISerialize
                 }
             }
         }
-    }
 
+    
+    }
+    public void LogCount()
+    {
+        Debug.Log("GetTile " + newMethod + "/" + oldMethod);
+
+    }
 
     public bool IsAlreadyRoadTile(string type,string newType, RoadType Generating)
     {
@@ -149,10 +155,26 @@ public class BatchRoad : ISerialize
         return false;
     }
 
+    bool InChunkRange(Vector2 coords)
+    {
+        if (coords.x >= 0 && coords.y >= 0 && coords.x < WorldChunkManager.ChunkSize && coords.y < WorldChunkManager.ChunkSize)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    WorldTile toEdit = null;
+    int newMethod = 0, oldMethod = 0;
 
     protected bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type, bool CareAboutOverwrite = true)
     {
-        WorldTile toEdit = toGenerateIn.GetTileFromPosition(pos);
+        bool NeedsNewTile = false;
+       
+
+
+            toEdit = WorldTileHelpers.GetTileNearExisting(toEdit,toGenerateIn,pos);
+        
         if (toEdit != null)
         {
             if (IsAlreadyRoadTile(toEdit.tileType,type, this.type)&&CareAboutOverwrite)

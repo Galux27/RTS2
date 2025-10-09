@@ -61,7 +61,7 @@ public class Platau_MapGeneratorFeature : MapFeatureBase
                     dist = Vector2Int.Distance(curCoords, startCoords);
                     if (dist < MaxDistForPlatau)
                     {
-                        toAdd = toGenerateIn.GetWorldTileFromVec2Int(curCoords);
+                        toAdd = WorldTileHelpers.GetTileNearExisting(toAdd, toGenerateIn, curCoords);//toGenerateIn.GetWorldTileFromVec2Int(curCoords);
                         if (toAdd != null)
                         {
                             if (toAdd.CanPutDecorationsOn == false)

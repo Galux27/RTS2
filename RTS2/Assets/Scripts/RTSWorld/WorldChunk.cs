@@ -20,7 +20,7 @@ public class WorldChunk:ISerialize
     public WallSegment[,] WallSegments;
     public PathfindingNode[,] PathfindingNodes;
     public WorldTile[,] ChunkTiles;
-    public Vector2Int WorldCoords;
+    public Vector2Int WorldCoords,BatchCoords;
     public bool NeedsToRender = false,IsRendered=false;
     const float CameraRenderDistance = 16*3;
     public Dictionary<WorldTileBlendType, WorldTileBlendCoordDataStore> TileBlends;
@@ -38,7 +38,17 @@ public class WorldChunk:ISerialize
         TileBlends[type].AddBlend( dir, val,coords,isHorizontal);
     }
 
-
+    public void SetAllChunkBatches(Vector2Int batch)
+    {
+        BatchCoords = batch;
+        for(int x = 0; x < ChunkTiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < ChunkTiles.GetLength(0); y++)
+            {
+                ChunkTiles[x, y].Batch = batch;
+            }
+        }
+    }
 
     public bool CheckIfChunkNeedsToRender()
     {
@@ -65,7 +75,7 @@ public class WorldChunk:ISerialize
     }
 
 
-    public WorldChunk(int x,int y,int localX,int localY)
+    public WorldChunk(int x,int y,int localX,int localY,Vector2Int batchCoords)
     {
         HasChunkFinishedLoading = false;
         DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
@@ -74,6 +84,7 @@ public class WorldChunk:ISerialize
         LocalXCoord=localX;
         LocalYCoord=localY;
         WorldCoords=new Vector2Int(x, y);
+        BatchCoords=batchCoords;
         GenerateTilesForChunk();
         GenerateWallsForChunk();
         GeneratePathfindingNodes();
@@ -189,7 +200,7 @@ public class WorldChunk:ISerialize
 
             for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
             {
-                ChunkTiles[localx, localy] = new WorldTile(x,y);
+                ChunkTiles[localx, localy] = new WorldTile(x,y,new Vector2Int(this.LocalXCoord,this.LocalYCoord),BatchCoords,localx,localy);
                 localy++;
             }
             localx++;

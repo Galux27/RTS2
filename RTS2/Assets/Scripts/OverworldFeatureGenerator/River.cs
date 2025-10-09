@@ -129,10 +129,10 @@ public class FeatureRiver : OverworldFeatureToWorldConverter
         }
         toGenerateIn.RefreshGroundTiles();
     }
-
+    WorldTile toEdit;
     void UpdateTile(WorldChunkBatch toGenerateIn, Vector3 pos, string type)
     {
-        WorldTile toEdit = toGenerateIn.GetTileFromPosition(pos);
+       toEdit = WorldTileHelpers.GetTileNearExisting(toEdit, toGenerateIn, pos);
         if (toEdit != null)
         {
             toEdit.UpdateWaterLevel(10f);

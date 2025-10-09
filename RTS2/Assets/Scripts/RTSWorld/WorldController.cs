@@ -189,19 +189,23 @@ public class WorldTile:ISerialize
     public string tileType;
     public WaterData WaterData;
     public ElevationTile Elevation;
+    public Vector2Int Chunk, Batch,Local;
     public Vector2Int Coords()
     {
         return new Vector2Int(x, y);
     }
 
 
-    public WorldTile(int x,int y)
+    public WorldTile(int x,int y,Vector2Int chunk,Vector2Int batch,int localX,int localY)
     {
         this.x = x;
         this.y = y;
         tileType = "Ground";
         WaterData = new WaterData(0f);
         Elevation = new ElevationTile(new Vector3Int(x, y, 0));
+        Chunk = chunk;
+        Batch = batch;
+        Local = new Vector2Int(localX, localY);
     }
 
     public void SetElevation(float value,bool updatePathfinding=true)

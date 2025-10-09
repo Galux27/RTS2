@@ -138,18 +138,7 @@ public class Road : OverworldFeatureToWorldConverter
         }
     }
 
-    bool UpdateTile(WorldChunkBatch toGenerateIn,Vector3 pos, string type)
-    {
-        WorldTile toEdit = toGenerateIn.GetTileFromPosition(pos);
-        if (toEdit != null)
-        {
-            Debug.Log("Road: setting tile at " + toEdit.Coords() + " original pos " + pos + " " + toGenerateIn.GetDebugOut()+" to " + type) ;
-            toEdit.UpdateTileType(type);
-            toEdit.CanPutDecorationsOn = false;
-            return true;
-        }
-        return false;
-    }
+    
 
     public override OverworldFeature GetFeatureIGenerate()
     {

@@ -40,12 +40,18 @@ public static class DataReaders
         keyValueSplit = splitListFromData[6].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         Vector2Int localCoords = (Vector2Int)ParseDataObject(keyValueSplit[0], keyValueSplit[1]);
 
-        WorldChunk chunk = new WorldChunk(coords.x, coords.y,localCoords.x,localCoords.y);
+        WorldChunk chunk = new WorldChunk(coords.x, coords.y,localCoords.x,localCoords.y,Vector2Int.zero);
         currentLoadingChunkWorldCoords =chunk.WorldCoords;
 
         keyValueSplit = splitListFromData[1].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
        chunk.ChunkTiles = (WorldTile[,])ParseDataObject(keyValueSplit[0], splitListFromData[1].Substring(keyValueSplit[0].Length));
-
+        for(int x = 0; x < chunk.ChunkTiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < chunk.ChunkTiles.GetLength(1); y++)
+            {
+                chunk.ChunkTiles[x, y].Chunk = coords;
+            }
+        }
         keyValueSplit = splitListFromData[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         if (keyValueSplit.Length > 1)
         {
@@ -494,9 +500,9 @@ public static class DataReaders
                 y = currentTile.y - (( yc));
 
             }
-           
-          
 
+
+            currentTile.Local = new Vector2Int(x, y);
             tiles[x, y] = currentTile;
         }
         return tiles;
@@ -596,7 +602,7 @@ public static class DataReaders
         float elevation = (float)ParseDataObject(keyObjectSplit[0], keyObjectSplit[1]);
 
         //CHUNK_TILES;COORDS;144,144::TILE_TYPE;Ground::WATER_LEVEL;0::`
-        WorldTile retVal = new WorldTile(coords.x,coords.y);
+        WorldTile retVal = new WorldTile(coords.x,coords.y,Vector2Int.zero,Vector2Int.zero,0,0);
         retVal.tileType = tileType;
         retVal.WaterData = new WaterData(waterLevel);
         retVal.Elevation = new ElevationTile(new Vector3Int(coords.x, coords.y, 0), elevation);
