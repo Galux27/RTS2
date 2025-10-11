@@ -446,9 +446,9 @@ public class WorldChunkBatch : MonoBehaviour
             //Write chunk data to some live save place as its changed from the savegame
             if (DoWeNeedToUpdateData)
             {
-                SerializationHelpers.SaveChunkBatchToWorkingCopy(this);
+                MultiThreadedManager.Instance.AddAction(() => SerializationHelpers.SaveChunkBatchToWorkingCopy(this), () => UnloadChunk());
             }
-            UnloadChunk();
+            
             return true;
         }
         return false;
