@@ -23,7 +23,7 @@ public class WorldRenderer : MonoBehaviour
 
     public Tilemap WorldTilemap,WaterTilemap;
     public WorldTiles WorldTiles;
-    WorldTilesManager WorldTilesManager;
+    public WorldTilesManager WorldTilesManager;
 
 
 

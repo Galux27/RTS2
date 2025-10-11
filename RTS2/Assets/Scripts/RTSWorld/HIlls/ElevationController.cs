@@ -90,6 +90,25 @@ public struct ElevationTile
         Passible = true;
     }
 
+
+    public void Init(Vector3Int coords, float elevation = 0f)
+    {
+        this.coords = coords;
+        Elevation = elevation;
+        if (DirectionsForEdge == null)
+        {
+            DirectionsForEdge = new List<ElevationTileType>();
+        }
+            IsEdge = false;
+        IsCorner = false;
+        elevation = 0f;
+        isDrawn = false;
+        IsGoingUp = true;
+        Passible = true;
+    }
+
+
+
     public void SetIsEdge(bool val,float adjHeight)
     {
         IsEdge = val;

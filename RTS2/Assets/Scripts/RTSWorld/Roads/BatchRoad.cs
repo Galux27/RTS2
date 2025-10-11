@@ -29,6 +29,29 @@ public class BatchRoad : ISerialize
         return "Error";
     }
 
+    public uint GetRoadTileID()
+    {
+        if (!HasCached)
+        {
+            GetCachedTileIDs();
+        }
+        switch (type)
+        {
+            case RoadType.MajorRoad:
+                return CachedMajor;
+                break;
+            case RoadType.MinorRoad:
+                return CachedMinor;
+                break;
+            case RoadType.Backroad:
+                return CachedBackroad;
+                break;
+            default:
+                break;
+        }
+        return CachedMajor;
+    }
+
     public bool SeperateLanes()
     {
         switch (type)
@@ -115,7 +138,7 @@ public class BatchRoad : ISerialize
                 for (float a = 0f; a < 1f; a += widthInc)
                 {
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
-                    UpdateTile(batch, finalPos, GetRoadTileType());
+                    UpdateTile(batch, finalPos, GetRoadTileType(), GetRoadTileID());
                 }
             }
         }
@@ -128,26 +151,43 @@ public class BatchRoad : ISerialize
 
     }
 
-    public bool IsAlreadyRoadTile(string type,string newType, RoadType Generating)
+    uint CachedTiled, CachedMajor, CachedMinor, CachedBackroad;
+    bool HasCached = false;
+    void GetCachedTileIDs()
     {
-        if (newType == "Tiled")
+        CachedTiled = WorldRenderer.Instance.WorldTilesManager.GetTileID("Tiled");
+        CachedMajor = WorldRenderer.Instance.WorldTilesManager.GetTileID("MajorRoad");
+        CachedMinor = WorldRenderer.Instance.WorldTilesManager.GetTileID("MinorRoad");
+        CachedBackroad = WorldRenderer.Instance.WorldTilesManager.GetTileID("Backroad");
+
+        HasCached = true;
+    }
+
+    public bool IsAlreadyRoadTile(uint type,uint newType, RoadType Generating)
+    {
+        if (!HasCached)
         {
-            return type == "MajorRoad" || type == "Tiled" || type == "MinorRoad" || type == "Backroad";
+            GetCachedTileIDs();
+        }
+
+        if (newType == CachedTiled)
+        {
+            return type == CachedMajor || type == CachedTiled || type == CachedMinor || type == CachedBackroad;
 
         }
         switch (Generating)
         {
             case RoadType.None:
-                return type == "MajorRoad" || type== "Tiled" || type == "MinorRoad" || type == "Backroad";
+                return type == CachedMajor || type == CachedTiled || type == CachedMinor || type == CachedBackroad;
                 break;
             case RoadType.MajorRoad:
-                return type == "MajorRoad";
+                return type == CachedMajor;
                 break;
             case RoadType.MinorRoad:
-                return type == "MajorRoad"|| type == "MinorRoad";
+                return type == CachedMajor || type == CachedMinor;
                 break;
             case RoadType.Backroad:
-                return type == "MajorRoad" || type == "MinorRoad" || type == "Backroad";
+                return type == CachedMajor || type == CachedMinor || type == CachedBackroad;
                 break;
             default:
                 break;
@@ -166,34 +206,125 @@ public class BatchRoad : ISerialize
 
     WorldTile toEdit = null;
     int newMethod = 0, oldMethod = 0;
+    Vector2Int batch = new Vector2Int(),coords=new Vector2Int();
+    int localChunkX=0, localChunkY = 0;
+    Vector2Int lastBatch = new Vector2Int();
 
-    protected bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type, bool CareAboutOverwrite = true)
+    Vector2Int lastCoords= new Vector2Int();
+    bool lastExisted = true;
+    WorldChunkBatch batchUsing;
+    protected bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type,uint typeID, bool CareAboutOverwrite = true)
     {
         bool NeedsNewTile = false;
-       
 
-
-            toEdit = WorldTileHelpers.GetTileNearExisting(toEdit,toGenerateIn,pos);
-        
-        if (toEdit != null)
+        bool flipX=false,flipY=false;
+        if (pos.x < 0)
         {
-            if (IsAlreadyRoadTile(toEdit.tileType,type, this.type)&&CareAboutOverwrite)
+            pos.x *= -1f;
+            flipX = true;
+        }
+
+        if(pos.y< 0)
+        {
+            pos.y *= -1f;
+            flipY = true;
+        }
+
+
+        batch.x = Mathf.RoundToInt(pos.x - (pos.x % WorldChunkManager.ChunkBatchSize));
+        batch.y = Mathf.RoundToInt(pos.y - (pos.y % WorldChunkManager.ChunkBatchSize));
+
+        if (flipX)
+        {
+            batch.x *= -1;
+        }
+        if (flipY)
+        {
+            batch.y *= -1;
+        }
+
+        if (lastBatch == batch && batchUsing!=null)
+        {
+            if (lastExisted == false)
             {
                 return false;
             }
-            EnvironmentObjectInstance OnTile = null;
-            if(WorldChunkManager.Instance.ChunkBatches[WorldChunkBatch.chunkBatch].Chunks[WorldChunkBatch.chunk.x, WorldChunkBatch.chunk.y].DoesAnyObjectExistAtCoords(toEdit.Coords(), out OnTile))
-            {
-                OnTile.DestroyInstance();
-            }
-            OverworldTile tile= OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
-            toEdit.Elevation.SetTileToWalkable(tile.Elevation);
-            toEdit.UpdateWaterLevel(toEdit.WaterData.WaterLevel * -1f);
-            toEdit.UpdateTileType(type);
-            toEdit.CanPutDecorationsOn = false;
-            return true;
         }
-        return false;
+        else
+        {
+            lastBatch = batch;
+            lastExisted = WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch);
+            if (lastExisted)
+            {
+                batchUsing = WorldChunkManager.Instance.ChunkBatches[batch];
+            }
+            if (batchUsing == null||!lastExisted)
+            {
+                return false;
+            }
+        }
+
+        if (flipX)
+        {
+            batch.x *= -1;
+        }
+        if (flipY)
+        {
+            batch.y *= -1;
+        }
+
+        localChunkX = Mathf.FloorToInt((pos.x-batch.x) / WorldChunkManager.ChunksPerBatch);
+        localChunkY = Mathf.FloorToInt((pos.y-batch.y) / WorldChunkManager.ChunksPerBatch);
+
+
+        coords.x = Mathf.FloorToInt((pos.x % WorldChunkManager.ChunkSize));
+        coords.y = Mathf.FloorToInt((pos.y % WorldChunkManager.ChunkSize));//= new Vector2Int(,);
+        if (flipX)
+        {
+            batch.x *= -1;
+        }
+        if (flipY)
+        {
+            batch.y *= -1;
+        }
+        //int r = Random.Range(0, 100);
+        //if (r < 2)
+        //{
+        //   // Debug.Log("Converted " + pos + " to " + batch + " chunk " + localChunkX + "," + localChunkY + " coords " + coords);
+        //}
+        try
+            {
+            
+            if (lastExisted==false)
+            {
+                return false;
+            }
+            toEdit = batchUsing.Chunks[localChunkX, localChunkY].ChunkTiles[coords.x, coords.y];//WorldTileHelpers.GetTileNearExisting(toEdit,toGenerateIn,pos);
+
+            if (toEdit != null)
+            {
+                if (IsAlreadyRoadTile(toEdit.TileID, typeID, this.type) && CareAboutOverwrite)
+                {
+                    return false;
+                }
+                EnvironmentObjectInstance OnTile = null;
+                if (batchUsing.Chunks[localChunkX, localChunkY].DoesAnyObjectExistAtCoords(toEdit.Coords(), out OnTile))
+                {
+                    OnTile.DestroyInstance();
+                }
+                OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
+                toEdit.Elevation.SetTileToWalkable(tile.Elevation);
+                toEdit.UpdateWaterLevel(toEdit.WaterData.WaterLevel * -1f);
+                toEdit.UpdateTileType(type);
+                toEdit.CanPutDecorationsOn = false;
+                return true;
+            }
+        }
+        catch(System.Exception e) 
+        {
+            Debug.LogError("error rendering road with " + pos+"Local Chunk "+  localChunkX+","+localChunkY+" coords "+coords+ " error "+ e.ToString());
+        }
+            return false;
     }
 
     protected bool IsNextIncrementGoingOverPoint(float val,float inc,float target)
@@ -222,6 +353,15 @@ public class BatchRoad : ISerialize
     protected string GetEdgeTile()
     {
         return "Tiled";
+    }
+
+    protected uint GetEdgeID()
+    {
+        if (!HasCached)
+        {
+            GetCachedTileIDs();
+        }
+        return CachedTiled;
     }
 
     public void Deserialize(SerializedData data)
@@ -361,14 +501,14 @@ public class MinorRoad : BatchRoad
                 {
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
                    
-                    UpdateTile(batch, finalPos, GetRoadTileType());
+                    UpdateTile(batch, finalPos, GetRoadTileType(), GetRoadTileID());
 
                     
                 }
                 finalPos = Vector2.Lerp(leftEdge, rightEdge, 0f);
-                UpdateTile(batch, finalPos, GetEdgeTile());
+                UpdateTile(batch, finalPos, GetEdgeTile(), GetEdgeID());
                 finalPos = Vector2.Lerp(leftEdge, rightEdge, 1f);
-                UpdateTile(batch, finalPos, GetEdgeTile());
+                UpdateTile(batch, finalPos, GetEdgeTile(), GetEdgeID());
 
               
             }
@@ -418,12 +558,12 @@ public class MajorRoad : BatchRoad
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
                     if (IsFirstIncrementOrLast(a, widthInc))
                     {
-                        UpdateTile(batch, finalPos, GetEdgeTile());
+                        UpdateTile(batch, finalPos, GetEdgeTile(), GetEdgeID());
 
                     }
                     else
                     {
-                        UpdateTile(batch, finalPos, GetRoadTileType());
+                        UpdateTile(batch, finalPos, GetRoadTileType(), GetRoadTileID());
 
                     }
                 }
@@ -434,7 +574,7 @@ public class MajorRoad : BatchRoad
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
                     if ( IsNextIncrementGoingOverPoint(a, widthInc, .5f))
                     {
-                        UpdateTile(batch, finalPos, GetEdgeTile());
+                        UpdateTile(batch, finalPos, GetEdgeTile(), GetEdgeID());
 
                     }
                     
@@ -547,12 +687,12 @@ public class BatchRoadBlend : BatchRoad
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
                     if (IsFirstIncrementOrLast(a, widthInc) && GenerateEdge())
                     {
-                        UpdateTile(batch, finalPos, GetEdgeTile());
+                        UpdateTile(batch, finalPos, GetEdgeTile(), GetEdgeID());
 
                     }
                     else
                     {
-                        UpdateTile(batch, finalPos, GetRoadTileType());
+                        UpdateTile(batch, finalPos, GetRoadTileType(), GetRoadTileID());
 
                     }
                 }
@@ -565,7 +705,7 @@ public class BatchRoadBlend : BatchRoad
                         finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
                         if (IsNextIncrementGoingOverPoint(a, widthInc, .5f))
                         {
-                            UpdateTile(batch, finalPos, GetEdgeTile());
+                            UpdateTile(batch, finalPos, GetEdgeTile(), GetEdgeID());
 
                         }
 

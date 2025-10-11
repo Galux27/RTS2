@@ -11,6 +11,12 @@ public struct WaterData
         WaterLevel = level;
     }
 
+    public void Init(float level)
+    {
+        WaterLevel = level;
+    }
+
+
     public void UpdateWaterLevel(float val)
     {
         WaterLevel += val;

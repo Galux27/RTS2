@@ -187,6 +187,7 @@ public class WorldTile:ISerialize
     public int x,y;
     public bool traversable = true, CanPutDecorationsOn = true;
     public string tileType;
+    public uint TileID;
     public WaterData WaterData;
     public ElevationTile Elevation;
     public Vector2Int Chunk, Batch,Local;
@@ -198,11 +199,16 @@ public class WorldTile:ISerialize
 
     public WorldTile(int x,int y,Vector2Int chunk,Vector2Int batch,int localX,int localY)
     {
+       Init(x,y,chunk,batch,localX,localY);
+    }
+
+    public void Init(int x, int y, Vector2Int chunk, Vector2Int batch, int localX, int localY)
+    {
         this.x = x;
         this.y = y;
         tileType = "Ground";
-        WaterData = new WaterData(0f);
-        Elevation = new ElevationTile(new Vector3Int(x, y, 0));
+        WaterData.Init(0f);// = new WaterData(0f);
+        Elevation.Init(new Vector3Int(x, y, 0));// = new ElevationTile(new Vector3Int(x, y, 0));    
         Chunk = chunk;
         Batch = batch;
         Local = new Vector2Int(localX, localY);
@@ -261,9 +267,10 @@ public class WorldTile:ISerialize
         return data;
     }
 
-    public void UpdateTileType(String type)
+    public void UpdateTileType(string type)
     {      
         tileType = type;
+        TileID = WorldRenderer.Instance.WorldTilesManager.GetTileID(type);
     }
 
 

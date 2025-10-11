@@ -15,14 +15,17 @@ public class WorldTiles : ScriptableObject
 public class WorldTilesManager
 {
     Dictionary<string, WorldTileType> WorldTiles;
+    Dictionary<string, uint> WorldTileIndexes;
     Dictionary<float, WaterTile> WaterTiles;
     public WorldTilesManager(WorldTiles toUse)
     {
         List<WorldTileType> tileTypes = toUse.tileTypes;
         WorldTiles = new Dictionary<string, WorldTileType>();
+        WorldTileIndexes = new Dictionary<string, uint>();
         for(int x=0; x<tileTypes.Count; x++)
         {
             WorldTiles.Add(tileTypes[x].tileType, tileTypes[x]);
+            WorldTileIndexes.Add(tileTypes[x].tileType, (uint)x);
         }
 
         WaterTiles = new Dictionary<float, WaterTile>();
@@ -48,6 +51,16 @@ public class WorldTilesManager
         }
         return retVal.Tiles[Random.Range(0, retVal.Tiles.Length)] ;
     }
+
+    public uint GetTileID(string type)
+    {
+        if (WorldTileIndexes.ContainsKey(type))
+        {
+            return WorldTileIndexes[type];
+        }
+        return 0;
+    }
+
 
     public TileBase GetTileBase(string type)
     {

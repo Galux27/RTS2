@@ -77,19 +77,23 @@ public class WorldChunk:ISerialize
 
     public WorldChunk(int x,int y,int localX,int localY,Vector2Int batchCoords)
     {
+        Init(x,y,localX,localY,batchCoords);
+    }
+
+    public void Init(int x, int y, int localX, int localY, Vector2Int batchCoords)
+    {
         HasChunkFinishedLoading = false;
-        DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f,1f),1f);
+        DebugColor = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), 1f);
         X = x;
         Y = y;
-        LocalXCoord=localX;
-        LocalYCoord=localY;
-        WorldCoords=new Vector2Int(x, y);
-        BatchCoords=batchCoords;
+        LocalXCoord = localX;
+        LocalYCoord = localY;
+        WorldCoords = new Vector2Int(x, y);
+        BatchCoords = batchCoords;
         GenerateTilesForChunk();
         GenerateWallsForChunk();
         GeneratePathfindingNodes();
     }
-
 
     public void BlendHeight(float newHeight,Vector2Int dirComingFrom)
     {
@@ -188,8 +192,11 @@ public class WorldChunk:ISerialize
 
     void GenerateTilesForChunk()
     {
-        ChunkTiles = new WorldTile[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
-        xStart = X;
+        if (ChunkTiles == null)
+        {
+            ChunkTiles = new WorldTile[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        }
+            xStart = X;
         yStart = Y;
         localx = 0;
         localy = 0;
@@ -200,8 +207,15 @@ public class WorldChunk:ISerialize
 
             for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
             {
-                ChunkTiles[localx, localy] = new WorldTile(x,y,new Vector2Int(this.LocalXCoord,this.LocalYCoord),BatchCoords,localx,localy);
-                localy++;
+                if (ChunkTiles[localx, localy] == null)
+                {
+                    ChunkTiles[localx, localy] = new WorldTile(x, y, new Vector2Int(this.LocalXCoord, this.LocalYCoord), BatchCoords, localx, localy);
+                }
+                else
+                {
+                    ChunkTiles[localx, localy].Init(x, y, new Vector2Int(this.LocalXCoord, this.LocalYCoord), BatchCoords, localx, localy);
+                }
+                    localy++;
             }
             localx++;
             localy = 0;
@@ -210,8 +224,11 @@ public class WorldChunk:ISerialize
     static int xStart, yStart,localx,localy;
     void GeneratePathfindingNodes()
     {
-        PathfindingNodes=new PathfindingNode[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
-        xStart = X;
+        if (PathfindingNodes == null)
+        {
+            PathfindingNodes = new PathfindingNode[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        }
+            xStart = X;
         yStart = Y;
         localx = 0;
         localy = 0;
@@ -220,8 +237,15 @@ public class WorldChunk:ISerialize
 
             for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
             {
-                PathfindingNodes[localx, localy] = new PathfindingNode(x,y,true);
-                localy++;
+                if (PathfindingNodes[localx, localy] == null)
+                {
+                    PathfindingNodes[localx, localy] = new PathfindingNode(x, y, true);
+                }
+                else
+                {
+                    PathfindingNodes[localx, localy].Init(x, y, true);
+                }
+                    localy++;
             }
             localx++;
             localy = 0;
@@ -471,7 +495,11 @@ public class WorldChunk:ISerialize
 
     void GenerateWallsForChunk()
     {
-        WallSegments = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+        if (WallSegments == null)
+        {
+            WallSegments = new WallSegment[WorldChunkManager.ChunkSize, WorldChunkManager.ChunkSize];
+
+        }
         xStart = X;
         yStart = Y;
         localx = 0;
@@ -481,8 +509,15 @@ public class WorldChunk:ISerialize
            
             for (int y = yStart; y < yStart + WorldChunkManager.ChunkSize; y++)
             {
-                WallSegments[localx, localy] = new WallSegment(x, y, null,localx,localy);
-                localy++;
+                if (WallSegments[localx, localy] == null)
+                {
+                    WallSegments[localx, localy] = new WallSegment(x, y, null, localx, localy);
+                }
+                else
+                {
+                    WallSegments[localx,localy].Init(x,y,null,localx,localy);
+                }
+                    localy++;
             }
             localx++;
             localy = 0;

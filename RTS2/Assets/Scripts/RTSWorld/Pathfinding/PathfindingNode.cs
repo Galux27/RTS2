@@ -22,19 +22,25 @@ public class PathfindingNode
 
     public PathfindingNode(int x, int y, bool passable)
     {
+        Init(x, y, passable);
+
+    }
+
+    public void Init(int x, int y, bool passable)
+    {
         X = x;
         Y = y;
-        IsPassable= passable;
-
+        IsPassable = passable;
+        if (neighbours == null)
+        {
+            neighbours = new List<PathfindingNode>(4);
+        }
     }
 
     public void InitData(PathfindingNode[,] myGrid,int localX,int localY)
     {
         worldPos = new Vector3(X+.5f, Y+.5f);
-        if (neighbours == null)
-        {
-            neighbours = new List<PathfindingNode>(4);
-        }
+       
         
         if (localX > 0)
         {

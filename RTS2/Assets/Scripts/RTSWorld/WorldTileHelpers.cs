@@ -55,7 +55,7 @@ public static class WorldTileHelpers
             Debug.LogError("Error getting tile from coords " + coords + " " + batch.ToString() + "/" + chunk.ToString() + "/" + local.ToString());
             return null;
         }
-        }
+    }
     static bool ValidateCoords()
     {
         if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch) == false)

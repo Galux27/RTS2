@@ -7,30 +7,41 @@ using UnityEngine;
 
 public class WorldChunkBatch : MonoBehaviour
 {
-    
+
     public Vector2Int coords;
     public WorldChunk[,] Chunks;
     public bool IsActive = false;
     Vector2Int UpperBound = new Vector2Int();
     public bool NeedsGeneration = true;
     public Vector2Int OverworldCoords = new Vector2Int();
-    public List<WorldTileBlend> BlendList=new List<WorldTileBlend>();
+    public List<WorldTileBlend> BlendList = new List<WorldTileBlend>();
     public List<BatchRoad> Roads = new List<BatchRoad>();
 
-    public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords,Vector2Int overworld)
+    public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords, Vector2Int overworld)
     {
-        GameObject g = new GameObject();
-        g.name = "World Chunk Batch" + coords.ToString();
-        WorldChunkBatch wcb = g.AddComponent<WorldChunkBatch>();
-        wcb.SetCoords( coords,overworld);
-       
+
+        WorldChunkBatch wcb = WorldChunkBatchPool.GetChunkBatch();
+        wcb.SetCoords(coords, overworld);
+
         return wcb;
 
     }
 
     public Vector2Int Center()
     {
-        return coords+new Vector2Int(WorldChunkManager.ChunkBatchSize/2, WorldChunkManager.ChunkBatchSize/2);
+        return coords + new Vector2Int(WorldChunkManager.ChunkBatchSize / 2, WorldChunkManager.ChunkBatchSize / 2);
+    }
+
+    public void OnBatchCreated()
+    {
+        Chunks = new WorldChunk[WorldChunkManager.ChunksPerBatch, WorldChunkManager.ChunksPerBatch];
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y] = new WorldChunk(0, 0, 0, 0, Vector2Int.zero);  
+            }
+        }
     }
 
 
@@ -145,7 +156,12 @@ public class WorldChunkBatch : MonoBehaviour
         this.OverworldCoords = overworld;
         this.coords = coords;
         UpperBound = coords + new Vector2Int(WorldChunkManager.ChunksPerBatch * WorldChunkManager.ChunkSize, WorldChunkManager.ChunksPerBatch * WorldChunkManager.ChunkSize);
+        gameObject.name = "World Chunk Batch" + coords.ToString();
+
     }
+
+
+
 
 
     public bool IsPointInChunk(int x,int y)
@@ -157,7 +173,10 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void InitWorldChunks()
     {
-        Chunks = new WorldChunk[ WorldChunkManager.ChunksPerBatch, WorldChunkManager.ChunksPerBatch];
+        if (Chunks == null)
+        {
+            Chunks = new WorldChunk[WorldChunkManager.ChunksPerBatch, WorldChunkManager.ChunksPerBatch];
+        }
         if (WorldChunkManager.Instance.ExistingChunkData == null)
         {
             WorldChunkManager.Instance.ExistingChunkData = new Dictionary<Vector2Int, string>();
@@ -169,11 +188,21 @@ public class WorldChunkBatch : MonoBehaviour
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
                 {
-                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y,coords);
+                    if (Chunks[x, y] == null)
+                    {
+                        Chunks[x, y]= new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, coords);
+
+                    }
+                    else
+                    {
+                        Chunks[x, y].Init(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, coords);
+
+                    }
+
                 }
             }
 
-            for (int x = 0; x < Chunks.GetLength(0); x++)
+                for (int x = 0; x < Chunks.GetLength(0); x++)
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
                 {
@@ -203,9 +232,17 @@ public class WorldChunkBatch : MonoBehaviour
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
                 {
-                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, coords);
+                    if (Chunks[x, y] == null)
+                    {
+                        Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, coords);
+                    }
+                    else
+                    {
+                        Chunks[x, y].Init(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, coords);
+
+                    }
+                    }
                 }
-            }
 
             for (int x = 0; x < Chunks.GetLength(0); x++)
             {
@@ -237,9 +274,17 @@ public class WorldChunkBatch : MonoBehaviour
             {
                 for (int y = 0; y < Chunks.GetLength(1); y++)
                 {
-                    Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, this.coords);
+                    if (Chunks[x, y] == null)
+                    {
+                        Chunks[x, y] = new WorldChunk(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, this.coords);
+                    }
+                    else
+                    {
+                        Chunks[x, y].Init(coords.x + (x * WorldChunkManager.ChunkSize), coords.y + (y * WorldChunkManager.ChunkSize), x, y, this.coords);
+
+                    }
                 }
-            }
+                }
 
             for (int x = 0; x < Chunks.GetLength(0); x++)
             {

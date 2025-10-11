@@ -604,8 +604,8 @@ public static class DataReaders
         //CHUNK_TILES;COORDS;144,144::TILE_TYPE;Ground::WATER_LEVEL;0::`
         WorldTile retVal = new WorldTile(coords.x,coords.y,Vector2Int.zero,Vector2Int.zero,0,0);
         retVal.tileType = tileType;
-        retVal.WaterData = new WaterData(waterLevel);
-        retVal.Elevation = new ElevationTile(new Vector3Int(coords.x, coords.y, 0), elevation);
+        retVal.WaterData.Init(waterLevel);// = new WaterData(waterLevel);
+        retVal.Elevation.Init(new Vector3Int(coords.x, coords.y, 0), elevation);// = new ElevationTile();
         retVal.SetElevation(elevation);
 
         return retVal;

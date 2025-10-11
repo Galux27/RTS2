@@ -18,6 +18,11 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
    public WallTile baseWallType;
     public WallSegment(int x, int y,WallTile wallType,int localX,int localY)
     {
+        Init(x,y,wallType,localX,localY);
+    }
+
+    public void Init(int x, int y, WallTile wallType, int localX, int localY)
+    {
         this.x = x;
         this.y = y;
         if (wallType != null)
