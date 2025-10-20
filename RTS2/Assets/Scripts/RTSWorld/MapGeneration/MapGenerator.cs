@@ -138,7 +138,8 @@ public class FloorTileGenerator
     public virtual void GenerateTiles(WorldChunkBatch toSetIn)
     {
         WorldChunk setTilesIn = null;
-        for(int x = 0; x < toSetIn.Chunks.GetLength(0); x++)
+        uint id = WorldRenderer.Instance.WorldTilesManager.GetTileID(TileToSet);
+        for (int x = 0; x < toSetIn.Chunks.GetLength(0); x++)
         {
             for(int y = 0; y < toSetIn.Chunks.GetLength(1); y++)
             {
@@ -147,7 +148,7 @@ public class FloorTileGenerator
                 {
                     for (int y1 = 0; y1 < setTilesIn.ChunkTiles.GetLength(1); y1++)
                     {
-                        setTilesIn.UpdateTile(x1, y1, TileToSet);
+                        setTilesIn.UpdateTile(x1, y1, TileToSet,id);
                     }
                 }
             }

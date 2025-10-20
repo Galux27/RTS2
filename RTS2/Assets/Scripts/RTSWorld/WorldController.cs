@@ -267,10 +267,10 @@ public class WorldTile:ISerialize
         return data;
     }
 
-    public void UpdateTileType(string type)
+    public void UpdateTileType(string type,uint id)
     {      
         tileType = type;
-        TileID = WorldRenderer.Instance.WorldTilesManager.GetTileID(type);
+        TileID = id;
     }
 
 

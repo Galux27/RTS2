@@ -446,7 +446,7 @@ public class WorldChunkBatch : MonoBehaviour
             //Write chunk data to some live save place as its changed from the savegame
             if (DoWeNeedToUpdateData)
             {
-                MultiThreadedManager.Instance.AddAction(() => SerializationHelpers.SaveChunkBatchToWorkingCopy(this), () => UnloadChunk());
+                MultiThreadedManager.Instance.AddAction(() => { SerializationHelpers.SaveChunkBatchToWorkingCopy(this); UnloadChunk(); },() => WorldChunkManager.Instance.ChunkBatches.Remove(this.coords));
             }
             
             return true;
@@ -460,7 +460,6 @@ public class WorldChunkBatch : MonoBehaviour
         //go through chunks on the edge and remove pathfinding neighbours that 
         UnlinkBatchFromOtherBatches();
         //reset all environment objects and remove UIDs
-        WorldChunkManager.Instance.ChunkBatches.Remove(this.coords);
         Debug.Log("Unloading chunk at " + this.coords);
     }
 

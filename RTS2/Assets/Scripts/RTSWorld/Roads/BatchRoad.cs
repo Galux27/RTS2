@@ -122,9 +122,9 @@ public class BatchRoad : ISerialize
             dir = dir.normalized;
             Vector2 perpDir = Vector2.Perpendicular(target - pos).normalized * HalfWidth();
             float inc = 1f / dist;
-            inc /= 2f;
+            //inc /= 2f;
             float widthInc = 1f / Width;
-            widthInc /= 2f;
+            //widthInc /= 2f;
             Vector2 leftEdge = Vector2.zero;
             Vector2 rightEdge = Vector2.zero;
             Vector2 curPos = new Vector2();
@@ -216,7 +216,8 @@ public class BatchRoad : ISerialize
     protected bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type,uint typeID, bool CareAboutOverwrite = true)
     {
         bool NeedsNewTile = false;
-
+       
+       
         bool flipX=false,flipY=false;
         if (pos.x < 0)
         {
@@ -279,6 +280,17 @@ public class BatchRoad : ISerialize
 
         coords.x = Mathf.FloorToInt((pos.x % WorldChunkManager.ChunkSize));
         coords.y = Mathf.FloorToInt((pos.y % WorldChunkManager.ChunkSize));//= new Vector2Int(,);
+
+        if (coords == lastCoords)
+        {
+            return false;
+        }
+        else
+        {
+            lastCoords = coords;
+        }
+
+
         if (flipX)
         {
             batch.x *= -1;
@@ -287,13 +299,9 @@ public class BatchRoad : ISerialize
         {
             batch.y *= -1;
         }
-        //int r = Random.Range(0, 100);
-        //if (r < 2)
-        //{
-        //   // Debug.Log("Converted " + pos + " to " + batch + " chunk " + localChunkX + "," + localChunkY + " coords " + coords);
-        //}
+    
         try
-            {
+        {
             
             if (lastExisted==false)
             {
@@ -315,7 +323,7 @@ public class BatchRoad : ISerialize
                 OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
                 toEdit.Elevation.SetTileToWalkable(tile.Elevation);
                 toEdit.UpdateWaterLevel(toEdit.WaterData.WaterLevel * -1f);
-                toEdit.UpdateTileType(type);
+                toEdit.UpdateTileType(type,typeID);
                 toEdit.CanPutDecorationsOn = false;
                 return true;
             }

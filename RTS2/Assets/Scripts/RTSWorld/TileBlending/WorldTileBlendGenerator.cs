@@ -102,7 +102,8 @@ public class LandToMountainGenerator : WorldTileBlendGenerator
        int oddsX=0,oddsY=0;
         oddsX = (int)Mathf.Lerp(0f, 70f, Mathf.InverseLerp(lowX, highX, chunk.LocalXCoord));
         oddsY = (int)Mathf.Lerp(0f, 70f, Mathf.InverseLerp(lowY, highY, chunk.LocalYCoord));
-
+        string type = "Mountain";
+        uint ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(type);
         for (int x=0;x<chunk.ChunkTiles.GetLength(0); x++)
         {
             for(int y = 0; y < chunk.ChunkTiles.GetLength(1); y++)
@@ -110,7 +111,7 @@ public class LandToMountainGenerator : WorldTileBlendGenerator
                 rand = (oddsX + oddsY) / 2;
                 if (Random.Range(0, 100) < rand)
                 {
-                    chunk.UpdateTile(x, y, "Mountain");
+                    chunk.UpdateTile(x, y, type, ID) ;
                 }
                
             }
@@ -568,7 +569,9 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
     {
         Vector2Int coords = new Vector2Int();
         float dist = 9999f;
-        for(int x=0;x<chunk.ChunkTiles.GetLength(0);x++)
+        string type = "Sand";
+        uint ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(type);
+        for (int x=0;x<chunk.ChunkTiles.GetLength(0);x++)
         {
             for (int y = 0; y < chunk.ChunkTiles.GetLength(0); y++)
             {
@@ -577,7 +580,7 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                 dist = Vector2Int.Distance(coords, corner);
                 if (dist < DistFromCornerForBlend)
                 {
-                    chunk.UpdateTile(x, y, "Sand");
+                    chunk.UpdateTile(x, y,type,ID );
                     chunk.UpdateWaterLevel(x, y, -99);
                 }
             }
@@ -652,14 +655,16 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                 float waterLevel = 0f;
                     if (positive)
                     {
-                        for (int x = xStart; x < chunk.ChunkTiles.GetLength(0); x++)
+                    string type = "Sand";
+                    uint ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(type);
+                    for (int x = xStart; x < chunk.ChunkTiles.GetLength(0); x++)
                         {
                             //set tiles to be blend
                             //if (x == chunk.ChunkTiles.GetLength(0)-1)
                             {
                             if (x <= xEnd)
                             {
-                                chunk.UpdateTile(x, y, "Sand");
+                                chunk.UpdateTile(x, y,type,ID);
                             }
                              waterLevel =  Mathf.Lerp(0,-50, Mathf.InverseLerp(xStart, chunk.ChunkTiles.GetLength(0), x));
                                 chunk.UpdateWaterLevel(x,y, waterLevel);
@@ -668,13 +673,15 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                     }
                     else
                     {
-                        for (int x = xStart; x >= 0; x--)
+                    string type = "Sand";
+                    uint ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(type);
+                    for (int x = xStart; x >= 0; x--)
                         {
                         
                         {
                             if (x > xEnd)
                             {
-                                chunk.UpdateTile(x, y, "Sand");
+                                chunk.UpdateTile(x, y, type,ID);
                             }
                             waterLevel = Mathf.Lerp(0, -50, Mathf.InverseLerp(xStart, 0, x));
                             chunk.UpdateWaterLevel(x, y, waterLevel);
@@ -711,12 +718,14 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                 float waterLevel = 0f;
                 if (positive)
                 {
+                    string type = "Sand";
+                    uint ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(type);
                     for (int y = yStart; y < chunk.ChunkTiles.GetLength(1); y++)
                     {
 
                         if (y < yEnd)
                         {
-                            chunk.UpdateTile(x, y, "Sand");
+                            chunk.UpdateTile(x, y, type, ID);
 
                         }
 
@@ -728,12 +737,14 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                 }
                 else
                 {
+                    string type = "Sand";
+                    uint ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(type);
                     for (int y = yStart; y >= 0; y--)
                     {
                         //set tiles to be blend
                         if (y > yEnd)
                         {
-                            chunk.UpdateTile(x, y, "Sand");
+                            chunk.UpdateTile(x, y, type,ID);
 
                         }
                         waterLevel = Mathf.Lerp(0, -50, Mathf.InverseLerp(yStart, 0, y));

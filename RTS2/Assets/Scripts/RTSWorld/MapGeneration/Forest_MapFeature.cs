@@ -26,14 +26,15 @@ public class Forest_MapFeature :MapFeatureBase
             if (tileChecking != null && tileChecking.traversable && tileChecking.WaterData.WaterLevel == 0f &&tileChecking.CanPutDecorationsOn)
             {
                 objectToCreate = Random.Range(0, ValidObjectsForFeature.Count);
-                chunkCoords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(new Vector3(x, y));
+                chunkCoords = tileChecking.Chunk; //WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(new Vector3(x, y));
                 tileChunk = toGenerateIn.Chunks[chunkCoords.x, chunkCoords.y];
-
-                if (tileChunk.DoesAnyObjectExistAtCoords(new Vector2Int(x, y), out existing) == false)
+                //tileChunk.DoesAnyObjectExistAtCoords(new Vector2Int(x, y), out existing) == false
+                //if ()
                 {
                     toAdd = new EnvironmentObjectInstance(x, y, ValidObjectsForFeature[objectToCreate]);
                     tileChunk.AddEnvironmentObject(toAdd);
                     WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(toAdd, !EnvironmentObjectHelpers.GetEnvironmentObject(ValidObjectsForFeature[objectToCreate]).BlocksTile);
+                    tileChecking.CanPutDecorationsOn = false;
                 }
             }
         }
