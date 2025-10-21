@@ -344,7 +344,7 @@ public class Room:ISerialize
             EnvironmentObject objData = EnvironmentObjectHelpers.GetEnvironmentObject(key);
 
         Debug.Log("Room: getting obj data from " + key+"|"+(objData==null)+"|"+(objData.CapacityData.CapacityData==null)+" is valid "+ CanUseRoom());
-            if (objData.CapacityData != null && objData.CapacityData.CapacityData.Count > 0)
+            if (objData.CapacityData != null && objData.CapacityData.CapacityData!=null && objData.CapacityData.CapacityData.Count > 0)
             {
                 for (int q = 0; q < objData.CapacityData.CapacityData.Count; q++)
                 {

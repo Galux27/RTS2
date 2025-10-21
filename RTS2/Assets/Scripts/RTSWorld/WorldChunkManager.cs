@@ -15,6 +15,22 @@ public class WorldChunkManager : MonoBehaviour
     static WorldChunkManager instance;
     public Dictionary<Vector2Int, WorldChunkBatch> ChunkBatches;
     public List<Vector2Int> ChunksLoaded;
+
+    public WorldChunkBatch GetChunkBatch(Vector2Int coords)
+    {
+        if (ExistingChunkData.ContainsKey(coords) && !ChunkBatches.ContainsKey(coords))
+        {
+            CreateChunkBatch(coords);
+        }
+        if (ChunkBatches.ContainsKey(coords))
+        {
+            return ChunkBatches[coords];
+        }
+        
+        return null;
+    }
+
+
     public static WorldChunkManager Instance
     {
         get
@@ -40,6 +56,7 @@ public class WorldChunkManager : MonoBehaviour
     int Width, Height;
     public void InitWorldChunks()
     {
+        WorldChunkBatchPool.ClearPool();
         ChunkBatches = new Dictionary<Vector2Int, WorldChunkBatch>();
         CreateChunkBatch(new Vector2Int());       
     }

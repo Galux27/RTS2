@@ -581,7 +581,8 @@ public class WorldChunkBatch : MonoBehaviour
 
                 for (int q = 0; q < Chunks[x, y].EnvironmentObjectsInChunk.Count; q++)
                 {
-                    WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(Chunks[x, y].EnvironmentObjectsInChunk[q], !EnvironmentObjectHelpers.GetEnvironmentObject(Chunks[x, y].EnvironmentObjectsInChunk[q].Name()).BlocksTile);
+                    WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(Chunks[x, y].EnvironmentObjectsInChunk[q],
+                        !EnvironmentObjectHelpers.GetEnvironmentObject(Chunks[x, y].EnvironmentObjectsInChunk[q].Name()).BlocksTile);
                 }
 
             }

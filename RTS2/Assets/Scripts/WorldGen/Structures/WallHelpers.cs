@@ -424,7 +424,7 @@ public static class WallHelpers
         Vector2Int local = Vector2Int.zero;
 
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y, out batch, out chunk, out local);
-        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y];
+        return WorldChunkManager.Instance.GetChunkBatch(batch).Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y];
     }
 
     public static WallSegment GetWallAtCoords(Vector2Int coords)

@@ -8,6 +8,13 @@ public static class WorldChunkBatchPool
     static bool Init = false;
     const int NumberOfBatchesToInit = 20;
 
+    public static void ClearPool()
+    {
+        AvailableBatches.Clear();
+        Init = false;
+    }
+
+
     public static void InitPool()
     {
         if (Init)

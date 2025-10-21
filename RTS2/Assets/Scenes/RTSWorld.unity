@@ -2997,6 +2997,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 976452365210366062, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3367064256327745116, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3996310132720197623, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 3996310132720197623, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 3996310132720197623, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 885
+      objectReference: {fileID: 0}
+    - target: {fileID: 3996310132720197623, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -361
+      objectReference: {fileID: 0}
     - target: {fileID: 7712946765650062323, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
       propertyPath: m_Name
       value: OverworldGenerator

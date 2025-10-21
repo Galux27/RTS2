@@ -339,7 +339,6 @@ public class BatchRoad : ISerialize
     {
         if (val <= target && val + inc > target)
         {
-            Debug.Log("Half way point " + val + "+" + inc);
             return true;
         }
         return false;

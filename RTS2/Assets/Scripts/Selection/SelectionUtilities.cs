@@ -493,6 +493,7 @@ public static class SelectionUtilities
         chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(maxDist + (WorldChunkManager.ChunkSize), point);
         for (int x = 0; x < chunksToCheck.Count; x++)
         {
+          
 
             toCheck.AddRange(chunksToCheck[x].UnitsInChunk);
         }
@@ -502,6 +503,10 @@ public static class SelectionUtilities
         Vector3 unitPosition = Vector3.zero;
         for (int x = 0; x < toCheck.Count; x++)
         {
+            if (toCheck[x] == null)
+            {
+                continue;
+            }
             unitPosition = toCheck[x].transform.position;
             unitPosition.z = 0;
             if (toCheck[x].MyFaction.MyFactionID == FactionController.USER_FACTION)

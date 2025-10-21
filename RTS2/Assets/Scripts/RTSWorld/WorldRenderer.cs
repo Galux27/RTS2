@@ -111,7 +111,6 @@ public class WorldRenderer : MonoBehaviour
         postions[index]= coords;
         if (lastTilePlaced != tile.tileType)
         {
-            Debug.Log("Placing " + tile.tileType);
             currentTile = WorldTilesManager.GetTileBase(tile.tileType);
             lastTilePlaced = tile.tileType;
             lastTileBase = currentTile;

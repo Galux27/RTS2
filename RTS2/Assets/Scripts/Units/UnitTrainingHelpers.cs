@@ -23,7 +23,7 @@ public static class UnitTrainingHelpers
         health.CurrentHealth = old.Health();
 
         string equipedObject = "";
-        if (old.GetComponent<ItemHolder>())
+        if (old.GetComponent<ItemHolder>() && old.GetComponent<ItemHolder>().CurrentlyHolding!=null)
         {
             equipedObject = old.GetComponent<ItemHolder>().CurrentlyHolding.name;
         }
