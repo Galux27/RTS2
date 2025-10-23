@@ -30,16 +30,35 @@ public class PathFollower
         return pathfindingNodes != null &&pathfindingNodes.Count > 0;
     }
 
+
+    public void GetPath(Vector3 myPos, PathfindingNode targetPos)
+    {
+        EasyStopwatch.StartStopwatch();
+        pathfindingNodes = Pathfinding.FindPath(myPos, targetPos, followingPath);
+        EasyStopwatch.StopStopwatch();
+        int count = 0;
+
+        if (pathfindingNodes != null)
+        {
+            count = pathfindingNodes.Count;
+        }
+        Debug.Log("Trying to get path between " + myPos + " to " + targetPos + " length " + count+" took "+ EasyStopwatch.GetStopwatchElapsedTime());
+
+    }
+
     public void GetPath(Vector3 myPos,Vector3 targetPos)
     {
         EasyStopwatch.StartStopwatch();
         pathfindingNodes = Pathfinding.FindPath(myPos, targetPos,followingPath);
         EasyStopwatch.StopStopwatch();
         int count = 0;
+
         if (pathfindingNodes != null)
         {
             count = pathfindingNodes.Count;
         }
+        Debug.Log("Trying to get path between " + myPos + " to " + targetPos + " length " + count);
+
     }
 
     Vector3 GetCurrentNode()

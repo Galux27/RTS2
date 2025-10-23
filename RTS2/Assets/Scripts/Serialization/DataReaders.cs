@@ -49,7 +49,7 @@ public static class DataReaders
         {
             for (int y = 0; y < chunk.ChunkTiles.GetLength(1); y++)
             {
-                chunk.ChunkTiles[x, y].Chunk = coords;
+                chunk.ChunkTiles[x, y].Chunk = localCoords;
             }
         }
         keyValueSplit = splitListFromData[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);

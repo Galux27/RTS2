@@ -20,6 +20,9 @@ public class EnvironmentObjectBehaviourBase:ScriptableObject
 
     public virtual void PassInVector(Vector3 data,string use)
     {
-
+        if (use == "POS")
+        {
+            myPosition = data;
+        }
     }
 }

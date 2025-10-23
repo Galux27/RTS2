@@ -13,11 +13,10 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         if (ConstructableObjectManager.Instance.AllObjects[ObjectKey].MyBehaviour != null)
         {
             myBehaviour = ScriptableObject.Instantiate(ConstructableObjectManager.Instance.AllObjects[ObjectKey].MyBehaviour);
-            myBehaviour.myPosition= new Vector3(x,y,0);
+            myBehaviour.PassInVector( new Vector3(x,y,0),"POS");
         }
         if (ConstructableObjectManager.Instance.AllObjects[ObjectKey].RequiresUpdate)
         {
-            Debug.Log("Added to on update");
             GameController.Instance.OnUpdate += OnUpdate;
         }
         UnitCapacityManager.RefreshCapacities();

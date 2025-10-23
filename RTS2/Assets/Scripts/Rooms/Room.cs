@@ -317,7 +317,7 @@ public class Room:ISerialize
                 {
                     string key = ObjectsInRoom[x].ObjectKey;
                     EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(key);
-                    if (obj.CapacityData != null && obj.CapacityData.CapacityData.Count > 0)
+                    if (obj.CapacityData != null && obj.CapacityData.CapacityData!=null && obj.CapacityData.CapacityData.Count > 0)
                     {
                         for (int q = 0; q < obj.CapacityData.CapacityData.Count; q++)
                         {

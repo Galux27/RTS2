@@ -19,6 +19,18 @@ public class MoveTo_Behaviour : BehaviourBase
         }
     }
 
+    public void InitBehaviour(Unit toPerform,PathfindingNode target,bool UsePath)
+    {
+        base.InitBehaviour(toPerform);
+        TargetPosition = target.worldPos;
+        usePath = UsePath;
+        if (usePath)
+        {
+            follower = new PathFollower(toPerform);
+            follower.GetPath(toPerform.transform.position, target);
+        }
+    }
+
     public override bool CanPerformBehaviour()
     {
         return Vector3.Distance(unitToMove.transform.position, TargetPosition) >1f && unitToMove!=null;

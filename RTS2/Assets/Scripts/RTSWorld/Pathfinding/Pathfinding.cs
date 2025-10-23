@@ -236,9 +236,14 @@ public static class Pathfinding
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos,performing);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos,performing);
-        Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "+seekerNode.worldPos.ToString()+" dest node " + targetNode.worldPos.ToString());
+        Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "
+            +seekerNode.worldPos.ToString()
+            +" dest node " + targetNode.worldPos.ToString());
         if (seekerNode.IsPassable == false || targetNode.IsPassable == false)
         {
+            Debug.Log("Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos + 
+                "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count+"|"+seekerNode.IsPassable+"|"+targetNode.IsPassable);
+
             return null;
         }
         Debug.Log("Getting path " + seekerNode.worldPos+"|"+targetNode.worldPos+"|"+seekerNode.neighbours.Contains(targetNode)+"|"+seekerNode.neighbours.Count+"|"+targetNode.neighbours.Count);
@@ -293,6 +298,74 @@ public static class Pathfinding
         }
         return null;
     }
+
+    public static List<PathfindingNode> FindPath(Vector3 startPos, PathfindingNode targetNode, Unit performing)
+    {
+        //get player and target position in grid coords
+        PathfindingNode seekerNode = GetNodeFromPosition(startPos, performing);
+        Debug.Log("Getting Path from " + startPos + " to " + targetNode.worldPos + " start node "
+            + seekerNode.worldPos.ToString()
+            + " dest node " + targetNode.worldPos.ToString());
+        if (seekerNode.IsPassable == false || targetNode.IsPassable == false)
+        {
+            Debug.Log("Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos +
+                "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count + "|" + seekerNode.IsPassable + "|" + targetNode.IsPassable);
+
+            return null;
+        }
+        Debug.Log("Getting path " + seekerNode.worldPos + "|" + targetNode.worldPos + "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count);
+        openSet.Clear();
+        closedSet.Clear();
+        openSet.Add(seekerNode);
+
+        //calculates path for pathfinding
+        while (openSet.Count > 0)
+        {
+
+            //iterates through openSet and finds lowest FCost
+            PathfindingNode node = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].GetFCost(performing) <= node.GetFCost(performing))
+                {
+                    if (openSet[i].GetHCost(performing) < node.GetHCost(performing))
+                        node = openSet[i];
+                }
+            }
+
+            openSet.Remove(node);
+            closedSet.Add(node);
+
+            //If target found, retrace path
+            if (node == targetNode)
+            {
+                return RetracePath(seekerNode, targetNode);
+
+            }
+
+            //adds neighbor nodes to openSet
+            foreach (PathfindingNode neighbour in node.neighbours)
+            {
+                if (neighbour.GetPassable(performing) == false || closedSet.Contains(neighbour))
+                {
+                    continue;
+                }
+
+                int newCostToNeighbour = node.GetGCost(performing) + GetDistance(node, neighbour);
+                if (newCostToNeighbour < neighbour.GetGCost(performing) || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = node;
+
+                    if (!openSet.Contains(neighbour))
+                        openSet.Add(neighbour);
+                }
+            }
+        }
+        return null;
+    }
+
 
     static List<PathfindingNode> RetracePath(PathfindingNode startNode, PathfindingNode endNode)
     {
