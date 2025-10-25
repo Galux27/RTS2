@@ -37,8 +37,15 @@ public class MapGenerator : MonoBehaviour
             return;
         }
         OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
-       
 
+        for (int x = 0; x < overworldTile.Features.Count; x++)
+        {
+
+            if (OverworldConverters.ContainsKey(overworldTile.Features[x]))
+            {
+                OverworldConverters[overworldTile.Features[x]].GenerateFeature(toGenerateIn);
+            }
+        }
         if (!overworldTile.Features.Contains(OverworldFeature.LargeWaterBody))
         {
             bool generated = false;
@@ -55,14 +62,7 @@ public class MapGenerator : MonoBehaviour
             toGenerateIn.ApplyOverworldHeight(0);
 
         }
-        for (int x = 0; x < overworldTile.Features.Count; x++)
-        {
-
-            if (OverworldConverters.ContainsKey(overworldTile.Features[x]))
-            {
-                OverworldConverters[overworldTile.Features[x]].GenerateFeature(toGenerateIn);
-            }
-        }
+       
         toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
         toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
         toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);

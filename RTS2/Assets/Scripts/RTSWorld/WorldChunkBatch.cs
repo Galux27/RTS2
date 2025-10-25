@@ -93,6 +93,7 @@ public class WorldChunkBatch : MonoBehaviour
     public void AddRoad(BatchRoad road)
     {
         Roads.Add(road);
+        road.GenerateRoad();
     }
 
     public void GenerateRoadBlends(RoadType toGen)
@@ -113,13 +114,13 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void GenerateRoads(RoadType toGen)
     {
-        for(int x = 0; x < Roads.Count; x++)
-        {
-            if (Roads[x].type == toGen)
-            {
-                Roads[x].GenerateRoad();
-            }
-        }
+        //for(int x = 0; x < Roads.Count; x++)
+        //{
+        //    if (Roads[x].type == toGen)
+        //    {
+        //        Roads[x].GenerateRoad();
+        //    }
+        //}
 
         for (int x = 0; x < Roads.Count; x++)
         {

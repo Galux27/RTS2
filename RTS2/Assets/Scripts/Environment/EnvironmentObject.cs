@@ -11,10 +11,10 @@ using UnityEngine;
 public class EnvironmentObject : ScriptableObject
 {
     public string Name;
-    public Sprite ForwardsSprite,SideSprite,BackwardsSprite;
+    public Sprite ForwardsSprite,SideSprite,BackwardsSprite,HarvestedSprite;
     public bool BlocksTile;
     public int Width, Height;
-    public bool CanHarvest,IsDecoration,RequiresUpdate;
+    public bool CanHarvest,IsDecoration,RequiresUpdate,DestroyOnHarvest=true;
     public HarvestableResourceData Resources;
     public ResourceCapacityData CapacityData;
     public float MaxHealth;

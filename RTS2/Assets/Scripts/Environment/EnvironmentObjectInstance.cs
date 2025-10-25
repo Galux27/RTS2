@@ -127,6 +127,10 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
 
     public void DestroyInstance()
     {
+        if (!EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey).DestroyOnHarvest)
+        {
+            return;
+        }
         //if (Drawn)
         //{
         //    CleanupInstance();

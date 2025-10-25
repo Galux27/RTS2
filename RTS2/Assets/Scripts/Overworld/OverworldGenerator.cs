@@ -153,14 +153,14 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                 {
                     coords = new Vector2Int(x, y);
 
-                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.MinorRoad) 
+                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.MajorRoad) 
                        )
                     {
                         int count = 0;
                         neighbours = GetNeighbours(coords);
                         for (int i = 0; i < neighbours.Count; i++)
                         {
-                            if (neighbours[i].Features.Contains(OverworldFeature.MinorRoad))
+                            if (neighbours[i].Features.Contains(OverworldFeature.MajorRoad))
                             {
                                 count++;
                                 //hasSetOverworldStartingCoords = true;
