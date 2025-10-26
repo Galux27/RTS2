@@ -29,6 +29,11 @@ public class BatchRoad : ISerialize
         return "Error";
     }
 
+    public virtual bool IsBlend()
+    {
+        return false;
+    }
+
     public uint GetRoadTileID()
     {
         if (!HasCached)
@@ -318,6 +323,7 @@ public class BatchRoad : ISerialize
                 EnvironmentObjectInstance OnTile = null;
                 if (batchUsing.Chunks[localChunkX, localChunkY].DoesAnyObjectExistAtCoords(toEdit.Coords(), out OnTile))
                 {
+                    Debug.Log("Destroyed object on road " + OnTile.Name());
                     OnTile.DestroyInstance();
                 }
                 OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
@@ -720,6 +726,12 @@ public class BatchRoadBlend : BatchRoad
                 }
                 }
             }
+        
+    }
+
+    public override bool IsBlend()
+    {
+        return true;
     }
 }
 

@@ -319,13 +319,16 @@ public class WorldChunkBatch : MonoBehaviour
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
-                if (Chunks[x, y].CheckIfChunkNeedsToRender())
+                if (Chunks[x, y].CheckIfChunkNeedsToRender() || Chunks[x,y].DoesChunkNeedRefresh())
                 {
+                    Debug.Log("Generating: render call" + coords);
+
                     WorldRenderer.Instance.RenderChunk(Chunks[x, y].ChunkTiles);
                     Chunks[x, y].RenderEnvironmentObjects();
                     Chunks[x, y].NeedsToRender = false;
                     Chunks[x, y].RefreshWalls();
                     Chunks[x, y].IsRendered = true;
+                    Chunks[x, y].NeedsUpdate = false;
                     count++;
                 }else if (Chunks[x, y].IsRendered)
                 {

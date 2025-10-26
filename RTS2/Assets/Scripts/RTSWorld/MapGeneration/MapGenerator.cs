@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -37,7 +38,7 @@ public class MapGenerator : MonoBehaviour
             return;
         }
         OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
-
+        Debug.Log("Generating: render call" + toGenerateIn.coords);
         for (int x = 0; x < overworldTile.Features.Count; x++)
         {
 
@@ -48,6 +49,14 @@ public class MapGenerator : MonoBehaviour
         }
         if (!overworldTile.Features.Contains(OverworldFeature.LargeWaterBody))
         {
+            toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
+            toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
+            toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);
+
+            toGenerateIn.GenerateRoads(RoadType.Backroad);
+            toGenerateIn.GenerateRoads(RoadType.MinorRoad);
+            toGenerateIn.GenerateRoads(RoadType.MajorRoad);
+
             bool generated = false;
             TryToGenerateByFeature(toGenerateIn, out generated);
             if (!generated)
@@ -63,13 +72,7 @@ public class MapGenerator : MonoBehaviour
 
         }
        
-        toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
-        toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
-        toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);
-
-        toGenerateIn.GenerateRoads(RoadType.Backroad);
-        toGenerateIn.GenerateRoads(RoadType.MinorRoad);
-        toGenerateIn.GenerateRoads(RoadType.MajorRoad) ;
+        
         toGenerateIn.NeedsGeneration = false;
         toGenerateIn.SetChunksLoaded();
     }

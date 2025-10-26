@@ -82,7 +82,7 @@ public class WorldController : MonoBehaviour
             }
         }
         WorldChunkManager.Instance.RenderWorldChunks();
-        WallManager.RenderWalls(BuildingTilemap);
+       // WallManager.RenderWalls(BuildingTilemap);
 
     }
 
@@ -104,9 +104,9 @@ public class WorldController : MonoBehaviour
         
         Color c = Color.green;
 
-        for (int x = coords.x; x < coords.x + data.GetWidth; x++)
+        for (int x = coords.x-data.GetWidth/2; x < coords.x + data.GetWidth/2; x++)
         {
-            for (int y = coords.y ; y < coords.y + data.GetHeight; y++)
+            for (int y = coords.y-data.GetWidth/2 ; y < coords.y + data.GetHeight/2; y++)
             {
                 SetTraversible(x, y, traversable);
             }
@@ -116,11 +116,10 @@ public class WorldController : MonoBehaviour
 
      public void SetTraversible(int x,int y,bool traversable)
     {
-        if (CoordsValid(x, y))
-        {
+        
             WorldTileHelpers.UpdateTileTraversible(x, y, traversable);
             Pathfinding.UpdateNodeData(x, y, traversable);
-        }
+        
 
    }
 
@@ -158,12 +157,7 @@ public class WorldController : MonoBehaviour
 
         }
     }
-    bool CoordsValid(int x,int y)
-    {
-        if (x < 0 || y < 0) return false;
-        if (x > WorldWidth-1 || y > WorldHeight-1) return false;
-        return true;
-    }
+   
 
     public bool IsTraversible(int x,int y)
     {
@@ -271,6 +265,7 @@ public class WorldTile:ISerialize
     {      
         tileType = type;
         TileID = id;
+        WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].NeedsUpdate = true;
     }
 
 

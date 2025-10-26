@@ -21,7 +21,7 @@ public class WorldChunk:ISerialize
     public PathfindingNode[,] PathfindingNodes;
     public WorldTile[,] ChunkTiles;
     public Vector2Int WorldCoords,BatchCoords;
-    public bool NeedsToRender = false,IsRendered=false;
+    public bool NeedsToRender = false,IsRendered=false,NeedsUpdate=false;
     const float CameraRenderDistance = 16*3;
     public Dictionary<WorldTileBlendType, WorldTileBlendCoordDataStore> TileBlends;
 
@@ -56,6 +56,11 @@ public class WorldChunk:ISerialize
         float dist = Vector2.Distance(new Vector2(X + (WorldChunkManager.ChunkSize / 2),
             Y + (WorldChunkManager.ChunkSize / 2)), new Vector2(cameraPos.x, cameraPos.y));
         return NeedsToRender || dist<CameraRenderDistance && IsRendered==false;
+    }
+
+    public bool DoesChunkNeedRefresh()
+    {
+        return IsRendered && NeedsUpdate;
     }
 
     public bool CanWeCleanupChunk()
