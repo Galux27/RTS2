@@ -263,6 +263,7 @@ public class WorldTile:ISerialize
 
     public void UpdateTileType(string type,uint id)
     {      
+       
         tileType = type;
         TileID = id;
         WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].NeedsUpdate = true;
