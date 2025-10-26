@@ -49,19 +49,21 @@ public class MapGenerator : MonoBehaviour
         }
         if (!overworldTile.Features.Contains(OverworldFeature.LargeWaterBody))
         {
-            toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
-            toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
-            toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);
-
-            toGenerateIn.GenerateRoads(RoadType.Backroad);
-            toGenerateIn.GenerateRoads(RoadType.MinorRoad);
-            toGenerateIn.GenerateRoads(RoadType.MajorRoad);
+            
 
             bool generated = false;
             TryToGenerateByFeature(toGenerateIn, out generated);
+            bool wasGenerated = generated;
             if (!generated)
             {
-                DefaultFeatures.GenerateForFeature(toGenerateIn);
+                DefaultFeatures.GenerateForFeature(toGenerateIn,DefaultFeatures.features);
+            }
+
+         
+            if (!wasGenerated)
+            {
+                DefaultFeatures.GenerateForFeature(toGenerateIn, DefaultFeatures.UnnaturalFeatures,false);
+
             }
         }
         else
@@ -71,8 +73,15 @@ public class MapGenerator : MonoBehaviour
             toGenerateIn.ApplyOverworldHeight(0);
 
         }
-       
-        
+        toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
+        toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
+        toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);
+
+        toGenerateIn.GenerateRoads(RoadType.Backroad);
+        toGenerateIn.GenerateRoads(RoadType.MinorRoad);
+        toGenerateIn.GenerateRoads(RoadType.MajorRoad);
+
+
         toGenerateIn.NeedsGeneration = false;
         toGenerateIn.SetChunksLoaded();
     }
@@ -86,7 +95,7 @@ public class MapGenerator : MonoBehaviour
         {
             if (overworldTile.Features.Contains(Features[x].toGenerateFor))
             {
-                Features[x].GenerateForFeature(toGenerateIn);
+                Features[x].GenerateForFeature(toGenerateIn, Features[x].features);
                 generated = true;
             }
         }
@@ -97,11 +106,11 @@ public class MapGenerator : MonoBehaviour
 public class FeatureMapGenerator
 {
     public OverworldFeature toGenerateFor;
-    public List<MapFeatureBase> features = new List<MapFeatureBase>();
+    public List<MapFeatureBase> features = new List<MapFeatureBase>(),UnnaturalFeatures=new List<MapFeatureBase>();
     public int FeaturesToGenerate;
     public FloorTileGenerator floorTileGenerator;
     public bool RefreshElevationOnGenerate = false;
-    public void GenerateForFeature(WorldChunkBatch toGenerateIn)
+    public void GenerateForFeature(WorldChunkBatch toGenerateIn,List<MapFeatureBase> features,bool useFloorGenerator=true)
     {
 
 
@@ -109,7 +118,7 @@ public class FeatureMapGenerator
         OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
         toGenerateIn.ApplyOverworldHeight(overworldTile.Elevation);
 
-        if (floorTileGenerator.Use)
+        if (floorTileGenerator.Use && useFloorGenerator)
         {
             floorTileGenerator.GenerateTiles(toGenerateIn);
         }

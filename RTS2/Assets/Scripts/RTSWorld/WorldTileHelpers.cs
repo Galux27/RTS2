@@ -66,7 +66,15 @@ public static class WorldTileHelpers
     }
     public static void UpdateTileTraversible(int x,int y,bool val)
     {
-        GetTileFromCoords(x,y).traversable = val;
-    }
+        WorldTile worldTile= GetTileFromCoords(x, y);
+        if (worldTile != null)
+        {
+            worldTile.traversable = val;
+        }
+        else
+        {
+            Debug.LogError("No node found at " + x + "," + y);
+        }
+        }
 
-}
+    }

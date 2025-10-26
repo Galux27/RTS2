@@ -2146,6 +2146,7 @@ MonoBehaviour:
     features:
     - {fileID: 11400000, guid: 6edbc6166985b3940903208b35abd114, type: 2}
     - {fileID: 11400000, guid: 7b01f63a9ef63a44cad98f88b9b1fb9b, type: 2}
+    UnnaturalFeatures: []
     FeaturesToGenerate: 100
     floorTileGenerator:
       TileToSet: Mountain
@@ -2158,6 +2159,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: d5bc94e3ecb71814ab2f0d9b2c37154b, type: 2}
     - {fileID: 11400000, guid: 2516cede25602904fba4da26388db422, type: 2}
     - {fileID: 11400000, guid: fd276b50c9199ec4db9e7960f1bcadec, type: 2}
+    UnnaturalFeatures:
+    - {fileID: 11400000, guid: 9d6f941b845265948b089b630a0eb0e5, type: 2}
     FeaturesToGenerate: 100
     floorTileGenerator:
       TileToSet: Grass
@@ -4252,6 +4255,7 @@ MonoBehaviour:
     BatchCoords: {x: 0, y: 0}
     NeedsToRender: 0
     IsRendered: 0
+    NeedsUpdate: 0
     HasChunkFinishedLoading: 0
   OverworldTileImIn:
     X: 0

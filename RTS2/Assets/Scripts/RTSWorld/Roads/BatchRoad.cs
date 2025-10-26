@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using TMPro;
 using UnityEngine;
 
 public class BatchRoad : ISerialize
@@ -10,6 +11,7 @@ public class BatchRoad : ISerialize
     public int Width;
     public string Key;
     public RoadType type;
+    public bool IsGenerated = false, IsDrawn = false;
     public string GetRoadTileType()
     {
         switch (type)
@@ -114,10 +116,14 @@ public class BatchRoad : ISerialize
     {
         Segments = new List<RoadSegment>();
         Segments.Add(new RoadSegment(RoadStart, RoadEnd));
+        IsGenerated = true;
     }
 
     public virtual void RenderRoad(WorldChunkBatch batch)
     {
+        IsDrawn = true;
+        int failCount = 0;
+        int total = 0;
         for(int x=0;x<Segments.Count; x++)
         {
             Vector2 pos = Segments[x].Start;
@@ -143,12 +149,17 @@ public class BatchRoad : ISerialize
                 for (float a = 0f; a < 1f; a += widthInc)
                 {
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
-                    UpdateTile(batch, finalPos, GetRoadTileType(), GetRoadTileID());
+                    if(! UpdateTile(batch, finalPos, GetRoadTileType(), GetRoadTileID()))
+                    {
+                        failCount++;
+                    }
+                    total++;
                 }
             }
         }
+        Debug.Log("Road generation between " + RoadStart + " and " + RoadEnd + " failed " + failCount + "/" + total);
 
-    
+
     }
     public void LogCount()
     {
@@ -213,78 +224,84 @@ public class BatchRoad : ISerialize
     int newMethod = 0, oldMethod = 0;
     Vector2Int batch = new Vector2Int(),coords=new Vector2Int();
     int localChunkX=0, localChunkY = 0;
-    Vector2Int lastBatch = new Vector2Int();
-
     Vector2Int lastCoords= new Vector2Int();
     bool lastExisted = true;
-    WorldChunkBatch batchUsing;
+
+    bool IsPosInBatch(WorldChunkBatch toGenerateIn,Vector2 pos)
+    {
+        if(pos.x<toGenerateIn.coords.x || pos.x>toGenerateIn.coords.x+WorldChunkManager.ChunkBatchSize
+            || pos.y < toGenerateIn.coords.y || pos.y > toGenerateIn.coords.y + WorldChunkManager.ChunkBatchSize)
+        {
+            return false;
+        }
+        return true;
+    }
+
     protected bool UpdateTile(WorldChunkBatch toGenerateIn, Vector2 pos, string type,uint typeID, bool CareAboutOverwrite = true)
     {
+        if (!IsPosInBatch(toGenerateIn, pos))
+        {
+            return false;
+        }
+        int r = Random.Range(0, 100);
+        if (r == 27)
+        {
+            Debug.Log("Setting road tile in batch " + toGenerateIn.coords + " at position " + pos);
+        }
         bool NeedsNewTile = false;
        
        
         bool flipX=false,flipY=false;
-        if (pos.x < 0)
+        //if (pos.x < 0)
+        //{
+        //    pos.x *= -1f;
+        //    flipX = true;
+        //}
+
+        //if (pos.y < 0)
+        //{
+        //    pos.y *= -1f;
+        //    flipY = true;
+        //}
+
+
+        //batch.x = Mathf.RoundToInt(pos.x - (pos.x % WorldChunkManager.ChunkBatchSize));
+        //batch.y = Mathf.RoundToInt(pos.y - (pos.y % WorldChunkManager.ChunkBatchSize));
+        batch = toGenerateIn.coords;
+
+   
+        lastExisted = WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch);
+         
+        if (!lastExisted)
         {
-            pos.x *= -1f;
-            flipX = true;
+            return false;
         }
 
-        if(pos.y< 0)
-        {
-            pos.y *= -1f;
-            flipY = true;
-        }
 
+        //if (flipX)
+        //{
+        //    batch.x *= -1;
+        //}
+        //if (flipY)
+        //{
+        //    batch.y *= -1;
+        //}
 
-        batch.x = Mathf.RoundToInt(pos.x - (pos.x % WorldChunkManager.ChunkBatchSize));
-        batch.y = Mathf.RoundToInt(pos.y - (pos.y % WorldChunkManager.ChunkBatchSize));
-
-        if (flipX)
-        {
-            batch.x *= -1;
-        }
-        if (flipY)
-        {
-            batch.y *= -1;
-        }
-
-        if (lastBatch == batch && batchUsing!=null)
-        {
-            if (lastExisted == false)
-            {
-                return false;
-            }
-        }
-        else
-        {
-            lastBatch = batch;
-            lastExisted = WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch);
-            if (lastExisted)
-            {
-                batchUsing = WorldChunkManager.Instance.ChunkBatches[batch];
-            }
-            if (batchUsing == null||!lastExisted)
-            {
-                return false;
-            }
-        }
-
-        if (flipX)
-        {
-            batch.x *= -1;
-        }
-        if (flipY)
-        {
-            batch.y *= -1;
-        }
-
-        localChunkX = Mathf.FloorToInt((pos.x-batch.x) / WorldChunkManager.ChunksPerBatch);
-        localChunkY = Mathf.FloorToInt((pos.y-batch.y) / WorldChunkManager.ChunksPerBatch);
+        localChunkX = Mathf.Clamp( Mathf.FloorToInt( Mathf.InverseLerp(batch.x, batch.x+ WorldChunkManager.ChunkBatchSize, pos.x ) * WorldChunkManager.ChunkSize),0,15);//Mathf.FloorToInt((pos.x-batch.x) / WorldChunkManager.ChunksPerBatch);
+        localChunkY = Mathf.Clamp(Mathf.FloorToInt(Mathf.InverseLerp(batch.y, batch.y + WorldChunkManager.ChunkBatchSize, pos.y ) * WorldChunkManager.ChunkSize), 0, 15);
 
 
         coords.x = Mathf.FloorToInt((pos.x % WorldChunkManager.ChunkSize));
         coords.y = Mathf.FloorToInt((pos.y % WorldChunkManager.ChunkSize));//= new Vector2Int(,);
+
+        if (coords.x < 0)
+        {
+            coords.x += WorldChunkManager.ChunkSize;
+        }
+        if(coords.y < 0)
+        {
+            coords.y += WorldChunkManager.ChunkSize;
+        }
 
         if (coords == lastCoords)
         {
@@ -296,15 +313,19 @@ public class BatchRoad : ISerialize
         }
 
 
-        if (flipX)
+        //if (flipX)
+        //{
+        //    batch.x *= -1;
+        //}
+        //if (flipY)
+        //{
+        //    batch.y *= -1;
+        //}
+        if (r == 27)
         {
-            batch.x *= -1;
+            Debug.Log("Setting road tile in batch " + toGenerateIn.coords + " at position " + pos+" batch " +batch+","+localChunkX+","+localChunkY+","+coords
+                +" road start " + RoadStart+","+RoadEnd);
         }
-        if (flipY)
-        {
-            batch.y *= -1;
-        }
-    
         try
         {
             
@@ -312,7 +333,7 @@ public class BatchRoad : ISerialize
             {
                 return false;
             }
-            toEdit = batchUsing.Chunks[localChunkX, localChunkY].ChunkTiles[coords.x, coords.y];//WorldTileHelpers.GetTileNearExisting(toEdit,toGenerateIn,pos);
+            toEdit = toGenerateIn.Chunks[localChunkX, localChunkY].ChunkTiles[coords.x, coords.y];//WorldTileHelpers.GetTileNearExisting(toEdit,toGenerateIn,pos);
 
             if (toEdit != null)
             {
@@ -321,7 +342,7 @@ public class BatchRoad : ISerialize
                     return false;
                 }
                 EnvironmentObjectInstance OnTile = null;
-                if (batchUsing.Chunks[localChunkX, localChunkY].DoesAnyObjectExistAtCoords(toEdit.Coords(), out OnTile))
+                if (toGenerateIn.Chunks[localChunkX, localChunkY].DoesAnyObjectExistAtCoords(toEdit.Coords(), out OnTile))
                 {
                     Debug.Log("Destroyed object on road " + OnTile.Name());
                     OnTile.DestroyInstance();
@@ -329,14 +350,15 @@ public class BatchRoad : ISerialize
                 OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
                 toEdit.Elevation.SetTileToWalkable(tile.Elevation);
                 toEdit.UpdateWaterLevel(toEdit.WaterData.WaterLevel * -1f);
-                toEdit.UpdateTileType(type,typeID);
+                 toEdit.UpdateTileType(type,typeID);
+                //toGenerateIn.Chunks[localChunkX, localChunkY].UpdateTile(toEdit.Local.x, toEdit.Local.y, type, typeID);
                 toEdit.CanPutDecorationsOn = false;
                 return true;
             }
         }
         catch(System.Exception e) 
         {
-            Debug.LogError("error rendering road with " + pos+"Local Chunk "+  localChunkX+","+localChunkY+" coords "+coords+ " error "+ e.ToString());
+            Debug.LogError("error rendering road with " + pos+"batch " + batch+"Local Chunk "+  localChunkX+","+localChunkY+" coords "+coords+ " error "+ e.ToString());
         }
             return false;
     }
@@ -429,6 +451,7 @@ public class Backroad : BatchRoad
         {
             base.GenerateRoad();
         }
+        IsGenerated = true;
     }
 
 }
@@ -442,6 +465,7 @@ public class MinorRoad : BatchRoad
 
     public override void GenerateRoad()
     {
+        IsGenerated = true;
         Segments = new List<RoadSegment>();
         List<PathfindingNode> path = Pathfinding.FindPath(RoadStart, RoadEnd);
         Vector2 startPoint = Vector2.zero;
@@ -488,6 +512,7 @@ public class MinorRoad : BatchRoad
 
     public override void RenderRoad(WorldChunkBatch batch)
     {
+        IsDrawn = true;
         for (int x = 0; x < Segments.Count; x++)
         {
             Vector2 pos = Segments[x].Start;
@@ -543,6 +568,8 @@ public class MajorRoad : BatchRoad
 
     public override void RenderRoad(WorldChunkBatch batch)
     {
+        int failed = 0, total = 0;
+        IsDrawn = true;
         for (int x = 0; x < Segments.Count; x++)
         {
             Vector2 pos = Segments[x].Start;
@@ -571,13 +598,19 @@ public class MajorRoad : BatchRoad
                     finalPos = Vector2.Lerp(leftEdge, rightEdge, a);
                     if (IsFirstIncrementOrLast(a, widthInc))
                     {
-                        UpdateTile(batch, finalPos, GetEdgeTile(), GetEdgeID());
+                        if(!UpdateTile(batch, finalPos, GetEdgeTile(), GetEdgeID()))
+                        {
+                            failed++;
+                        }
+                        total++;
 
                     }
                     else
                     {
-                        UpdateTile(batch, finalPos, GetRoadTileType(), GetRoadTileID());
-
+                        if(!UpdateTile(batch, finalPos, GetRoadTileType(), GetRoadTileID())){
+                            failed++;
+                        }
+                        total++;
                     }
                 }
                 // ||
@@ -594,6 +627,8 @@ public class MajorRoad : BatchRoad
                 }
             }
         }
+        Debug.Log("Road generation between " + RoadStart + " and " + RoadEnd + " failed " + failed + "/" + total+" batch "+ batch.coords);
+
     }
 }
 
@@ -613,7 +648,7 @@ public class BatchRoadBlend : BatchRoad
         Vector2 endPoint = Vector2.zero;
         Vector2 finalStartPoint = Vector2.zero;
         Vector2 finalEndPoint = Vector2.zero;
-        
+        IsGenerated = true;
         for (int x = 0; x < toLink.Count; x++)
         {
 
@@ -669,6 +704,7 @@ public class BatchRoadBlend : BatchRoad
 
     public override void RenderRoad(WorldChunkBatch batch)
     {
+        IsDrawn = true;
         for (int x = 0; x < Segments.Count; x++)
         {
             Vector2 pos = Segments[x].Start;

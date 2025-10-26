@@ -11,13 +11,15 @@ public static class Pathfinding
     static int worldWidth, worldHeight;
        public static void UpdateNodeData(int x,int y,bool traversable)
     {
-        if (GetNodeFromCoords(x, y) == null)
+        PathfindingNode node = GetNodeFromCoords(x, y);
+        if (node == null)
         {
             Debug.LogError("Null node at " + x+"," + y);
+            return;
         }
 
 
-       GetNodeFromCoords(x,y).UpdatePassable(traversable);
+       node.UpdatePassable(traversable);
     }
     public static void AddPathNodeModifier(int x,int y,PathNodeModifier toAdd)
     {

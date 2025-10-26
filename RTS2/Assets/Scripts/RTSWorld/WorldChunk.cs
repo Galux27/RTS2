@@ -188,6 +188,7 @@ public class WorldChunk:ISerialize
     public void UpdateTile(int x, int y, string type,uint tileID)
     {
         ChunkTiles[x, y].UpdateTileType(type,tileID);
+        NeedsUpdate = true;
     }
 
     public void UpdateWaterLevel(int x, int y,float val)

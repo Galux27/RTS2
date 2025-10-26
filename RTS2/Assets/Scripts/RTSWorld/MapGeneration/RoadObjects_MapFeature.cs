@@ -38,7 +38,7 @@ public class RoadObjects_MapFeature : MapFeatureBase
             if (road.type == RoadType.MajorRoad || road.type == RoadType.MinorRoad)
             {
                 RoadSegment rs = GetRandomRoadSegment(road);
-                float point = Random.Range(0f, 1f);
+                float point = Random.Range(0.15f, .85f);
                 Vector2 posForObj = Vector2.Lerp(rs.Start, rs.End, point);
                 string objID = GetRandomObjectToSpawn();
                 EnvironmentObject obj = EnvironmentObjectManager.Instance.AllObjects[objID];
@@ -74,7 +74,8 @@ public class RoadObjects_MapFeature : MapFeatureBase
                 }
                 if (isValid)
                 {
-                    Debug.Log("Generating road objects, creating road ojbects "+ obj.name + " at "+ posForObj+" offset " + offset+"Road points "+ rs.Start+","+rs.End+" chunk batch "+ toGenerateIn.coords+","+toPutOn.Coords()+","+toPutOn.Batch);
+                    Debug.Log("Generating road objects, creating road ojbects "+ obj.name + " at "+ posForObj+" offset " + offset+"Road points "
+                        + rs.Start+","+rs.End+" chunk batch "+ toGenerateIn.coords+","+toPutOn.Coords()+","+toPutOn.Batch+","+road.IsGenerated+","+road.IsDrawn);
 
                     EnvironmentObjectInstance toAdd = new EnvironmentObjectInstance(toPutOn.x,toPutOn.y,objID);
                     WorldChunkManager.Instance.ChunkBatches[toPutOn.Batch].Chunks[toPutOn.Chunk.x, toPutOn.Chunk.y].AddEnvironmentObject(toAdd);
