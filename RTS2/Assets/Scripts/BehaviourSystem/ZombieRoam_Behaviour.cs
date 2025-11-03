@@ -47,7 +47,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
        
             Vector2Int coords = this.unitToMove.MyCurrentChunk;
             PathfindingNode node = Pathfinding.GetNodeFromPosition(unitToMove.transform.position+direction);
-            if (node.IsPassable)
+            if (node!=null && node.IsPassable)
             {
                 unitToMove.MoveUnit(DirectionToTarget());
             }
@@ -56,7 +56,6 @@ public class ZombieRoam_Behaviour :BehaviourBase
                 directionChangeTimer = directionChangeTimerLength;
             }
             directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta,0.01f);
-        Debug.Log("Roam Timer " + directionChangeTimer+"/"+count);
 
         if (directionChangeTimer > directionChangeTimerLength)
             {

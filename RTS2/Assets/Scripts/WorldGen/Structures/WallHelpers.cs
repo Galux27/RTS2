@@ -424,10 +424,18 @@ public static class WallHelpers
         Vector2Int local = Vector2Int.zero;
 
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y, out batch, out chunk, out local);
-        return WorldChunkManager.Instance.GetChunkBatch(batch).Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y];
-    }
 
-    public static WallSegment GetWallAtCoords(Vector2Int coords)
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch))
+        {
+            return WorldChunkManager.Instance.GetChunkBatch(batch).Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y];
+        }
+        else
+        {
+            return null;
+        }
+        }
+
+        public static WallSegment GetWallAtCoords(Vector2Int coords)
     {
         Vector2Int batch = Vector2Int.zero;
         Vector2Int chunk = Vector2Int.zero;

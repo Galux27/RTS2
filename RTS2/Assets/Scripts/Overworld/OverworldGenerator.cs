@@ -359,6 +359,19 @@ public class OverworldTile: ISerialize
         return retVal;
     }
 
+    public int GetQuantitiyOfFeature(OverworldFeature feature)
+    {
+        int retVal = 0;
+        for(int x = 0; x < Features.Count; x++)
+        {
+            if (Features[x] == feature)
+            {
+                retVal++;
+            }
+        }
+        return retVal;
+    }
+
   
     public SerializedData Serialize()
     {

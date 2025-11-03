@@ -83,6 +83,7 @@ public class MapGenerator : MonoBehaviour
 
 
         toGenerateIn.NeedsGeneration = false;
+        GameLifeManager.Instance.OnChunkBatchGenerated(toGenerateIn);
         toGenerateIn.SetChunksLoaded();
     }
 

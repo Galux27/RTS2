@@ -24,6 +24,7 @@ public class ZombieController : MonoBehaviour
     public bool Spawn = false;
     public int GetMaxNumberOfZombies()
     {
+
         return 100;
     }
 
@@ -65,6 +66,9 @@ public class ZombieController : MonoBehaviour
             CreateZombie();
         }
     }
+
+
+
 
     void CreateZombie()
     {

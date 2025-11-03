@@ -35,21 +35,6 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
     void PerformPassiveZombieBehaviour(Unit toCheck)
     {
 
-        //PathfindingNode nodeAtPosition = Pathfinding.GetNodeFromPosition(toCheck.transform.position);
-        //if (nodeAtPosition != null)
-        //{
-        //    if (nodeAtPosition.GetPassable(toCheck) == false && toCheck.lastCoords != Vector2Int.zero)
-        //    {
-        //        MoveTo_Behaviour moveTo = new MoveTo_Behaviour();
-        //        moveTo.InitBehaviour(toCheck, Pathfinding.GetNodeFromCoords(toCheck.lastCoords).worldPos, false);
-        //        currentBehaviour = moveTo;
-
-        //    }
-        //}
-
-        Debug.Log("Behaviuour check");
-
-
         Unit UnitNearMe = BehaviourUtilities.GetClosestTargetThatsHostile(toCheck, 15f);
        
         if (UnitNearMe != null)
@@ -59,7 +44,6 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
                 ZombieAttackTarget_Behaviour zombieFollowTarget_Behaviour = new ZombieAttackTarget_Behaviour();
                 zombieFollowTarget_Behaviour.InitBehaviour(UnitNearMe, toCheck);
                 currentBehaviour = zombieFollowTarget_Behaviour;
-                Debug.Log("Set Zombie Behaviour: attack target "+toCheck.GetMyUID().Value);
             }
         }
         else
@@ -70,7 +54,6 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
                 ZombieAttackObject_Behaviour zombieAttackObject_Behaviour = new ZombieAttackObject_Behaviour();
                 zombieAttackObject_Behaviour.InitBehaviour(ObjectAttacking, toCheck);
                 currentBehaviour = zombieAttackObject_Behaviour;
-                Debug.Log("Set Zombie Behaviour: attackwakk" + toCheck.GetMyUID().Value);
 
             }
             else
@@ -81,7 +64,6 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
                     ZombieAttackObject_Behaviour zombieAttackObject_Behaviour = new ZombieAttackObject_Behaviour();
                     zombieAttackObject_Behaviour.InitBehaviour(ObjectAttacking, toCheck);
                     currentBehaviour = zombieAttackObject_Behaviour;
-                    Debug.Log("Set Zombie Behaviour: attack target" + toCheck.GetMyUID().Value);
 
                 }
                 else
@@ -91,7 +73,6 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
                         ZombieRoam_Behaviour zombieRoam_Behaviour = new ZombieRoam_Behaviour();
                         zombieRoam_Behaviour.InitRoamBehaviour((Zombie)toCheck);
                         currentBehaviour = zombieRoam_Behaviour;
-                        Debug.Log("Set Zombie Behaviour: attack roam" + toCheck.GetMyUID().Value);
 
                     }
                 }

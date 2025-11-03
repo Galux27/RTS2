@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UnitMoniter : MonoBehaviour
@@ -72,11 +73,12 @@ public class UnitMoniter : MonoBehaviour
        {
            IncreaseUnitCount(toAdd);
        }
-       else if(toAdd.MyFaction.MyFactionID == FactionController.ZOMBIE_FACTION)
-       {
-            ZombieController.Instance.AddZombieToMoniter(toAdd);
-       }
-        
+        //else if (toAdd.MyFaction.MyFactionID == FactionController.ZOMBIE_FACTION)
+        //{
+        //    WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(new Vector2Int(Mathf.RoundToInt(toAdd.transform.position.x), Mathf.RoundToInt(toAdd.transform.position.y))).AddUnitToBatch(toAdd);
+        //    ZombieController.Instance.AddZombieToMoniter(toAdd);
+        //}
+
         AllUnits.Add(toAdd);
     }
 

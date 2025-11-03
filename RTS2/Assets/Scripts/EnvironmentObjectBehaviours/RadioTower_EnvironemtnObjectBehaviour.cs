@@ -18,7 +18,7 @@ public class RadioTower_EnvironemtnObjectBehaviour : EnvironmentObjectBehaviourB
     public override void PassInVector(Vector3 data, string use)
     {
        base.PassInVector(data, use);
-       // WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(data.x, data.y, out batch, out chunk, out coords);
+       WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(data.x, data.y, out batch, out chunk, out coords);
        
         BatchesICanSpawnIn = new List<Vector2Int>();
         BatchesICanSpawnIn.Add(batch + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0));
@@ -60,27 +60,6 @@ public class RadioTower_EnvironemtnObjectBehaviour : EnvironmentObjectBehaviourB
                 }
             }
         }
-
-        //for (int x=0;x<WorldChunkManager.ChunkSize;x++)
-        //{
-        //    for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
-        //    {
-        //        //wc.ChunkTiles[x, y];
-        //        curTilePos = new Vector3(toCheck.Coords().x, toCheck.Coords().y);
-
-        //        if (toCheck.TileTraversable() && wc.PathfindingNodes[x,y].IsPassable)
-        //        {
-        //            float dist = Vector3.Distance(curTilePos,startPos);
-        //            if(dist<closestDist)
-        //            {
-        //                closestDist = dist;
-        //                myTile = toCheck;
-        //            }
-                 
-        //        }
-              
-        //    }
-        //}
 
         target = GetTargetNode().worldPos;
         Debug.Log("Radio tower target was " + GetTargetNode().worldPos +" "+ GetTargetNode().IsPassable);

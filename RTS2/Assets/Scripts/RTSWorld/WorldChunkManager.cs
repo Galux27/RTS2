@@ -601,6 +601,7 @@ public class WorldChunkManager : MonoBehaviour
 
     public void OnUnitCreated(Unit u)
     {
+
         GetWorldChunkBatchFromPosition(u.transform.position).OnUnitCreated(u);
       
     }

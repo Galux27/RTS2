@@ -662,6 +662,64 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 70065404}
   m_CullTransparentMesh: 1
+--- !u!1 &83243158
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 83243161}
+  - component: {fileID: 83243160}
+  - component: {fileID: 83243159}
+  m_Layer: 0
+  m_Name: GameLife
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &83243159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83243158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7ed6cb05e0d5d442a6604eaa95731b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ZombiePrefab: {fileID: 1965254852317116142, guid: 71b2a2af47f21324194c8ca455e31063, type: 3}
+--- !u!114 &83243160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83243158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e673497950e30043a088ab6272c35b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &83243161
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83243158}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -206.76962, y: 129.5511, z: -0.9482422}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &84661698
 GameObject:
   m_ObjectHideFlags: 0
@@ -15344,3 +15402,4 @@ SceneRoots:
   - {fileID: 515391871}
   - {fileID: 406524719}
   - {fileID: 935836952}
+  - {fileID: 83243161}

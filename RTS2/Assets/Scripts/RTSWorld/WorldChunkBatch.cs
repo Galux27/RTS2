@@ -16,6 +16,8 @@ public class WorldChunkBatch : MonoBehaviour
     public Vector2Int OverworldCoords = new Vector2Int();
     public List<WorldTileBlend> BlendList = new List<WorldTileBlend>();
     public List<BatchRoad> Roads = new List<BatchRoad>();
+    public WorldChunkBatchUnits UnitsInBatch;
+
 
     public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords, Vector2Int overworld)
     {
@@ -43,7 +45,6 @@ public class WorldChunkBatch : MonoBehaviour
             }
         }
     }
-
 
     public void ApplyOverworldHeight(float height)
     {
@@ -1057,4 +1058,22 @@ public class WorldChunkBatch : MonoBehaviour
         Chunks[coords.x, coords.y].RemoveConstructable(bs,needsCleanup);
     }
 
+}
+
+
+public class WorldChunkBatchUnits
+{
+    public List<Unit> UnitsInBatch;
+    public WorldChunkBatchUnits()
+    {
+        UnitsInBatch = new List<Unit>();
+    }
+
+    public void AddUnitToBatch(Unit unit)
+    {
+        if(!UnitsInBatch.Contains(unit))
+        {
+            UnitsInBatch.Add(unit);
+        }
+    }
 }

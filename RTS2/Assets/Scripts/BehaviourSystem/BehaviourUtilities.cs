@@ -51,7 +51,7 @@ public static class BehaviourUtilities
                 if (WorldController.Instance.WallManager.CoordsValid(x, y))
                 {
                     wallChecking=WallHelpers.GetWallAtCoords(x, y);
-                    if (wallChecking.WallType!=WallType.None)
+                    if (wallChecking!=null && wallChecking.WallType!=WallType.None)
                     {
                         WallSectionCache.Add(wallChecking);
                     }
