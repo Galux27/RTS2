@@ -985,28 +985,13 @@ public class WorldChunkBatch : MonoBehaviour
     {
         GetChunkCoordsFromWorldPos(u.transform.position);
         Chunks[getCoordsCache.x, getCoordsCache.y].AddUnitToChunk(u);
-        u.UpdateChunk(getCoordsCache);
+        u.UpdateChunk(Chunks[getCoordsCache.x, getCoordsCache.y]);
     }
 
     public void OnUnitMove(Unit u)
     {
         GetChunkCoordsFromWorldPos(u.transform.position);
-
-        if (u.MyCurrentChunk != getCoordsCache)
-        {
-            try
-            {
-                Chunks[u.MyCurrentChunk.x, u.MyCurrentChunk.y].RemoveUnitFromChunk(u);
-                Chunks[getCoordsCache.x, getCoordsCache.y].AddUnitToChunk(u);
-                u.UpdateChunk(getCoordsCache);
-            }
-            catch
-            {
-                Debug.LogError("Issue moving between chunks " + u.MyCurrentChunk.ToString() + " to " + getCoordsCache.ToString());
-            }
-        }
-
-
+        u.UpdateChunk(Chunks[getCoordsCache.x, getCoordsCache.y]);
     }
 
     public void OnUnitDeath(Unit u)

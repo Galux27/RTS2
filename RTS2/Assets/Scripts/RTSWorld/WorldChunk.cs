@@ -776,6 +776,11 @@ public class WorldChunk:ISerialize
         {
             ToBuild[x].Render();
         }
+
+        for (int x = 0; x < UnitsInChunk.Count; x++)
+        {
+            UnitsInChunk[x].UpdateUnitRenderer(true);
+        }
     }
 
     public void CleanupEnvironmentObjects()
@@ -900,6 +905,11 @@ public class WorldChunk:ISerialize
             {
                 WallSegments[x, y].UnRender();
             }
+        }
+
+        for(int x = 0; x < UnitsInChunk.Count; x++)
+        {
+            UnitsInChunk[x].UpdateUnitRenderer(false);
         }
     }
 }

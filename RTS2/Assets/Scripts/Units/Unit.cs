@@ -13,14 +13,56 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public UnitOrders MyOrders;
     public Action<Unit> OnAttacked;
     ObjectHealth MyHealth;
-    public Vector2Int MyCurrentChunk;
+    public Vector2Int MyCurrentChunk,MyCurrentBatch;
+    bool SetChunk = false;
     public UnitFaction MyFaction;
     public UnitSenses MySenses;
+    public UnitRenderer MyRender;
 
-    public void UpdateChunk(Vector2Int newChunk)
+    public void UpdateChunk(WorldChunk newChunk)
     {
-        MyCurrentChunk = newChunk;
+        RemoveUnitFromChunkItsIn();
+        MyCurrentChunk = new Vector2Int(newChunk.LocalXCoord, newChunk.LocalYCoord) ;
+        MyCurrentBatch = newChunk.BatchCoords;
+        newChunk.AddUnitToChunk(this);
+        UpdateUnitRenderer(newChunk.IsRendered);
+       
+        SetChunk = true;
     }
+
+ 
+    public void RemoveUnitFromChunkItsIn()
+    {
+        if (SetChunk)
+        {
+            WorldChunkManager.Instance.ChunkBatches[MyCurrentBatch].Chunks[MyCurrentChunk.x, MyCurrentChunk.y].RemoveUnitFromChunk(this);
+        }
+    }
+
+    public void UpdateUnitRenderer(bool show)
+    {
+        if (show)
+        {
+            if (MyRender == null)
+            {
+                MyRender = GameObjectPoolManager.Instance.GetObjectFromPool("UnitRenderer").GetComponent<UnitRenderer>();
+                MyRender.transform.parent = this.transform;
+                MyRender.transform.localPosition = Vector3.zero;
+                MyRender.SetUnitVisuals(UnitVisualManager.Instance.AllVisuals[MyType]);
+            }
+            MyRender.DrawUnit();
+        }
+        else
+        {
+            if (MyRender != null)
+            {
+                MyRender.HideUnit();
+                MyRender.transform.parent = null;
+                GameObjectPoolManager.Instance.ReturnObjectToPool(MyRender.gameObject, "UnitRenderer");
+                MyRender = null;
+            }
+            }
+        }
 
 
     BehaviourRunner behaviourRunner;
@@ -97,7 +139,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     {
         OnObjectDeselected();
         UnitMoniter.Instance.RemoveUnit(this);
-        WorldChunkManager.Instance.OnUnitDeath(this);
+        RemoveUnitFromChunkItsIn();
         Destroy(this.gameObject);
     }
 

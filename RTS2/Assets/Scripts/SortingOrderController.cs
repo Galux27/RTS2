@@ -13,32 +13,9 @@ public class SortingOrderController : MonoBehaviour
         sr= GetComponent<SpriteRenderer>();
     }
 
-    float lastY;
-    private void Update()
-    {
-        return;
-
-        if (IsStatic)
-        {
-            return;
-        }
-        if (lastY != this.transform.position.y)
-        {
-            OnPositionChange();
-            lastY = this.transform.position.y;
-        }
-    }
+   
+    
 
 
-    public void OnPositionChange()
-    {
-        return;
-        int sortingOrder = Mathf.RoundToInt(this.transform.position.y * SortingLayersPerMeter);
-        sr.sortingOrder=  -sortingOrder;
-    }
-
-    private void OnEnable()
-    {
-        OnPositionChange();
-    }
+  
 }
