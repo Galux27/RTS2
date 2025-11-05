@@ -11,8 +11,24 @@ public class ObjectHealth : MonoBehaviour
 
     private void Awake()
     {
-        healthUI = Instantiate(WorldspaceUIManager.Instance.WorldspaceHealthBar).GetComponent<HealthUI>();
-        healthUI.LinkToHealth(this);
+      
+    }
+
+    public void OnObjectRender()
+    {
+        if (healthUI == null)
+        {
+            healthUI = Instantiate(WorldspaceUIManager.Instance.WorldspaceHealthBar).GetComponent<HealthUI>();
+            healthUI.LinkToHealth(this);
+        }
+    }
+
+    public void OnObjectHidden()
+    {
+        if (healthUI != null)
+        {
+            GameObject.Destroy(healthUI.gameObject);
+        }
     }
 
     public void ForceHealthValues(float health,float max)

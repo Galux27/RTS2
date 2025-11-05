@@ -51,6 +51,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
                 MyRender.SetUnitVisuals(UnitVisualManager.Instance.AllVisuals[MyType]);
             }
             MyRender.DrawUnit();
+            MyHealth.OnObjectRender();
         }
         else
         {
@@ -60,6 +61,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
                 MyRender.transform.parent = null;
                 GameObjectPoolManager.Instance.ReturnObjectToPool(MyRender.gameObject, "UnitRenderer");
                 MyRender = null;
+                MyHealth.OnObjectHidden();
             }
             }
         }

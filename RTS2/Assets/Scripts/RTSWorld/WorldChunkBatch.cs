@@ -888,9 +888,10 @@ public class WorldChunkBatch : MonoBehaviour
         }
     }
 
+    static List<WorldChunk> GetChunksCache = new List<WorldChunk>();
     public List<WorldChunk> GetChunksInRadius(float radius, Vector3 searchCenter)
     {
-        List<WorldChunk> retVal = new List<WorldChunk>();
+        GetChunksCache.Clear();
         GetChunkCoordsFromWorldPos(searchCenter);
         int chunkRadius = Mathf.Max(Mathf.RoundToInt(radius / WorldChunkManager.ChunkSize), 1);
 
@@ -900,12 +901,12 @@ public class WorldChunkBatch : MonoBehaviour
             {
                 if (CoordsValid(x, y))
                 {
-                    retVal.Add(Chunks[x, y]);
+                    GetChunksCache.Add(Chunks[x, y]);
                 }
             }
         }
 
-        return retVal;
+        return GetChunksCache;
     }
 
     const bool DrawNodeWalkable = false, DrawNodeNeighbours = false;

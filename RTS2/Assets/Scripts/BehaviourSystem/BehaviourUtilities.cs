@@ -9,15 +9,18 @@ public static class BehaviourUtilities
 {
 
     //using a cache to not allocate memory every time we need to find units
-    static List<Unit> GetUnitCache=new List<Unit>();
+    static List<Unit> GetUnitCache=new List<Unit>(),GetHostileCache=new List<Unit>();
     public static List<Unit> GetHostileUnits(Unit searching,float range)
     {
+        ChunksToCheck.Clear();
+
         GetUnitCache.Clear();
-       List<WorldChunk> toCheck = WorldChunkManager.Instance.GetChunksInRadius(range, searching.transform.position);
-        List<Unit> result = new List<Unit>();
-        for(int x = 0; x < toCheck.Count; x++)
+        ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(range, searching.transform.position);
+        GetHostileCache.Clear();
+            
+         for (int x = 0; x < ChunksToCheck.Count; x++)
         {
-            GetUnitCache.AddRange(toCheck[x].UnitsInChunk);
+            GetUnitCache.AddRange(ChunksToCheck[x].UnitsInChunk);
         }
         float dist = 999999f;
         for(int x = 0; x < GetUnitCache.Count; x++)
@@ -27,46 +30,62 @@ public static class BehaviourUtilities
                 dist = Vector3.Distance(GetUnitCache[x].transform.position, searching.transform.position);
                 if (dist < range)
                 {
-                    result.Add(GetUnitCache[x]);
+                    GetHostileCache.Add(GetUnitCache[x]);
                 }
             }
         }
         GetUnitCache.Clear();
-        return result;
+        return GetHostileCache;
     }
     static List<WallSegment> WallSectionCache = new List<WallSegment>();
     const int WallCheckRadius = 3;
     static WallSegment wallChecking;
     public static WallSegment GetNearbyWallSegmentToAttack(Unit searching,out bool foundSomething)
     {
-        wallChecking = null;
-        WallSectionCache.Clear();
         foundSomething = false;
-        Vector2Int center = WorldController.Instance.ConvertWorldToTileCoords(searching.transform.position);
-        
-        for(int x = center.x - WallCheckRadius; x < center.x + WallCheckRadius; x++)
+        ChunksToCheck.Clear();
+        //wallChecking = null;
+        WallSectionCache.Clear();
+        //foundSomething = false;
+        //Vector2Int center = WorldController.Instance.ConvertWorldToTileCoords(searching.transform.position);
+        ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(WallCheckRadius, searching.transform.position);
+        for(int q = 0; q < ChunksToCheck.Count; q++)
         {
-            for (int y = center.y - WallCheckRadius; y< center.y + WallCheckRadius; y++)
+            for(int x = 0; x < WorldChunkManager.ChunkSize; x++)
             {
-                if (WorldController.Instance.WallManager.CoordsValid(x, y))
+                for(int y=0;y < WorldChunkManager.ChunkSize; y++)
                 {
-                    wallChecking=WallHelpers.GetWallAtCoords(x, y);
-                    if (wallChecking!=null && wallChecking.WallType!=WallType.None)
+                    wallChecking = ChunksToCheck[q].WallSegments[x, y];
+                    if (wallChecking != null && wallChecking.WallType != WallType.None)
                     {
                         WallSectionCache.Add(wallChecking);
                     }
                 }
             }
         }
+        //for(int x = center.x - WallCheckRadius; x < center.x + WallCheckRadius; x++)
+        //{
+        //    for (int y = center.y - WallCheckRadius; y< center.y + WallCheckRadius; y++)
+        //    {
+        //        if (WorldController.Instance.WallManager.CoordsValid(x, y))
+        //        {
+        //            wallChecking=WallHelpers.GetWallAtCoords(x, y);
+        //            if (wallChecking!=null && wallChecking.WallType!=WallType.None)
+        //            {
+        //                WallSectionCache.Add(wallChecking);
+        //            }
+        //        }
+        //    }
+        //}
         WallSegment retVal = null;
-        float dist = 9999999f, dist2 = 0f ;
-        for(int x=0;x<WallSectionCache.Count;x++)
+        float dist = 9999999f, dist2 = 0f;
+        for (int x = 0; x < WallSectionCache.Count; x++)
         {
-            dist2 = Vector3.Distance(WallSectionCache[x].Position(),searching.Position());
-            if(dist2 < dist)
+            dist2 = Vector3.Distance(WallSectionCache[x].Position(), searching.Position());
+            if (dist2 < dist)
             {
                 retVal = WallSectionCache[x];
-                dist=dist2;
+                dist = dist2;
                 foundSomething = true;
             }
         }
@@ -76,15 +95,18 @@ public static class BehaviourUtilities
 
     const float MaxDistForNearbyObject =7f,ObjectCheckDist=20f;
     static List<EnvironmentObjectInstance> EnvironmentObjectCache=new List<EnvironmentObjectInstance>();
+    static List<EnvironmentObjectInstance> AllObjectsCache=new List<EnvironmentObjectInstance>();
+    static List<WorldChunk> ChunksToCheck = new List<WorldChunk>();
     public static ObjectInfo GetNearbyObjectToAttack(Unit searching,out bool foundSomething)
     {
         EnvironmentObjectCache.Clear();
         foundSomething = false;
-        List<WorldChunk> chunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(ObjectCheckDist, searching.transform.position);
-        List<EnvironmentObjectInstance> allObjects = new List<EnvironmentObjectInstance>();
-        for(int x = 0; x < chunksToCheck.Count; x++)
+        ChunksToCheck.Clear();
+        AllObjectsCache.Clear();
+        ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(ObjectCheckDist, searching.transform.position);
+        for(int x = 0; x < ChunksToCheck.Count; x++)
         {
-            allObjects.AddRange(chunksToCheck[x].EnvironmentObjectsInChunk);
+            AllObjectsCache.AddRange(ChunksToCheck[x].EnvironmentObjectsInChunk);
         }
 
         Vector2Int chunkImNear = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(searching.transform.position);
@@ -94,9 +116,9 @@ public static class BehaviourUtilities
         ConstructableObjectInstance constructedObject;
         float dist = 99999999f;
         float dist2 = 0f;
-        for(int x = 0; x < allObjects.Count; x++)
+        for(int x = 0; x < AllObjectsCache.Count; x++)
         {
-            constructedObject = allObjects[x] as ConstructableObjectInstance;
+            constructedObject = AllObjectsCache[x] as ConstructableObjectInstance;
             if (constructedObject != null)
             {
                 dist2=Vector3.Distance(constructedObject.Position(), searching.transform.position);
@@ -119,23 +141,23 @@ public static class BehaviourUtilities
         return retVal;
     }
 
-    
+    static Unit UnitCache;
     public static Unit GetClosestTargetThatsHostile(Unit searching,float range)
     {
         GetUnitCache = GetHostileUnits(searching,range);
         if(GetUnitCache.Count==0) return null;
         float dist = 9999999f;
-        Unit retVal = null;
+        UnitCache = null;
         for(int x=0; x < GetUnitCache.Count;x++)
         {
             float dist2 = Vector3.Distance(searching.transform.position, GetUnitCache[x].transform.position);
             if (dist2 < dist)
             {
-                retVal = GetUnitCache[x];
+                UnitCache = GetUnitCache[x];
                 dist = dist2;
             }
         }
-        return retVal;
+        return UnitCache;
     }
 
     public static Vector3 GetPositionAwayFromTarget(Vector3 posToAvoid)
