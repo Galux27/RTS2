@@ -18,7 +18,9 @@ public class ObjectHealth : MonoBehaviour
     {
         if (healthUI == null)
         {
-            healthUI = Instantiate(WorldspaceUIManager.Instance.WorldspaceHealthBar).GetComponent<HealthUI>();
+            
+            healthUI = GameObjectPoolManager.Instance.GetObjectFromPool("WorldspaceHealthBar").GetComponent<HealthUI>();
+            healthUI.gameObject.SetActive(true);
             healthUI.LinkToHealth(this);
         }
     }
@@ -27,7 +29,8 @@ public class ObjectHealth : MonoBehaviour
     {
         if (healthUI != null)
         {
-            GameObject.Destroy(healthUI.gameObject);
+            GameObjectPoolManager.Instance.ReturnObjectToPool(healthUI.gameObject, "WorldspaceHealthBar");
+            //GameObject.Destroy(healthUI.gameObject);
         }
     }
 

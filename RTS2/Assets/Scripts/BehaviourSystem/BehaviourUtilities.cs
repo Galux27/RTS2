@@ -34,7 +34,6 @@ public static class BehaviourUtilities
                 }
             }
         }
-        GetUnitCache.Clear();
         return GetHostileCache;
     }
     static List<WallSegment> WallSectionCache = new List<WallSegment>();
@@ -144,16 +143,16 @@ public static class BehaviourUtilities
     static Unit UnitCache;
     public static Unit GetClosestTargetThatsHostile(Unit searching,float range)
     {
-        GetUnitCache = GetHostileUnits(searching,range);
-        if(GetUnitCache.Count==0) return null;
+        GetHostileUnits(searching,range);
+        if(GetHostileCache.Count==0) return null;
         float dist = 9999999f;
         UnitCache = null;
-        for(int x=0; x < GetUnitCache.Count;x++)
+        for(int x=0; x < GetHostileCache.Count;x++)
         {
-            float dist2 = Vector3.Distance(searching.transform.position, GetUnitCache[x].transform.position);
+            float dist2 = Vector3.Distance(searching.transform.position, GetHostileCache[x].transform.position);
             if (dist2 < dist)
             {
-                UnitCache = GetUnitCache[x];
+                UnitCache = GetHostileCache[x];
                 dist = dist2;
             }
         }

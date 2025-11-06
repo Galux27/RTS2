@@ -26,6 +26,7 @@ public class PauseMenuUIElement : BaseUIElement
         Resume.gameObject.GetComponent<Button>().onClick.AddListener(HideUI);
         Save.gameObject.GetComponent<Button>().onClick.AddListener(OpenSaveMenu);
         Load.gameObject.GetComponent<Button>().onClick.AddListener(OpenLoadMenu);
+        Quit.gameObject.GetComponent<Button>().onClick.AddListener(QuitButtonClick);
     }
     public static float SpeedGameAtWhenOpened = 0f;
     public override void HideUI()
@@ -40,6 +41,10 @@ public class PauseMenuUIElement : BaseUIElement
         base.DrawUI();
     }
 
+    void QuitButtonClick()
+    {
+        Application.Quit();
+    }
     void OpenSaveMenu()
     {
         SavingMenu.Instance.DrawUI();

@@ -2077,6 +2077,9 @@ MonoBehaviour:
   - Key: UnitRenderer
     InitCount: 100
     Object: {fileID: 6482684324076282870, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
+  - Key: WorldspaceHealthBar
+    InitCount: 100
+    Object: {fileID: 2408530287784991639, guid: d07fb4c129fe50047a49bb3948e25aab, type: 3}
 --- !u!114 &247636649
 MonoBehaviour:
   m_ObjectHideFlags: 0

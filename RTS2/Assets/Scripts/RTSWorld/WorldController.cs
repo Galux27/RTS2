@@ -86,6 +86,7 @@ public class WorldController : MonoBehaviour
 
     }
 
+
     public Vector2Int ConvertWorldToTileCoords(Vector3 pos)
     {
         return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
@@ -190,6 +191,10 @@ public class WorldTile:ISerialize
         return new Vector2Int(x, y);
     }
 
+  public Vector3 WorldPos()
+    {
+        return new Vector3(x, y, 0);
+    }
 
     public WorldTile(int x,int y,Vector2Int chunk,Vector2Int batch,int localX,int localY)
     {

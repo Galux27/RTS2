@@ -9,6 +9,7 @@ public class DebugPathTesting : MonoBehaviour
     public bool FindPath=false,isPathNull=false;
     List<PathfindingNode> path;
     public int PathLength = 0;
+    TileRaycast tr;
     // Start is called before the first frame update
     void Start()
     {
@@ -80,6 +81,12 @@ public class DebugPathTesting : MonoBehaviour
         {
            path=  Pathfinding.FindPath(Marker1.transform.position, Marker2.transform.position);
             FindPath = false;
+            tr = new TileRaycast(Marker1.transform.position, Marker2.transform.position);
+            tr.PerformRaycast();
+        }
+        if (tr != null)
+        {
+            tr.DrawPath();
         }
         if (path != null && path.Count>0)
         {

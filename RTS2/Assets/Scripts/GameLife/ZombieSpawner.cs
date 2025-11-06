@@ -27,7 +27,7 @@ public class ZombieSpawner:MonoBehaviour
             toSpawn = 0;
         }
         Debug.Log("Spawner: spawning zombies " + batch.coords + " quantity " + toSpawn);
-        for(int x = 0; x < toSpawn*5; x++)
+        for(int x = 0; x < toSpawn; x++)
         {
             SpawnZombie(batch);
         }

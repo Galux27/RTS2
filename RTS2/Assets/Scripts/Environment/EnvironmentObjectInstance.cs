@@ -131,13 +131,9 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         {
             return;
         }
-        //if (Drawn)
-        //{
-        //    CleanupInstance();
-        //}
         if (healthUI != null)
         {
-            GameObject.Destroy(healthUI.gameObject);
+            GameObjectPoolManager.Instance.ReturnObjectToPool(healthUI.gameObject, "WorldspaceHealthBar");
         }
         myChunk.RemoveEnvironmentObject(this);
         EnvironmentObjectManager.Instance.OnDestroyEnvironmentObject(this);
@@ -206,8 +202,9 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
             {
                 return;
             }
-        healthUI = GameObject.Instantiate(WorldspaceUIManager.Instance.WorldspaceHealthBar,Object.transform).GetComponent<HealthUI>();
-       healthUI.LinkToObjectInfo(this);
+        healthUI = GameObjectPoolManager.Instance.GetObjectFromPool("WorldspaceHealthBar").GetComponent<HealthUI>();
+        healthUI.gameObject.SetActive(true);
+        healthUI.LinkToObjectInfo(this);
     }
 
     void UpdateHealthUI()
