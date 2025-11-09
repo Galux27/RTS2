@@ -16,10 +16,13 @@ public class UnitAttackController : MonoBehaviour
 
     public void OnNewItem(ItemInWorld itemHeld) 
     {
+        Debug.Log("On new item " + itemHeld.Name());
         if (itemHeld.MyItem.GetType() == typeof(Weapon))
         {
            Weapon equiped = (Weapon)itemHeld.MyItem;
             SetAttackValues(equiped.AttackDamage,equiped.AttackRate,equiped.AttackRange);
+            Debug.Log("On new item " + itemHeld.Name()+" is ranged " +equiped.IsRanged);
+
             if (equiped.IsRanged)
             {
                 SetRangedValues(5,equiped.FireRate,equiped.FireMinRange,equiped.FireMaxRange,equiped.RangedProjectile);
@@ -59,15 +62,40 @@ public class UnitAttackController : MonoBehaviour
     {
         return CanRangedAttack(target) || CanMeleeAttack(target);
     }
-
+    TileRaycast AttackRaycast;
     public bool CanRangedAttack(Vector3 pos)
     {
-        if (HasRanged)
+        if (!HasRanged)
         {
+            Debug.Log("Ranged Attack: can't ranged attack " + pos + " due to no ranged weapon");
             return false;
         }
+      
+        
         float distToTarget = Vector3.Distance(this.transform.position, pos);
-        return distToTarget <= MaxRange && distToTarget >= MinRange;
+        if (distToTarget <= MaxRange && distToTarget >= MinRange)
+        {
+            if (AttackRaycast == null)
+            {
+                AttackRaycast = new TileRaycast(this.transform.position, pos);
+            }
+            AttackRaycast.RaycastCheck(this.transform.position, pos);
+            if (AttackRaycast.DidRaycastHitEnd(pos))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.Log("Ranged Attack: can't ranged attack " + pos + "raycast not reaching end");
+                return false;
+            }
+        }
+        else
+        {
+            Debug.Log("Ranged Attack: can't ranged attack " + pos + " due to not in range "+MaxRange+"->"+MinRange);
+
+        }
+        return false;
     }
 
 
@@ -108,14 +136,16 @@ public class UnitAttackController : MonoBehaviour
             rangedTimer -= DeltaTimeWrapper.GameplayDelta;
             if (CanRangedAttack(positionOverride) && rangedTimer <= 0)
             {
-                GameObject g = GameObjectPoolManager.Instance.GetObjectFromPool("Projectile");//Instantiate(RangedProjectile, this.transform.position, Quaternion.identity);
-                g.transform.position = this.transform.position;
-                g.transform.rotation = Quaternion.identity;
-                Projectile p = g.GetComponent<Projectile>();
-                g.SetActive(true);
-                p.SetMomentum(DirectionToTarget(positionOverride), 20f, this.GetComponent<Unit>(), 5f);
-                p.SetCreator(this.GetComponent<Unit>());
+                GameObject g = GameObjectPoolManager.Instance.GetObjectFromPool("ProjectileVisual");
+                g.GetComponent<ProjectileVisual>().DisplayProjectileVisual(this.transform.position, attacking.Position(), .25f);
+                //g.transform.position = this.transform.position;
+                //g.transform.rotation = Quaternion.identity;
+                //Projectile p = g.GetComponent<Projectile>();
+                //g.SetActive(true);
+                //p.SetMomentum(DirectionToTarget(positionOverride), 20f, this.GetComponent<Unit>(), 5f);
+                //p.SetCreator(this.GetComponent<Unit>());
 
+                attacking.AdjustHealth(-AttackDamage);
                 rangedTimer = RangedFireRate;
             }
         }
@@ -133,7 +163,7 @@ public class UnitAttackController : MonoBehaviour
             attackTimer = AttackRate;
         }
     }
-
+    
     public void AttemptAttack(Unit attacking)
     {
         if (HasRanged)
@@ -141,14 +171,9 @@ public class UnitAttackController : MonoBehaviour
             rangedTimer -= DeltaTimeWrapper.GameplayDelta;
             if (CanRangedAttack(attacking.gameObject) && rangedTimer<=0)
             {
-                GameObject g = GameObjectPoolManager.Instance.GetObjectFromPool("Projectile");//Instantiate(RangedProjectile, this.transform.position, Quaternion.identity);
-                g.transform.position = this.transform.position;
-                g.transform.rotation = Quaternion.identity;
-                Projectile p = g.GetComponent<Projectile>();
-                g.SetActive(true);
-                p.SetMomentum(DirectionToTarget(attacking.gameObject), 20f, this.GetComponent<Unit>(),5f);
-                p.SetCreator(this.GetComponent<Unit>());
-               
+                GameObject g = GameObjectPoolManager.Instance.GetObjectFromPool("ProjectileVisual");
+                g.GetComponent<ProjectileVisual>().DisplayProjectileVisual(this.transform.position, attacking.Position(), .25f);
+                attacking.GetComponent<Unit>().AttackUnit(AttackDamage, this.GetComponent<Unit>());
                 rangedTimer = RangedFireRate;
             }
         }

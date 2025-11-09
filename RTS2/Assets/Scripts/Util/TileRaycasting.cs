@@ -16,8 +16,15 @@ public class TileRaycast
     Vector2Int roundedCoords = new Vector2Int();
     List<WorldTile> TilesHit = new List<WorldTile>();
     int maxIterations = 0;
+    Vector3 startPosCache, endPosCache;
     public TileRaycast(Vector3 startPos,Vector3 endPos)
     {
+       InitRaycast(startPos, endPos);
+    }
+
+    public void InitRaycast(Vector3 startPos,Vector3 endPos)
+    {
+        startPosCache = startPos; endPosCache=endPos;
         currentTile = Pathfinding.GetTileFromPosition(startPos);
         // WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out batch, out chunk, out coords);
         batch = currentTile.Batch;
@@ -28,53 +35,93 @@ public class TileRaycast
         increment = endPos - startPos;
         increment = increment.normalized;
         CoordsAsVector = new Vector2(coords.x, coords.y);
-        maxIterations = Mathf.RoundToInt( Vector3.Distance(startPos, endPos));
+        maxIterations = Mathf.RoundToInt(Vector3.Distance(startPos, endPos));
+    }
+
+    public bool DoesRaycastNeedReinitializing(Vector3 startPos, Vector3 endPos)
+    {
+        if (startPosCache != startPos || endPosCache != endPos)
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    public void RaycastCheck(Vector3 startPos,Vector3 endPos)
+    {
+        if(DoesRaycastNeedReinitializing(startPos, endPos))
+        {
+            InitRaycast(startPos, endPos);
+            PerformRaycast();
+        }
+    }
+
+    public bool DidRaycastHitEnd(Vector3 endPos)
+    {
+        return Vector3.Distance(GetFurthestTile().WorldPos(), endPos) < 1.5f;
     }
 
     public void PerformRaycast()
     {
+        EasyStopwatch.StartStopwatch();
         while (maxIterations > 0)
         {
             ProgressRaycast();
             maxIterations--;
+            if (!IsLastTileValid(GetFurthestTile()))
+            {
+                break;
+            }
         }
+        EasyStopwatch.StopStopwatch();
+        Debug.Log("Tile Raycast Took " + EasyStopwatch.GetStopwatchElapsedTime());
     }
+
+    public bool IsValid()
+    {
+        return TilesHit.Count > 0;
+    }
+
+    public WorldTile GetFurthestTile()
+    {
+        return TilesHit[TilesHit.Count - 1];
+    }
+
+    public bool IsLastTileValid(WorldTile tile)
+    {
+        //check for world tile
+        if (tile.ContainsContents(WorldTileContents.EnvObject))
+        {
+            return false;
+        }
+        return true;
+    }
+
 
     public void ProgressRaycast()
     {
         CoordsAsVector += increment;
         roundedCoords.x = Mathf.FloorToInt(CoordsAsVector.x);
         roundedCoords.y = Mathf.FloorToInt(CoordsAsVector.y);
-        bool MovedToNew = false;
-        Debug.Log("tile raycast iteration " + batch + "," + chunk + "," + coords+"("+CoordsAsVector+")");
 
         if (roundedCoords != coords)
         {
-            MovedToNew = true;
             coords = roundedCoords;
             if (IsChunkOutOfBounds(coords))
             {
-                IncrementCoords(ref coords, ref chunk,1);
+                IncrementCoords(ref coords, ref chunk,ref CoordsAsVector,1);
                 if (IsChunkOutOfBounds(chunk))
                 {
                     IncrementCoords(ref chunk, ref batch, WorldChunkManager.ChunkBatchSize);
                 }
-                CoordsAsVector.x = coords.x;
-                CoordsAsVector.y = coords.y;
+               /// CoordsAsVector.x = coords.x;
+              //  CoordsAsVector.y = coords.y;
             }
+            TilesHit.Add(WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[coords.x, coords.y]);
 
         }
-        if (MovedToNew)
-        {
-            try
-            {
-                TilesHit.Add(WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[coords.x, coords.y]);
-            }
-            catch(System.Exception e)
-            {
-                Debug.LogError("Error on tile raycast " + batch + "," + chunk + "," + coords+","+increment+","+e.ToString());
-            }
-        }
+       
     }
 
     public void DrawPath()
@@ -84,8 +131,38 @@ public class TileRaycast
             Debug.DrawLine(TilesHit[x].WorldPos(), TilesHit[x + 1].WorldPos(), Color.cyan);
         }
     }
+    Vector2Int lastCoords = new Vector2Int();
+    void IncrementCoords(ref Vector2Int coordsToCheckAgainst, ref Vector2Int coordsToAlter,ref Vector2 actualPos, int inc)
+    {
+        lastCoords = coordsToCheckAgainst;
+        if (coordsToCheckAgainst.x < 0)
+        {
+            coordsToAlter.x -= inc;
+            coordsToCheckAgainst.x = WorldChunkManager.ChunkSize - 1;
 
+            
+        }
+        else if (coordsToCheckAgainst.x >= WorldChunkManager.ChunkSize)
+        {
+            coordsToAlter.x += inc;
+            coordsToCheckAgainst.x = 0;
+        }
 
+        if (coordsToCheckAgainst.y < 0)
+        {
+            coordsToAlter.y -= inc;
+            coordsToCheckAgainst.y = WorldChunkManager.ChunkSize - 1;
+        }
+        else if (coordsToCheckAgainst.y >= WorldChunkManager.ChunkSize)
+        {
+            coordsToAlter.y += inc;
+            coordsToCheckAgainst.y = 0;
+
+        }
+
+        lastCoords =  coordsToCheckAgainst-lastCoords;
+        actualPos += lastCoords;
+    }
     void IncrementCoords(ref Vector2Int coordsToCheckAgainst,ref Vector2Int coordsToAlter,int inc)
     {
         if (coordsToCheckAgainst.x < 0)

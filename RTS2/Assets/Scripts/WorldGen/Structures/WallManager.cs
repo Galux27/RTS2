@@ -112,7 +112,7 @@ public class WallManager
                 {
 
                     WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-                    WorldController.Instance.SetTraversible(x, y, false);
+                    WorldController.Instance.SetTraversible(x, y, false,WorldTileContents.Wall);
                 }
             }
         }
@@ -149,7 +149,7 @@ public class WallManager
                 if (wall.HasWall)
                 {
                     WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
+                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall,WorldTileContents.Wall);
                 }
             }
         }
@@ -249,7 +249,7 @@ public class WallManager
                 if (wall.HasWall)
                 {
                     WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall);
+                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall, WorldTileContents.Door);
                 }
             }
         }
@@ -272,7 +272,7 @@ public class WallManager
                 }
             }
         }
-        WorldController.Instance.SetTraversible(x, y, true);
+        WorldController.Instance.SetTraversible(x, y, true,WorldTileContents.Door);
         WorldController.Instance.AddPathfindingModifier(x, y, new PathNodeModifier_Door());
     }
 
@@ -300,7 +300,7 @@ public class WallManager
         wall = WallHelpers.GetWallAtCoords(x, y);
         if (wall.WallType == WallType.Wall)
         {
-            WorldController.Instance.SetTraversible(x, y,false);
+            WorldController.Instance.SetTraversible(x, y,false,WorldTileContents.Door);
         }
         WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
         OnWallAdded?.Invoke(asCoords);

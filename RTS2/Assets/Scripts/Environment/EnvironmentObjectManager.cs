@@ -64,7 +64,7 @@ public class EnvironmentObjectManager : MonoBehaviour
         {
             for (int y = coords.y; y < coords.y + data.GetHeight; y++)
             {
-                WorldController.Instance.SetTraversible(x, y, true);
+                WorldController.Instance.SetTraversible(x, y, true,WorldTileContents.EnvObject);
             }
         }
     }

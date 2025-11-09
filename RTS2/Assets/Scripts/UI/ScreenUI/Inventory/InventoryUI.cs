@@ -17,7 +17,7 @@ public class InventoryUI : MonoBehaviour
 
     private void Start()
     {
-        InventoryParentUI.Instance.OnInventoryChange += RedrawUI;
+        //InventoryParentUI.Instance.OnInventoryChange += RedrawUI;
         
     }
 

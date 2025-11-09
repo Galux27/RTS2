@@ -469,6 +469,10 @@ public static class SelectionUtilities
         Vector3 unitPosition = Vector3.zero;
         for (int x = 0; x < toCheck.Count; x++)
         {
+            if (toCheck[x] == null)
+            {
+                continue;
+            }
             unitPosition = toCheck[x].transform.position;
             unitPosition.z = 0;
             if (FactionController.Instance.IsHostile(toCheck[x], FactionController.USER_FACTION))

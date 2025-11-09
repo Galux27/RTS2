@@ -14,15 +14,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.4
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.4
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.4
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1723682970823558292, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_LocalPosition.x
@@ -204,8 +204,11 @@ MonoBehaviour:
   MyAttackController: {fileID: 0}
   MyOrders: {fileID: 0}
   MyCurrentChunk: {x: 0, y: 0}
+  MyCurrentBatch: {x: 0, y: 0}
   MyFaction: {fileID: 0}
   MySenses: {fileID: 0}
+  MyRender: {fileID: 0}
+  lastCoords: {x: 0, y: 0}
   HasBeenSwapped: 0
   HasMovedThisFrame: 0
 --- !u!114 &-7279718248699524055

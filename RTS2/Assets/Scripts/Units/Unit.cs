@@ -121,7 +121,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 
     void OnHoldItem(ItemInWorld holding)
     {
-        holding.sr.sortingOrder = this.GetComponent<BodyController>().Torso.sortingOrder + 1;
+        holding.sr.sortingOrder = 3;
     }
 
 

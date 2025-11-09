@@ -109,17 +109,18 @@ public class WorldController : MonoBehaviour
         {
             for (int y = coords.y-data.GetWidth/2 ; y < coords.y + (data.GetHeight/2) +1; y++)
             {
-                SetTraversible(x, y, traversable);
+                SetTraversible(x, y, traversable,WorldTileContents.EnvObject);
+                
             }
         }
     }
 
 
-     public void SetTraversible(int x,int y,bool traversable)
+    public void SetTraversible(int x,int y,bool traversable,WorldTileContents conents=WorldTileContents.None)
     {
         
-            WorldTileHelpers.UpdateTileTraversible(x, y, traversable);
-            Pathfinding.UpdateNodeData(x, y, traversable);
+        WorldTileHelpers.UpdateTileTraversible(x, y, traversable,conents);
+        Pathfinding.UpdateNodeData(x, y, traversable);
         
 
    }
@@ -175,7 +176,13 @@ public class WorldController : MonoBehaviour
 
     }
 }
-
+public enum WorldTileContents
+{
+    None,
+    Wall,
+    EnvObject,
+    Door
+}
 [System.Serializable]
 public class WorldTile:ISerialize
 {
@@ -186,6 +193,26 @@ public class WorldTile:ISerialize
     public WaterData WaterData;
     public ElevationTile Elevation;
     public Vector2Int Chunk, Batch,Local;
+    public List<WorldTileContents> TileContents=new List<WorldTileContents>();
+    public void AddContents(WorldTileContents toAdd)
+    {
+        if (!TileContents.Contains(toAdd))
+        {
+            TileContents.Add(toAdd);
+        }
+    }
+    public void RemoveContents(WorldTileContents toRemove)
+    {
+        if (TileContents.Contains(toRemove))
+        {
+            TileContents.Remove(toRemove);
+        }
+    }
+
+    public bool ContainsContents(WorldTileContents toCheck)
+    {
+        return TileContents.Contains(toCheck);
+    }
     public Vector2Int Coords()
     {
         return new Vector2Int(x, y);

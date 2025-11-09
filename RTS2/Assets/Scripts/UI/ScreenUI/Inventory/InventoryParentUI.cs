@@ -54,6 +54,7 @@ public class InventoryParentUI :BaseUI
 
     public void PopulateUI(Inventory toDisplay,Inventory toDisplay2)
     {
+        return;
         InventoryOne = toDisplay;
         InventoryOneUI.PopulateInventory(toDisplay, 1, false, false);
         InventoryOneUI.DisplayUI(true);

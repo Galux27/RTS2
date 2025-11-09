@@ -20,8 +20,8 @@ public class CombinedInventory
 
     public CombinedInventory()
     {
-        SelectableManager.OnSelectionChanged += RefreshInventoriesSelected;
-        SelectableManager.OnSelectionChanged += () => InventoryParentUI.Instance.PopulateSelectedInventoryUI();
+       // SelectableManager.OnSelectionChanged += RefreshInventoriesSelected;
+        //SelectableManager.OnSelectionChanged += () => InventoryParentUI.Instance.PopulateSelectedInventoryUI();
 
 
     }

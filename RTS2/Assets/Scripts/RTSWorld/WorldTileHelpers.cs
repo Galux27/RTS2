@@ -64,14 +64,25 @@ public static class WorldTileHelpers
         }
         return true;
     }
-    public static void UpdateTileTraversible(int x,int y,bool val)
+    public static void UpdateTileTraversible(int x,int y,bool val,WorldTileContents toAdd=WorldTileContents.None)
     {
         WorldTile worldTile= GetTileFromCoords(x, y);
         if (worldTile != null)
         {
             worldTile.traversable = val;
-        }
-        else
+            if (toAdd != WorldTileContents.None)
+            {
+                if (!val)
+                {
+                    worldTile.AddContents(toAdd);
+                }
+                else
+                {
+                    worldTile.RemoveContents(toAdd);
+                }
+            }
+            }
+            else
         {
             Debug.LogError("No node found at " + x + "," + y);
         }
