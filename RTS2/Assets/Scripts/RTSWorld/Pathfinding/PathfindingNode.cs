@@ -10,7 +10,7 @@ public class PathfindingNode
     public int hCost;
     public bool obstacle;
 
-    public int X, Y;
+    public int X, Y,localX,localY;
     public PathfindingNode parent;
     public bool IsPassable = true;
 
@@ -40,28 +40,38 @@ public class PathfindingNode
     public void InitData(PathfindingNode[,] myGrid,int localX,int localY)
     {
         worldPos = new Vector3(X+.5f, Y+.5f);
-       
+       this.localX= localX;
+        this.localY = localY;
         
         if (localX > 0)
         {
-            neighbours.Add(myGrid[localX-1,localY]);
+            AddNeighbour(myGrid[localX-1,localY]);
         }
         
         if(localX < WorldChunkManager.ChunkSize-1)
         {
-            neighbours.Add(myGrid[localX + 1, localY]);
+            AddNeighbour(myGrid[localX + 1, localY]);
         }
 
         if (localY > 0)
         {
-            neighbours.Add(myGrid[localX , localY - 1]);
+            AddNeighbour(myGrid[localX , localY - 1]);
         }
         
         if (localY < WorldChunkManager.ChunkSize - 1)
         {
-            neighbours.Add(myGrid[localX , localY + 1]);
+            AddNeighbour(myGrid[localX , localY + 1]);
         }
 
+    }
+
+    void AddNeighbour(PathfindingNode node)
+    {
+        if (neighbours.Contains(node))
+        {
+            return;
+        }
+        neighbours.Add(node);
     }
 
     public void UpdatePassable(bool val)
@@ -198,6 +208,8 @@ public class PathfindingNode
         {
             neighbours = new List<PathfindingNode>(4);
         }
-        neighbours.Add(toAdd);
+       
+        AddNeighbour(toAdd);
+       
     }
 }

@@ -10,6 +10,7 @@ public class DebugPathTesting : MonoBehaviour
     List<PathfindingNode> path;
     public int PathLength = 0;
     TileRaycast tr;
+    public int size = 5;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,9 +23,9 @@ public class DebugPathTesting : MonoBehaviour
        WorldTile node = null;
         PathfindingNode pathNode = null;
         batchCoords = new Vector2(WorldChunkManager.NewCalculateBatchCoords(TestCoords.x), WorldChunkManager.NewCalculateBatchCoords( TestCoords.y));
-        for(int x=-5;x<=5;x++)
+        for(int x= -size; x <= size; x++)
         {
-            for(int y=-5;y<=5;y++)
+            for(int y= -size; y <= size; y++)
             {
                 p = center + new Vector3(x, y, 0);
               
@@ -40,11 +41,12 @@ public class DebugPathTesting : MonoBehaviour
                             if (pathNode.IsPassable == false)
                             {
                                 Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].worldPos, Color.green);
-
+                                Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1*(pathNode.neighbours.Count + 1)), Color.magenta);
                             }
                             else
                             {
                                 Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].worldPos, Color.blue);
+                                Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
 
                             }
                         }
@@ -53,11 +55,13 @@ public class DebugPathTesting : MonoBehaviour
                             if (node.Elevation.IsPassible())
                             {
                                 Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].worldPos, Color.red);
+                                Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
 
                             }
                             else
                             {
                                 Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].worldPos, Color.magenta);
+                                Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
 
                             }
                         }
