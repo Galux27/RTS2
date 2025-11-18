@@ -37,21 +37,25 @@ public class SelectableManager : MonoBehaviour
         if (toAdd.IsSelectable()&& toAdd.GetIsSelected() == false)
         {
             CurrentlySelected.Add(toAdd);
-            toAdd.SetIsSelected(true);  
+            toAdd.SetIsSelected(true);
+
         }
     }
 
-    public void ClearSelectables()
+    public void ClearSelectables(bool updateEvents = true)
     {
         for(int x=0; x < CurrentlySelected.Count; x++)
         {
             CurrentlySelected[x].SetIsSelected(false);
         }
         CurrentlySelected.Clear();
-        OnSelectionChanged?.Invoke();
-    }
+        if (updateEvents)
+        {
+            OnSelectionChanged?.Invoke();
+        }
+        }
 
-    public void RemoveSelectable(Selectable toRemove)
+        public void RemoveSelectable(Selectable toRemove)
     {
         if (toRemove.GetIsSelected()==true)
         {

@@ -5,7 +5,7 @@ using System;
 public class ObjectHealth : MonoBehaviour
 {
     public float CurrentHealth, MaxHealth;
-    public Action<float> OnHealthIncrease, OnHealthDecrease;
+    public Action<float> OnHealthIncrease, OnHealthDecrease,OnHealthUpdate;
     public Action OnDeath;
     HealthUI healthUI;
 
@@ -18,7 +18,6 @@ public class ObjectHealth : MonoBehaviour
     {
         if (healthUI == null)
         {
-            
             healthUI = GameObjectPoolManager.Instance.GetObjectFromPool("WorldspaceHealthBar").GetComponent<HealthUI>();
             healthUI.gameObject.SetActive(true);
             healthUI.LinkToHealth(this);
@@ -39,6 +38,7 @@ public class ObjectHealth : MonoBehaviour
         CurrentHealth = health;
         MaxHealth = max;
         healthUI?.UpdateHealth();
+        OnHealthUpdate?.Invoke(CurrentHealth);
     }
 
     public void IncreaseHealth(float val)
@@ -47,6 +47,8 @@ public class ObjectHealth : MonoBehaviour
         CurrentHealth= Mathf.Min(CurrentHealth, MaxHealth);
         OnHealthIncrease?.Invoke(CurrentHealth);
         healthUI?.UpdateHealth();
+        OnHealthUpdate?.Invoke(CurrentHealth);
+
     }
 
     public void DecreaseHealth(float val)
@@ -55,6 +57,8 @@ public class ObjectHealth : MonoBehaviour
         CurrentHealth = Mathf.Max(0, CurrentHealth);
         OnHealthDecrease?.Invoke(CurrentHealth);
         healthUI?.UpdateHealth();
+        OnHealthUpdate?.Invoke(CurrentHealth);
+
         if (CurrentHealth <= 0)
         {
             OnDeath?.Invoke();

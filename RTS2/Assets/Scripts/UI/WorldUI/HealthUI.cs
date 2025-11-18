@@ -11,6 +11,7 @@ public class HealthUI : MonoBehaviour
 
     public void LinkToHealth(ObjectHealth toDisplay)
     {
+        if(toDisplay==null) return;
         health = toDisplay;
         this.transform.parent = toDisplay.gameObject.transform;
         this.transform.localPosition = new Vector3(0, 1.6f, 0);

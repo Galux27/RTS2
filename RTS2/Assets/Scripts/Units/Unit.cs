@@ -12,7 +12,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public UnitAttackController MyAttackController;
     public UnitOrders MyOrders;
     public Action<Unit> OnAttacked;
-    ObjectHealth MyHealth;
+    public ObjectHealth MyHealth;
     public Vector2Int MyCurrentChunk,MyCurrentBatch;
     bool SetChunk = false;
     public UnitFaction MyFaction;
@@ -41,6 +41,10 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 
     public void UpdateUnitRenderer(bool show)
     {
+        if (this.transform == null)
+        {
+            return;
+        }
         if (show)
         {
             if (MyRender == null)

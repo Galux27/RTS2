@@ -25,6 +25,10 @@ public static class BehaviourUtilities
         float dist = 999999f;
         for(int x = 0; x < GetUnitCache.Count; x++)
         {
+            if (GetUnitCache[x] == null)
+            {
+                continue;
+            }
             if (FactionController.Instance.IsHostile(searching, GetUnitCache[x]))
             {
                 dist = Vector3.Distance(GetUnitCache[x].transform.position, searching.transform.position);

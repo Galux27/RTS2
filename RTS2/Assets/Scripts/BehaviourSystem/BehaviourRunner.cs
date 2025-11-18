@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class BehaviourRunner : MonoBehaviour
 {
     Unit UnitPerforming;
     BehaviourDecisionMaker myDecisionMaker;
+    public Action<BehaviourBase> OnBehaviourChange;
     public void SetDecisionMaker(BehaviourDecisionMaker decisionMaker) 
     {  
         myDecisionMaker = decisionMaker; 
@@ -14,8 +16,19 @@ public class BehaviourRunner : MonoBehaviour
 
     public void SetBehaviour(BehaviourBase toPerform)
     {
-        CurrentBehaviour = toPerform; 
+        CurrentBehaviour = toPerform;
+        OnBehaviourChange?.Invoke(toPerform);
     }
+
+    public string GetBehaviourDisplayText()
+    {
+        if (CurrentBehaviour != null)
+        {
+            return CurrentBehaviour.BehaviourType();
+        }
+        return "Idle";
+    }
+
 
     public void SetUnitPerforming(Unit toPerform)
     {
