@@ -373,11 +373,11 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 }
 
 public enum UnitType {
-    None,
-    Zombie,
-    Human,
-    Rifleman,
-    Civilian,
-    Engineer
+    None=0,
+    Zombie=1,
+    Human=2,
+    Rifleman=3,
+    Civilian=4,
+    Engineer=5
 }
 

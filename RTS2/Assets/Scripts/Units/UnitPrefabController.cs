@@ -23,7 +23,7 @@ public class UnitPrefabController : MonoBehaviour
     }
 
 
-    public GameObject CreateUnitFromSavedData(string data)
+    public GameObject CreateUnitFromSavedData(string data,bool checkForChunkBeingLoaded=false)
     {
         Debug.Log("Unit Data: " + data);
         string[] inventorySplit = data.Split(SerializeDataHelpers.INVENTORY_MARKER);
@@ -47,13 +47,26 @@ public class UnitPrefabController : MonoBehaviour
         Debug.Log("Unit data: type " + deserialized[DataKeys.UnitType].ToString());
 
 
+        Vector3 worldPos = (Vector3)deserialized[DataKeys.Pos];
+
+        if (checkForChunkBeingLoaded)
+        {
+            Vector2Int chunkBatch = WorldChunkManager.Instance.ConvertPositionToChunkBatchCoords(worldPos);
+            if(WorldChunkManager.Instance.DoesChunkExist(chunkBatch)==false)
+            {
+                WorldChunkManager.Instance.AddUnitToLoadWhenChunkLoads(chunkBatch, data);
+                return null;
+            }
+        }
+
+
         UnitType type = (UnitType)(int)deserialized[DataKeys.UnitType];
         GameObject retVal = Instantiate(allUnitPrefabs[type].UnitSO.Prefab);
 
         ObjectHealth health = retVal.GetComponent<ObjectHealth>();
         health.ForceHealthValues((float)deserialized[DataKeys.Health], (float)deserialized[DataKeys.MaxHealth]);
         retVal.GetComponent<UnitFaction>().MyFactionID = (string)deserialized[DataKeys.UnitFaction];
-        retVal.transform.position = (Vector3)deserialized[DataKeys.Pos];
+        retVal.transform.position = worldPos;
         retVal.GetComponent<Unit>().SetMyUID((ulong)deserialized[DataKeys.UID]);
 
         Debug.Log("Unit Data: invr split 1 " + behaviourSplit[2].ToString());

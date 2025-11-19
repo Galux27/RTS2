@@ -306,6 +306,7 @@ public static class SerializationHelpers
         List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetUnitFilePath(name));
         for(int x=0;x<dataFromFile.Count;x++)
         {
+            Debug.Log("Creating unit from " + dataFromFile[x] + " out of " + dataFromFile.Count);
             UnitPrefabController.Instance.CreateUnitFromSavedData(dataFromFile[x]);
         }
     }

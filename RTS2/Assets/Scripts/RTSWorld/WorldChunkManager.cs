@@ -190,7 +190,30 @@ public class WorldChunkManager : MonoBehaviour
         return new Vector2Int(x - ChunkBatchSize, y - ChunkBatchSize);
     }
 
-    Vector2Int ConvertPositionToChunkBatchCoords(Vector3 pos)
+    Dictionary<Vector2Int, List<string>> UnitsInChunkBatches = new Dictionary<Vector2Int, List<string>>();
+    public void AddUnitToLoadWhenChunkLoads(Vector2Int batch,string data)
+    {
+        if (!UnitsInChunkBatches.ContainsKey(batch))
+        {
+            UnitsInChunkBatches.Add(batch, new List<string>());
+        }
+        UnitsInChunkBatches[batch].Add(data);
+    }
+
+    public void LoadChunkBatchUnits(Vector2Int batch)
+    {
+        if (!UnitsInChunkBatches.ContainsKey(batch))
+        {
+            return;
+        }
+        for(int x = 0; x < UnitsInChunkBatches[batch].Count; x++)
+        {
+            UnitPrefabController.Instance.CreateUnitFromSavedData(UnitsInChunkBatches[batch][x]);
+        }
+        UnitsInChunkBatches.Remove(batch);
+    }
+
+    public Vector2Int ConvertPositionToChunkBatchCoords(Vector3 pos)
     {
         int x = 0;
 
@@ -603,9 +626,14 @@ public class WorldChunkManager : MonoBehaviour
 
     public void OnUnitCreated(Unit u)
     {
-
-        GetWorldChunkBatchFromPosition(u.transform.position).OnUnitCreated(u);
-      
+        try
+        {
+            GetWorldChunkBatchFromPosition(u.transform.position).OnUnitCreated(u);
+        }
+        catch
+        {
+            Debug.LogError("Error creating unit from " + u.transform.position);
+        }
     }
 
     public void OnUnitMove(Unit u)

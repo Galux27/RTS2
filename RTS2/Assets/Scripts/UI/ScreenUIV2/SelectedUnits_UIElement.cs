@@ -15,7 +15,10 @@ public class SelectedUnits_UIElement : BaseUIElement
         SelectableManager.OnSelectionChanged += OnSelectionChange;
         cg = this.GetComponent<CanvasGroup>();
     }
-
+    private void OnDestroy()
+    {
+        SelectableManager.OnSelectionChanged -= OnSelectionChange;
+    }
     void OnSelectionChange()
     {
         Cleanup();

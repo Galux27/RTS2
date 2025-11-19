@@ -133,9 +133,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSelected: 0
   isSelectable: 1
-  MyType: 3
+  MyType: 4
   MyAttackController: {fileID: 0}
   MyOrders: {fileID: 0}
+  MyHealth: {fileID: 0}
   MyCurrentChunk: {x: 0, y: 0}
   MyCurrentBatch: {x: 0, y: 0}
   MyFaction: {fileID: 0}

@@ -303,7 +303,7 @@ public class WorldChunkBatch : MonoBehaviour
                 }
             }
         }
-     
+        WorldChunkManager.Instance.LoadChunkBatchUnits(coords);
         LinkBatchToOtherBatches();
 
        
