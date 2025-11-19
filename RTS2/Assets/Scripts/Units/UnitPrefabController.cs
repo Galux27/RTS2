@@ -77,6 +77,7 @@ public class UnitPrefabController : MonoBehaviour
         KeyDataSplit[1] = KeyDataSplit[1].Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT)[0];
         Debug.Log("unit data: key obj split " + KeyDataSplit[0] + "1 " + KeyDataSplit[1]);
 
+        retVal.GetComponent<UnitOrders>().SetOrdersFromFile((Dictionary<string, bool>)deserialized[DataKeys.Orders]);
         ulong id = (ulong) DataReaders.ParseDataObject(KeyDataSplit[0], KeyDataSplit[1]);
 
         BehaviourDeserializer.AddBehaviourToDeserialize(behaviourSplit[1],retVal.GetComponent<Unit>());

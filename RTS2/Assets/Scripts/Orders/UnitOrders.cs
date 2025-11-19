@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 
@@ -30,6 +31,47 @@ public class UnitOrders : MonoBehaviour
         {
             Orders[key].Value = val;
         }
-
     }
+
+    public void SetOrdersFromFile(Dictionary<string,bool> orders)
+    {
+        foreach(KeyValuePair<string,bool> kvp in orders)
+        {
+            if (!orders.ContainsKey(kvp.Key))
+            {
+                AddOrder(new Order(kvp.Key, kvp.Value));
+            }
+            else
+            {
+                SetOrder(kvp.Key, kvp.Value);
+            }
+        }
+    }
+
+    public string SerializeOrders()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        
+        foreach(KeyValuePair<string,Order> kvp in Orders)
+        {
+            stringBuilder.Append(kvp.Value.Key);
+            stringBuilder.Append(SerializeDataHelpers.LIST_ELEMENT_SPLIT);
+
+            if (kvp.Value.Value)
+            {
+                stringBuilder.Append("1");
+
+            }
+            else
+            {
+                stringBuilder.Append("0");
+
+            }
+            stringBuilder.Append(SerializeDataHelpers.DATA_ELEMENT_SPLIT);
+
+        }
+
+        return stringBuilder.ToString();
+    }
+    
 }

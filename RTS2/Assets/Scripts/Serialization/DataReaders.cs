@@ -194,8 +194,8 @@ public static class DataReaders
                 return DesieralizeResources(data);
             case DataKeys.OverFeature:
                 return DeserializeOverworldFeature(data);
-            case DataKeys.ItemUID:
-            case DataKeys.ItemsInContainer:
+            case DataKeys.Orders:
+                return DeserializeOrders(data);          
             default:
                 break;
         }
@@ -218,6 +218,24 @@ public static class DataReaders
 
     }
 
+    static Dictionary<string,bool> DeserializeOrders(string data)
+    {
+        Debug.Log("Deserializing orders: " + data);
+        Dictionary<string, bool> retVal = new Dictionary<string, bool>();
+        string[] split = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT,StringSplitOptions.RemoveEmptyEntries);
+        string[] allData = null;
+        for(int x = 0; x < split.Length; x++)
+        {
+            allData = split[x].Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, StringSplitOptions.RemoveEmptyEntries);
+            if (allData.Length > 1)
+            {
+                bool val = allData[1] == "1";
+                retVal.Add(allData[0], val);
+            }
+        }
+
+            return retVal;
+    }
 
     static Dictionary<string, ResourceData> DesieralizeResources(string data)
     {

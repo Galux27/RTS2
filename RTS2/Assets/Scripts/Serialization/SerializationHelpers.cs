@@ -379,7 +379,7 @@ public class DataKeys
     public const string RoadType = "RDT";
     public const string RoadElement = "RDE";
     public const string RoadWidth = "RDW";
-
+    public const string Orders = "ORD";
 
     public const string OverElevation = "O_ELE";
     public const string OverFeature = "O_FET";
@@ -493,7 +493,7 @@ public static class SerializeDataHelpers
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
              ||key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType
             ||key==DataKeys.TargetUID|| key == DataKeys.InventoryUID || key==DataKeys.MiscString||key==DataKeys.CameraZoom||key==DataKeys.OverElevation||
-            key==DataKeys.OverPop)
+            key==DataKeys.OverPop||key==DataKeys.Orders)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
         }  
@@ -608,8 +608,7 @@ public static class SerializeDataHelpers
         return "";
     }
 
-   
-
+  
     public static string SerializeListOfData(List<DataToSerialize> data)
     {
         List<string> stored = new List<string>();

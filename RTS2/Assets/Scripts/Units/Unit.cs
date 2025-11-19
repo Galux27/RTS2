@@ -325,13 +325,16 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         data.AddDataToSerialize(DataKeys.UnitFaction, MyFaction.MyFactionID);
         data.AddDataToSerialize(DataKeys.Health, MyHealth.CurrentHealth);
         data.AddDataToSerialize(DataKeys.MaxHealth,MyHealth.MaxHealth);
-        //TODO
-        //Orders
+        data.AddDataToSerialize(DataKeys.Orders, MyOrders.SerializeOrders());
+
+        //behaviour is second to last
         data.AddDataToSerialize(DataKeys.Behaviour, behaviourRunner.CurrentBehaviour);
+
+
+        //inventory is always last
         data.AddDataToSerialize(DataKeys.InventoryUID, GetComponent<Inventory>().GetMyUID().Value);
         data.AddDataToSerialize(DataKeys.Inventory, GetComponent<Inventory>().Serialize().Data);
         //Inventory
-        //Holding
 
 
         return data;
