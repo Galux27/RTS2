@@ -220,13 +220,12 @@ public static class DataReaders
 
     static Dictionary<string,bool> DeserializeOrders(string data)
     {
-        Debug.Log("Deserializing orders: " + data);
         Dictionary<string, bool> retVal = new Dictionary<string, bool>();
-        string[] split = data.Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT,StringSplitOptions.RemoveEmptyEntries);
+        string[] split = data.Split(SerializeDataHelpers.DATA_SPLIT,StringSplitOptions.RemoveEmptyEntries);
         string[] allData = null;
         for(int x = 0; x < split.Length; x++)
         {
-            allData = split[x].Split(SerializeDataHelpers.DATA_ELEMENT_SPLIT, StringSplitOptions.RemoveEmptyEntries);
+            allData = split[x].Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, StringSplitOptions.RemoveEmptyEntries);
             if (allData.Length > 1)
             {
                 bool val = allData[1] == "1";

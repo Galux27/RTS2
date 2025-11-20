@@ -35,10 +35,12 @@ public class UnitOrders : MonoBehaviour
 
     public void SetOrdersFromFile(Dictionary<string,bool> orders)
     {
+        
         foreach(KeyValuePair<string,bool> kvp in orders)
         {
             if (!orders.ContainsKey(kvp.Key))
             {
+
                 AddOrder(new Order(kvp.Key, kvp.Value));
             }
             else
@@ -46,6 +48,7 @@ public class UnitOrders : MonoBehaviour
                 SetOrder(kvp.Key, kvp.Value);
             }
         }
+        Destroy(this.GetComponent<Human_OrderInit>());
     }
 
     public string SerializeOrders()
@@ -67,7 +70,7 @@ public class UnitOrders : MonoBehaviour
                 stringBuilder.Append("0");
 
             }
-            stringBuilder.Append(SerializeDataHelpers.DATA_ELEMENT_SPLIT);
+            stringBuilder.Append(SerializeDataHelpers.DATA_SPLIT);
 
         }
 
