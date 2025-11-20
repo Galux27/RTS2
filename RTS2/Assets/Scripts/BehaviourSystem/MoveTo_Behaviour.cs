@@ -12,6 +12,7 @@ public class MoveTo_Behaviour : BehaviourBase
         base.InitBehaviour(toPerform);
         TargetPosition = targetPos;
         usePath= UsePath;
+        Debug.Log("Move to behaviour " + targetPos);
         if (usePath)
         {
             follower = new PathFollower(toPerform);

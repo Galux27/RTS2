@@ -31,7 +31,22 @@ public class GameActionController : MonoBehaviour
     {
         if (currentValidGameActions != null)
         {
-            CheckForShortcut();
+            CheckForShortcut();  
+        }
+        else
+        {
+            if (ActionSelectMenu.Instance.IsDisplaying())
+            {
+                ActionSelectMenu.Instance.CloseMenu();
+            }
+        }
+    }
+
+
+    public void OnManualInput()
+    {
+        if (currentValidGameActions != null)
+        {
             if (ActionSelectMenu.Instance.IsDisplaying() == false)
             {
                 if (ShouldDisplay)

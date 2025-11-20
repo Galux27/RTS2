@@ -32,8 +32,9 @@ public class Units_SelectionMode : SelectionMode
     {
         GameActionController.Instance.OnActionPerformed();
         CheckForActionsToPerform();
+        
         GameActionController.Instance.ShouldDisplay = !GameActionController.Instance.ShouldDisplay;
-
+        GameActionController.Instance.OnManualInput();
 
     }
 
