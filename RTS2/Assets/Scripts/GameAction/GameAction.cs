@@ -9,10 +9,11 @@ public class GameAction
 {
     public string ActionName;
     public Action PerformAction;
-
-    public GameAction(string actionName, Action action)
+    public KeyCode Shortcut;
+    public GameAction(string actionName, Action action,KeyCode shortcut)
     {
         ActionName = actionName;
         PerformAction = action;
+        Shortcut = shortcut;
     }
 }

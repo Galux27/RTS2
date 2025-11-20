@@ -80,13 +80,13 @@ public class CameraController : MonoBehaviour
     float GetVerticalMovement()
     {
         float retVal = 0f;
-        if (Input.GetKey(KeyCode.W))
+        if (InputController.Instance.IsHoldingUp())
         {
             retVal += 1f;
             isAutoMoving = false;
         }
 
-        if (Input.GetKey(KeyCode.S))
+        if (InputController.Instance.IsHoldingDown())
         {
             retVal -= 1f;
             isAutoMoving = false;
@@ -101,14 +101,14 @@ public class CameraController : MonoBehaviour
     float GetHorizontalMovement()
     {
         float retVal = 0f;
-        if (Input.GetKey(KeyCode.D))
+        if (InputController.Instance.IsHoldingRight())
         {
             retVal += 1f;
             isAutoMoving = false;
 
         }
 
-        if (Input.GetKey(KeyCode.A))
+        if (InputController.Instance.IsHoldingLeft())
         {
             retVal -= 1f;
             isAutoMoving = false;

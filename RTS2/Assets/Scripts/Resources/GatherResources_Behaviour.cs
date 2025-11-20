@@ -75,4 +75,9 @@ public class GatherResources_Behaviour : BehaviourBase
 
     }
 
+    public override KeyCode GetShortcutForBehaviour()
+    {
+        return KeyCode.H;
+    }
+
 }

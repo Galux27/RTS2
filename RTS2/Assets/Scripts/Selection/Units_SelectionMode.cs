@@ -31,7 +31,14 @@ public class Units_SelectionMode : SelectionMode
     public override void OnRightMouseUp()
     {
         GameActionController.Instance.OnActionPerformed();
+        CheckForActionsToPerform();
+        GameActionController.Instance.ShouldDisplay = !GameActionController.Instance.ShouldDisplay;
 
+
+    }
+
+    void CheckForActionsToPerform()
+    {
         if (SelectableManager.Instance.CurrentlySelected.Count > 0)
         {
             if (Input.GetMouseButtonUp(1))
@@ -39,7 +46,7 @@ public class Units_SelectionMode : SelectionMode
 
                 bool DoneCommand = false;
 
-               
+
                 Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
 
                 RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.UnitLayermask);
@@ -61,7 +68,7 @@ public class Units_SelectionMode : SelectionMode
                         }
                     };
 
-                    GameAction ga = new GameAction("Attack", attack);
+                    GameAction ga = new GameAction("Attack", attack, InputController.Instance.GetShortcutFromType(typeof(HumanAttackUnit_Behaviour)));
                     GameActionController.Instance.AddAction(ga);
                     //DoneCommand = true;
                 }
@@ -82,9 +89,9 @@ public class Units_SelectionMode : SelectionMode
 
                         }
                     };
-                    GameAction ga = new GameAction("Attack", attack);
+                    GameAction ga = new GameAction("Attack", attack, InputController.Instance.GetShortcutFromType(typeof(HumanAttackUnit_Behaviour)));
                     GameActionController.Instance.AddAction(ga);
-                  //  DoneCommand = true;
+                    //  DoneCommand = true;
                 }
 
                 if (OnHoverConstructable != null)
@@ -107,7 +114,7 @@ public class Units_SelectionMode : SelectionMode
 
                             }
                         };
-                        GameAction ga = new GameAction("Convert to " + convertToType, Convert);
+                        GameAction ga = new GameAction("Convert to " + convertToType, Convert, KeyCode.None);
                         GameActionController.Instance.AddAction(ga);
                     }
                 }
@@ -134,7 +141,7 @@ public class Units_SelectionMode : SelectionMode
                             }
                         }
                     };
-                    GameAction ga = new GameAction("Build", Build);
+                    GameAction ga = new GameAction("Build", Build, InputController.Instance.GetShortcutFromType(typeof(HumanBehaviour_ConstructObject)));
                     GameActionController.Instance.AddAction(ga);
                     DoneCommand = true;
                 }
@@ -158,7 +165,7 @@ public class Units_SelectionMode : SelectionMode
 
                         }
                     };
-                    GameAction ga = new GameAction("Harvest Resource", Harvest);
+                    GameAction ga = new GameAction("Harvest Resource", Harvest, InputController.Instance.GetShortcutFromType(typeof(GatherResources_Behaviour)));
                     GameActionController.Instance.AddAction(ga);
                 }
 
@@ -179,11 +186,11 @@ public class Units_SelectionMode : SelectionMode
 
                         }
                     };
-                    GameAction ga = new GameAction("Collect Resource", Gather);
+                    GameAction ga = new GameAction("Collect Resource", Gather, InputController.Instance.GetShortcutFromType(typeof(CollectResources_Behaviour)));
                     GameActionController.Instance.AddAction(ga);
                 }
 
-              
+
                 if (OnHoverInventory != null)
                 {
                     Action Gather = () =>
@@ -200,7 +207,7 @@ public class Units_SelectionMode : SelectionMode
 
                         }
                     };
-                    GameAction ga = new GameAction("Store Resources", Gather);
+                    GameAction ga = new GameAction("Store Resources", Gather, KeyCode.None);
                     GameActionController.Instance.AddAction(ga);
 
 
@@ -212,7 +219,7 @@ public class Units_SelectionMode : SelectionMode
 
 
                     };
-                    GameAction tr = new GameAction("Transfer Items", transfer);
+                    GameAction tr = new GameAction("Transfer Items", transfer, KeyCode.None);
                     GameActionController.Instance.AddAction(tr);
                 }
 
@@ -222,22 +229,22 @@ public class Units_SelectionMode : SelectionMode
 
                     Action Convert = () =>
                     {
-                       
-                            for (int x = 0; x < currentlySelected.Count; x++)
-                            {
-                                Unit toPerfrom = (Unit)currentlySelected[x];
-                                BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                                HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                                deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject);
-                                //CollectResources_Behaviour collect = new CollectResources_Behaviour();
-                                // collect.InitBehaviour(toPerfrom, toHarvest);
-                                br.SetBehaviour(deconstruct);
 
-                            }
-                       
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)currentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject);
+                            //CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                            // collect.InitBehaviour(toPerfrom, toHarvest);
+                            br.SetBehaviour(deconstruct);
+
+                        }
+
 
                     };
-                    GameAction ga = new GameAction("Deconstruct: " + OnHoverEnvironmentObject.Name(), Convert);
+                    GameAction ga = new GameAction("Deconstruct: " + OnHoverEnvironmentObject.Name(), Convert, InputController.Instance.GetShortcutFromType(typeof(HumanBehaviour_DeconstructObject)));
                     GameActionController.Instance.AddAction(ga);
                 }
 
@@ -254,7 +261,7 @@ public class Units_SelectionMode : SelectionMode
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom,OnHoverWallSegment);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment);
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);
@@ -263,7 +270,7 @@ public class Units_SelectionMode : SelectionMode
 
 
                     };
-                    GameAction ga = new GameAction("Deconstruct: " + OnHoverWallSegment.Name(), Convert);
+                    GameAction ga = new GameAction("Deconstruct: " + OnHoverWallSegment.Name(), Convert, InputController.Instance.GetShortcutFromType(typeof(HumanBehaviour_DeconstructObject)));
                     GameActionController.Instance.AddAction(ga);
                 }
 
@@ -291,14 +298,13 @@ public class Units_SelectionMode : SelectionMode
 
                             }
                         };
-                        GameAction ga = new GameAction("Move", move);
+                        GameAction ga = new GameAction("Move", move, KeyCode.None);
                         GameActionController.Instance.AddAction(ga);
                     }
                 }
             }
         }
     }
-
 
     Unit OnHoverEnemyUnit;
     Unit OnHoverMyUnit;
@@ -378,7 +384,276 @@ public class Units_SelectionMode : SelectionMode
       
 
         CursorIcon.Instance.SetMoveIcon();
+        CheckForActionsToPerformWithoutInput();
+    }
+    void CheckForActionsToPerformWithoutInput()
+    {
+        if (SelectableManager.Instance.CurrentlySelected.Count > 0)
+        {
+            GameActionController.Instance.currentValidGameActions.Clear();
+            //if (Input.GetMouseButtonUp(1))
+            {
 
+                bool DoneCommand = false;
+
+
+                Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
+
+                RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.UnitLayermask);
+                if (hit.collider != null)
+                {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
+                    System.Action attack = () =>
+                    {
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = ((Unit)currentlySelected[x]);
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
+                            attack.InitBehaviour(targetUnit, toPerfrom);
+                            attack.IsUserInstruction = true;
+                            br.SetBehaviour(attack);
+
+                        }
+                    };
+
+                    GameAction ga = new GameAction("Attack", attack, InputController.Instance.GetShortcutFromType(typeof(HumanAttackUnit_Behaviour)));
+                    GameActionController.Instance.AddAction(ga);
+                    //DoneCommand = true;
+                }
+                else if (OnHoverEnemyUnit != null)
+                {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    Unit enemy = OnHoverEnemyUnit;
+                    System.Action attack = () =>
+                    {
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = ((Unit)currentlySelected[x]);
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
+                            attack.InitBehaviour(enemy, toPerfrom);
+                            attack.IsUserInstruction = true;
+                            br.SetBehaviour(attack);
+
+                        }
+                    };
+                    GameAction ga = new GameAction("Attack", attack, InputController.Instance.GetShortcutFromType(typeof(HumanAttackUnit_Behaviour)));
+                    GameActionController.Instance.AddAction(ga);
+                    //  DoneCommand = true;
+                }
+
+                if (OnHoverConstructable != null)
+                {
+                    string convertToType = "";
+                    if (UnitTypesController.Instance.CanConvertUnitsWithObject(OnHoverConstructable, ref convertToType))
+                    {
+                        List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                        Action Convert = () =>
+                        {
+                            for (int x = 0; x < currentlySelected.Count; x++)
+                            {
+                                Unit toPerfrom = (Unit)currentlySelected[x];
+                                BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                HumanBehaviour_ChangeUnitType change = new HumanBehaviour_ChangeUnitType();
+                                change.InitBehaviour(toPerfrom, OnHoverConstructable, convertToType);
+                                //CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                                // collect.InitBehaviour(toPerfrom, toHarvest);
+                                br.SetBehaviour(change);
+
+                            }
+                        };
+                        GameAction ga = new GameAction("Convert to " + convertToType, Convert, KeyCode.None);
+                        GameActionController.Instance.AddAction(ga);
+                    }
+                }
+
+
+
+                if (OnHoverBuildable != null)
+                {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    Constructable toBuild = OnHoverBuildable;
+                    Action Build = () =>
+                    {
+
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = ((Unit)currentlySelected[x]);
+                            if (toPerfrom.MyType == UnitType.Engineer)
+                            {
+                                BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                HumanBehaviour_ConstructObject construct = new HumanBehaviour_ConstructObject();
+                                construct.InitBehaviour(toPerfrom, toBuild);
+                                construct.IsUserInstruction = true;
+                                br.SetBehaviour(construct);
+                            }
+                        }
+                    };
+                    GameAction ga = new GameAction("Build", Build, InputController.Instance.GetShortcutFromType(typeof(HumanBehaviour_ConstructObject)));
+                    GameActionController.Instance.AddAction(ga);
+                    DoneCommand = true;
+                }
+
+
+                if (OnHoverHarvestable != null)
+                {
+                    EnvironmentObjectInstance toHarvest = OnHoverHarvestable;
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+
+                    Action Harvest = () =>
+                    {
+
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)currentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            GatherResources_Behaviour gather = new GatherResources_Behaviour();
+                            gather.InitBehaviour(toPerfrom, toHarvest);
+                            br.SetBehaviour(gather);
+
+                        }
+                    };
+                    GameAction ga = new GameAction("Harvest Resource", Harvest, InputController.Instance.GetShortcutFromType(typeof(GatherResources_Behaviour)));
+                    GameActionController.Instance.AddAction(ga);
+                }
+
+                if (OnHoverResource != null)
+                {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    ResourceInstance toHarvest = OnHoverResource;
+                    Action Gather = () =>
+                    {
+
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)currentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                            collect.InitBehaviour(toPerfrom, toHarvest);
+                            br.SetBehaviour(collect);
+
+                        }
+                    };
+                    GameAction ga = new GameAction("Collect Resource", Gather, InputController.Instance.GetShortcutFromType(typeof(CollectResources_Behaviour)));
+                    GameActionController.Instance.AddAction(ga);
+                }
+
+
+                if (OnHoverInventory != null)
+                {
+                    Action Gather = () =>
+                    {
+
+                        for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+
+                            TransferResourcesToContainer_Behaviour storeResoruces = new TransferResourcesToContainer_Behaviour();
+                            storeResoruces.InitBehaviour(toPerfrom, OnHoverInventory);
+                            br.SetBehaviour(storeResoruces);
+
+                        }
+                    };
+                    GameAction ga = new GameAction("Store Resources", Gather, KeyCode.None);
+                    GameActionController.Instance.AddAction(ga);
+
+
+                    Action transfer = () =>
+                    {
+                        Unit toPerfrom = (Unit)SelectableManager.Instance.CurrentlySelected[0];
+                        Inventory unitInventory = toPerfrom.GetComponent<Inventory>();
+                        InventoryParentUI.Instance.PopulateUI(unitInventory, OnHoverInventory);
+
+
+                    };
+                    GameAction tr = new GameAction("Transfer Items", transfer, KeyCode.None);
+                    GameActionController.Instance.AddAction(tr);
+                }
+
+                if (OnHoverEnvironmentObject != null)
+                {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+
+                    Action Convert = () =>
+                    {
+
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)currentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject);
+                            //CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                            // collect.InitBehaviour(toPerfrom, toHarvest);
+                            br.SetBehaviour(deconstruct);
+
+                        }
+
+
+                    };
+                    GameAction ga = new GameAction("Deconstruct: " + OnHoverEnvironmentObject.Name(), Convert, InputController.Instance.GetShortcutFromType(typeof(HumanBehaviour_DeconstructObject)));
+                    GameActionController.Instance.AddAction(ga);
+                }
+
+
+                if (OnHoverWallSegment != null)
+                {
+                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+
+                    Action Convert = () =>
+                    {
+
+                        for (int x = 0; x < currentlySelected.Count; x++)
+                        {
+                            Unit toPerfrom = (Unit)currentlySelected[x];
+                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                            HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment);
+                            //CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                            // collect.InitBehaviour(toPerfrom, toHarvest);
+                            br.SetBehaviour(deconstruct);
+
+                        }
+
+
+                    };
+                    GameAction ga = new GameAction("Deconstruct: " + OnHoverWallSegment.Name(), Convert, InputController.Instance.GetShortcutFromType(typeof(HumanBehaviour_DeconstructObject)));
+                    GameActionController.Instance.AddAction(ga);
+                }
+
+                {
+                    hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.CursorLayermask);
+                    if (hit.collider != null)
+                    {
+                        Vector3 targetPos = hit.point;
+                        targetPos.z = 0;
+                        List<Selectable> selected = SelectableManager.Instance.CurrentlySelected;
+                        List<Vector3> targetPositions = UnitHelpers.GetWalkablePositionsNearTarget(selected, targetPos);
+
+
+                        Action move = () =>
+                        {
+
+                            for (int x = 0; x < selected.Count; x++)
+                            {
+                                Unit toPerfrom = (Unit)selected[x];
+                                BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
+                                moveTo_Behaviour.InitBehaviour(toPerfrom, targetPositions[x]);
+                                moveTo_Behaviour.IsUserInstruction = true;
+                                br.SetBehaviour(moveTo_Behaviour);
+
+                            }
+                        };
+                        GameAction ga = new GameAction("Move", move, KeyCode.None);
+                        GameActionController.Instance.AddAction(ga);
+                    }
+                }
+            }
+        }
     }
 
 }

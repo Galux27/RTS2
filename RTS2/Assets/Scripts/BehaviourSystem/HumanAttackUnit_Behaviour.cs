@@ -106,5 +106,10 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
      
         unitToMove.MyAttackController.AttemptAttack(objectToFollow);
     }
+
+    public override KeyCode GetShortcutForBehaviour()
+    {
+        return KeyCode.A;
+    }
 }
 

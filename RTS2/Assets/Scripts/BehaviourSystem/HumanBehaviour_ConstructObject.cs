@@ -75,4 +75,9 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
 
     }
 
+    public override KeyCode GetShortcutForBehaviour()
+    {
+        return KeyCode.C;
+    }
+
 }

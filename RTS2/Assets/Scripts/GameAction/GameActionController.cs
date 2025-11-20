@@ -26,20 +26,62 @@ public class GameActionController : MonoBehaviour
     }
 
     public List<GameAction> currentValidGameActions=new List<GameAction>();
-
+    public bool ShouldDisplay = false;
     private void Update()
     {
-        if (currentValidGameActions != null && ActionSelectMenu.Instance.IsDisplaying() == false)
+        if (currentValidGameActions != null)
         {
-            if (currentValidGameActions.Count > 1)
+            CheckForShortcut();
+            if (ActionSelectMenu.Instance.IsDisplaying() == false)
             {
-                ActionSelectMenu.Instance.CreateButtonsForActions(currentValidGameActions);
-                ActionSelectMenu.Instance.ShowUI();
+                if (ShouldDisplay)
+                {
+                    if (currentValidGameActions.Count > 1)
+                    {
+                        ActionSelectMenu.Instance.CreateButtonsForActions(currentValidGameActions);
+                        ActionSelectMenu.Instance.ShowUI();
+                    }
+                    else if (currentValidGameActions.Count == 1)
+                    {
+                        currentValidGameActions[0].PerformAction?.Invoke();
+                        OnActionPerformed();
+                    }
+                }
             }
-            else if (currentValidGameActions.Count == 1)
+            else
             {
-                currentValidGameActions[0].PerformAction?.Invoke();
-                OnActionPerformed();
+                if (!ShouldDisplay)
+                {
+                    if (ActionSelectMenu.Instance.IsDisplaying())
+                    {
+                        ActionSelectMenu.Instance.CloseMenu();
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (ActionSelectMenu.Instance.IsDisplaying())
+            {
+                ActionSelectMenu.Instance.CloseMenu();
+            }
+        }
+    }
+
+    void CheckForShortcut()
+    {
+        Debug.Log("Shortcut check: " + currentValidGameActions.Count + " " + InputController.Instance.IsHoldingShortcutButton());
+        if (InputController.Instance.IsHoldingShortcutButton())
+        {
+            for(int x = 0; x < currentValidGameActions.Count; x++)
+            {
+                Debug.Log("Shortcut check: " + currentValidGameActions[x].ActionName + " " + currentValidGameActions[x].Shortcut.ToString());
+                if (InputController.Instance.IsHoldingKey(currentValidGameActions[x].Shortcut))
+                {
+                    currentValidGameActions[0].PerformAction?.Invoke();
+                    OnActionPerformed();
+                    return;
+                }
             }
         }
     }

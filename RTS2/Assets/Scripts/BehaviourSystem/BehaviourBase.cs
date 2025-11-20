@@ -54,6 +54,12 @@ public class BehaviourBase:ISerialize
     }
 
 
+    public virtual KeyCode GetShortcutForBehaviour()
+    {
+        return KeyCode.None;
+    }
+
+
     public DataToSerialize GetDataToSerialize()
     {
         DataToSerialize otherData = GetBehaviourSpecificData();
