@@ -17,6 +17,19 @@ public class InputController : MonoBehaviour
             return instance;
         }
     }
+    float LastLeftClick=0f,LastRightClick=0f;
+    private void Update()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
+            LastLeftClick = Time.time;
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            LastRightClick = Time.time;
+        }
+    }
 
     public bool IsHoldingShortcutButton()
     {
@@ -46,6 +59,30 @@ public class InputController : MonoBehaviour
     { 
         return Input.GetKey(KeyCode.S);
     }
+
+
+
+    const float DoubleClickLimit = .1f;
+    public bool WasLastRightClickDoubleClick = false;
+    public bool IsPressingRightMouse(out bool isDoubleClick)
+    {
+        isDoubleClick = false;
+        if (Input.GetMouseButton(1)||Input.GetMouseButtonDown(1)||Input.GetMouseButtonUp(1))
+        {
+            Debug.Log("Actions: right click check" + (Time.time - LastRightClick));
+
+            if (Time.time - LastRightClick < DoubleClickLimit)
+            {
+                isDoubleClick = true;
+            }
+           
+            WasLastRightClickDoubleClick = isDoubleClick;
+            LastRightClick = Time.time;
+            return true;
+        }
+        return false;
+    }
+
 
     public KeyCode GetShortcutFromType(Type type)
     {

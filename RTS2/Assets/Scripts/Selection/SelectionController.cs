@@ -107,7 +107,15 @@ public class SelectionController : MonoBehaviour
         }
 
 
+        if (Input.GetMouseButtonUp(0))
+        {
+            LastLeftClick = Time.time;
+        }
 
+        if (Input.GetMouseButtonUp(1))
+        {
+            LastRightClick = Time.time;
+        }
 
         CurrentSelectionModeObj.OnHover();
 

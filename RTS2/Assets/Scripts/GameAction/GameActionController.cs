@@ -26,9 +26,10 @@ public class GameActionController : MonoBehaviour
     }
 
     public List<GameAction> currentValidGameActions=new List<GameAction>();
-    public bool ShouldDisplay = false;
+    public bool ShouldDisplay = true;
     private void Update()
     {
+        LogOutAllActions();
         if (currentValidGameActions != null)
         {
             CheckForShortcut();  
@@ -42,25 +43,83 @@ public class GameActionController : MonoBehaviour
         }
     }
 
+    void LogOutAllActions()
+    {
+        if (currentValidGameActions != null)
+        {
+            string val = "";
+            for(int x=0;x<currentValidGameActions.Count;x++)
+            {
+                val += currentValidGameActions[x].ActionName + ",";
+            }
+            Debug.Log("Actions: " + val);
+        }
+    }
+
+    void ForceToDoNonMoveAction()
+    {
+        Debug.Log("Actions: forcing to non move action");
+        for(int x = 0; x < currentValidGameActions.Count; x++)
+        {
+            if (currentValidGameActions[x].ActionName != "Move")
+            {
+                currentValidGameActions[x].PerformAction?.Invoke();
+                OnActionPerformed();
+            }
+        }
+    }
+
+    void ForceMoveAction()
+    {
+        Debug.Log("Actions: forcing to move action");
+
+        for (int x = 0; x < currentValidGameActions.Count; x++)
+        {
+            if (currentValidGameActions[x].ActionName == "Move")
+            {
+                currentValidGameActions[x].PerformAction?.Invoke();
+                OnActionPerformed();
+            }
+        }
+    }
 
     public void OnManualInput()
     {
+        Debug.Log("Actions: manual input "+ ActionSelectMenu.Instance.IsDisplaying()+","+(ShouldDisplay)+",");
         if (currentValidGameActions != null)
         {
             if (ActionSelectMenu.Instance.IsDisplaying() == false)
             {
-                if (ShouldDisplay)
+                //if (ShouldDisplay)
                 {
-                    if (currentValidGameActions.Count > 1)
-                    {
-                        ActionSelectMenu.Instance.CreateButtonsForActions(currentValidGameActions);
-                        ActionSelectMenu.Instance.ShowUI();
-                    }
-                    else if (currentValidGameActions.Count == 1)
+                    if (currentValidGameActions.Count == 1)
                     {
                         currentValidGameActions[0].PerformAction?.Invoke();
                         OnActionPerformed();
                     }
+                    else if (currentValidGameActions.Count == 2)
+                    {
+                        bool val = false;
+                        if (InputController.Instance.IsPressingRightMouse(out val))
+                        {
+                            Debug.Log("Actions: was right click double click " + InputController.Instance.WasLastRightClickDoubleClick);
+
+                            if (InputController.Instance.WasLastRightClickDoubleClick)
+                            {
+                                ForceMoveAction();
+                            }
+                            else
+                            {
+                                ForceToDoNonMoveAction();
+                            }
+                        }
+                    }
+                    else if (currentValidGameActions.Count > 2)
+                    {
+                        ActionSelectMenu.Instance.CreateButtonsForActions(currentValidGameActions);
+                        ActionSelectMenu.Instance.ShowUI();
+                    }
+                   
                 }
             }
             else

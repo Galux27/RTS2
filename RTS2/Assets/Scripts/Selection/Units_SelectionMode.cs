@@ -33,7 +33,7 @@ public class Units_SelectionMode : SelectionMode
         GameActionController.Instance.OnActionPerformed();
         CheckForActionsToPerform();
         
-        GameActionController.Instance.ShouldDisplay = !GameActionController.Instance.ShouldDisplay;
+        //GameActionController.Instance.ShouldDisplay = !GameActionController.Instance.ShouldDisplay;
         GameActionController.Instance.OnManualInput();
 
     }
@@ -322,36 +322,30 @@ public class Units_SelectionMode : SelectionMode
 
         RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.UnitLayermask);
         bool SetIcon = false;
-        if (hit.collider != null)
-        {
-            Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
-            if(targetUnit != null)
-            {
-                if (targetUnit.MyType == UnitType.Zombie)
-                {
-                    //attack icon
-                    CursorIcon.Instance.SetAttackIcon();
-                    return;
-                }
-            }
-        }
+        //if (hit.collider != null)
+        //{
+        //    Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
+        //    if(targetUnit != null)
+        //    {
+        //        if (targetUnit.MyType == UnitType.Zombie)
+        //        {
+        //            //attack icon
+        //            CursorIcon.Instance.SetAttackIcon();
+        //            return;
+        //        }
+        //    }
+        //}
         OnHoverMyUnit = SelectionUtilities.GetUserUnitWithinRangeOfPoint(r.origin, 1f);
 
 
       
 
         OnHoverEnemyUnit = SelectionUtilities.GetHostileUnitWithinRangeOfPoint(r.origin, 1f);
-        if (OnHoverEnemyUnit != null)
-        {
-            CursorIcon.Instance.SetAttackIcon();
-        }
+      
 
         OnHoverHarvestable = SelectionUtilities.GetHarvestableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
 
-        if (OnHoverHarvestable != null)
-        {
-            CursorIcon.Instance.SetBuildIcon();
-        }
+       
 
 
         OnHoverEnvironmentObject = SelectionUtilities.GetEnvironmentObjectInstanceWithinRangeOfPoint(r.origin, 1f);
@@ -360,10 +354,7 @@ public class Units_SelectionMode : SelectionMode
 
 
         OnHoverResource = SelectionUtilities.GetResourceInstanceObjectInstanceWithinRangeOfPoint(r.origin, 1f);
-        if (OnHoverResource != null)
-        {
-            CursorIcon.Instance.SetBuildIcon();
-        }
+        
         OnHoverInventory = SelectionUtilities.GetInventoryObjectWithinRangeOfPoint(r.origin, 1f);
         if (OnHoverInventory != null)
         {
@@ -375,14 +366,26 @@ public class Units_SelectionMode : SelectionMode
             CursorIcon.Instance.SetMoveIcon();
         }
         OnHoverConstructable = SelectionUtilities.GetConstructedObjectInRangeOfPoint(r.origin, 1f);
+        if (OnHoverResource != null)
+        {
+            CursorIcon.Instance.SetBuildIcon();
+        }
+        if (OnHoverHarvestable != null)
+        {
+            CursorIcon.Instance.SetBuildIcon();
+        }
         if (OnHoverConstructable != null)
         {
             Debug.Log("Found constructed object " + OnHoverConstructable.Name());
             CursorIcon.Instance.SetBuildIcon();
         }
-       
-
       
+        if (OnHoverEnemyUnit != null)
+        {
+            CursorIcon.Instance.SetAttackIcon();
+        }
+
+
 
         CursorIcon.Instance.SetMoveIcon();
         CheckForActionsToPerformWithoutInput();
