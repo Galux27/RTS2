@@ -87,7 +87,7 @@ public class SelectionUIElement :BaseUIElement
                    
                     SelectableManager.Instance.SetOnlyTypeSelected(item.Key);
                     SelectableManager.OnSelectionChanged();
-                    SelectionController.Instance.blockInputTimer = .2f;
+                    SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
                     
 
                 };
@@ -111,7 +111,7 @@ public class SelectionUIElement :BaseUIElement
                             SelectableManager.Instance.ClearSelectables();
                             SelectableManager.Instance.AddSelectable(item.Value[x]);
                             SelectableManager.OnSelectionChanged();
-                            SelectionController.Instance.blockInputTimer = .2f;
+                            SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
 
                         };
@@ -155,7 +155,7 @@ public class SelectionUIElement :BaseUIElement
                 Action onClick = () => {
 
                     SelectableManager.Instance.SetToOnlyNameSelected(kvp.Key);
-                       SelectionController.Instance.blockInputTimer = .2f;
+                       SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
                 };
                 button.GetComponent<SelectedObjectUIElement>().SetupButton(kvp.Key, kvp.Value.Quantity, onClick);
@@ -170,7 +170,7 @@ public class SelectionUIElement :BaseUIElement
                 Action onClick = () => {
 
                     SelectableManager.Instance.SetToOnlySelected(toSelect);
-                    SelectionController.Instance.blockInputTimer = .2f;
+                    SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
                 };
                 button.GetComponent<SelectedObjectUIElement>().SetupButton(toSelect as ObjectInfo,

@@ -17,7 +17,8 @@ public class InputController : MonoBehaviour
             return instance;
         }
     }
-    float LastLeftClick=0f,LastRightClick=0f;
+  public  float LastLeftClick=0f,LastRightClick=0f;
+    public const float BlockInputLength = .02f;
     private void Update()
     {
         if (Input.GetMouseButtonUp(0))
@@ -27,6 +28,7 @@ public class InputController : MonoBehaviour
 
         if (Input.GetMouseButtonUp(1))
         {
+            PriorRightClick = LastRightClick;
             LastRightClick = Time.time;
         }
     }
@@ -62,22 +64,22 @@ public class InputController : MonoBehaviour
 
 
 
-    const float DoubleClickLimit = .1f;
+    const float ClickLimit = .1f,DoubleClickLimit=.2f;
     public bool WasLastRightClickDoubleClick = false;
+    public float PriorRightClick = 0f;
     public bool IsPressingRightMouse(out bool isDoubleClick)
     {
         isDoubleClick = false;
-        if (Input.GetMouseButton(1)||Input.GetMouseButtonDown(1)||Input.GetMouseButtonUp(1))
+        if (Time.time-LastRightClick < ClickLimit)
         {
             Debug.Log("Actions: right click check" + (Time.time - LastRightClick));
 
-            if (Time.time - LastRightClick < DoubleClickLimit)
+            if (Time.time-PriorRightClick < DoubleClickLimit)
             {
                 isDoubleClick = true;
             }
            
             WasLastRightClickDoubleClick = isDoubleClick;
-            LastRightClick = Time.time;
             return true;
         }
         return false;

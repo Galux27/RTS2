@@ -54,7 +54,7 @@ public class SelectedObjectUIElement : MonoBehaviour
     void AutoMoveToUnit(ObjectInfo selected)
     {
         CameraController.Instance.SetToAutoMove(selected.Position());
-        SelectionController.Instance.blockInputTimer = .2f;
+        SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
     }
 

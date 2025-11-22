@@ -45,7 +45,7 @@ public class SelectedUnit_UIElement : BaseUIElement
     void AutoMoveToUnit()
     {
         CameraController.Instance.SetToAutoMove(myUnit.Position());
-        SelectionController.Instance.blockInputTimer = .2f;
+        SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
     }
 }

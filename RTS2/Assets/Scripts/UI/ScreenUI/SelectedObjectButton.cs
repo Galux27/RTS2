@@ -15,7 +15,7 @@ public class SelectedObjectButton : MonoBehaviour
         SelectButton.onClick.AddListener(() =>
         {
             SelectableManager.Instance.SetToOnlyNameSelected(category.Key);
-            SelectionController.Instance.blockInputTimer = .2f;
+            SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
            
         }
         );
@@ -28,13 +28,13 @@ public class SelectedObjectButton : MonoBehaviour
         quantitiy.text = "";
         SelectButton.onClick.AddListener(() => { 
             SelectableManager.Instance.SetToOnlySelected(objectInfo as Selectable);
-            SelectionController.Instance.blockInputTimer = .2f;
+            SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
         });
 
         ZoomToButton.onClick.AddListener(() => {
             CameraController.Instance.SetToAutoMove(objectInfo.Position());
-            SelectionController.Instance.blockInputTimer = .2f;
+            SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
 
         });

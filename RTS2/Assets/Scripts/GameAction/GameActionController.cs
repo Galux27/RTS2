@@ -29,7 +29,6 @@ public class GameActionController : MonoBehaviour
     public bool ShouldDisplay = true;
     private void Update()
     {
-        LogOutAllActions();
         if (currentValidGameActions != null)
         {
             CheckForShortcut();  
@@ -100,6 +99,7 @@ public class GameActionController : MonoBehaviour
                     else if (currentValidGameActions.Count == 2)
                     {
                         bool val = false;
+                        Debug.Log("Actions: double input check at " + Time.time+" last right click "+InputController.Instance.LastRightClick+" prior " +InputController.Instance.PriorRightClick);
                         if (InputController.Instance.IsPressingRightMouse(out val))
                         {
                             Debug.Log("Actions: was right click double click " + InputController.Instance.WasLastRightClickDoubleClick);
@@ -171,7 +171,7 @@ public class GameActionController : MonoBehaviour
     {
         currentValidGameActions.Clear();
         ActionSelectMenu.Instance.CloseMenu();
-        SelectionController.Instance.blockInputTimer = .2f;
+        SelectionController.Instance.blockInputTimer =InputController.BlockInputLength;
 
     }
 

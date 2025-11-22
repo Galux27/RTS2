@@ -48,14 +48,14 @@ public class UnitSelectButton : MonoBehaviour
             SelectableManager.Instance.SetOnlyTypeSelected(type);
         }
         SelectableManager.OnSelectionChanged();
-        SelectionController.Instance.blockInputTimer = .2f;
+        SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
     }
 
     void AutoMoveToUnit()
     {
         CameraController.Instance.SetToAutoMove(myUnit.Position());
-        SelectionController.Instance.blockInputTimer = .2f;
+        SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
 
     }
 
