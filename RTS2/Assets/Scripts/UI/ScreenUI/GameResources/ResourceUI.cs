@@ -19,4 +19,9 @@ public class ResourceUI : MonoBehaviour
     {
         Quantitiy.text = newVal.ToString()+"/"+capacity;
     }
+
+    public void UpdateRequirement(int val)
+    {
+        Quantitiy.text = val.ToString();
+    }
 }

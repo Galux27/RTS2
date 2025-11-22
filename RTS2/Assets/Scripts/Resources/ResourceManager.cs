@@ -59,6 +59,7 @@ public class ResourceManager : MonoBehaviour
     {
         UserResources.Add(name, data);
         ResourcesDisplayUI.Instance.CreateUIElement(data);
+        ResourceCostUI.Instance.CreateUIElement(data);
         Debug.Log("Resources: added resource "+  name);
 
     }

@@ -136,6 +136,7 @@ public class ConstructionUIElement : BaseUIElement
 
                 if (ConstructableObjectManager.Instance.AllObjects.ContainsKey(kvp.Key))
                 {
+                    ResourceCostUI.Instance.UpdateUI(kvp.Value.RequirementsToBuild);
                     ConstructableObjectManager.Instance.SetCursorObject(kvp.Key);
                 }
 
