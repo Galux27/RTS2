@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Michsky.UI.ModernUIPack;
+
 public class ActionSelectMenu : MonoBehaviour
 {
     static ActionSelectMenu instance;
@@ -50,11 +52,34 @@ public class ActionSelectMenu : MonoBehaviour
     {
         cg.alpha = 1f;
         cg.blocksRaycasts = true;
+        cg.interactable = true;
         transform.localScale = Vector3.one;
         Vector3 startPos = Input.mousePosition / GetComponentInParent<Canvas>().scaleFactor;
-        GetComponent<RectTransform>().anchoredPosition = startPos;
+        GetComponent<RectTransform>().anchoredPosition =  ClampPosToScreen( startPos);
         this.gameObject.SetActive(true);
 
+    }
+
+    Vector2 ClampPosToScreen(Vector2 pos)
+    {
+        if (pos.x < 200)
+        {
+            pos.x = 200;
+        }else if(pos.x>Screen.width-200)
+        {
+            pos.x = Screen.width-200;
+        }
+
+        if (pos.y < 200)
+        {
+            pos.y = 200;
+        }
+        else if (pos.y > Screen.height - 200)
+        {
+            pos.y = Screen.height - 200;
+        }
+
+        return pos;
     }
 
     public void CreateButtonsForActions(List<GameAction> potentialActions)
@@ -70,9 +95,12 @@ public class ActionSelectMenu : MonoBehaviour
     {
         GameObject g = GameObject.Instantiate(ButtonPrefab, ButtonParent);
         Button b = g.GetComponent<Button>();
-        b.onClick.AddListener(action.PerformAction.Invoke);
+       
+       b.onClick.AddListener(action.PerformAction.Invoke);
         b.onClick.AddListener(GameActionController.Instance.OnActionPerformed);
-        g.GetComponentInChildren<TextMeshProUGUI>().text = action.ActionName;
+        b.onClick.AddListener(()=>Debug.Log("Action: button click " + action.ActionName));
+        g.GetComponentInChildren<ButtonManagerBasic>().buttonText = action.ActionName;
+
     }
 
     public void CloseMenu()
@@ -80,6 +108,8 @@ public class ActionSelectMenu : MonoBehaviour
         Cleanup();
         cg.alpha = 0f;
         cg.blocksRaycasts = false;
+        cg.interactable = false;
+
         transform.localScale = Vector3.zero;
         this.gameObject.SetActive(false);
     }

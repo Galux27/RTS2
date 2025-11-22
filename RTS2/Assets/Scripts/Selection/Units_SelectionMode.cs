@@ -33,7 +33,6 @@ public class Units_SelectionMode : SelectionMode
         GameActionController.Instance.OnActionPerformed();
         CheckForActionsToPerform();
         
-        //GameActionController.Instance.ShouldDisplay = !GameActionController.Instance.ShouldDisplay;
         GameActionController.Instance.OnManualInput();
 
     }
@@ -321,20 +320,7 @@ public class Units_SelectionMode : SelectionMode
         Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.UnitLayermask);
-        bool SetIcon = false;
-        //if (hit.collider != null)
-        //{
-        //    Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
-        //    if(targetUnit != null)
-        //    {
-        //        if (targetUnit.MyType == UnitType.Zombie)
-        //        {
-        //            //attack icon
-        //            CursorIcon.Instance.SetAttackIcon();
-        //            return;
-        //        }
-        //    }
-        //}
+
         OnHoverMyUnit = SelectionUtilities.GetUserUnitWithinRangeOfPoint(r.origin, 1f);
 
 
@@ -378,7 +364,6 @@ public class Units_SelectionMode : SelectionMode
         }
         if (OnHoverConstructable != null)
         {
-            Debug.Log("Found constructed object " + OnHoverConstructable.Name());
             CursorIcon.Instance.SetBuildIcon();
         }
       
@@ -396,7 +381,6 @@ public class Units_SelectionMode : SelectionMode
         if (SelectableManager.Instance.CurrentlySelected.Count > 0)
         {
             GameActionController.Instance.currentValidGameActions.Clear();
-            //if (Input.GetMouseButtonUp(1))
             {
 
                 bool DoneCommand = false;
