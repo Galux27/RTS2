@@ -356,6 +356,8 @@ public class Units_SelectionMode : SelectionMode
         OnHoverResource = SelectionUtilities.GetResourceInstanceObjectInstanceWithinRangeOfPoint(r.origin, 1f);
         
         OnHoverInventory = SelectionUtilities.GetInventoryObjectWithinRangeOfPoint(r.origin, 1f);
+        CursorIcon.Instance.SetMoveIcon();
+
         if (OnHoverInventory != null)
         {
             CursorIcon.Instance.SetMoveIcon();
@@ -387,7 +389,6 @@ public class Units_SelectionMode : SelectionMode
 
 
 
-        CursorIcon.Instance.SetMoveIcon();
         CheckForActionsToPerformWithoutInput();
     }
     void CheckForActionsToPerformWithoutInput()

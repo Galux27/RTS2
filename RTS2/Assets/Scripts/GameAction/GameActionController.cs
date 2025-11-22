@@ -84,9 +84,10 @@ public class GameActionController : MonoBehaviour
 
     public void OnManualInput()
     {
-        Debug.Log("Actions: manual input "+ ActionSelectMenu.Instance.IsDisplaying()+","+(ShouldDisplay)+",");
         if (currentValidGameActions != null)
         {
+            Debug.Log("Actions: manual input " + ActionSelectMenu.Instance.IsDisplaying() + "," + (ShouldDisplay) + "," + currentValidGameActions.Count);
+
             if (ActionSelectMenu.Instance.IsDisplaying() == false)
             {
                 //if (ShouldDisplay)
@@ -96,25 +97,25 @@ public class GameActionController : MonoBehaviour
                         currentValidGameActions[0].PerformAction?.Invoke();
                         OnActionPerformed();
                     }
-                    else if (currentValidGameActions.Count == 2)
-                    {
-                        bool val = false;
-                        Debug.Log("Actions: double input check at " + Time.time+" last right click "+InputController.Instance.LastRightClick+" prior " +InputController.Instance.PriorRightClick);
-                        if (InputController.Instance.IsPressingRightMouse(out val))
-                        {
-                            Debug.Log("Actions: was right click double click " + InputController.Instance.WasLastRightClickDoubleClick);
+                    //else if (currentValidGameActions.Count == 2)
+                    //{
+                    //    bool val = false;
+                    //    Debug.Log("Actions: double input check at " + Time.time+" last right click "+InputController.Instance.LastRightClick+" prior " +InputController.Instance.PriorRightClick);
+                    //    if (InputController.Instance.IsPressingRightMouse(out val))
+                    //    {
+                    //        Debug.Log("Actions: was right click double click " + InputController.Instance.WasLastRightClickDoubleClick);
 
-                            if (InputController.Instance.WasLastRightClickDoubleClick)
-                            {
-                                ForceMoveAction();
-                            }
-                            else
-                            {
-                                ForceToDoNonMoveAction();
-                            }
-                        }
-                    }
-                    else if (currentValidGameActions.Count > 2)
+                    //        if (InputController.Instance.WasLastRightClickDoubleClick)
+                    //        {
+                    //            ForceMoveAction();
+                    //        }
+                    //        else
+                    //        {
+                    //            ForceToDoNonMoveAction();
+                    //        }
+                    //    }
+                    //}
+                    else if (currentValidGameActions.Count >= 2)
                     {
                         ActionSelectMenu.Instance.CreateButtonsForActions(currentValidGameActions);
                         ActionSelectMenu.Instance.ShowUI();
@@ -122,16 +123,16 @@ public class GameActionController : MonoBehaviour
                    
                 }
             }
-            else
-            {
-                if (!ShouldDisplay)
-                {
-                    if (ActionSelectMenu.Instance.IsDisplaying())
-                    {
-                        ActionSelectMenu.Instance.CloseMenu();
-                    }
-                }
-            }
+            //else
+            //{
+            //    if (!ShouldDisplay)
+            //    {
+            //        if (ActionSelectMenu.Instance.IsDisplaying())
+            //        {
+            //            ActionSelectMenu.Instance.CloseMenu();
+            //        }
+            //    }
+            //}
         }
         else
         {

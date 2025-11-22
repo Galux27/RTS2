@@ -36,10 +36,14 @@ public class SelectedUnits_UIElement : BaseUIElement
         {
             UnitOrders.OnUnitSelectionUpdated();
             cg.alpha = 1f;
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
         }
         else
         {
             cg.alpha = 0f;
+            cg.interactable =false;
+            cg.blocksRaycasts = false;
         }
 
     }
@@ -68,7 +72,7 @@ public class SelectedUnits_UIElement : BaseUIElement
             ActiveUIEleemnt.Add(ui);
         }
     }
-
+    //get icons working for actions if there's move + something else
     void Cleanup()
     {
         for(int x=0;x<ActiveUIEleemnt.Count;x++)

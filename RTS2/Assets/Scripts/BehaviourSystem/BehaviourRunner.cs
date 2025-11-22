@@ -87,7 +87,7 @@ public class BehaviourRunner : MonoBehaviour
         CurrentBehaviour.OnComplete?.Invoke();
         if (CurrentBehaviour.DoWeNullBehaviourOnComplete())
         {
-            CurrentBehaviour = null;
+            SetBehaviour( null);
         }
     }
 }
