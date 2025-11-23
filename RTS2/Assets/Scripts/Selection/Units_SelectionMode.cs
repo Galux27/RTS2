@@ -341,13 +341,13 @@ public class Units_SelectionMode : SelectionMode
 
         OnHoverResource = SelectionUtilities.GetResourceInstanceObjectInstanceWithinRangeOfPoint(r.origin, 1f);
         
-        OnHoverInventory = SelectionUtilities.GetInventoryObjectWithinRangeOfPoint(r.origin, 1f);
+       // OnHoverInventory = SelectionUtilities.GetInventoryObjectWithinRangeOfPoint(r.origin, 1f);
         CursorIcon.Instance.SetMoveIcon();
 
-        if (OnHoverInventory != null)
-        {
-            CursorIcon.Instance.SetMoveIcon();
-        }
+        //if (OnHoverInventory != null)
+        //{
+        //    CursorIcon.Instance.SetMoveIcon();
+        //}
         OnHoverBuildable = SelectionUtilities.GetConstructableObjectInstanceWithinRangeOfPoint(r.origin, 1f);
         if (OnHoverBuildable != null)
         {
@@ -356,11 +356,11 @@ public class Units_SelectionMode : SelectionMode
         OnHoverConstructable = SelectionUtilities.GetConstructedObjectInRangeOfPoint(r.origin, 1f);
         if (OnHoverResource != null)
         {
-            CursorIcon.Instance.SetBuildIcon();
+            CursorIcon.Instance.SetCollectIcon();
         }
         if (OnHoverHarvestable != null)
         {
-            CursorIcon.Instance.SetBuildIcon();
+            CursorIcon.Instance.SetHarvestIcon();
         }
         if (OnHoverConstructable != null)
         {
@@ -371,7 +371,10 @@ public class Units_SelectionMode : SelectionMode
         {
             CursorIcon.Instance.SetAttackIcon();
         }
-
+        if(GameActionController.Instance.currentValidGameActions!=null&& GameActionController.Instance.currentValidGameActions.Count > 2)
+        {
+            CursorIcon.Instance.SetMultipleActionIcon();
+        }
 
 
         CheckForActionsToPerformWithoutInput();
