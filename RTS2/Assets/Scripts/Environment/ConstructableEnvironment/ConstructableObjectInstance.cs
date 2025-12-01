@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -81,7 +80,15 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
             }
         }
         DebugDrawing.Instance.DrawEnvironmentObjectInstance(this);
+        if (this.Object != null)
+        {
+            SelectionUtilities.DrawBounds(this.Object.transform.position, this.GetSize(), Color.blue);
 
+        }
+        else
+        {
+            SelectionUtilities.DrawBounds(this.Position(), this.GetSize(), Color.red);
+        }
     }
 
 

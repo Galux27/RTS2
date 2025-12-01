@@ -29,6 +29,9 @@ public class CursorSelect : MonoBehaviour
         Camera = GetComponent<Camera>();
     }
 
+
+    public Vector3 MouseOffset = Vector3.zero;
+
     /// <summary>
     /// Gets mouse position in world
     /// </summary>
@@ -44,7 +47,7 @@ public class CursorSelect : MonoBehaviour
         if (hit.collider != null)
         {
             GotPositionThisFrame = true;
-            cachedPosition = hit.point;
+            cachedPosition = hit.point + new Vector2( MouseOffset.x,MouseOffset.y);
             return cachedPosition;
         }
         else
@@ -74,6 +77,7 @@ public class CursorSelect : MonoBehaviour
                 mouseDown = true;
             }
         }
+        
         if (Input.GetMouseButtonUp(0)&&mouseDown)
         {
             endPoint = GetMousePosition();
@@ -99,5 +103,6 @@ public class CursorSelect : MonoBehaviour
             CursorIcon.Instance.SetPosition(GetMousePosition());
         }
         CursorIcon.Instance.SetVisible(!mouseDown);
+        MouseOffset = Vector3.zero;
     }
 }

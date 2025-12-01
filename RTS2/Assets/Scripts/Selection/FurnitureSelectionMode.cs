@@ -4,11 +4,48 @@ using UnityEngine;
 public class FurnitureSelectionMode : SelectionMode
 {
     Constructable ConstructableHoveringOver;
+    void debugDraw()
+    {
+        if (ConstructableObjectManager.Instance.selectedToConstruct != null && hasEnoughResources)
+        {
+            Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
 
+            ConstructableObjectManager.Instance.GetCursor().SetActive(true);
+            Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+            float height = ConstructableObjectManager.Instance.selectedToConstruct.GetHeight;
+            float width = ConstructableObjectManager.Instance.selectedToConstruct.GetWidth;
+            Vector3 pos = new Vector3(coords.x , coords.y , 0f);
+
+
+            Debug.Log("Furniture Click: walkable " +
+                (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight))
+
+                + " intersect " + DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()));
+            SelectionUtilities.DrawBounds(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size(),Color.blue);
+            SelectionUtilities.DrawBounds(new Vector3(coords.x,coords.y,0), ConstructableObjectManager.Instance.selectedToConstruct.Size(),Color.green);
+
+           
+        }
+    }
     public override void OnHover()
     {
+        if (ConstructableObjectManager.Instance.selectedToConstruct != null)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Break();
+            }
+            //CursorSelect.Instance.MouseOffset = ConstructableObjectManager.Instance.selectedToConstruct.Size() * -.5f;
+        }
+        debugDraw();
+
+
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+
+
+
+
 
         //    CursorIcon.Instance.SetWallPlaceIcon();
 
@@ -18,7 +55,7 @@ public class FurnitureSelectionMode : SelectionMode
             ConstructableObjectManager.Instance.GetCursor().SetActive(true);
             float height = ConstructableObjectManager.Instance.selectedToConstruct.GetHeight;
             float width = ConstructableObjectManager.Instance.selectedToConstruct.GetWidth;
-            Vector3 pos = new Vector3(coords.x - (width / 2f), coords.y - (height / 2f), 0f);
+            Vector3 pos = new Vector3(coords.x, coords.y, 0f);
 
             if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth,
                 ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
@@ -101,18 +138,19 @@ public class FurnitureSelectionMode : SelectionMode
             Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
             float height = ConstructableObjectManager.Instance.selectedToConstruct.GetHeight;
             float width = ConstructableObjectManager.Instance.selectedToConstruct.GetWidth;
-            Vector3 pos = new Vector3(coords.x - (width / 2f), coords.y - (height / 2f), 0f);
+            Vector3 pos = new Vector3(coords.x , coords.y , 0f);
 
 
             Debug.Log("Furniture Click: walkable " +
                 (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight))
 
                 + " intersect " + DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()));
+        
             if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth, ConstructableObjectManager.Instance.selectedToConstruct.GetHeight)
                 && DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false
                 )
             {
-                ConstructableObjectManager.Instance.CreateBuildableForObject(coords, cursorPos,resourcesForConstruction);
+                ConstructableObjectManager.Instance.CreateBuildableForObject(coords, pos, resourcesForConstruction);
             }
         }
     }

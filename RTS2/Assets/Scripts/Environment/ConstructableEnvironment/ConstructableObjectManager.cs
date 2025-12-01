@@ -79,7 +79,7 @@ public class ConstructableObjectManager : MonoBehaviour
         float width = ConstructableObjectManager.Instance.selectedToConstruct.GetWidth;
 
 
-        Cursor.transform.position = new Vector3(coords.x + (width / 2f), coords.y + (height / 2f), 0f);
+        Cursor.transform.position = new Vector3(coords.x , coords.y , 0f);
 
 
     }
@@ -148,6 +148,7 @@ public class ConstructableObjectManager : MonoBehaviour
         {
             return;
         }
+        Debug.Log("Created object " + toConstruct + " " + coords + "," + pos);
         ConstructableObject selectedToConstruct = AllObjects[toConstruct];
         ConstructableObjectInstance instance = new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name);
         WorldChunkManager.Instance.AddEnvironmentObjectInstanceToChunk(instance);

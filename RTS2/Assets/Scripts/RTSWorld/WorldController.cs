@@ -105,9 +105,9 @@ public class WorldController : MonoBehaviour
         
         Color c = Color.green;
 
-        for (int x = coords.x-data.GetWidth/2; x < coords.x + (data.GetWidth/2) +1; x++)
+        for (int x = coords.x; x < coords.x + (data.GetWidth) +1; x++)
         {
-            for (int y = coords.y-data.GetWidth/2 ; y < coords.y + (data.GetHeight/2) +1; y++)
+            for (int y = coords.y ; y < coords.y + (data.GetHeight) +1; y++)
             {
                 SetTraversible(x, y, traversable,WorldTileContents.EnvObject);
                 

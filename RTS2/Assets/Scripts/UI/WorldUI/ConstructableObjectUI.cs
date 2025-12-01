@@ -26,6 +26,11 @@ public class ConstructableObjectUI : MonoBehaviour
         this.transform.position = pos;
     }
 
+    private void Update()
+    {
+        SelectionUtilities.DrawBounds(this.transform.position,this.transform.localScale,Color.magenta);
+    }
+
     public void SetSpriteRendererColour(Color c)
     {
         sr.color = c;
