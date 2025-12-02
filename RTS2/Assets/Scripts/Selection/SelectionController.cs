@@ -42,6 +42,8 @@ public class SelectionController : MonoBehaviour
         else if (mode == CurrentSelectionMode.Units)
         {
             CurrentSelectionModeObj = Units;
+            SelectedUnits_UIElement.Instance.DrawUI();
+
         }
         else if (mode == CurrentSelectionMode.Furniture)
         {
@@ -67,6 +69,7 @@ public class SelectionController : MonoBehaviour
     void OnCloseSelectionMode()
     {
         ConstructableObjectManager.Instance.selectedToConstruct = null;
+        SelectedUnits_UIElement.Instance.HideUI();
     }
     private void Awake()
     {

@@ -54,7 +54,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     public override Vector3 GetPosition()
     {
-        return base.Position() + GetSize() / 2f;
+        return base.Position() + (GetSize() / 2f);
     }
 
     public void InitInventoryObject(ulong uid)
@@ -148,7 +148,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     }
     public bool IsPointInBounds(Vector3 point)
     {
-        return SelectionUtilities.IsInBounds(GetSize(), new Vector3(PosX,PosY,0), point);
+        return SelectionUtilities.IsInBounds(GetSize(), GetPosition(), point);
 
     }
 

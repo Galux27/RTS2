@@ -54,6 +54,8 @@ public class SelectionUIElement :BaseUIElement
 
     void DrawSelected()
     {
+        SelectedUnits_UIElement.Instance.HideUI();
+
         switch (SelectableManager.Instance.CurrentSelectedType)
         {
             case SelectableType.None:
@@ -75,53 +77,8 @@ public class SelectionUIElement :BaseUIElement
 
     void DrawSelectedUnits()
     {
-        Dictionary<UnitType, List<Unit>> units = SelectableManager.Instance.FilterUnitsByType();
-        if (units.Count > 1)
-        {
-
-            foreach (var item in units)
-            {
-                GameObject button = Instantiate(SelectedObjectButtonPrefab, SelectedObjectsParent.transform);
-                Action onClick = () => {
-
-                   
-                    SelectableManager.Instance.SetOnlyTypeSelected(item.Key);
-                    SelectableManager.OnSelectionChanged();
-                    SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
-                    
-
-                };
-                button.GetComponent<SelectedObjectUIElement>().SetupButton(item.Value[0] as ObjectInfo,item.Value.Count,onClick);
-
-              
-            }
-        }
-        else if (units.Count == 1)
-        {
-            foreach (var item in units)
-            {
-                if (item.Value.Count > 0)
-                {
-                    for (int x = 0; x < item.Value.Count; x++)
-                    {
-                        GameObject button = Instantiate(SelectedObjectButtonPrefab, SelectedObjectsParent.transform);
-                        Action onClick = () =>
-                        {
-
-                            SelectableManager.Instance.ClearSelectables();
-                            SelectableManager.Instance.AddSelectable(item.Value[x]);
-                            SelectableManager.OnSelectionChanged();
-                            SelectionController.Instance.blockInputTimer = InputController.BlockInputLength;
-
-
-                        };
-                        button.GetComponent<SelectedObjectUIElement>().SetupButton(item.Value[x] as ObjectInfo, 1, onClick);
-
-                    }
-                }
-
-                }
-            }
+        SelectedUnits_UIElement.Instance.DrawUI();
+        SelectedUnits_UIElement.Instance.RefreshUI();
     }
 
     void DrawSelectedObjects()

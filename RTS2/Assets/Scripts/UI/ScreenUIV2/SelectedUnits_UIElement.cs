@@ -4,6 +4,19 @@ using UnityEngine;
 
 public class SelectedUnits_UIElement : BaseUIElement
 {
+    static SelectedUnits_UIElement instance;
+    public static SelectedUnits_UIElement Instance
+    {
+        get
+        {
+            if(instance == null)
+            {
+                instance=FindObjectOfType<SelectedUnits_UIElement>();   
+            }
+            return instance;
+        }
+    }
+
 
     public GameObject Prefab;
     public Transform UIParent;
@@ -72,6 +85,20 @@ public class SelectedUnits_UIElement : BaseUIElement
             ActiveUIEleemnt.Add(ui);
         }
     }
+
+
+    public override void HideUI()
+    {
+        base.HideUI();
+        Cleanup();
+    }
+
+    public override void RefreshUI()
+    {
+        base.RefreshUI();
+        OnSelectionChange();
+    }
+
     //get icons working for actions if there's move + something else
     void Cleanup()
     {

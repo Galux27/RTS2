@@ -65,7 +65,7 @@ public class BuildableStructure : Constructable,ObjectInfo
 
     public Vector3 GetPosition()
     {
-       return pos+offset;
+       return pos+GetSize()/2;
     }
 
    public float MaxDistToConstruct()

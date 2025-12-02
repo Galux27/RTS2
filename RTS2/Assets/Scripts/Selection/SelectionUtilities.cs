@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public static class SelectionUtilities
@@ -64,12 +65,13 @@ public static class SelectionUtilities
             {
                 obj = chunksToCheck[x].EnvironmentObjectsInChunk[y] as ConstructableObjectInstance;
 
-                if (obj!=null
-                    && (IsPointInRangeOfBounds(chunksToCheck[x].EnvironmentObjectsInChunk[y].GetPosition(), low, high)
-                    || obj.IsPointInBounds(point)))
-                {
-
-                    constructedObjectCache.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y] as ConstructableObjectInstance);
+                if (obj!=null)
+                {//IsInBounds(obj.GetSize(), obj.Position(), point )
+                    if (obj.IsPointInBounds(point)|| IsPointInRangeOfBounds(obj.GetPosition(),low,high))
+                    {
+                        constructedObjectCache.Add(chunksToCheck[x].EnvironmentObjectsInChunk[y] as ConstructableObjectInstance);
+                    }
+                   
                 }
             }
         }
@@ -203,9 +205,11 @@ public static class SelectionUtilities
         {
             for (int y = 0; y < chunksToCheck[x].ToBuild.Count; y++)
             {
-                if (IsPointInRangeOfBounds(chunksToCheck[x].ToBuild[y].GetPosition(), low, high) || chunksToCheck[x].ToBuild[y].IsPointInBounds(point))
+                if (IsInBounds(chunksToCheck[x].ToBuild[y].Size(), chunksToCheck[x].ToBuild[y].GetPosition(), point)|| IsPointInRangeOfBounds(point, low, high))
                 {
+                    
                     constructableObjectCache.Add(chunksToCheck[x].ToBuild[y]);
+                    
                 }
             }
         }
@@ -585,6 +589,7 @@ public static class SelectionUtilities
 
     public static bool IsInBounds(Vector3 size, Vector3 center, Vector3 pointToCheck)
     {
+        size.z = 999999f;
         BoundsForCheck = new Bounds(center, size);
         return BoundsForCheck.Contains(pointToCheck);
     }
