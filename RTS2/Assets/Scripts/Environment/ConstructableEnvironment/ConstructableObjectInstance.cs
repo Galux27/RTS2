@@ -52,6 +52,11 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     }
 
+    public override Vector3 GetPosition()
+    {
+        return base.Position() + GetSize() / 2f;
+    }
+
     public void InitInventoryObject(ulong uid)
     {
         EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey);
@@ -80,15 +85,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
             }
         }
         DebugDrawing.Instance.DrawEnvironmentObjectInstance(this);
-        if (this.Object != null)
-        {
-            SelectionUtilities.DrawBounds(this.Object.transform.position, this.GetSize(), Color.blue);
-
-        }
-        else
-        {
-            SelectionUtilities.DrawBounds(this.Position(), this.GetSize(), Color.red);
-        }
+        
     }
 
 

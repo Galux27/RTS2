@@ -322,16 +322,27 @@ public static class SelectionUtilities
         for (int x = 0; x < environmentObjectInstance.Count; x++)
         {
             objPosition = environmentObjectInstance[x].GetPosition();
-            curDist = Vector3.Distance(point, objPosition);
-
-            if (curDist < maxDist && curDist < closest)
+            Vector3 size = (environmentObjectInstance[x] as ConstructableObjectInstance).GetSize();
+            if (IsInBounds((environmentObjectInstance[x] as ConstructableObjectInstance).GetSize(), objPosition, point))
             {
-                retVal = environmentObjectInstance[x];
-                closest = curDist;
+                DrawBounds(objPosition, size, Color.magenta);
+
+                //curDist = Vector3.Distance(point, objPosition);
+
+                // if (curDist < maxDist && curDist < closest)
+                {
+                    return environmentObjectInstance[x];
+                    closest = curDist;
+                }
+            }
+            else
+            {
+                DrawBounds(objPosition, size, Color.cyan);
+
             }
 
         }
-        return retVal;
+            return retVal;
     }
 
     static List<EnvironmentObjectInstance> environmentObjectInstance = new List<EnvironmentObjectInstance>();

@@ -366,6 +366,11 @@ public class Units_SelectionMode : SelectionMode
         {
             CursorIcon.Instance.SetBuildIcon();
         }
+
+        if (OnHoverEnvironmentObject != null)
+        {
+            CursorIcon.Instance.SetDeconstructIcon();
+        }
       
         if (OnHoverEnemyUnit != null)
         {

@@ -120,8 +120,9 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         }
     }
 
-    public Vector3 GetPosition()
+    public virtual Vector3 GetPosition()
     {
+        
         return position;
     }
 
