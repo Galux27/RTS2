@@ -60,9 +60,9 @@ public class EnvironmentObjectManager : MonoBehaviour
 
         OnEnvironmentObjectDestroyed?.Invoke(obj);
 
-        for (int x = coords.x; x < coords.x + data.GetWidth; x++)
+        for (int x = coords.x; x < coords.x + data.GetWidth+1; x++)
         {
-            for (int y = coords.y; y < coords.y + data.GetHeight; y++)
+            for (int y = coords.y; y < coords.y + data.GetHeight+1; y++)
             {
                 WorldController.Instance.SetTraversible(x, y, true,WorldTileContents.EnvObject);
             }

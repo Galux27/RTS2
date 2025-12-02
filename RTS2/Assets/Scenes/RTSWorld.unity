@@ -4211,6 +4211,7 @@ MonoBehaviour:
   UnitLayermask:
     serializedVersion: 2
     m_Bits: 256
+  MouseOffset: {x: 0, y: 0, z: 0}
   startPoint: {x: 0, y: 0}
   endPoint: {x: 0, y: 0}
   UpdateCursorPos: 1
@@ -10878,8 +10879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0e877dd6ef1a72409cea768d1f71a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InstantConstructVal: 0
-  CareAboutResources: 1
+  InstantConstructVal: 1
+  CareAboutResources: 0
 --- !u!114 &1606643383
 MonoBehaviour:
   m_ObjectHideFlags: 0
