@@ -20,17 +20,20 @@ public class ConstructionUIElement : BaseUIElement
 
     }
     void OnSwitchMode()
-    {
-       
-        StructureSelectionMode.Mode = StructureSelectionType.None;
-       
-            SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.None);
+    {     
+        StructureSelectionMode.Mode = StructureSelectionType.None;   
+        SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.None);
         CursorIcon.Instance.SetVisible(false);
         CursorIcon.Instance.SetCustomIcon(null);
 
     }
 
+    public override void DrawUI()
+    {
+        base.DrawUI();
+        SelectableManager.Instance.ClearSelectables();
 
+    }
     private void SetConstructionMenuMode(ConstructionMenuMode toBe)
     {
         OnSwitchMode();

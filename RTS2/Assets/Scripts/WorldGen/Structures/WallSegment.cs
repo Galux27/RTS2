@@ -14,7 +14,6 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     public bool HasWallUnderConstruction=false;
     public WallType WallType=WallType.None;
     public GameObject Collider;
-    public float HealthVal, MaxHealthVal;
    public WallTile baseWallType;
     public WallSegment(int x, int y,WallTile wallType,int localX,int localY)
     {
@@ -27,8 +26,9 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         this.y = y;
         if (wallType != null)
         {
-            this.HealthVal = wallType.Health;
-            this.MaxHealthVal = HealthVal;
+            MyHealth = new ObjectHealth();
+            MyHealth.MaxHealth = wallType.Health;
+            MyHealth.CurrentHealth = wallType.Health;
             this.baseWallType = wallType;
         }
         localCoords = new Vector2Int(localX, localY);
@@ -55,8 +55,9 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     {
         if (wallType != null)
         {
-            this.HealthVal = wallType.Health;
-            this.MaxHealthVal = HealthVal;
+            MyHealth = new ObjectHealth();
+            MyHealth.MaxHealth = wallType.Health;
+            MyHealth.CurrentHealth = wallType.Health;
             this.baseWallType = wallType;
             
         }
@@ -191,22 +192,24 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     {
         return 1;
     }
-
-    public void OverrideHealthValues(float health,float maxHealth)
+    public ObjectHealth MyHealth;
+    public void OverrideHealthValues(float val, float max)
     {
-        HealthVal = health;
-        MaxHealthVal=maxHealth;
+        MyHealth.MaxHealth = max;
+        MyHealth.CurrentHealth = val;
     }
+
 
     public float Health()
     {
-        return HealthVal;
+        return MyHealth.MaxHealth;
     }
 
     public float MaxHealth()
     {
-        return MaxHealthVal;
+        return MyHealth.MaxHealth;
     }
+
 
     public Vector3 Position()
     {
@@ -215,17 +218,59 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
 
    public void AdjustHealth(float value)
     {
-        HealthVal += value;
-        Debug.Log("Wall damage,health at " + HealthVal);
-        if (HealthVal < 0 &&WallType!=WallType.None)
+        if (value > 0)
+        {
+            MyHealth.IncreaseHealth(value);
+        }
+        else
+        {
+            MyHealth.DecreaseHealth(value);
+        }
+
+        if (Health() > MaxHealth())
+        {
+            MyHealth.CurrentHealth = MaxHealth();
+        }
+        else if (Health() < 0)
         {
             OnDeath();
         }
+
+
+        if (healthUI == null)
+        {
+            DrawHealthUI();
+        }
+        UpdateHealthUI();
     }
 
-   public void OnDeath()
+    HealthUI healthUI;
+    void DrawHealthUI()
+    {
+        if (!Drawn)
+        {
+            return;
+        }
+        healthUI = GameObjectPoolManager.Instance.GetObjectFromPool("WorldspaceHealthBar").GetComponent<HealthUI>();
+        healthUI.gameObject.SetActive(true);
+        healthUI.LinkToObjectInfo(this);
+    }
+
+    void UpdateHealthUI()
+    {
+        if (healthUI != null)
+        {
+            healthUI.UpdateHealth();
+        }
+    }
+
+    public void OnDeath()
     {
         WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
+        if (healthUI != null)
+        {
+            GameObjectPoolManager.Instance.ReturnObjectToPool(healthUI.gameObject, "WorldspaceHealthBar");
+        }
     }
 
     public DataToSerialize GetDataToSerialize()

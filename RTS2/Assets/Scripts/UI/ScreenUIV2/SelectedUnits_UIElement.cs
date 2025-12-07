@@ -39,10 +39,11 @@ public class SelectedUnits_UIElement : BaseUIElement
         {
             for (int x = 0; x < SelectableManager.Instance.CurrentlySelected.Count; x++)
             {
-                if (SelectableManager.Instance.CurrentlySelected[x].GetSelectableType() == SelectableType.Unit)
-                {
-                    AddExtraUnitToDisplay(SelectableManager.Instance.CurrentlySelected[x] as Unit);
-                }
+                AddSelectableToDisplay(SelectableManager.Instance.CurrentlySelected[x]);
+                //if (SelectableManager.Instance.CurrentlySelected[x].GetSelectableType() == SelectableType.Unit)
+                //{
+                //    AddExtraUnitToDisplay(SelectableManager.Instance.CurrentlySelected[x] as Unit);
+               // }
             }
         }
         if (ActiveUIEleemnt.Count > 0)
@@ -61,6 +62,29 @@ public class SelectedUnits_UIElement : BaseUIElement
 
     }
 
+    void AddExtraConstructableToDisplay(ConstructableObjectInstance u)
+    {
+        if (u == null)
+        {
+            return;
+        }
+        SelectedUnit_UIElement ui = GetUIElement();
+        ui.SetConstructableObject(u);
+        ui.gameObject.SetActive(true);
+        ActiveUIEleemnt.Add(ui);
+    }
+
+    void AddWallSegmetToDisplay(WallSegment ws)
+    {
+        if (ws == null)
+        {
+            return;
+        }
+        SelectedUnit_UIElement ui = GetUIElement();
+        ui.SetWallSegment(ws);
+        ui.gameObject.SetActive(true);
+        ActiveUIEleemnt.Add(ui);
+    }
     void AddExtraUnitToDisplay(Unit u)
     {
         if (u == null)
@@ -71,6 +95,19 @@ public class SelectedUnits_UIElement : BaseUIElement
         ui.SetUnit(u);
         ui.gameObject.SetActive(true);
         ActiveUIEleemnt.Add(ui);
+    }
+    public void AddSelectableToDisplay(Selectable s)
+    {
+        if (s as Unit != null)
+        {
+            AddExtraUnitToDisplay(s as Unit);
+        } else if (s as ConstructableObjectInstance != null)
+        {
+            AddExtraConstructableToDisplay(s as ConstructableObjectInstance);
+        }else if(s as WallSegment != null)
+        {
+            AddWallSegmetToDisplay(s as WallSegment);
+        }
     }
 
     public void SetUnitsToDisplay(List<Unit> ToDisplay)

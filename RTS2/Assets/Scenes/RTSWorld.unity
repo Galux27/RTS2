@@ -13001,6 +13001,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1448843566157030568, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
+      propertyPath: m_Alpha
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1640067129160089456, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -13029,6 +13033,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RecCorpUI
       objectReference: {fileID: 0}
+    - target: {fileID: 3542259788011115025, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
+      propertyPath: m_text
+      value: Type
+      objectReference: {fileID: 0}
     - target: {fileID: 4569837758153740524, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -13052,6 +13060,10 @@ PrefabInstance:
     - target: {fileID: 4820853303559877362, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5026656049149954281, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5096929654285347261, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_Pivot.x
@@ -13169,6 +13181,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7230026773670998271, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
+      propertyPath: m_text
+      value: Zoom To
+      objectReference: {fileID: 0}
     - target: {fileID: 7382271098345854063, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -13204,6 +13220,10 @@ PrefabInstance:
     - target: {fileID: 7901611948293081163, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946303800376189815, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
+      propertyPath: m_text
+      value: Select
       objectReference: {fileID: 0}
     - target: {fileID: 8879482612345853579, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_AnchorMax.y

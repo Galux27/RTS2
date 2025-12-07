@@ -49,12 +49,14 @@ public class SelectionController : MonoBehaviour
         {
             CurrentSelectionModeObj = Buildings;
             RoomDrawrer.Instance.RenderAllRooms();
+            SelectedUnits_UIElement.Instance.DrawUI();
 
         }
         else if (mode == CurrentSelectionMode.Structures)
         {
             CurrentSelectionModeObj = Construction;
             RoomDrawrer.Instance.RenderAllRooms();
+            SelectedUnits_UIElement.Instance.DrawUI();
 
         }
         else if (mode == CurrentSelectionMode.Rooms)

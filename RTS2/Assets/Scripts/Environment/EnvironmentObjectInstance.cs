@@ -44,9 +44,10 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
             position = new Vector3(x, y);
             coords = new Vector2Int(x, y);
             EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(envObj);
-            HealthVal = obj.MaxHealth;
+            MyHealth = new ObjectHealth();
+            MyHealth.MaxHealth = obj.MaxHealth;
+            MyHealth.CurrentHealth = obj.MaxHealth;
             needsUpdate = obj.RequiresUpdate;
-            MaxHealthVal = HealthVal;
         }
         catch
         {
@@ -154,15 +155,15 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
     {
         return 1;
     }
-    float HealthVal,MaxHealthVal;
+    public ObjectHealth MyHealth;
     public float Health()
     {
-        return HealthVal;
+        return MyHealth.MaxHealth;
     }
 
     public float MaxHealth()
     {
-        return MaxHealthVal;
+        return MyHealth.MaxHealth;
     }
 
     public Vector3 Position()
@@ -171,19 +172,27 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
     }
     public void OverrideHealth(float val,float max)
     {
-        HealthVal = val;
-        MaxHealthVal = max;
+        MyHealth.MaxHealth = max;
+        MyHealth.CurrentHealth = val;
     }
 
 
     public void AdjustHealth(float value)
     {
-        HealthVal += value;
-        if (HealthVal > MaxHealth())
+        if (value > 0)
         {
-            HealthVal = MaxHealth();
+            MyHealth.IncreaseHealth(value);
         }
-        else if (HealthVal < 0)
+        else
+        {
+            MyHealth.DecreaseHealth(value);
+        }
+
+        if (Health() > MaxHealth())
+        {
+            MyHealth.CurrentHealth = MaxHealth();
+        }
+        else if (Health() < 0)
         {
             OnDeath();
         }

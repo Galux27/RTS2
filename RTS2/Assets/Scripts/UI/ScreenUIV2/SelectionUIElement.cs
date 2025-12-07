@@ -61,14 +61,12 @@ public class SelectionUIElement :BaseUIElement
             case SelectableType.None:
                 break;
             case SelectableType.Unit:
-                DrawSelectedUnits();
-                break;
             case SelectableType.Structure:
             case SelectableType.ConstructableObject:
             case SelectableType.Item:
             case SelectableType.UnderConstructionObject:
             case SelectableType.Resource:
-                DrawSelectedObjects();
+                DrawSelectedUnits();
                 break;
             default:
                 break;
