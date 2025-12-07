@@ -109,8 +109,9 @@ MonoBehaviour:
   Deconstruct: {fileID: -2118898040, guid: c996f0c00c484484483574532c21b58d, type: 3}
   Harvest: {fileID: 2026515384, guid: c996f0c00c484484483574532c21b58d, type: 3}
   Collect: {fileID: 11588841, guid: c996f0c00c484484483574532c21b58d, type: 3}
-  Multiple: {fileID: 0}
-  Enter: {fileID: 0}
+  Multiple: {fileID: -758391478, guid: c996f0c00c484484483574532c21b58d, type: 3}
+  Enter: {fileID: -562530029, guid: c996f0c00c484484483574532c21b58d, type: 3}
+  Select: {fileID: 21300000, guid: 10a223c486f525d4192720e46a1f04fc, type: 3}
 --- !u!114 &236727663740034397
 MonoBehaviour:
   m_ObjectHideFlags: 0

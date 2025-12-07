@@ -205,7 +205,8 @@ public static class SelectionUtilities
         {
             for (int y = 0; y < chunksToCheck[x].ToBuild.Count; y++)
             {
-                if (IsInBounds(chunksToCheck[x].ToBuild[y].Size(), chunksToCheck[x].ToBuild[y].GetPosition(), point)|| IsPointInRangeOfBounds(point, low, high))
+                if (IsInBounds(chunksToCheck[x].ToBuild[y].Size(), chunksToCheck[x].ToBuild[y].GetPosition(), point)
+                    || IsPointInRangeOfBounds(point, low, high))
                 {
                     
                     constructableObjectCache.Add(chunksToCheck[x].ToBuild[y]);
@@ -560,7 +561,8 @@ public static class SelectionUtilities
             selectables.Add(hoverdOver);
             return SelectableType.Unit;
         }
-        List<WallSegment> wallSegments = WorldController.Instance.WallManager.GetWallSegments(CursorSelect.Instance.startPoint, CursorSelect.Instance.endPoint) ;
+        List<WallSegment> wallSegments = WorldController.Instance.WallManager.GetWallSegments
+            (CursorSelect.Instance.startPoint-(Vector2.one*.5f), CursorSelect.Instance.endPoint - (Vector2.one * .5f)) ;
         if (wallSegments.Count > 0)
         {
             selectables.AddRange(wallSegments);

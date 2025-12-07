@@ -339,20 +339,25 @@ public static class WallHelpers
    static  bool DoWallBoundsIntersectExisting(Vector2Int coords)
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
-
-        Bounds toBuild = new Bounds(new Vector3(coords.x+.5f, coords.y+.5f),Vector3.one*.9f);
+        Vector3 pos = new Vector3(coords.x + .5f, coords.y + .5f);
+        Vector3 size = Vector3.one;
+       // Bounds toBuild = new Bounds(,*.9f);
 
 
         List<Constructable> selectables = SelectionUtilities.GetAllConstructablesInRangeOfObject(cursorPos, 20);
-        Bounds comparison = new Bounds();
+        //Bounds comparison = new Bounds();
 
         for (int x = 0; x < selectables.Count; x++)
         {
-            comparison = new Bounds(selectables[x].GetPosition(), selectables[x].Size());
-            if (comparison.Intersects(toBuild))
+            if (SelectionUtilities.IsInBounds(size, pos, selectables[x].GetPosition()))
             {
                 return true;
             }
+           // comparison = new Bounds(, selectables[x].Size());
+          //  if (comparison.Intersects(toBuild))
+          //  {
+          //      return true;
+          //  }
         }
 
         return false;
@@ -442,20 +447,7 @@ public static class WallHelpers
         Vector2Int local = Vector2Int.zero;
 
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(coords.x, coords.y, out batch, out chunk, out local);
-        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y];
-        Vector2Int chunkForWall = WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(coords);
-        WorldChunk toGetFrom = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(coords);//Chunks[chunkForWall.x, chunkForWall.y];
-        if (toGetFrom == null)
-        {
-            return null;
-        }
-
-        coordsCache = coords - toGetFrom.WorldCoords;
-        coordsCache = LimitToLocalChunk(coordsCache);
-
-
-
-        return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
+        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y]; 
     }
 
     static Vector2Int LimitToLocalChunk(Vector2Int coords)

@@ -39,6 +39,8 @@ public class Hybrid_SelectionMode : SelectionMode
 
     public override void OnHover()
     {
+        CursorIcon.Instance.SetSelectIcon();
+
         if (currentSubSelectionMode != null)
         {
             currentSubSelectionMode.OnHover();
@@ -58,7 +60,6 @@ public class Hybrid_SelectionMode : SelectionMode
     {
         SelectedObjectsUI.Instance.CloseUI();
         SelectableManager.Instance.CurrentSelectedType = CurrentSelectionType;
-
         switch (CurrentSelectionType)
         {
             case SelectableType.Unit:        

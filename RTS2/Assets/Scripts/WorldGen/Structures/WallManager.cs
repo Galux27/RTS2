@@ -190,6 +190,7 @@ public class WallManager
             {
                 for(float y=l.y;y < h.y; y += 1f)
                 {
+                    
                     coords = WorldController.Instance.ConvertWorldToTileCoords(new Vector3(x,y,0));
                     wall = WallHelpers.GetWallAtCoords(coords);
                     if (wall.HasWall || wall.HasDoor)
@@ -201,9 +202,8 @@ public class WallManager
         }
         else
         {
-            coords = WorldController.Instance.ConvertWorldToTileCoords(Vector3.Lerp(l,h,.5f));
+            coords = WorldController.Instance.ConvertWorldToTileCoords(l);
             wall = WallHelpers.GetWallAtCoords(coords);
-
             if (wall.HasWall || wall.HasDoor)
             {
                 retVal.Add(wall);
