@@ -24,6 +24,9 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     {
         this.x = x;
         this.y = y;
+      
+        
+
         if (wallType != null)
         {
             MyHealth = new ObjectHealth();
@@ -31,6 +34,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
             MyHealth.CurrentHealth = wallType.Health;
             this.baseWallType = wallType;
         }
+       
         localCoords = new Vector2Int(localX, localY);
     }
 
@@ -202,11 +206,19 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
 
     public float Health()
     {
+        if (MyHealth == null)
+        {
+            return 0f;
+        }
         return MyHealth.MaxHealth;
     }
 
     public float MaxHealth()
     {
+        if (MyHealth == null)
+        {
+            return 0f;
+        }
         return MyHealth.MaxHealth;
     }
 

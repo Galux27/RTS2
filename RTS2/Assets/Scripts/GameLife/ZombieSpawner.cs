@@ -11,33 +11,41 @@ public class ZombieSpawner:MonoBehaviour
     public GameObject ZombiePrefab;
     public void OnWorldChunkBatchGenerated(WorldChunkBatch batch)
     {
+        int toSpawn = 0;
         OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords);
-        int MajorRoads = tile.GetQuantitiyOfFeature(OverworldFeature.MajorRoad);
-        int MinorRoads = tile.GetQuantitiyOfFeature(OverworldFeature.MinorRoad);
-        int BackRoads = tile.GetQuantitiyOfFeature(OverworldFeature.Backroad);
-        int pop = tile.Population / 10;
-        int toSpawn = Random.Range(0,20);
-        toSpawn += pop;
-        toSpawn += MajorRoads * ZombiesPerMajorRoad;
-        toSpawn += MinorRoads * ZombiesPerMinorRoad;
-        toSpawn += BackRoads * ZombiesPerBackroad;
-        int MajorWater = tile.GetQuantitiyOfFeature(OverworldFeature.LargeWaterBody);
-        if (MajorWater > 0)
+        GameObject enemy = null;
+        int failCount = 0;
+        for (int x = 0; x < tile.EntitiesInTile.Count; x++)
         {
-            toSpawn = 0;
-        }
-        Debug.Log("Spawner: spawning zombies " + batch.coords + " quantity " + toSpawn);
-        for(int x = 0; x < toSpawn; x++)
-        {
-            SpawnZombie(batch);
-        }
+
+            if (tile.EntitiesInTile[x].isActive == false && tile.EntitiesInTile[x].isDead==false && tile.EntitiesInTile[x].EntityType==ALifeEntityType.Zombie)
+            {
+                while (enemy == null&&failCount<50)
+                {
+                    enemy = SpawnZombie(batch);
+                    if (enemy != null)
+                    {
+                        tile.EntitiesInTile[x].SetActive(true);
+                        tile.EntitiesInTile[x].SetID(enemy.GetComponent<Unit>().GetMyUID().Value);
+                    }
+                    failCount++;
+                }
+                enemy = null;
+                failCount = 0;
+            }
+        }    
     }
 
-    void SpawnZombie(WorldChunkBatch batch)
+    public void OnWorldChunkBatchUnloaded(WorldChunkBatch batch)
+    {
+
+    }
+
+    GameObject SpawnZombie(WorldChunkBatch batch)
     {
         if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch.coords) == false)
         {
-            return;
+            return null;
         }
 
         Vector2Int chunk = new Vector2Int(Random.Range(1, WorldChunkManager.ChunkSize-1), Random.Range(1, WorldChunkManager.ChunkSize-1));
@@ -52,6 +60,8 @@ public class ZombieSpawner:MonoBehaviour
             Vector3 worldPos = new Vector3(toSpawnOn.Coords().x, toSpawnOn.Coords().y);
             UnitTypeSO zombie = UnitTypesController.Instance.Units["Zombie"];
             GameObject g = Instantiate(zombie.Prefab, worldPos, Quaternion.identity);
+            return g;
         }
+        return null;
     }
 }

@@ -13,11 +13,16 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
             if (instance == null)
             {
                 instance=FindObjectOfType<OverworldGenerator>();
+                instance.Init();
             }
             return instance;
         }
     }
-
+    void Init()
+    {
+        ALifeSystem = new ALife();
+    }
+    public ALife ALifeSystem;
 
     public OverworldTile GetOverworldTile(Vector2Int coords)
     {
@@ -47,6 +52,22 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         }
         StartCoroutine(GenerateWorld());
 
+    }
+
+    void OnGenerationDone()
+    {
+        EasyStopwatch.StartStopwatch();
+
+        for (int x = 0; x < OverworldWidth; x++)
+        {
+            for (int y = 0; y < OverworldHeight; y++)
+            {
+                ALifeSystem.GenerateEntitiesForOverworldTile(OverworldTiles[x, y]);
+             
+            }
+        }
+        EasyStopwatch.StopStopwatch();
+        Debug.Log("Z Generation took " + EasyStopwatch.GetStopwatchElapsedTime()+ " total zomz "+ALifeSystem.zombieCount);
     }
 
     public List<OverworldTile> GetNeighbours(Vector2Int coords,bool getDiagonal=false)
@@ -217,7 +238,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         }
         OverworldRenderer.Instance.RenderWorld();
         Debug.Log("Full Generation took " + EasyStopwatch.GetStopwatchElapsedTime());
-
+        OnGenerationDone();
     }
 
 
@@ -236,6 +257,8 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         {
             EasyStopwatch.StopStopwatch();
             Debug.Log("Generation took " + EasyStopwatch.GetStopwatchElapsedTime());
+            OnGenerationDone();
+
         }
 
     }
@@ -285,6 +308,7 @@ public class OverworldTile: ISerialize
     public int Population = 0;
     public OverworldPathfindingNode Node;
     public string Settlement = "";
+
 
     public OverworldTile(int x,int y,float elevation=0)
     {
@@ -392,6 +416,19 @@ public class OverworldTile: ISerialize
     {
         throw new System.NotImplementedException();
     }
+
+    public List<ALifeEntity> EntitiesInTile=new List<ALifeEntity>();
+
+    public void AddALifeEntity(ALifeEntity entity)
+    {
+        EntitiesInTile.Add(entity);
+    }
+
+    public void RemoveALifeEntity(ALifeEntity entity)
+    {
+        EntitiesInTile.Remove(entity);
+    }
+
 
 }
 
