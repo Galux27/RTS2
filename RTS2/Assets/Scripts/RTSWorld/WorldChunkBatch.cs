@@ -447,6 +447,7 @@ public class WorldChunkBatch : MonoBehaviour
                 }
             }
 
+            GameLifeManager.Instance.OnChunkBatchUnloaded(this);
             //Write chunk data to some live save place as its changed from the savegame
             if (DoWeNeedToUpdateData)
             {

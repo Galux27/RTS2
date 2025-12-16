@@ -40,12 +40,73 @@ public class ZombieSpawner:MonoBehaviour
             }
 
         }
-        
+    }
+
+    public void OnALifeEntityEntersLoadedChunk(ALifeEntity entity,WorldChunkBatch batch)
+    {
+        if (entity.isDead || entity.isActive)
+        {
+            return;
+        }
+        entity.isActive = true;
+        int xCoord = -1, yCoord = -1;
+        if (entity.PreviousCoords.x > entity.CurrentCoords.x)
+        {
+            xCoord = WorldChunkManager.ChunksPerBatch - 2;
+        }else if (entity.PreviousCoords.x < entity.CurrentCoords.x)
+        {
+            xCoord = 1;
+        }
+
+        if (entity.PreviousCoords.y > entity.CurrentCoords.y)
+        {
+            yCoord = WorldChunkManager.ChunksPerBatch - 2;
+        }
+        else if (entity.PreviousCoords.y < entity.CurrentCoords.y)
+        {
+            yCoord = 1;
+        }
+
+        SpawnZombie(batch, xCoord, yCoord); 
     }
 
     public void OnWorldChunkBatchUnloaded(WorldChunkBatch batch)
     {
+        
+    }
 
+    GameObject SpawnZombie(WorldChunkBatch batch,int forceChunkX=-1,int forceChunkY=-1)
+    {
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch.coords) == false)
+        {
+            return null;
+        }
+
+        Vector2Int chunk = new Vector2Int(Random.Range(1, WorldChunkManager.ChunkSize - 1), Random.Range(1, WorldChunkManager.ChunkSize - 1));
+        if(forceChunkX!=-1)
+        {
+            chunk.x = forceChunkX;
+        }
+        if(forceChunkY!=-1)
+        {
+            chunk.y = forceChunkY;
+        }
+        
+        Vector2Int tile = new Vector2Int(Random.Range(0, WorldChunkManager.ChunkSize), Random.Range(0, WorldChunkManager.ChunkSize));
+
+        int xCoord = 0;
+        int yCoord = 0;
+
+        WorldTile toSpawnOn = WorldChunkManager.Instance.ChunkBatches[batch.coords].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y];
+        if (toSpawnOn.TileTraversable())
+        {
+            Vector3 worldPos = new Vector3(toSpawnOn.Coords().x, toSpawnOn.Coords().y);
+            UnitTypeSO zombie = UnitTypesController.Instance.Units["Zombie"];
+            GameObject g = Instantiate(zombie.Prefab, worldPos, Quaternion.identity);
+            Debug.Log("A Life: dpawn zomb crossing chunks " + worldPos, g);
+            return g;
+        }
+        return null;
     }
 
     GameObject SpawnZombie(WorldChunkBatch batch)

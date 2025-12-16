@@ -307,6 +307,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
 public class OverworldTile: ISerialize
 {
     public int X, Y;
+    Vector2Int coords;
     public float Elevation;
     public List<OverworldFeature> Features = new List<OverworldFeature>();
     
@@ -319,6 +320,7 @@ public class OverworldTile: ISerialize
     {
         X = x;
         Y = y;
+        coords= new Vector2Int(x,y);
         SetElevation( elevation);
     }
     
@@ -431,6 +433,11 @@ public class OverworldTile: ISerialize
             UnitsInTile.Add(entity.Faction,new ALifeFactionGroup(entity.Faction));
         }
         UnitsInTile[entity.Faction].AddEntity(entity);
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+        {
+            Debug.Log("A Life: moved into existing chunk");
+            OverworldGenerator.Instance.ALifeSystem.OnALifeEntityEntersActiveChunk(entity, WorldChunkManager.Instance.ChunkBatches[coords]);
+        }
     }
 
     public void RemoveALifeEntity(ALifeEntity entity)

@@ -51,8 +51,15 @@ public static class ALifeActions
 
     public static void MoveBetweenChunks(ALifeEntity performing)
     {
+        OverworldTile target = OverworldGenerator.Instance.GetOverworldTile(performing.CurrentCoords);
+        if (target.GetQuantitiyOfFeature(OverworldFeature.LargeWaterBody)>0)
+        {
+            performing.CurrentCoords = performing.PreviousCoords;
+            return;
+        }
         OverworldGenerator.Instance.GetOverworldTile(performing.PreviousCoords).RemoveALifeEntity(performing);
-        OverworldGenerator.Instance.GetOverworldTile(performing.CurrentCoords).AddALifeEntity(performing);
+        target.AddALifeEntity(performing);
+
     }
 
 

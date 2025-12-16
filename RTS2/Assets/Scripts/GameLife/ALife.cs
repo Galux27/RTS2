@@ -18,10 +18,9 @@ public class ALife
             GenerateEnemiesForTile(tile);
         }
     }
-    static bool RunningALifeUpdate = false,CanStartNewThread=true;
+    static bool RunningALifeUpdate = false,CanStartNewThread=true,CanUpdateUnits=false;
     public void Update()
     {
-        Debug.Log("A Life: update "+RunningALifeUpdate+"Time "+UpdateTimer);
 
         if (RunningALifeUpdate)
         {
@@ -32,7 +31,10 @@ public class ALife
             return;
         }
 
-
+        if (CanUpdateUnits)
+        {
+            GenerateUnitsFromMovingChunks();
+        }
         UpdateTimer += DeltaTimeWrapper.GameplayDelta;
         if(UpdateTimer > ALifeUpdateRate)
         {
@@ -61,6 +63,7 @@ public class ALife
         }
         else
         {
+            CanUpdateUnits = true;
             Debug.Log("A Life: fin");
         }
     }
@@ -144,6 +147,38 @@ public class ALife
             tile.AddALifeEntity(new ALifeEntity(new Vector2Int(tile.X, tile.Y),FactionController.ZOMBIE_FACTION));
         }
         zombieCount+=toSpawn;
+    }
+
+
+
+
+    public void OnALifeEntityEntersActiveChunk(ALifeEntity ent, WorldChunkBatch entering)
+    {
+        if (ent.isActive || ent.isDead)
+        {
+            return;
+        }
+        if (!ToGenerate.ContainsKey(entering))
+        {
+            ToGenerate.Add(entering, new List<ALifeEntity>());
+        }
+        ToGenerate[entering].Add(ent);
+    }
+    Dictionary<WorldChunkBatch, List<ALifeEntity>> ToGenerate = new Dictionary<WorldChunkBatch, List<ALifeEntity>>();
+    void GenerateUnitsFromMovingChunks()
+    {
+        foreach(KeyValuePair<WorldChunkBatch,List<ALifeEntity>> kvp in ToGenerate)
+        {
+            for(int x=0;x< kvp.Value.Count; x++)
+            {
+                if (kvp.Value[x].Faction == FactionController.ZOMBIE_FACTION)
+                {
+                    GameLifeManager.Instance.ZombieSpawner.OnALifeEntityEntersLoadedChunk(kvp.Value[x], kvp.Key);
+                }
+            }
+        }
+        ToGenerate.Clear();
+        CanUpdateUnits = false;
     }
 }
 
