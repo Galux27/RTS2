@@ -25,7 +25,6 @@ public class RoadObjects_MapFeature : MapFeatureBase
     public override void GenerateFeature(WorldChunkBatch toGenerateIn)
     {
         GetValidRoads(toGenerateIn);
-        Debug.Log("Generating road objects, road count " + toGenerateIn.Roads.Count);
         if (ValidRoads.Count == 0)
         {
             return;

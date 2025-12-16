@@ -137,7 +137,6 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void AddWorldBlend(WorldTileBlend blend)
     {
-        Debug.Log("Adding blend "+ blend.BlendType.ToString()+" dir "+ blend.Direction+" at " + coords+"/"+OverworldCoords.ToString());
         BlendList.Add(blend);
     }
 

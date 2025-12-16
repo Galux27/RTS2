@@ -52,7 +52,7 @@ public static class WorldTileHelpers
         }
         catch
         {
-            Debug.LogError("Error getting tile from coords " + coords + " " + batch.ToString() + "/" + chunk.ToString() + "/" + local.ToString());
+          //  Debug.LogError("Error getting tile from coords " + coords + " " + batch.ToString() + "/" + chunk.ToString() + "/" + local.ToString());
             return null;
         }
     }
@@ -84,7 +84,7 @@ public static class WorldTileHelpers
             }
             else
         {
-            Debug.LogError("No node found at " + x + "," + y);
+            //Debug.LogError("No node found at " + x + "," + y);
         }
         }
 

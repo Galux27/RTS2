@@ -58,7 +58,6 @@ public class FactionController : MonoBehaviour
             return false;
         }
         return FactionLookup[id1].FactionEnemies.Contains(id2);
-
     }
 
 

@@ -55,7 +55,6 @@ public class MultiThreadedManager : MonoBehaviour
         
         actions.Remove(complete);
         Debug.Log("Multi: Removed action from multithreading...");
-        Debug.Break();
     }
 
 

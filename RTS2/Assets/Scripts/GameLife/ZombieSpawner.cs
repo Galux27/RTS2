@@ -15,25 +15,32 @@ public class ZombieSpawner:MonoBehaviour
         OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords);
         GameObject enemy = null;
         int failCount = 0;
-        for (int x = 0; x < tile.EntitiesInTile.Count; x++)
+        if(tile.UnitsInTile.ContainsKey(FactionController.ZOMBIE_FACTION))
         {
-
-            if (tile.EntitiesInTile[x].isActive == false && tile.EntitiesInTile[x].isDead==false && tile.EntitiesInTile[x].EntityType==ALifeEntityType.Zombie)
+            
+            for (int x = 0; x < tile.UnitsInTile[FactionController.ZOMBIE_FACTION].FactionEntities.Count; x++)
             {
-                while (enemy == null&&failCount<50)
+
+                if (tile.UnitsInTile[FactionController.ZOMBIE_FACTION].FactionEntities[x].isActive == false 
+                    && tile.UnitsInTile[FactionController.ZOMBIE_FACTION].FactionEntities[x].isDead == false )
                 {
-                    enemy = SpawnZombie(batch);
-                    if (enemy != null)
+                    while (enemy == null && failCount < 50)
                     {
-                        tile.EntitiesInTile[x].SetActive(true);
-                        tile.EntitiesInTile[x].SetID(enemy.GetComponent<Unit>().GetMyUID().Value);
+                        enemy = SpawnZombie(batch);
+                        if (enemy != null)
+                        {
+                            tile.UnitsInTile[FactionController.ZOMBIE_FACTION].FactionEntities[x].SetActive(true);
+                            tile.UnitsInTile[FactionController.ZOMBIE_FACTION].FactionEntities[x].SetID(enemy.GetComponent<Unit>().GetMyUID().Value);
+                        }
+                        failCount++;
                     }
-                    failCount++;
+                    enemy = null;
+                    failCount = 0;
                 }
-                enemy = null;
-                failCount = 0;
             }
-        }    
+
+        }
+        
     }
 
     public void OnWorldChunkBatchUnloaded(WorldChunkBatch batch)

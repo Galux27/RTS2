@@ -293,7 +293,6 @@ public class BatchRoad : ISerialize
                 EnvironmentObjectInstance OnTile = null;
                 if (toGenerateIn.Chunks[localChunkX, localChunkY].DoesAnyObjectExistAtCoords(toEdit.Coords(), out OnTile))
                 {
-                    Debug.Log("Destroyed object on road " + OnTile.Name());
                     OnTile.DestroyInstance();
                 }
                 OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);

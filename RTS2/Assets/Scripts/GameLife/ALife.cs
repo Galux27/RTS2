@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ALife
 {
+    const float ALifeUpdateRate=30;
+    float UpdateTimer = 0f;
     const int ZombiesPerMajorRoad = 25, ZombiesPerMinorRoad = 10, ZombiesPerBackroad = 5;
     public int zombieCount = 0;
     public void GenerateEntitiesForOverworldTile(OverworldTile tile)
@@ -14,6 +16,110 @@ public class ALife
         }else
         {
             GenerateEnemiesForTile(tile);
+        }
+    }
+    static bool RunningALifeUpdate = false,CanStartNewThread=true;
+    public void Update()
+    {
+        Debug.Log("A Life: update "+RunningALifeUpdate+"Time "+UpdateTimer);
+
+        if (RunningALifeUpdate)
+        {
+            if (CanStartNewThread)
+            {
+                StartUpdateThread();
+            }
+            return;
+        }
+
+
+        UpdateTimer += DeltaTimeWrapper.GameplayDelta;
+        if(UpdateTimer > ALifeUpdateRate)
+        {
+            RunningALifeUpdate = true;
+            Debug.Log("A Life: starting a life update");
+            StartUpdateThread();
+            //MultiThreadedManager.Instance.AddAction(()=> { MultithreadedUpdateALife(); },()=> { OnALifeUpdateFinish(); });
+            //OverworldGenerator.Instance.StartCoroutine(UpdateALife());
+            UpdateTimer = 0f;
+        }
+    }
+    void StartUpdateThread()
+    {
+        CanStartNewThread = false;
+        MultiThreadedManager.Instance.AddAction(() => { MultithreadedUpdateALife(); }, () => { OnALifeUpdateFinish(); });
+    
+    }
+    void OnALifeUpdateFinish()
+    {
+        CanStartNewThread = true;
+
+        if (RunningALifeUpdate)
+        {
+            Debug.Log("A Life: next batch" +curX+","+curY);
+
+        }
+        else
+        {
+            Debug.Log("A Life: fin");
+        }
+    }
+    const int maxPerThread = 500;
+    int curX=0,curY=0;
+    void MultithreadedUpdateALife()
+    {
+        int count = 0;
+        for (; curX < OverworldGenerator.Instance.OverworldWidth; curX++)
+        {
+            for (; curY < OverworldGenerator.Instance.OverworldHeight; curY++)
+            {
+                UpdateALifeTile(OverworldGenerator.Instance.OverworldTiles[curX, curY]);
+                count++;
+                if (count > maxPerThread)
+                {
+                    return;
+                }
+            }
+            curY = 0;
+        }
+        curX = 0;
+        curY = 0;
+        //Debug.Log("A Life: finished a life pass");
+        RunningALifeUpdate = false;
+    }
+
+    const int ALifeUpdatesPerFrame = 30;
+    IEnumerator UpdateALife()
+    {
+        yield return new WaitForEndOfFrame();
+        int updateCount = 0;
+        for(int x = 0; x < OverworldGenerator.Instance.OverworldWidth; x++)
+        {
+            for (int y = 0; y < OverworldGenerator.Instance.OverworldHeight; y++)
+            {
+                UpdateALifeTile(OverworldGenerator.Instance.OverworldTiles[x,y]);
+                updateCount++;
+                if (updateCount > ALifeUpdatesPerFrame)
+                {
+                    updateCount = 0;
+                    yield return new WaitForEndOfFrame();
+                }
+            }
+        }
+        Debug.Log("A Life: finished a life pass");
+        RunningALifeUpdate=false;
+    }
+
+    void UpdateALifeTile(OverworldTile tile)
+    {
+        if (tile.UnitsInTile.ContainsKey(FactionController.ZOMBIE_FACTION))
+        {
+            List<ALifeEntity> toUpdate = tile.UnitsInTile[FactionController.ZOMBIE_FACTION].FactionEntities;
+
+            for (int x = 0; x < toUpdate.Count; x++)
+            {
+                ALifeDecisionMaker.MakeZombieDecisions(toUpdate[x]);
+            }
         }
     }
 
@@ -35,27 +141,27 @@ public class ALife
         }
         for(int x = 0; x < toSpawn; x++)
         {
-            tile.AddALifeEntity(new ALifeEntity(new Vector2Int(tile.X, tile.Y), ALifeEntityType.Zombie));
+            tile.AddALifeEntity(new ALifeEntity(new Vector2Int(tile.X, tile.Y),FactionController.ZOMBIE_FACTION));
         }
         zombieCount+=toSpawn;
     }
 }
 
-public struct ALifeEntity
+public class ALifeEntity
 {
     public Vector2Int CurrentCoords,PreviousCoords;
-    public ALifeEntityType EntityType;
     public bool isActive,isDead,HasID;
     public ulong ID;
-    public ALifeEntity(Vector2Int startCoords,ALifeEntityType entityType)
+    public string Faction;
+    public ALifeEntity(Vector2Int startCoords,string faction)
     {
         CurrentCoords = startCoords;
-        EntityType = entityType;
         PreviousCoords = startCoords;
         isActive = false;
         isDead = false;
         HasID = false;
         ID = 0;
+        Faction = faction;
     }
 
     public void SetActive(bool val)
@@ -76,10 +182,22 @@ public enum ALifeEntityType
     AIUnit
 }
 
-public class ALifeAction
+public class ALifeFactionGroup
 {
-    public virtual void PerformAction(ALifeEntity performing)
+    public string FactionID;
+    public List<ALifeEntity> FactionEntities;
+    public ALifeFactionGroup(string faction)
     {
+        FactionID = faction;
+        FactionEntities=new List<ALifeEntity>();
+    }
 
+    public void AddEntity(ALifeEntity entity) { 
+        FactionEntities.Add(entity);
+    }
+
+    public void RemoveEntity(ALifeEntity entity)
+    {
+        FactionEntities.Remove(entity);
     }
 }

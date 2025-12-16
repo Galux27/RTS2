@@ -70,6 +70,11 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         Debug.Log("Z Generation took " + EasyStopwatch.GetStopwatchElapsedTime()+ " total zomz "+ALifeSystem.zombieCount);
     }
 
+    private void Update()
+    {
+        ALifeSystem.Update();
+    }
+
     public List<OverworldTile> GetNeighbours(Vector2Int coords,bool getDiagonal=false)
     {
         List<OverworldTile> retVal = new List<OverworldTile>();
@@ -417,16 +422,24 @@ public class OverworldTile: ISerialize
         throw new System.NotImplementedException();
     }
 
-    public List<ALifeEntity> EntitiesInTile=new List<ALifeEntity>();
+    public Dictionary<string, ALifeFactionGroup> UnitsInTile=new Dictionary<string, ALifeFactionGroup>();
 
     public void AddALifeEntity(ALifeEntity entity)
     {
-        EntitiesInTile.Add(entity);
+        if (!UnitsInTile.ContainsKey(entity.Faction))
+        {
+            UnitsInTile.Add(entity.Faction,new ALifeFactionGroup(entity.Faction));
+        }
+        UnitsInTile[entity.Faction].AddEntity(entity);
     }
 
     public void RemoveALifeEntity(ALifeEntity entity)
     {
-        EntitiesInTile.Remove(entity);
+        if (!UnitsInTile.ContainsKey(entity.Faction))
+        {
+            UnitsInTile.Add(entity.Faction, new ALifeFactionGroup(entity.Faction));
+        }
+        UnitsInTile[entity.Faction].RemoveEntity(entity);
     }
 
 
