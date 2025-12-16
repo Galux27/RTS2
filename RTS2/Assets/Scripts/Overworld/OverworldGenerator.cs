@@ -32,7 +32,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
     }
 
 
-    Vector2Int OverworldStartingCoords;
+     Vector2Int OverworldStartingCoords;
     bool hasSetOverworldStartingCoords = false;
    public int OverworldWidth,OverworldHeight;
     public float MaxElevation, SeaLevel;
@@ -163,7 +163,11 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         }
         return retVal;
     }
-
+    public void SetOverworldStartingCoords(Vector2Int coords)
+    {
+        hasSetOverworldStartingCoords = true;
+        OverworldStartingCoords = coords;
+    }
 
     public Vector2Int GetOverworldStartingCoords()
     {

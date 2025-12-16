@@ -137,6 +137,7 @@ public static class DataReaders
             case DataKeys.Coords:
             case DataKeys.LocalCoords:
             case DataKeys.OverRiverCoords:
+            case DataKeys.GenStart:
                 return ParseVector2Int(data);
                 break;
             case DataKeys.ChunkTiles:

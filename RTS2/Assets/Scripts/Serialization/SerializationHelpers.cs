@@ -380,7 +380,7 @@ public class DataKeys
     public const string RoadElement = "RDE";
     public const string RoadWidth = "RDW";
     public const string Orders = "ORD";
-
+    public const string GenStart = "ORG";
     public const string OverElevation = "O_ELE";
     public const string OverFeature = "O_FET";
     public const string OverPop = "O_POP";
@@ -463,7 +463,7 @@ public static class SerializeDataHelpers
     public const char INVENTORY_SPLIT_TWO = ']';
     public static string SerializeData(string key,object value)
     {
-        if (key == DataKeys.Coords||key==DataKeys.LocalCoords||key==DataKeys.OverRiverCoords)
+        if (key == DataKeys.Coords||key==DataKeys.LocalCoords||key==DataKeys.OverRiverCoords||key==DataKeys.GenStart)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector2Int(value), DATA_ELEMENT_SPLIT.ToString());
         }

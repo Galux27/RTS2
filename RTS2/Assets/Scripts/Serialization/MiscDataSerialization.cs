@@ -13,6 +13,7 @@ public static class MiscDataSerialization
         retVal.AddDataToSerialize(DataKeys.UID, IDManager.GetCurrentID());
         retVal.AddDataToSerialize(DataKeys.WaterLevel, PauseMenuUIElement.SpeedGameAtWhenOpened);
         retVal.AddDataToSerialize(DataKeys.ResourcesStored, ResourceManager.Instance.UserResources);
+        retVal.AddDataToSerialize(DataKeys.GenStart,OverworldGenerator.Instance.GetOverworldStartingCoords());
         return new SerializedData(retVal);
    }
     static bool DisplayedOne = false;
@@ -73,6 +74,7 @@ public static class MiscDataSerialization
             }
         }
         Vector3 cameraPos = (Vector3)deserializedData[DataKeys.Pos];
+        OverworldGenerator.Instance.SetOverworldStartingCoords((Vector2Int)deserializedData[DataKeys.GenStart]);
         cameraPos.z = -10f;
         CameraController.Instance.transform.position = cameraPos;
         CameraController.Instance.SetCameraZoom((float)deserializedData[DataKeys.CameraZoom]);
