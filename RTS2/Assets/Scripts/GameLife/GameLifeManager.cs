@@ -54,7 +54,7 @@ public class GameLifeManager : MonoBehaviour
         for (int x = 0; x < 5; x++)
         {
             OverworldGenerator.Instance.OverworldTiles[startChunk.x, startChunk.y].AddALifeEntity(new ALifeEntity(startChunk,
-           FactionController.USER_FACTION, "Engineer"));
+           FactionController.USER_FACTION, "Engineer"),false);
         }
         SpawnedInitialUserUnits = true;
     }
@@ -96,7 +96,6 @@ public class GameLifeManager : MonoBehaviour
 
         foreach(KeyValuePair<string,ALifeFactionGroup> kvp in tile.UnitsInTile) 
         {
-
             for (int x = 0; x < tile.UnitsInTile[kvp.Key].FactionEntities.Count; x++)
             {
 
@@ -105,7 +104,8 @@ public class GameLifeManager : MonoBehaviour
                 {
                     while (enemy == null && failCount < 50)
                     {
-                        enemy = EntitySpawner.SpawnEntity(batch, tile.UnitsInTile[kvp.Key].FactionEntities[x].UnitType, tile.UnitsInTile[kvp.Key].FactionEntities[x].Faction);
+                        enemy = EntitySpawner.SpawnEntity(batch, 
+                            tile.UnitsInTile[kvp.Key].FactionEntities[x].UnitType, tile.UnitsInTile[kvp.Key].FactionEntities[x].Faction);
                         if (enemy != null)
                         {
                             tile.UnitsInTile[kvp.Key].FactionEntities[x].SetActive(true);

@@ -428,23 +428,30 @@ public class OverworldTile: ISerialize
         throw new System.NotImplementedException();
     }
 
-    public Dictionary<string, ALifeFactionGroup> UnitsInTile=new Dictionary<string, ALifeFactionGroup>();
+    public Dictionary<string, ALifeFactionGroup> UnitsInTile = new Dictionary<string, ALifeFactionGroup>();
 
-    public void AddALifeEntity(ALifeEntity entity)
+    public void AddALifeEntity(ALifeEntity entity,bool CheckForExisting=true)
     {
+        
         if (!UnitsInTile.ContainsKey(entity.Faction))
         {
             UnitsInTile.Add(entity.Faction,new ALifeFactionGroup(entity.Faction));
         }
-        UnitsInTile[entity.Faction].AddEntity(entity);
-        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+        if (entity.Faction == FactionController.USER_FACTION)
         {
-            Debug.Log("A Life: moved into existing chunk");
-            OverworldGenerator.Instance.ALifeSystem.OnALifeEntityEntersActiveChunk(entity, WorldChunkManager.Instance.ChunkBatches[coords]);
         }
-    }
+            UnitsInTile[entity.Faction].AddEntity(entity);
+        if (CheckForExisting)
+        {
+            if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
+            {
+                Debug.Log("A Life: moved into existing chunk");
+                OverworldGenerator.Instance.ALifeSystem.OnALifeEntityEntersActiveChunk(entity, WorldChunkManager.Instance.ChunkBatches[coords]);
+            }
+        }
+        }
 
-    public void RemoveALifeEntity(ALifeEntity entity)
+        public void RemoveALifeEntity(ALifeEntity entity)
     {
         if (!UnitsInTile.ContainsKey(entity.Faction))
         {

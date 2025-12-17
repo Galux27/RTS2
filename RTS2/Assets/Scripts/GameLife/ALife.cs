@@ -144,7 +144,7 @@ public class ALife
         }
         for(int x = 0; x < toSpawn; x++)
         {
-            tile.AddALifeEntity(new ALifeEntity(new Vector2Int(tile.X, tile.Y),FactionController.ZOMBIE_FACTION,UnitTypesController.BaseZombie));
+            tile.AddALifeEntity(new ALifeEntity(new Vector2Int(tile.X, tile.Y),FactionController.ZOMBIE_FACTION,UnitTypesController.BaseZombie),false);
         }
         zombieCount+=toSpawn;
     }
