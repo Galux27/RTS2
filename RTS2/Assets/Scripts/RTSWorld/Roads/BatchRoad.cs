@@ -158,7 +158,7 @@ public class BatchRoad : ISerialize
     }
     public void LogCount()
     {
-        Debug.Log("GetTile " + newMethod + "/" + oldMethod);
+        //Debug.Log("GetTile " + newMethod + "/" + oldMethod);
 
     }
 

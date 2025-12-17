@@ -131,12 +131,15 @@ public class WallManager
             }
     }
 
-    public void RemoveSingleWall(int x, int y, Tilemap toDrawOn, WallTile toUse)
+    public void RemoveSingleWall(int x, int y, Tilemap toDrawOn, WallTile toUse,bool alterHealth=true)
     {
         
         SetWall(x, y,toUse,false);
         WallSegment toRemove = WallHelpers.GetWallAtCoords(x, y);
-        toRemove.AdjustHealth(-9999);
+        if (alterHealth)
+        {
+            toRemove.AdjustHealth(-9999);
+        }
         WallHelpers.CalculateTileType(ref toRemove, this, toRemove.baseWallType);
 
         toDrawOn.SetTile(new Vector3Int(x, y, 0), null);

@@ -9,10 +9,11 @@ public class SelectedUnit_UIElement : BaseUIElement
     public TextMeshProUGUI Type, Health, BehavourType;
     public Button SelectUnitButton, ZoomToUnit;
     Selectable myObject;
-    ObjectHealth HealthReferenced;
+    EntityHealth HealthReferenced;
     BehaviourRunner BehaviourReferenced;
     public void SetUnit(Unit u)
     {
+        Cleanup();
         myObject= u;
         u.MyHealth.OnHealthUpdate += OnHealthChange;
         Type.text = u.MyType.ToString();
@@ -21,10 +22,14 @@ public class SelectedUnit_UIElement : BaseUIElement
         SelectUnitButton.onClick.AddListener(SelectUnit);
         ZoomToUnit.onClick.AddListener(AutoMoveToUnit);
         BehaviourReferenced = u.BehaviourRunner;
+        OnHealthChange(HealthReferenced.CurrentHealth);
+
     }
 
     public void SetConstructableObject(ConstructableObjectInstance env)
     {
+        Cleanup();
+
         myObject = env;
         env.MyHealth.OnHealthUpdate += OnHealthChange;
         Type.text = env.Name();
@@ -32,10 +37,14 @@ public class SelectedUnit_UIElement : BaseUIElement
         ZoomToUnit.onClick.AddListener(AutoMoveToUnit);
         HealthReferenced = env.MyHealth;
         BehaviourReferenced = null;
+        OnHealthChange(HealthReferenced.CurrentHealth);
+
     }
 
     public void SetWallSegment(WallSegment env)
     {
+        Cleanup();
+
         myObject = env;
         env.MyHealth.OnHealthUpdate += OnHealthChange;
         Type.text = env.Name();
@@ -43,6 +52,7 @@ public class SelectedUnit_UIElement : BaseUIElement
         ZoomToUnit.onClick.AddListener(AutoMoveToUnit);
         HealthReferenced = env.MyHealth;
         BehaviourReferenced = null;
+        OnHealthChange(HealthReferenced.CurrentHealth);
     }
     public void Cleanup()
     {
@@ -86,7 +96,14 @@ public class SelectedUnit_UIElement : BaseUIElement
 
     void OnHealthChange(float newHealth)
     {
-        Health.text = newHealth.ToString()+"/"+HealthReferenced.MaxHealth.ToString();
+        if (HealthReferenced != null)
+        {
+            Health.text = newHealth.ToString() + "/" + HealthReferenced.MaxHealth.ToString();
+        }
+        else
+        {
+            Health.text = newHealth.ToString() + "/" + "null";
+        }
     }
     void AutoMoveToUnit()
     {

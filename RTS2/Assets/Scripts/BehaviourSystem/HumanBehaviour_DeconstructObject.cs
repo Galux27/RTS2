@@ -75,12 +75,14 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
             }
 
             progressBarUI.UpdateCurrent(DeltaTimeWrapper.GameplayDelta+progressBarUI.CurrentValue);
+            Debug.Log("Destroy: progress " + progressBarUI.CurrentValue + "/" + progressBarUI.MaxValue+" is done "+ progressBarUI.IsDone());
             if (progressBarUI.IsDone())
             {
-                isDeconstructed = true;
                 progressBarUI.ReturnProgressBar();
                 progressBarUI = null;
                 DestroyObject();
+                isDeconstructed = true;
+
             }
         }
     }

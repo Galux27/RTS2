@@ -18,7 +18,7 @@ public static class UnitTrainingHelpers
 
     public static void CopyValuesToNewUnit(Unit old,ref Unit newUnit)
     {
-        ObjectHealth health = newUnit.GetComponent<ObjectHealth>();
+        EntityHealth health = newUnit.MyHealth;
         health.MaxHealth = old.MaxHealth();
         health.CurrentHealth = old.Health();
 

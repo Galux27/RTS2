@@ -29,7 +29,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
 
         if (wallType != null)
         {
-            MyHealth = new ObjectHealth();
+            MyHealth = new EntityHealth();
             MyHealth.MaxHealth = wallType.Health;
             MyHealth.CurrentHealth = wallType.Health;
             this.baseWallType = wallType;
@@ -59,7 +59,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     {
         if (wallType != null)
         {
-            MyHealth = new ObjectHealth();
+            MyHealth = new EntityHealth();
             MyHealth.MaxHealth = wallType.Health;
             MyHealth.CurrentHealth = wallType.Health;
             this.baseWallType = wallType;
@@ -196,7 +196,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     {
         return 1;
     }
-    public ObjectHealth MyHealth;
+    public EntityHealth MyHealth;
     public void OverrideHealthValues(float val, float max)
     {
         MyHealth.MaxHealth = max;
@@ -210,7 +210,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         {
             return 0f;
         }
-        return MyHealth.MaxHealth;
+        return MyHealth.CurrentHealth;
     }
 
     public float MaxHealth()
@@ -236,14 +236,14 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         }
         else
         {
-            MyHealth.DecreaseHealth(value);
+            MyHealth.DecreaseHealth(value*-1);
         }
 
         if (Health() > MaxHealth())
         {
             MyHealth.CurrentHealth = MaxHealth();
         }
-        else if (Health() < 0)
+        else if (Health() <= 0)
         {
             OnDeath();
         }
@@ -278,7 +278,8 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
 
     public void OnDeath()
     {
-        WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
+
+        WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile,false);
         if (healthUI != null)
         {
             GameObjectPoolManager.Instance.ReturnObjectToPool(healthUI.gameObject, "WorldspaceHealthBar");

@@ -68,7 +68,7 @@ public class UnitPrefabController : MonoBehaviour
         retVal.GetComponent<UnitFaction>().MyFactionID = (string)deserialized[DataKeys.UnitFaction];
         retVal.transform.position = worldPos;
         retVal.GetComponent<Unit>().SetMyUID((ulong)deserialized[DataKeys.UID]);
-
+        retVal.GetComponent<Unit>().MyHealth.ForceHealthValues((float)deserialized[DataKeys.Health], (float)deserialized[DataKeys.MaxHealth]);
         Debug.Log("Unit Data: invr split 1 " + behaviourSplit[2].ToString());
 
         KeyDataSplit = behaviourSplit[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT);

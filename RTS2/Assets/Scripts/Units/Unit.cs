@@ -12,7 +12,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public UnitAttackController MyAttackController;
     public UnitOrders MyOrders;
     public Action<Unit> OnAttacked;
-    public ObjectHealth MyHealth;
+    public EntityHealth MyHealth;
     public Vector2Int MyCurrentChunk,MyCurrentBatch;
     bool SetChunk = false;
     public UnitFaction MyFaction;
@@ -55,7 +55,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
                 MyRender.SetUnitVisuals(UnitVisualManager.Instance.AllVisuals[MyType]);
             }
             MyRender.DrawUnit();
-            MyHealth.OnObjectRender();
+            MyHealth.OnObjectRender(this.gameObject);
         }
         else
         {
@@ -65,7 +65,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
                 MyRender.transform.parent = null;
                 GameObjectPoolManager.Instance.ReturnObjectToPool(MyRender.gameObject, "UnitRenderer");
                 MyRender = null;
-                MyHealth.OnObjectHidden();
+                MyHealth.OnObjectHidden(this.gameObject);
             }
             }
         }
@@ -96,7 +96,10 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         {
             this.GetComponent<ItemHolder>().OnSetHolding += OnHoldItem;
         }
-        MyHealth=this.GetComponentInChildren<ObjectHealth>();
+        MyHealth = new EntityHealth();
+       
+        MyHealth.CurrentHealth=this.GetComponentInChildren<ObjectHealth>().CurrentHealth;
+        MyHealth.MaxHealth=this.GetComponentInChildren<ObjectHealth>().MaxHealth;
         MyAttackController = this.GetComponent<UnitAttackController>();
         MyHealth.OnDeath += OnDeath;
         behaviourRunner= this.GetComponent<BehaviourRunner>();

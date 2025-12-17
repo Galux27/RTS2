@@ -6,14 +6,14 @@ public class HealthUI : MonoBehaviour
 {
     const float MaxValWidth = 100f;
     [SerializeField]GameObject Bar;
-    ObjectHealth health;
+    EntityHealth health;
     ObjectInfo objectHealth;
 
-    public void LinkToHealth(ObjectHealth toDisplay)
+    public void LinkToHealth(EntityHealth toDisplay,GameObject parent)
     {
         if(toDisplay==null) return;
         health = toDisplay;
-        this.transform.parent = toDisplay.gameObject.transform;
+        this.transform.parent = parent.transform;
         this.transform.localPosition = new Vector3(0, 1.6f, 0);
     }
 

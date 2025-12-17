@@ -20,7 +20,7 @@ public class ObjectHealth : MonoBehaviour
         {
             healthUI = GameObjectPoolManager.Instance.GetObjectFromPool("WorldspaceHealthBar").GetComponent<HealthUI>();
             healthUI.gameObject.SetActive(true);
-            healthUI.LinkToHealth(this);
+           // healthUI.LinkToHealth(this);
         }
     }
 

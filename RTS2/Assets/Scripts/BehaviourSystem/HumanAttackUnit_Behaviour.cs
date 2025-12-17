@@ -7,7 +7,7 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
 {
     Unit objectToFollow;
     float  DistRefreshTimer = TargetRefreshTimerLength;
-    ObjectHealth healthOfUnitAttacking;
+    EntityHealth healthOfUnitAttacking;
     PathFollower follower;
     Vector3 targetPosition;
     const float DistanceTargetRefresh = 2f, TargetRefreshTimerLength = 1f;
@@ -16,7 +16,7 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
     {
         InitBehaviour(me);
         this.objectToFollow = objectToFollow;
-        healthOfUnitAttacking = objectToFollow.GetComponent<ObjectHealth>();
+        healthOfUnitAttacking = objectToFollow.MyHealth;
         follower = new PathFollower(me);
         targetPosition = objectToFollow.transform.position;
         follower.GetPath(me.transform.position, targetPosition);

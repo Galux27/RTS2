@@ -5,12 +5,12 @@ using UnityEngine;
 public class ZombieAttackTarget_Behaviour : BehaviourBase
 {
     Unit objectToFollow;
-    ObjectHealth healthOfUnitAttacking;
+    EntityHealth healthOfUnitAttacking;
     public void InitBehaviour(Unit objectToFollow, Unit me)
     {
         InitBehaviour(me);
         this.objectToFollow = objectToFollow;
-        healthOfUnitAttacking=objectToFollow.GetComponent<ObjectHealth>();
+        healthOfUnitAttacking=objectToFollow.MyHealth;
     }
 
     public override void InitializeFromData(Unit performing, Dictionary<string, object> data)

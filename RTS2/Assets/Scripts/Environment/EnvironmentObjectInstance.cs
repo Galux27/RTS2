@@ -44,7 +44,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
             position = new Vector3(x, y);
             coords = new Vector2Int(x, y);
             EnvironmentObject obj = EnvironmentObjectHelpers.GetEnvironmentObject(envObj);
-            MyHealth = new ObjectHealth();
+            MyHealth = new EntityHealth();
             MyHealth.MaxHealth = obj.MaxHealth;
             MyHealth.CurrentHealth = obj.MaxHealth;
             needsUpdate = obj.RequiresUpdate;
@@ -155,10 +155,10 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
     {
         return 1;
     }
-    public ObjectHealth MyHealth;
+    public EntityHealth MyHealth;
     public float Health()
     {
-        return MyHealth.MaxHealth;
+        return MyHealth.CurrentHealth;
     }
 
     public float MaxHealth()
@@ -185,14 +185,14 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         }
         else
         {
-            MyHealth.DecreaseHealth(value);
+            MyHealth.DecreaseHealth(value*-1);
         }
 
         if (Health() > MaxHealth())
         {
             MyHealth.CurrentHealth = MaxHealth();
         }
-        else if (Health() < 0)
+        else if (Health() <= 0)
         {
             OnDeath();
         }
