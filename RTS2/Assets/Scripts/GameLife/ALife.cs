@@ -144,7 +144,7 @@ public class ALife
         }
         for(int x = 0; x < toSpawn; x++)
         {
-            tile.AddALifeEntity(new ALifeEntity(new Vector2Int(tile.X, tile.Y),FactionController.ZOMBIE_FACTION));
+            tile.AddALifeEntity(new ALifeEntity(new Vector2Int(tile.X, tile.Y),FactionController.ZOMBIE_FACTION,UnitTypesController.BaseZombie));
         }
         zombieCount+=toSpawn;
     }
@@ -171,10 +171,10 @@ public class ALife
         {
             for(int x=0;x< kvp.Value.Count; x++)
             {
-                if (kvp.Value[x].Faction == FactionController.ZOMBIE_FACTION)
-                {
-                    GameLifeManager.Instance.ZombieSpawner.OnALifeEntityEntersLoadedChunk(kvp.Value[x], kvp.Key);
-                }
+
+                GameLifeManager.Instance.SpawnUnitFromALifeEntity(kvp.Value[x], kvp.Key);//ZombieSpawner.OnALifeEntityEntersLoadedChunk(kvp.Value[x], kvp.Key);
+
+
             }
         }
         ToGenerate.Clear();
@@ -187,8 +187,8 @@ public class ALifeEntity
     public Vector2Int CurrentCoords,PreviousCoords;
     public bool isActive,isDead,HasID;
     public ulong ID;
-    public string Faction;
-    public ALifeEntity(Vector2Int startCoords,string faction)
+    public string Faction,UnitType;
+    public ALifeEntity(Vector2Int startCoords,string faction,string type)
     {
         CurrentCoords = startCoords;
         PreviousCoords = startCoords;
@@ -197,6 +197,7 @@ public class ALifeEntity
         HasID = false;
         ID = 0;
         Faction = faction;
+        UnitType=type;
     }
 
     public void SetActive(bool val)

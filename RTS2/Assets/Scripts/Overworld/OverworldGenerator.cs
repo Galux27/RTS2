@@ -57,7 +57,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
     void OnGenerationDone()
     {
         EasyStopwatch.StartStopwatch();
-
+        GameLifeManager.Instance.OnNewGameStarted();
         for (int x = 0; x < OverworldWidth; x++)
         {
             for (int y = 0; y < OverworldHeight; y++)

@@ -77,59 +77,12 @@ public class ZombieSpawner:MonoBehaviour
 
     GameObject SpawnZombie(WorldChunkBatch batch,int forceChunkX=-1,int forceChunkY=-1)
     {
-        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch.coords) == false)
-        {
-            return null;
-        }
-
-        Vector2Int chunk = new Vector2Int(Random.Range(1, WorldChunkManager.ChunkSize - 1), Random.Range(1, WorldChunkManager.ChunkSize - 1));
-        if(forceChunkX!=-1)
-        {
-            chunk.x = forceChunkX;
-        }
-        if(forceChunkY!=-1)
-        {
-            chunk.y = forceChunkY;
-        }
-        
-        Vector2Int tile = new Vector2Int(Random.Range(0, WorldChunkManager.ChunkSize), Random.Range(0, WorldChunkManager.ChunkSize));
-
-        int xCoord = 0;
-        int yCoord = 0;
-
-        WorldTile toSpawnOn = WorldChunkManager.Instance.ChunkBatches[batch.coords].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y];
-        if (toSpawnOn.TileTraversable())
-        {
-            Vector3 worldPos = new Vector3(toSpawnOn.Coords().x, toSpawnOn.Coords().y);
-            UnitTypeSO zombie = UnitTypesController.Instance.Units["Zombie"];
-            GameObject g = Instantiate(zombie.Prefab, worldPos, Quaternion.identity);
-            Debug.Log("A Life: dpawn zomb crossing chunks " + worldPos, g);
-            return g;
-        }
-        return null;
+        return EntitySpawner.SpawnEntity(batch,"Zombie",FactionController.ZOMBIE_FACTION,forceChunkX,forceChunkY);
+       
     }
 
     GameObject SpawnZombie(WorldChunkBatch batch)
     {
-        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch.coords) == false)
-        {
-            return null;
-        }
-
-        Vector2Int chunk = new Vector2Int(Random.Range(1, WorldChunkManager.ChunkSize-1), Random.Range(1, WorldChunkManager.ChunkSize-1));
-        Vector2Int tile = new Vector2Int(Random.Range(0, WorldChunkManager.ChunkSize), Random.Range(0, WorldChunkManager.ChunkSize));
-
-        int xCoord = 0;
-        int yCoord = 0;
-
-        WorldTile toSpawnOn = WorldChunkManager.Instance.ChunkBatches[batch.coords].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y];
-        if (toSpawnOn.TileTraversable())
-        {
-            Vector3 worldPos = new Vector3(toSpawnOn.Coords().x, toSpawnOn.Coords().y);
-            UnitTypeSO zombie = UnitTypesController.Instance.Units["Zombie"];
-            GameObject g = Instantiate(zombie.Prefab, worldPos, Quaternion.identity);
-            return g;
-        }
-        return null;
+        return EntitySpawner.SpawnEntity(batch, "Zombie",FactionController.ZOMBIE_FACTION);
     }
 }

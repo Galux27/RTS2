@@ -18,6 +18,7 @@ public class UnitTypesController : MonoBehaviour
             return instance;
         }
     }
+   public const string BaseZombie = "Zombie";
     const string FilePath = "UnitData";
     public Dictionary<string, UnitTypeSO> Units;
     public List<string> UnitKeys;
