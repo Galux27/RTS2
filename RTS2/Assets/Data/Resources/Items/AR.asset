@@ -21,6 +21,7 @@ MonoBehaviour:
   AttackRate: 2
   AttackDamage: 3
   AttackRange: 1.5
+  RangedDamage: 5
   IsRanged: 1
   FireMinRange: 0
   FireMaxRange: 30

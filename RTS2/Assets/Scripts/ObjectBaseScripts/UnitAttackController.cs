@@ -25,7 +25,7 @@ public class UnitAttackController : MonoBehaviour
 
             if (equiped.IsRanged)
             {
-                SetRangedValues(5,equiped.FireRate,equiped.FireMinRange,equiped.FireMaxRange,equiped.RangedProjectile);
+                SetRangedValues(equiped.RangedDamage,equiped.FireRate,equiped.FireMinRange,equiped.FireMaxRange,equiped.RangedProjectile);
             }
             else
             {

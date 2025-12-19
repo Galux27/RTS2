@@ -115,7 +115,7 @@ public class ALife
 
     void UpdateALifeTile(OverworldTile tile)
     {
-        if (tile.UnitsInTile.ContainsKey(FactionController.ZOMBIE_FACTION))
+        if ( tile.UnitsInTile.ContainsKey(FactionController.ZOMBIE_FACTION))
         {
             List<ALifeEntity> toUpdate = tile.UnitsInTile[FactionController.ZOMBIE_FACTION].FactionEntities;
 
@@ -142,9 +142,19 @@ public class ALife
         {
             toSpawn = 0;
         }
+        ALifeEntity spawning = null;
+        CachedUnitData data = UnitTypesController.Instance.UnitData["Zombie"];
         for(int x = 0; x < toSpawn; x++)
         {
-            tile.AddALifeEntity(new ALifeEntity(new Vector2Int(tile.X, tile.Y),FactionController.ZOMBIE_FACTION,UnitTypesController.BaseZombie),false);
+            spawning = new ALifeEntity(
+                new Vector2Int(tile.X, tile.Y),
+                FactionController.ZOMBIE_FACTION,
+                UnitTypesController.BaseZombie,
+                new Vector2Int(Random.Range(0, WorldChunkManager.ChunkBatchSize), Random.Range(0, WorldChunkManager.ChunkBatchSize))
+                , 1, 1, 1);
+            spawning.SetUnitDetails(data);
+            tile.AddALifeEntity(spawning
+                , false);
         }
         zombieCount+=toSpawn;
     }
@@ -184,22 +194,44 @@ public class ALife
 
 public class ALifeEntity
 {
-    public Vector2Int CurrentCoords,PreviousCoords;
+    public Vector2Int CurrentBatchCoords,PreviousBatchCoords,LocalCoords;
     public bool isActive,isDead,HasID;
     public ulong ID;
     public string Faction,UnitType;
-    public ALifeEntity(Vector2Int startCoords,string faction,string type)
+    public float MoveSpeed, AttackRate,AttackMaxRange,AttackMinRange,Health,MaxHealth,RangedDamage,AttackDamage;
+    public ALifeEntity(Vector2Int startCoords,string faction,string type,Vector2Int localCoords,float moveSpeed,float attackRate,float attackRange)
     {
-        CurrentCoords = startCoords;
-        PreviousCoords = startCoords;
+        CurrentBatchCoords = startCoords;
+        PreviousBatchCoords = startCoords;
         isActive = false;
         isDead = false;
         HasID = false;
         ID = 0;
         Faction = faction;
         UnitType=type;
+        LocalCoords = localCoords;
+        MoveSpeed = moveSpeed;
+        AttackRate = attackRate;
+        AttackMaxRange = attackRange;
+        AttackMinRange = 0;
+
     }
 
+    public void SetUnitDetails(CachedUnitData data)
+    {
+        MoveSpeed = data.MoveSpeed;
+        AttackRate = data.AttackRate;
+        AttackDamage = data.MeleeDamage;
+        Health = data.Health;
+        MaxHealth = data.MaxHealth;
+        RangedDamage=data.RangedDamage;
+        AttackMinRange = data.RangeMin;
+        AttackMaxRange=data.RangeMax;
+    }
+    public bool HasRanged()
+    {
+        return AttackMaxRange > 0;
+    }
     public void SetActive(bool val)
     {
         isActive = val;

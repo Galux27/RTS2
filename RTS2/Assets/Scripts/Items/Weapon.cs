@@ -9,7 +9,7 @@ public class Weapon : Item
     public float AttackRate;
     public float AttackDamage;
     public float AttackRange;
-
+    public float RangedDamage;
     
     public bool IsRanged;
     public float FireMinRange,FireMaxRange;

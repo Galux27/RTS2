@@ -50,19 +50,19 @@ public class ZombieSpawner:MonoBehaviour
         }
         entity.isActive = true;
         int xCoord = -1, yCoord = -1;
-        if (entity.PreviousCoords.x > entity.CurrentCoords.x)
+        if (entity.PreviousBatchCoords.x > entity.CurrentBatchCoords.x)
         {
             xCoord = WorldChunkManager.ChunksPerBatch - 2;
-        }else if (entity.PreviousCoords.x < entity.CurrentCoords.x)
+        }else if (entity.PreviousBatchCoords.x < entity.CurrentBatchCoords.x)
         {
             xCoord = 1;
         }
 
-        if (entity.PreviousCoords.y > entity.CurrentCoords.y)
+        if (entity.PreviousBatchCoords.y > entity.CurrentBatchCoords.y)
         {
             yCoord = WorldChunkManager.ChunksPerBatch - 2;
         }
-        else if (entity.PreviousCoords.y < entity.CurrentCoords.y)
+        else if (entity.PreviousBatchCoords.y < entity.CurrentBatchCoords.y)
         {
             yCoord = 1;
         }

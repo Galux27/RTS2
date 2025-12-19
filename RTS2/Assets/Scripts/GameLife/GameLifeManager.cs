@@ -50,11 +50,15 @@ public class GameLifeManager : MonoBehaviour
     {
         //spawn 5 engineers
         Vector2Int startChunk = OverworldGenerator.Instance.GetOverworldStartingCoords();
-
+        CachedUnitData data=  UnitTypesController.Instance.UnitData["Engineer"];
+        ALifeEntity ae = null;
         for (int x = 0; x < 5; x++)
         {
-            OverworldGenerator.Instance.OverworldTiles[startChunk.x, startChunk.y].AddALifeEntity(new ALifeEntity(startChunk,
-           FactionController.USER_FACTION, "Engineer"),false);
+            ae = new ALifeEntity(startChunk,
+           FactionController.USER_FACTION, "Engineer",
+           new Vector2Int(Random.Range(0, WorldChunkManager.ChunkSize), Random.Range(0, WorldChunkManager.ChunkSize)), 1, 1, 1);
+            ae.SetUnitDetails(data);
+            OverworldGenerator.Instance.OverworldTiles[startChunk.x, startChunk.y].AddALifeEntity(ae,false);
         }
         SpawnedInitialUserUnits = true;
     }
@@ -67,20 +71,20 @@ public class GameLifeManager : MonoBehaviour
         }
         entity.isActive = true;
         int xCoord = -1, yCoord = -1;
-        if (entity.PreviousCoords.x > entity.CurrentCoords.x)
+        if (entity.PreviousBatchCoords.x > entity.CurrentBatchCoords.x)
         {
             xCoord = WorldChunkManager.ChunksPerBatch - 2;
         }
-        else if (entity.PreviousCoords.x < entity.CurrentCoords.x)
+        else if (entity.PreviousBatchCoords.x < entity.CurrentBatchCoords.x)
         {
             xCoord = 1;
         }
 
-        if (entity.PreviousCoords.y > entity.CurrentCoords.y)
+        if (entity.PreviousBatchCoords.y > entity.CurrentBatchCoords.y)
         {
             yCoord = WorldChunkManager.ChunksPerBatch - 2;
         }
-        else if (entity.PreviousCoords.y < entity.CurrentCoords.y)
+        else if (entity.PreviousBatchCoords.y < entity.CurrentBatchCoords.y)
         {
             yCoord = 1;
         }
@@ -93,19 +97,20 @@ public class GameLifeManager : MonoBehaviour
         OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords);
         GameObject enemy = null;
         int failCount = 0;
-
+        Vector2Int tileCoords = new Vector2Int(),chunkCoords= new Vector2Int();
         foreach(KeyValuePair<string,ALifeFactionGroup> kvp in tile.UnitsInTile) 
         {
             for (int x = 0; x < tile.UnitsInTile[kvp.Key].FactionEntities.Count; x++)
             {
-
+                ConvertALifeEntityCoordsToChunkAndTile(kvp.Value.FactionEntities[x].LocalCoords,out chunkCoords,out tileCoords);
                 if (tile.UnitsInTile[kvp.Key].FactionEntities[x].isActive == false
                     && tile.UnitsInTile[kvp.Key].FactionEntities[x].isDead == false)
                 {
                     while (enemy == null && failCount < 50)
                     {
                         enemy = EntitySpawner.SpawnEntity(batch, 
-                            tile.UnitsInTile[kvp.Key].FactionEntities[x].UnitType, tile.UnitsInTile[kvp.Key].FactionEntities[x].Faction);
+                            tile.UnitsInTile[kvp.Key].FactionEntities[x].UnitType, tile.UnitsInTile[kvp.Key].FactionEntities[x].Faction
+                            ,chunkCoords.x,chunkCoords.y,tileCoords.x,tileCoords.y);
                         if (enemy != null)
                         {
                             tile.UnitsInTile[kvp.Key].FactionEntities[x].SetActive(true);
@@ -119,6 +124,12 @@ public class GameLifeManager : MonoBehaviour
             }
 
         }
+    }
+    void ConvertALifeEntityCoordsToChunkAndTile(Vector2Int input,out Vector2Int chunk, out Vector2Int tile)
+    {
+        tile = new Vector2Int(input.x % WorldChunkManager.ChunkSize, input.y % WorldChunkManager.ChunkSize);
+        chunk = new Vector2Int(Mathf.FloorToInt(input.x / WorldChunkManager.ChunkSize), Mathf.FloorToInt(input.y / WorldChunkManager.ChunkSize));
+        
     }
 
 

@@ -15,35 +15,35 @@ public static class ALifeActions
 
     public static void Roam(ALifeEntity performing)
     {
-        performing.PreviousCoords=performing.CurrentCoords;
-        if (performing.CurrentCoords.x == 0)
+        performing.PreviousBatchCoords=performing.CurrentBatchCoords;
+        if (performing.CurrentBatchCoords.x == 0)
         {
             
-            performing.CurrentCoords.x += ran.Next(0,1);
+            performing.CurrentBatchCoords.x += ran.Next(0,1);
         }
-        else if(performing.CurrentCoords.x == OverworldGenerator.Instance.OverworldWidth) 
+        else if(performing.CurrentBatchCoords.x == OverworldGenerator.Instance.OverworldWidth) 
         {
-            performing.CurrentCoords.x += ran.Next(-1, 0);
+            performing.CurrentBatchCoords.x += ran.Next(-1, 0);
 
         }
         else
         {
-            performing.CurrentCoords.x += ran.Next(-1, 1);
+            performing.CurrentBatchCoords.x += ran.Next(-1, 1);
 
         }
 
-        if (performing.CurrentCoords.y == 0)
+        if (performing.CurrentBatchCoords.y == 0)
         {
-            performing.CurrentCoords.y += ran.Next(0, 1);
+            performing.CurrentBatchCoords.y += ran.Next(0, 1);
         }
-        else if (performing.CurrentCoords.y == OverworldGenerator.Instance.OverworldHeight)
+        else if (performing.CurrentBatchCoords.y == OverworldGenerator.Instance.OverworldHeight)
         {
-            performing.CurrentCoords.y += ran.Next(-1, 0);
+            performing.CurrentBatchCoords.y += ran.Next(-1, 0);
 
         }
         else
         {
-            performing.CurrentCoords.y += ran.Next(-1, 1);
+            performing.CurrentBatchCoords.y += ran.Next(-1, 1);
 
         }
         MoveBetweenChunks(performing);
@@ -51,13 +51,13 @@ public static class ALifeActions
 
     public static void MoveBetweenChunks(ALifeEntity performing)
     {
-        OverworldTile target = OverworldGenerator.Instance.GetOverworldTile(performing.CurrentCoords);
+        OverworldTile target = OverworldGenerator.Instance.GetOverworldTile(performing.CurrentBatchCoords);
         if (target.GetQuantitiyOfFeature(OverworldFeature.LargeWaterBody)>0)
         {
-            performing.CurrentCoords = performing.PreviousCoords;
+            performing.CurrentBatchCoords = performing.PreviousBatchCoords;
             return;
         }
-        OverworldGenerator.Instance.GetOverworldTile(performing.PreviousCoords).RemoveALifeEntity(performing);
+        OverworldGenerator.Instance.GetOverworldTile(performing.PreviousBatchCoords).RemoveALifeEntity(performing);
         target.AddALifeEntity(performing);
 
     }
