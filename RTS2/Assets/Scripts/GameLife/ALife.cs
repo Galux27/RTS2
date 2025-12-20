@@ -198,7 +198,8 @@ public class ALifeEntity
     public bool isActive,isDead,HasID;
     public ulong ID;
     public string Faction,UnitType;
-    public float MoveSpeed, AttackRate,AttackMaxRange,AttackMinRange,Health,MaxHealth,RangedDamage,AttackDamage;
+    public int MoveSpeed;
+    public float  AttackRate,AttackMaxRange,AttackMinRange,Health,MaxHealth,RangedDamage,AttackDamage;
     public ALifeEntity(Vector2Int startCoords,string faction,string type,Vector2Int localCoords,float moveSpeed,float attackRate,float attackRange)
     {
         CurrentBatchCoords = startCoords;
@@ -210,7 +211,7 @@ public class ALifeEntity
         Faction = faction;
         UnitType=type;
         LocalCoords = localCoords;
-        MoveSpeed = moveSpeed;
+        MoveSpeed = Mathf.RoundToInt( moveSpeed);
         AttackRate = attackRate;
         AttackMaxRange = attackRange;
         AttackMinRange = 0;
@@ -219,7 +220,7 @@ public class ALifeEntity
 
     public void SetUnitDetails(CachedUnitData data)
     {
-        MoveSpeed = data.MoveSpeed;
+        MoveSpeed =Mathf.RoundToInt( data.MoveSpeed);
         AttackRate = data.AttackRate;
         AttackDamage = data.MeleeDamage;
         Health = data.Health;
