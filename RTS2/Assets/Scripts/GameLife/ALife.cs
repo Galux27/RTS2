@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ALife
 {
-    const float ALifeUpdateRate=30;
+    const float ALifeUpdateRate=3;
     float UpdateTimer = 0f;
     const int ZombiesPerMajorRoad = 25, ZombiesPerMinorRoad = 10, ZombiesPerBackroad = 5;
     public int zombieCount = 0;
@@ -21,7 +21,11 @@ public class ALife
     static bool RunningALifeUpdate = false,CanStartNewThread=true,CanUpdateUnits=false;
     public void Update()
     {
-
+        if (Input.GetKey(KeyCode.V))
+        {
+            MultithreadedUpdateALife();
+            Debug.Break();
+        }
         if (RunningALifeUpdate)
         {
             if (CanStartNewThread)
@@ -66,10 +70,11 @@ public class ALife
             Debug.Log("A Life: fin");
         }
     }
-    const int maxPerThread = 500;
+    const int maxPerThread = 100;
     int curX=0,curY=0;
     void MultithreadedUpdateALife()
     {
+        Debug.Log("A Life: Multithreaded update " + curX + "," + curY);
         int count = 0;
         for (; curX < OverworldGenerator.Instance.OverworldWidth; curX++)
         {
@@ -88,6 +93,7 @@ public class ALife
         curY = 0;
         //Debug.Log("A Life: finished a life pass");
         RunningALifeUpdate = false;
+        OnALifeUpdateFinish();
     }
 
     const int ALifeUpdatesPerFrame = 30;
@@ -154,9 +160,9 @@ public class ALife
 
     void GenerateRandomUnitsForTile(int zombiesSpawned, OverworldTile tile)
     {
-        int toSpawn = Random.Range(0,Mathf.RoundToInt( zombiesSpawned*Random.Range(0f,1f)));
+        int toSpawn = tile.Population / 20;
         ALifeEntity spawning = null;
-
+        Debug.Log("A Life: Spawning " + toSpawn + " rifleman");
         CachedUnitData data = UnitTypesController.Instance.UnitData[UnitTypesController.BaseRilfeman];
         for (int x = 0; x < toSpawn; x++)
         {
@@ -214,10 +220,10 @@ public class ALifeEntity
     public int MoveSpeed;
     public float  AttackRate,AttackMaxRange,AttackMinRange,Health,MaxHealth,RangedDamage,AttackDamage;
     public ALifeCombat CombatImPartOf;
-
-    public float GetDangerDistance()
+    int attackRangeInt;
+    public int GetDangerDistance()
     {
-        return AttackMaxRange + MoveSpeed + 10f;
+        return attackRangeInt + MoveSpeed + 10;
     }
 
     public ALifeEntity(Vector2Int startCoords,string faction,string type,Vector2Int localCoords,float moveSpeed,float attackRate,float attackRange)
@@ -248,6 +254,7 @@ public class ALifeEntity
         RangedDamage=data.RangedDamage;
         AttackMinRange = data.RangeMin;
         AttackMaxRange=data.RangeMax;
+        attackRangeInt = (int)AttackMaxRange;
     }
     public bool HasRanged()
     {
@@ -342,7 +349,7 @@ public class ALifeCombat
     }
     public void ProcessCombat(ALifeChunk combatIn)
     {
-        DebugOutCombat();
+       // DebugOutCombat();
         foreach(KeyValuePair<string,List<ALifeEntity>> kvp in  EntitiesInvolved)
         {
             for(int x=0;x<kvp.Value.Count;x++)
@@ -355,30 +362,30 @@ public class ALifeCombat
         List<ALifeEntity> ToRemoveFromCombat = new List<ALifeEntity>();
         foreach (KeyValuePair<string, List<ALifeEntity>> kvp in EntitiesInvolved)
         {
-            Debug.Log("A Life: started unit combat " + kvp.Key+","+kvp.Value.Count);
+           // Debug.Log("A Life: started unit combat " + kvp.Key+","+kvp.Value.Count);
             for (int x = 0; x < kvp.Value.Count; x++)
             {
                 target = GetClosestPotentialCombatTarget(kvp.Value[x]);
-                Debug.Log("A Life: found target " + (target == null) + " " + kvp.Value.Count);
+               // Debug.Log("A Life: found target " + (target == null) + " " + kvp.Value.Count);
                 if (target != null)
                 {
                     distToTarget = Vector2Int.Distance(kvp.Value[x].LocalCoords, target.LocalCoords);
                     if (distToTarget < kvp.Value[x].AttackMaxRange && distToTarget > kvp.Value[x].AttackMinRange)
                     {
-                        Debug.Log("A Life: action 1");
+                      //  Debug.Log("A Life: action 1");
                         ALifeActions.AttackTarget(kvp.Value[x], target, kvp.Value[x].AttackMaxRange > MinAttackRange
                             && distToTarget > MinAttackRange);
                         OnAttack(kvp.Value[x], target, ref ToRemoveFromCombat);
                     }
                     else if(distToTarget > kvp.Value[x].AttackMaxRange)
                     {
-                        Debug.Log("A Life: action 2");
+                     //   Debug.Log("A Life: action 2");
 
                         ALifeActions.MoveTowardsEntity(kvp.Value[x], target);
                     }
                     else
                     {
-                        Debug.Log("A Life: action 3");
+                      //  Debug.Log("A Life: action 3");
 
                         ALifeActions.MoveTowardsPosition(kvp.Value[x], 
                             combatIn.GetPositionToRepositionTo(kvp.Value[x], out hazardLevel));
@@ -393,7 +400,7 @@ public class ALifeCombat
                 target = null;
                 kvp.Value[x].PerformedCombatAction = true;
             }
-            Debug.Log("A Life: finished unit combat");
+            //Debug.Log("A Life: finished unit combat");
 
         }
 

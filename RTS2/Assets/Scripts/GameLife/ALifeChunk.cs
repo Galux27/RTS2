@@ -45,30 +45,38 @@ public class ALifeChunk
         UnitsInTile[entity.Faction].RemoveEntity(entity);
     }
 
+    bool NeedsToPerformCombatChecks()
+    {
+        return UnitsInTile.Count > 1;
+    }
 
+    static float Hazard = 0, CombCheck=0, CombExe=0, Decisions = 0;
     public void UpdateALifeInChunk()
     {
         if (UnitsInTile.Count == 0)
         {
             return;
         }
-        UpdateHazardMap();
-        CheckForCombat();
-        PerformCombat();
-        MakeUnitDecisions();
+        if (NeedsToPerformCombatChecks())
+        {
+            UpdateHazardMap();
+            CheckForCombat();
+            PerformCombat();
+        }
+            MakeUnitDecisions();
     }
     void PerformCombat()
     {
-        Debug.Log("A Life: starting combat update for " + coords);
-        EasyStopwatch.StartStopwatch();
+      //  Debug.Log("A Life: starting combat update for " + coords);
+      //  EasyStopwatch.StartStopwatch();
         Combat.ProcessCombat(this);
-        EasyStopwatch.StopStopwatch();
-        Debug.Log("A Life: combat update " + EasyStopwatch.GetStopwatchElapsedTime());
+       // EasyStopwatch.StopStopwatch();
+        //Debug.Log("A Life: combat update " + EasyStopwatch.GetStopwatchElapsedTime());
 
     }
     void CheckForCombat()
     {
-        EasyStopwatch.StartStopwatch();
+      //  EasyStopwatch.StartStopwatch();
         Vector2Int pos = new Vector2Int();
         float hazardLevel = 0;
         float[,] hazardMap = null;
@@ -91,14 +99,11 @@ public class ALifeChunk
                         Combat.AddEntityToCombat(kvp.Value.FactionEntities[x]);
                     }
                 }
-                else
-                {
-                    Debug.LogError("A Life Error: local coords out of bounds " + pos);
-                }
+                
             }
         }
-        EasyStopwatch.StopStopwatch();
-        Debug.Log("A Life: checking for combatents took " + EasyStopwatch.GetStopwatchElapsedTime());
+        //EasyStopwatch.StopStopwatch();
+       // Debug.Log("A Life: checking for combatents took " + EasyStopwatch.GetStopwatchElapsedTime());
     }
 
     Vector2Int ClampToArray(Vector2Int pos)

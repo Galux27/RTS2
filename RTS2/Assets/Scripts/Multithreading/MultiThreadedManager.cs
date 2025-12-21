@@ -19,10 +19,9 @@ public class MultiThreadedManager : MonoBehaviour
 
     List<MultiThreadedAction> actions = new List<MultiThreadedAction>();
 
-    public void AddAction(Action toPerform,Action OnComplete)
+    public void AddAction(Action toPerform,Action OnComplete,bool autoComplete=true)
     {
-        Debug.Log("Multi: Added action to multithreading...");
-        MultiThreadedAction action = new MultiThreadedAction(toPerform,OnComplete);
+        MultiThreadedAction action = new MultiThreadedAction(toPerform,OnComplete,autoComplete);
         actions.Add(action);
         action.StartAction();
     }
@@ -51,10 +50,8 @@ public class MultiThreadedManager : MonoBehaviour
     public void OnActionComplete(MultiThreadedAction complete)
     {
         complete.OnComplete?.Invoke();
-        complete.StopThread();
-        
+        complete.StopThread();      
         actions.Remove(complete);
-        Debug.Log("Multi: Removed action from multithreading...");
     }
 
 

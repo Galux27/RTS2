@@ -58,12 +58,11 @@ public class FactionController : MonoBehaviour
 
     bool HostileCheck(string id1,string id2)
     {
-        if(FactionLookup.ContainsKey(id1) == false)
-        {
-            return false;
-        }
         return FactionLookup[id1].FactionEnemies.Contains(id2);
     }
 
-
+    public List<string> GetFactionEnemies(string id)
+    {
+        return FactionLookup[id].FactionEnemies;
+    }
 }
