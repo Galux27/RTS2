@@ -58,7 +58,6 @@ public class ALife
 
         if (RunningALifeUpdate)
         {
-            Debug.Log("A Life: next batch" +curX+","+curY);
 
         }
         else
@@ -115,15 +114,8 @@ public class ALife
 
     void UpdateALifeTile(OverworldTile tile)
     {
-        if ( tile.UnitsInTile.ContainsKey(FactionController.ZOMBIE_FACTION))
-        {
-            List<ALifeEntity> toUpdate = tile.UnitsInTile[FactionController.ZOMBIE_FACTION].FactionEntities;
-
-            for (int x = 0; x < toUpdate.Count; x++)
-            {
-                ALifeDecisionMaker.MakeZombieDecisions(toUpdate[x]);
-            }
-        }
+        tile.ALifeChunk.UpdateALifeInChunk();
+       
     }
 
     void GenerateEnemiesForTile(OverworldTile tile)
@@ -150,13 +142,34 @@ public class ALife
                 new Vector2Int(tile.X, tile.Y),
                 FactionController.ZOMBIE_FACTION,
                 UnitTypesController.BaseZombie,
-                new Vector2Int(Random.Range(0, WorldChunkManager.ChunkBatchSize), Random.Range(0, WorldChunkManager.ChunkBatchSize))
+                new Vector2Int(Random.Range(0, WorldChunkManager.ChunkBatchSize-1), Random.Range(0, WorldChunkManager.ChunkBatchSize-1))
                 , 1, 1, 1);
             spawning.SetUnitDetails(data);
             tile.AddALifeEntity(spawning
                 , false);
         }
+        GenerateRandomUnitsForTile(toSpawn, tile);
         zombieCount+=toSpawn;
+    }
+
+    void GenerateRandomUnitsForTile(int zombiesSpawned, OverworldTile tile)
+    {
+        int toSpawn = Random.Range(0,Mathf.RoundToInt( zombiesSpawned*Random.Range(0f,1f)));
+        ALifeEntity spawning = null;
+
+        CachedUnitData data = UnitTypesController.Instance.UnitData[UnitTypesController.BaseRilfeman];
+        for (int x = 0; x < toSpawn; x++)
+        {
+            spawning = new ALifeEntity(
+                new Vector2Int(tile.X, tile.Y),
+                FactionController.USER_FACTION,
+                UnitTypesController.BaseRilfeman,
+                new Vector2Int(Random.Range(0, WorldChunkManager.ChunkBatchSize-1), Random.Range(0, WorldChunkManager.ChunkBatchSize-1))
+                , 1, 1, 1);
+            spawning.SetUnitDetails(data);
+            tile.AddALifeEntity(spawning
+                , false);
+        }
     }
 
 
@@ -195,11 +208,18 @@ public class ALife
 public class ALifeEntity
 {
     public Vector2Int CurrentBatchCoords,PreviousBatchCoords,LocalCoords;
-    public bool isActive,isDead,HasID;
+    public bool isActive,isDead,HasID,PerformedCombatAction;
     public ulong ID;
     public string Faction,UnitType;
     public int MoveSpeed;
     public float  AttackRate,AttackMaxRange,AttackMinRange,Health,MaxHealth,RangedDamage,AttackDamage;
+    public ALifeCombat CombatImPartOf;
+
+    public float GetDangerDistance()
+    {
+        return AttackMaxRange + MoveSpeed + 10f;
+    }
+
     public ALifeEntity(Vector2Int startCoords,string faction,string type,Vector2Int localCoords,float moveSpeed,float attackRate,float attackRange)
     {
         CurrentBatchCoords = startCoords;
@@ -238,6 +258,10 @@ public class ALifeEntity
         isActive = val;
     }
 
+    public bool IsInCombat()
+    {
+        return CombatImPartOf != null;
+    }
     public void SetID(ulong id) { 
         ID = id;
         HasID = true;
@@ -255,12 +279,16 @@ public class ALifeFactionGroup
 {
     public string FactionID;
     public List<ALifeEntity> FactionEntities;
+
     public ALifeFactionGroup(string faction)
     {
         FactionID = faction;
         FactionEntities=new List<ALifeEntity>();
     }
 
+   
+
+   
     public void AddEntity(ALifeEntity entity) { 
         FactionEntities.Add(entity);
     }
@@ -268,5 +296,151 @@ public class ALifeFactionGroup
     public void RemoveEntity(ALifeEntity entity)
     {
         FactionEntities.Remove(entity);
+    }
+
+
+    bool CoordValid(int x, int y)
+    {
+        return x >= 0 && x < WorldChunkManager.ChunkBatchSize && y < WorldChunkManager.ChunkBatchSize && y >= 0;
+    }
+}
+
+public class ALifeCombat
+{
+    public Dictionary<string, List<ALifeEntity>> EntitiesInvolved=new Dictionary<string, List<ALifeEntity>>();
+    public ALifeCombat()
+    {
+        EntitiesInvolved = new Dictionary<string, List<ALifeEntity>>();
+    }
+  
+    public void AddEntityToCombat(ALifeEntity entity)
+    {
+        if (!EntitiesInvolved.ContainsKey(entity.Faction))
+        {
+            EntitiesInvolved.Add(entity.Faction, new List<ALifeEntity>());
+        }
+        EntitiesInvolved[entity.Faction].Add(entity);
+        entity.CombatImPartOf = this;
+    }
+    
+    public void RemoveEntityFromCombat(ALifeEntity entity)
+    {
+        entity.CombatImPartOf = null;
+        entity.PerformedCombatAction = false;
+        EntitiesInvolved[entity.Faction].Remove(entity);
+    }
+    const float MinAttackRange = 1f;
+
+    void DebugOutCombat()
+    {
+        Debug.Log("A Life: total factions " + EntitiesInvolved.Count);
+        foreach (KeyValuePair<string, List<ALifeEntity>> kvp in EntitiesInvolved)
+        {
+            Debug.Log("A Life: faction " + kvp.Key +" has "+ kvp.Value.Count);
+
+        }
+    }
+    public void ProcessCombat(ALifeChunk combatIn)
+    {
+        DebugOutCombat();
+        foreach(KeyValuePair<string,List<ALifeEntity>> kvp in  EntitiesInvolved)
+        {
+            for(int x=0;x<kvp.Value.Count;x++)
+            {
+                kvp.Value[x].PerformedCombatAction = false;
+            }
+        }
+        ALifeEntity target = null;
+        float distToTarget = 0f, hazardLevel = 0f ;
+        List<ALifeEntity> ToRemoveFromCombat = new List<ALifeEntity>();
+        foreach (KeyValuePair<string, List<ALifeEntity>> kvp in EntitiesInvolved)
+        {
+            Debug.Log("A Life: started unit combat " + kvp.Key+","+kvp.Value.Count);
+            for (int x = 0; x < kvp.Value.Count; x++)
+            {
+                target = GetClosestPotentialCombatTarget(kvp.Value[x]);
+                Debug.Log("A Life: found target " + (target == null) + " " + kvp.Value.Count);
+                if (target != null)
+                {
+                    distToTarget = Vector2Int.Distance(kvp.Value[x].LocalCoords, target.LocalCoords);
+                    if (distToTarget < kvp.Value[x].AttackMaxRange && distToTarget > kvp.Value[x].AttackMinRange)
+                    {
+                        Debug.Log("A Life: action 1");
+                        ALifeActions.AttackTarget(kvp.Value[x], target, kvp.Value[x].AttackMaxRange > MinAttackRange
+                            && distToTarget > MinAttackRange);
+                        OnAttack(kvp.Value[x], target, ref ToRemoveFromCombat);
+                    }
+                    else if(distToTarget > kvp.Value[x].AttackMaxRange)
+                    {
+                        Debug.Log("A Life: action 2");
+
+                        ALifeActions.MoveTowardsEntity(kvp.Value[x], target);
+                    }
+                    else
+                    {
+                        Debug.Log("A Life: action 3");
+
+                        ALifeActions.MoveTowardsPosition(kvp.Value[x], 
+                            combatIn.GetPositionToRepositionTo(kvp.Value[x], out hazardLevel));
+
+                        if (hazardLevel < 0)
+                        {
+                            ToRemoveFromCombat.Add(kvp.Value[x]);
+                        }  
+                    }
+                   
+                }
+                target = null;
+                kvp.Value[x].PerformedCombatAction = true;
+            }
+            Debug.Log("A Life: finished unit combat");
+
+        }
+
+        for (int x = 0; x < ToRemoveFromCombat.Count; x++)
+        {
+            RemoveEntityFromCombat(ToRemoveFromCombat[x]);
+        }
+    }
+
+    void OnAttack(ALifeEntity performing,ALifeEntity target,ref List<ALifeEntity> toRemove)
+    {
+        Debug.Log("A Life Combat: type "+performing.UnitType+" pos "+performing.LocalCoords+" hp " +performing.Health 
+            +" target type"+ performing.UnitType + " pos " + target.LocalCoords+" hp " + target.Health);
+        if (performing.isDead &&!toRemove.Contains(performing))
+        {
+            toRemove.Add(performing);
+        }
+        if(target.isDead&& !toRemove.Contains(target))
+        {
+            toRemove.Add(target);
+        }
+    }
+
+    ALifeEntity GetClosestPotentialCombatTarget(ALifeEntity performing)
+    {
+        ALifeEntity retVal = null;
+        float closest = 999999f, curDist = 999999f ;
+        foreach (KeyValuePair<string, List<ALifeEntity>> kvp in EntitiesInvolved)
+        {
+            if(kvp.Key==performing.Faction|| FactionController.Instance.IsHostile(kvp.Key, performing.Faction)==false) {
+                continue;
+            
+            }
+            for(int x=0;x<kvp.Value.Count;x++)
+            {
+                if (kvp.Value[x].isDead || kvp.Value[x].isActive)
+                {
+                    continue;
+                }
+                curDist = Vector2Int.Distance(kvp.Value[x].LocalCoords, performing.LocalCoords);
+                if(curDist < closest)
+                {
+                    closest = curDist;
+                    retVal = kvp.Value[x];
+                }
+            }
+        }
+        return retVal;
     }
 }

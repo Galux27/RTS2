@@ -51,6 +51,11 @@ public class FactionController : MonoBehaviour
 
     }
 
+    public bool IsHostile(string target,string me)
+    {
+        return HostileCheck(target, me);
+    }
+
     bool HostileCheck(string id1,string id2)
     {
         if(FactionLookup.ContainsKey(id1) == false)

@@ -13,11 +13,12 @@ public static class ALifeActions
     }
     static System.Random ran = new System.Random();
     static Vector2Int Dir, Pos, NewChunk;
-
+    static Vector2 DirVec2;
+    static float Dist;
     static bool HasMovedChunk(Vector2Int pos, out Vector2Int chunkDir)
     {
         chunkDir = new Vector2Int();
-        if (pos.x < 0 || pos.y < 0 || pos.y > WorldChunkManager.ChunkBatchSize || pos.x > WorldChunkManager.ChunkBatchSize)
+        if (pos.x < 0 || pos.y < 0 || pos.y >= WorldChunkManager.ChunkBatchSize || pos.x >= WorldChunkManager.ChunkBatchSize)
         {
             if (pos.x < 0)
             {
@@ -41,7 +42,7 @@ public static class ALifeActions
 
     static bool IsNewChunkValid(Vector2Int coords)
     {
-        return coords.y < 0 || coords.x < 0 || coords.y >= OverworldGenerator.Instance.OverworldHeight || coords.x >= OverworldGenerator.Instance.OverworldWidth;
+        return !(coords.y < 0 || coords.x < 0 || coords.y >= OverworldGenerator.Instance.OverworldHeight || coords.x >= OverworldGenerator.Instance.OverworldWidth);
     }
 
     static void ConvertLocalPosToNewChunkPos()
@@ -63,17 +64,18 @@ public static class ALifeActions
             Pos.y = WorldChunkManager.ChunkBatchSize - Pos.y;
         }
     }
-
+    static int debugRan=0;
     public static void Roam(ALifeEntity performing)
     {
         performing.PreviousBatchCoords=performing.CurrentBatchCoords;
 
-        Dir = new Vector2Int(ran.Next(-1,1),ran.Next(-1,1))*performing.MoveSpeed;
+        Dir = new Vector2Int(ran.Next(-2,2),ran.Next(-2,2))*performing.MoveSpeed;
         Pos = performing.LocalCoords + Dir;
 
 
         bool MovedChunk = HasMovedChunk(Pos,out NewChunk);
 
+        
 
         if (MovedChunk)
         {
@@ -88,11 +90,22 @@ public static class ALifeActions
             else
             {
                 performing.CurrentBatchCoords = performing.PreviousBatchCoords;
-            } 
-        }
-    }
+            }
 
-        public static void MoveBetweenChunks(ALifeEntity performing)
+        }
+        else
+        {
+            performing.LocalCoords = Pos;
+        }
+        performing.LocalCoords = ClampToArray(performing.LocalCoords);
+    }
+    static Vector2Int ClampToArray(Vector2Int pos)
+    {
+        pos.x = Mathf.Clamp(pos.x, 0, WorldChunkManager.ChunkBatchSize - 1);
+        pos.y = Mathf.Clamp(pos.y, 0, WorldChunkManager.ChunkBatchSize - 1);
+        return pos;
+    }
+    public static void MoveBetweenChunks(ALifeEntity performing)
     {
         OverworldTile target = OverworldGenerator.Instance.GetOverworldTile(performing.CurrentBatchCoords);
         if (target.GetQuantitiyOfFeature(OverworldFeature.LargeWaterBody)>0)
@@ -102,9 +115,43 @@ public static class ALifeActions
         }
         OverworldGenerator.Instance.GetOverworldTile(performing.PreviousBatchCoords).RemoveALifeEntity(performing);
         target.AddALifeEntity(performing);
-
     }
 
+    public static void MoveTowardsEntity(ALifeEntity performing,ALifeEntity target)
+    {
+        MoveTowardsPosition(performing,target.LocalCoords);
+    }
+
+    public static void MoveTowardsPosition(ALifeEntity performing,Vector2Int target)
+    {
+        DirVec2 = ((target - performing.LocalCoords));
+        DirVec2 = DirVec2.normalized*Mathf.Min( performing.MoveSpeed,Vector2Int.Distance(performing.LocalCoords,target));
+        Dir.x = Mathf.RoundToInt(DirVec2.x);
+        Dir.y = Mathf.RoundToInt(DirVec2.y);
+        performing.LocalCoords += Dir;
+    }
+
+    public static void AttackTarget(ALifeEntity performing,ALifeEntity target,bool useRanged)
+    {
+        if (useRanged)
+        {
+            target.Health -= performing.RangedDamage;
+            if (target.Health <= 0)
+            {
+                target.isDead = true;
+            }
+        }
+        else
+        {
+            target.Health -= performing.AttackDamage;
+            performing.Health -= target.AttackDamage;
+            if (target.Health <= 0)
+            {
+                target.isDead = true;
+            }
+        }
+    }
+   
 
 }
 

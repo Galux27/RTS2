@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Threading;
+using UnityEngine;
 
 public class MultiThreadedAction
 {
@@ -21,7 +22,9 @@ public class MultiThreadedAction
 
     void PerformAction()
     {
-        ToPerform.Invoke();
+        
+            ToPerform.Invoke();
+        
         IsComplete = true;
     }
 
