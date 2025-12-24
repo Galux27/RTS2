@@ -57,13 +57,17 @@ public class ALifeChunk
         {
             return;
         }
+        MakeUnitDecisions();
+
         if (NeedsToPerformCombatChecks())
         {
+            Debug.Log("A Life Combat: performing combat checks on " + coords);
+            ALifeDebugRenderer.Instance?.AddChunkWithCombat(coords);
             UpdateHazardMap();
             CheckForCombat();
             PerformCombat();
+
         }
-            MakeUnitDecisions();
     }
     void PerformCombat()
     {
@@ -121,7 +125,7 @@ public class ALifeChunk
 
             for (int x = 0; x < toUpdate.Count; x++)
             {
-                if (!toUpdate[x].PerformedCombatAction)
+                if (!toUpdate[x].IsInCombat())
                 {
                     ALifeDecisionMaker.MakeZombieDecisions(toUpdate[x]);
                 }

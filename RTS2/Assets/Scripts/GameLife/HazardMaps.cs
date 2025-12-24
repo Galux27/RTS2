@@ -19,12 +19,18 @@ public static class HazardMaps
                 HazardMapsData.Add(kvp.Key, new HazardMap(toCreateFrom.coords, kvp.Key));
             }
            
-                if (HazardMapsData[kvp.Key].OverworldChunkShown != toCreateFrom.coords)
+                //if (HazardMapsData[kvp.Key].OverworldChunkShown != toCreateFrom.coords)
                 {
                     HazardMapsData[kvp.Key].PopulateHazardMap(toCreateFrom.UnitsInTile, toCreateFrom.coords);
+                  
                 }
 
-                
+            if (kvp.Key == FactionController.USER_FACTION && HazardMapsData[kvp.Key].OverworldChunkShown == ALifeDebugRenderer.Instance.GetCurCoords())
+            {
+                Debug.Log("Setting hazard map debug " +  kvp.Key +" chunks "+ HazardMapsData[kvp.Key].OverworldChunkShown +" "+ ALifeDebugRenderer.Instance.GetCurCoords()
+                    +" "+ toCreateFrom.coords);
+                ALifeDebugRenderer.Instance.SetHazardMap(HazardMapsData[kvp.Key].HazardMapData);
+            }
         }
     }
 
@@ -112,16 +118,17 @@ public class HazardMap
                     {
                         // if (CoordValid(x, y))
                         {
-                            if (isHostile)
-                            {
-                                HazardMapData[x, y] += damage;
-                            }
-                            else
-                            {
-                                HazardMapData[x, y] -= damage;
-                            }
+                            //if (isHostile)
+                           // {
+                                HazardMapData[x, y] +=  damage;
+                            //}
+                            //else
+                            //{
+                            //    HazardMapData[x, y] -= 1;// damage;
+                            //}
                         }
                     }
+                    y = yStart;
                 }
             }
 

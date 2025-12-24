@@ -379,16 +379,18 @@ public class ALifeCombat
                     }
                     else if(distToTarget > kvp.Value[x].AttackMaxRange)
                     {
-                     //   Debug.Log("A Life: action 2");
-
-                        ALifeActions.MoveTowardsEntity(kvp.Value[x], target);
+                        //   Debug.Log("A Life: action 2");
+                        Debug.Log("A Life Combat: moving towards entity" + target.LocalCoords);
+  
+                          ALifeActions.MoveTowardsEntity(kvp.Value[x], target);
                     }
                     else
                     {
-                      //  Debug.Log("A Life: action 3");
+                        //  Debug.Log("A Life: action 3");
+                        Vector2Int pos = combatIn.GetPositionToRepositionTo(kvp.Value[x], out hazardLevel);
+                        Debug.Log("A Life Combat: moving to safe location " +pos);
 
-                        ALifeActions.MoveTowardsPosition(kvp.Value[x], 
-                            combatIn.GetPositionToRepositionTo(kvp.Value[x], out hazardLevel));
+ ALifeActions.MoveTowardsPosition(kvp.Value[x], pos);
 
                         if (hazardLevel < 0)
                         {
