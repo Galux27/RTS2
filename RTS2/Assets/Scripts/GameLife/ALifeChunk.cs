@@ -61,9 +61,8 @@ public class ALifeChunk
 
         if (NeedsToPerformCombatChecks())
         {
-            Debug.Log("A Life Combat: performing combat checks on " + coords);
             ALifeDebugRenderer.Instance?.AddChunkWithCombat(coords);
-            UpdateHazardMap();
+          //  UpdateHazardMap();
             CheckForCombat();
             PerformCombat();
 
@@ -80,13 +79,15 @@ public class ALifeChunk
     }
     void CheckForCombat()
     {
-      //  EasyStopwatch.StartStopwatch();
+        EasyStopwatch.StartStopwatch();
         Vector2Int pos = new Vector2Int();
-        float hazardLevel = 0;
-        float[,] hazardMap = null;
+
+        List<string> factionEnemies = null;
+        ALifeEntity target = null;
         foreach (KeyValuePair<string, ALifeFactionGroup> kvp in UnitsInTile)
         {
-            hazardMap = HazardMaps.GetHazardMap(kvp.Key);
+            factionEnemies = FactionController.Instance.GetFactionEnemies(kvp.Key);
+          //  hazardMap = HazardMaps.GetHazardMap(kvp.Key);
             for(int x=0;x<kvp.Value.FactionEntities.Count;x++)
             {
                 if (kvp.Value.FactionEntities[x].IsInCombat())
@@ -96,18 +97,39 @@ public class ALifeChunk
                 pos = ClampToArray( kvp.Value.FactionEntities[x].LocalCoords);
                 if (CoordValid(pos.x, pos.y))
                 {
-                    hazardLevel = hazardMap[pos.x, pos.y];
-
-                    if (hazardLevel > 0f)
+                   for(int q = 0; q < factionEnemies.Count; q++)
                     {
-                        Combat.AddEntityToCombat(kvp.Value.FactionEntities[x]);
+                        if (UnitsInTile.ContainsKey(factionEnemies[q]) && IsInRangeOfEnemy(UnitsInTile[factionEnemies[q]], kvp.Value.FactionEntities[x],out target))
+                        {
+                            Combat.AddEntityToCombat(kvp.Value.FactionEntities[x]);
+                            Combat.AddEntityToCombat(target);
+                            break;
+                        }
                     }
+
                 }
                 
             }
         }
-        //EasyStopwatch.StopStopwatch();
-       // Debug.Log("A Life: checking for combatents took " + EasyStopwatch.GetStopwatchElapsedTime());
+        EasyStopwatch.StopStopwatch();
+        Debug.Log("A Life: checking for combatents took " + EasyStopwatch.GetStopwatchElapsedTime());
+    }
+
+    bool IsInRangeOfEnemy(ALifeFactionGroup enemies,ALifeEntity checking,out ALifeEntity target)
+    {
+        float dist = 0f;
+        float maxDist = checking.GetDangerDistance();
+        for (int x = 0; x < enemies.FactionEntities.Count; x++)
+        {
+            dist= Vector2Int.Distance(enemies.FactionEntities[x].LocalCoords,checking.LocalCoords);
+            if (dist < maxDist)
+            {
+                target = enemies.FactionEntities[x];
+                return true;
+            }
+        }
+        target = null;
+        return false;
     }
 
     Vector2Int ClampToArray(Vector2Int pos)
@@ -139,33 +161,39 @@ public class ALifeChunk
         HazardMaps.UpdateHazardMapData(this);
       
     }
-
-    public Vector2Int GetPositionToRepositionTo(ALifeEntity entity,out float hazardLevel)
+    static System.Random ran = new System.Random();
+    public Vector2Int GetPositionToRepositionTo(ALifeEntity entity,int dist)
     {
         Vector2Int retVal = entity.LocalCoords;
-        float[,] HazardMap = HazardMaps.GetHazardMap(entity.Faction);
-        hazardLevel = HazardMap[retVal.x,retVal.y];
 
-        if (HazardMap == null)
-        {
-            return retVal;
-        }
-        float currentHazardLevel = HazardMap[retVal.x, retVal.y];
-        for (int x = retVal.x - entity.MoveSpeed; x < retVal.x + entity.MoveSpeed; x++) 
-        {
-            for (int y = retVal.y - entity.MoveSpeed; y < retVal.y + entity.MoveSpeed; y++)
-            {
-                if (CoordValid(x, y))
-                {
-                    if(HazardMap[x, y] < currentHazardLevel)
-                    {
-                        retVal.x = x;
-                        retVal.y = y;
-                        currentHazardLevel = HazardMap[x, y];
-                    }
-                }
-            }
-        }
+        retVal.x += ran.Next(-dist, dist);
+        retVal.y += ran.Next(-dist, dist);
+        retVal.x = Mathf.Clamp(entity.LocalCoords.x, 0, WorldChunkManager.ChunkBatchSize - 1);
+        retVal.y = Mathf.Clamp(entity.LocalCoords.y, 0, WorldChunkManager.ChunkBatchSize - 1);
+
+        //float[,] HazardMap = HazardMaps.GetHazardMap(entity.Faction);
+        //hazardLevel = HazardMap[retVal.x,retVal.y];
+
+        //if (HazardMap == null)
+        //{
+        //    return retVal;
+        //}
+        //float currentHazardLevel = HazardMap[retVal.x, retVal.y];
+        //for (int x = retVal.x - entity.MoveSpeed; x < retVal.x + entity.MoveSpeed; x++) 
+        //{
+        //    for (int y = retVal.y - entity.MoveSpeed; y < retVal.y + entity.MoveSpeed; y++)
+        //    {
+        //        if (CoordValid(x, y))
+        //        {
+        //            if(HazardMap[x, y] < currentHazardLevel)
+        //            {
+        //                retVal.x = x;
+        //                retVal.y = y;
+        //                currentHazardLevel = HazardMap[x, y];
+        //            }
+        //        }
+        //    }
+        //}
 
         return retVal;
     }

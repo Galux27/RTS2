@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ALife
 {
-    const float ALifeUpdateRate=3;
+    const float ALifeUpdateRate=.1f;
     float UpdateTimer = 0f;
     const int ZombiesPerMajorRoad = 25, ZombiesPerMinorRoad = 10, ZombiesPerBackroad = 5;
     public int zombieCount = 0;
@@ -43,7 +44,7 @@ public class ALife
         if(UpdateTimer > ALifeUpdateRate)
         {
             RunningALifeUpdate = true;
-            Debug.Log("A Life: starting a life update");
+            Debug.Log("A Life Update: starting a life update");
             StartUpdateThread();
             //MultiThreadedManager.Instance.AddAction(()=> { MultithreadedUpdateALife(); },()=> { OnALifeUpdateFinish(); });
             //OverworldGenerator.Instance.StartCoroutine(UpdateALife());
@@ -67,14 +68,15 @@ public class ALife
         else
         {
             CanUpdateUnits = true;
-            Debug.Log("A Life: fin");
+            Debug.Log("A Life Update: fin");
         }
     }
-    const int maxPerThread = 100;
+    const int maxPerThread = 10;
     int curX=0,curY=0;
+    const float MaxUpdateTimeForThread = .01f;
     void MultithreadedUpdateALife()
     {
-        Debug.Log("A Life: Multithreaded update " + curX + "," + curY);
+        MultithreadingStopwatch.StartStopwatch();
         int count = 0;
         for (; curX < OverworldGenerator.Instance.OverworldWidth; curX++)
         {
@@ -82,8 +84,11 @@ public class ALife
             {
                 UpdateALifeTile(OverworldGenerator.Instance.OverworldTiles[curX, curY]);
                 count++;
-                if (count > maxPerThread)
+                if ( MultithreadingStopwatch.GetStopwatchElapsedTime()> MaxUpdateTimeForThread)
                 {
+                    Debug.Log("A Life Update: updated " + count+" "+curX+","+curY);
+
+                    MultithreadingStopwatch.StopStopwatch();
                     return;
                 }
             }
@@ -130,7 +135,7 @@ public class ALife
         int MinorRoads = tile.GetQuantitiyOfFeature(OverworldFeature.MinorRoad);
         int BackRoads = tile.GetQuantitiyOfFeature(OverworldFeature.Backroad);
         int pop = tile.Population / 10;
-        int toSpawn = Random.Range(0, 20);
+        int toSpawn = UnityEngine.Random.Range(0, 20);
         toSpawn += pop;
         toSpawn += MajorRoads * ZombiesPerMajorRoad;
         toSpawn += MinorRoads * ZombiesPerMinorRoad;
@@ -148,7 +153,7 @@ public class ALife
                 new Vector2Int(tile.X, tile.Y),
                 FactionController.ZOMBIE_FACTION,
                 UnitTypesController.BaseZombie,
-                new Vector2Int(Random.Range(0, WorldChunkManager.ChunkBatchSize-1), Random.Range(0, WorldChunkManager.ChunkBatchSize-1))
+                new Vector2Int(UnityEngine.Random.Range(0, WorldChunkManager.ChunkBatchSize-1), UnityEngine.Random.Range(0, WorldChunkManager.ChunkBatchSize-1))
                 , 1, 1, 1);
             spawning.SetUnitDetails(data);
             tile.AddALifeEntity(spawning
@@ -170,7 +175,7 @@ public class ALife
                 new Vector2Int(tile.X, tile.Y),
                 FactionController.USER_FACTION,
                 UnitTypesController.BaseRilfeman,
-                new Vector2Int(Random.Range(0, WorldChunkManager.ChunkBatchSize-1), Random.Range(0, WorldChunkManager.ChunkBatchSize-1))
+                new Vector2Int(UnityEngine.Random.Range(0, WorldChunkManager.ChunkBatchSize-1), UnityEngine.Random.Range(0, WorldChunkManager.ChunkBatchSize-1))
                 , 1, 1, 1);
             spawning.SetUnitDetails(data);
             tile.AddALifeEntity(spawning
@@ -347,8 +352,116 @@ public class ALifeCombat
 
         }
     }
+    void ProcessCombat2(ALifeChunk combatIn)
+    {
+        foreach (KeyValuePair<string, List<ALifeEntity>> kvp in EntitiesInvolved)
+        {
+            for (int x = 0; x < kvp.Value.Count; x++)
+            {
+                kvp.Value[x].PerformedCombatAction = false;
+            }
+        }
+        ALifeEntity target = null;
+        System.Random ran = new System.Random();
+        float distToTarget = 0f, hazardLevel = 0f, attackChance = 0f;
+        List<ALifeEntity> ToRemoveFromCombat = new List<ALifeEntity>();
+        foreach (KeyValuePair<string, List<ALifeEntity>> kvp in EntitiesInvolved)
+        {
+            // Debug.Log("A Life: started unit combat " + kvp.Key+","+kvp.Value.Count);
+            for (int x = 0; x < kvp.Value.Count; x++)
+            {
+                target = GetClosestPotentialCombatTarget(kvp.Value[x]);
+                // Debug.Log("A Life: found target " + (target == null) + " " + kvp.Value.Count);
+                if (target != null)
+                {
+                    distToTarget = Vector2Int.Distance(kvp.Value[x].LocalCoords, target.LocalCoords);
+
+                    if (distToTarget < kvp.Value[x].GetDangerDistance())
+                    {
+                        attackChance = ran.Next(0, (int)kvp.Value[x].AttackMaxRange);
+                        if (attackChance < distToTarget)
+                        {
+                            //  Debug.Log("A Life: action 1");
+                            Debug.Log("A Life Combat: attacking target" + "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + " target " + target.Faction
+                              + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange + "/" + " dam " + kvp.Value[x].AttackDamage + "," + kvp.Value[x].RangedDamage);
+
+                            ALifeActions.AttackTarget(kvp.Value[x], target, kvp.Value[x].AttackMaxRange > MinAttackRange
+                                && distToTarget > MinAttackRange);
+                            OnAttack(kvp.Value[x], target, ref ToRemoveFromCombat);
+
+                        }
+                        else
+                        {
+                            Vector2Int pos = combatIn.GetPositionToRepositionTo(kvp.Value[x], kvp.Value[x].MoveSpeed);
+                            Debug.Log("A Life Combat: moving to safe location" +
+                                "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + "->" + pos + " target " + target.Faction
+                             + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange);
+                            ALifeActions.MoveTowardsPosition(kvp.Value[x], pos);
+
+                            if (hazardLevel < 0)
+                            {
+                                ToRemoveFromCombat.Add(kvp.Value[x]);
+                            }
+                        }
+                    }
+
+                    if (distToTarget < kvp.Value[x].AttackMaxRange)
+                    {
+                        attackChance = ran.Next(0, (int)kvp.Value[x].AttackMaxRange);
+
+                        if (attackChance < distToTarget)
+                        {
+                            //  Debug.Log("A Life: action 1");
+                            //Debug.Log("A Life Combat: attacking target" + "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + " target " + target.Faction
+                            //  + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange + "/" + " dam " + kvp.Value[x].AttackDamage + "," + kvp.Value[x].RangedDamage);
+
+                            ALifeActions.AttackTarget(kvp.Value[x], target, kvp.Value[x].AttackMaxRange > MinAttackRange
+                                && distToTarget > MinAttackRange);
+                            OnAttack(kvp.Value[x], target, ref ToRemoveFromCombat);
+
+                        }
+                        else
+                        {
+                            Vector2Int pos = combatIn.GetPositionToRepositionTo(kvp.Value[x], kvp.Value[x].MoveSpeed);
+                            //Debug.Log("A Life Combat: moving to safe location" +
+                            //    "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + "->" + pos + " target " + target.Faction
+                            // + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange);
+                            ALifeActions.MoveTowardsPosition(kvp.Value[x], pos);
+
+                            if (hazardLevel < 0)
+                            {
+                                ToRemoveFromCombat.Add(kvp.Value[x]);
+                            }
+                        }
+
+                    }
+                    else if (distToTarget > kvp.Value[x].AttackMaxRange)
+                    {
+                        //   Debug.Log("A Life: action 2");
+                        //Debug.Log("A Life Combat: moving towards entity" + "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + " target " + target.Faction
+                        //    + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange);
+
+                        ALifeActions.MoveTowardsEntity(kvp.Value[x], target);
+                    }
+                }
+                target = null;
+                kvp.Value[x].PerformedCombatAction = true;
+            }
+            //Debug.Log("A Life: finished unit combat");
+
+        }
+
+        for (int x = 0; x < ToRemoveFromCombat.Count; x++)
+        {
+            RemoveEntityFromCombat(ToRemoveFromCombat[x]);
+        }
+    }
+
+
     public void ProcessCombat(ALifeChunk combatIn)
     {
+        ProcessCombat2(combatIn);
+        return;
        // DebugOutCombat();
         foreach(KeyValuePair<string,List<ALifeEntity>> kvp in  EntitiesInvolved)
         {
@@ -358,7 +471,8 @@ public class ALifeCombat
             }
         }
         ALifeEntity target = null;
-        float distToTarget = 0f, hazardLevel = 0f ;
+        System.Random ran = new System.Random();
+        float distToTarget = 0f, hazardLevel = 0f, attackChance = 0f;
         List<ALifeEntity> ToRemoveFromCombat = new List<ALifeEntity>();
         foreach (KeyValuePair<string, List<ALifeEntity>> kvp in EntitiesInvolved)
         {
@@ -370,34 +484,44 @@ public class ALifeCombat
                 if (target != null)
                 {
                     distToTarget = Vector2Int.Distance(kvp.Value[x].LocalCoords, target.LocalCoords);
-                    if (distToTarget < kvp.Value[x].AttackMaxRange && distToTarget > kvp.Value[x].AttackMinRange)
+                    if (distToTarget < kvp.Value[x].AttackMaxRange)
                     {
-                      //  Debug.Log("A Life: action 1");
-                        ALifeActions.AttackTarget(kvp.Value[x], target, kvp.Value[x].AttackMaxRange > MinAttackRange
-                            && distToTarget > MinAttackRange);
-                        OnAttack(kvp.Value[x], target, ref ToRemoveFromCombat);
+                        attackChance = ran.Next(0, (int)kvp.Value[x].AttackMaxRange);
+
+                        if (attackChance < distToTarget)
+                        {
+                            //  Debug.Log("A Life: action 1");
+                            Debug.Log("A Life Combat: attacking target" + "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + " target " + target.Faction
+                              + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange + "/" + " dam " + kvp.Value[x].AttackDamage + "," + kvp.Value[x].RangedDamage);
+
+                            ALifeActions.AttackTarget(kvp.Value[x], target, kvp.Value[x].AttackMaxRange > MinAttackRange
+                                && distToTarget > MinAttackRange);
+                            OnAttack(kvp.Value[x], target, ref ToRemoveFromCombat);
+
+                        }
+                        else
+                        {
+                            Vector2Int pos = combatIn.GetPositionToRepositionTo(kvp.Value[x], kvp.Value[x].MoveSpeed);
+                            Debug.Log("A Life Combat: moving to safe location" +
+                                "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + "->" + pos + " target " + target.Faction
+                             + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange);
+                            ALifeActions.MoveTowardsPosition(kvp.Value[x], pos);
+
+                            if (hazardLevel < 0)
+                            {
+                                ToRemoveFromCombat.Add(kvp.Value[x]);
+                            }
+                        }
+                       
                     }
                     else if(distToTarget > kvp.Value[x].AttackMaxRange)
                     {
                         //   Debug.Log("A Life: action 2");
-                        Debug.Log("A Life Combat: moving towards entity" + target.LocalCoords);
+                        Debug.Log("A Life Combat: moving towards entity" + "OVC:" + combatIn.coords + kvp.Value[x].Faction+" " + kvp.Value[x].LocalCoords+" target " +target.Faction
+                            +" "+ target.LocalCoords+" dist "+ distToTarget+"/"+ kvp.Value[x].AttackMaxRange);
   
                           ALifeActions.MoveTowardsEntity(kvp.Value[x], target);
-                    }
-                    else
-                    {
-                        //  Debug.Log("A Life: action 3");
-                        Vector2Int pos = combatIn.GetPositionToRepositionTo(kvp.Value[x], out hazardLevel);
-                        Debug.Log("A Life Combat: moving to safe location " +pos);
-
- ALifeActions.MoveTowardsPosition(kvp.Value[x], pos);
-
-                        if (hazardLevel < 0)
-                        {
-                            ToRemoveFromCombat.Add(kvp.Value[x]);
-                        }  
-                    }
-                   
+                    }    
                 }
                 target = null;
                 kvp.Value[x].PerformedCombatAction = true;
@@ -415,7 +539,7 @@ public class ALifeCombat
     void OnAttack(ALifeEntity performing,ALifeEntity target,ref List<ALifeEntity> toRemove)
     {
         Debug.Log("A Life Combat: type "+performing.UnitType+" pos "+performing.LocalCoords+" hp " +performing.Health 
-            +" target type"+ performing.UnitType + " pos " + target.LocalCoords+" hp " + target.Health);
+            +" target type"+ target.UnitType + " pos " + target.LocalCoords+" hp " + target.Health);
         if (performing.isDead &&!toRemove.Contains(performing))
         {
             toRemove.Add(performing);

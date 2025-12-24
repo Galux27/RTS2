@@ -97,7 +97,6 @@ public class UnitTypesController : MonoBehaviour
             {
                 output.RangeMax = 1;
             }
-
             }
 
         }
