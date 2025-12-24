@@ -253,7 +253,7 @@ public class ALifeEntity
         MaxHealth = data.MaxHealth;
         RangedDamage=data.RangedDamage;
         AttackMinRange = data.RangeMin;
-        AttackMaxRange=data.RangeMax;
+        AttackMaxRange=Mathf.Max(1, data.RangeMax);
         attackRangeInt = (int)AttackMaxRange;
     }
     public bool HasRanged()

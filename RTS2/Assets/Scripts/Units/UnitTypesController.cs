@@ -70,8 +70,8 @@ public class UnitTypesController : MonoBehaviour
                     {
                         GotRangedWeapon = true;
                         output.RangedDamage = w.RangedDamage;
-                        output.RangeMax = w.FireMinRange;
-                        output.RangeMin = w.FireMaxRange;
+                        output.RangeMin = w.FireMinRange;
+                        output.RangeMax = w.FireMaxRange;
                         output.AttackRate = w.FireRate;
                     }
                     else
@@ -93,9 +93,14 @@ public class UnitTypesController : MonoBehaviour
         {
             output.MeleeDamage = 5;
             output.AttackRate = 1f;
-        }
+            if (!GotRangedWeapon)
+            {
+                output.RangeMax = 1;
+            }
 
-    }
+            }
+
+        }
 
     public bool CanConvertUnitsWithObject(ConstructableObjectInstance objectFound,ref string typeCanConvertTo)
     {
