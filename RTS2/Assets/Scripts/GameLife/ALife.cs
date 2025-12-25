@@ -261,6 +261,12 @@ public class ALifeEntity
         AttackMaxRange=Mathf.Max(1, data.RangeMax);
         attackRangeInt = (int)AttackMaxRange;
     }
+
+    public void UpdateDetailsFromActiveUnit(Unit unit)
+    {
+        Health = unit.Health();
+    }
+
     public bool HasRanged()
     {
         return AttackMaxRange > 0;

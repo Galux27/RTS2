@@ -28,20 +28,25 @@ public class GameLifeManager : MonoBehaviour
 
     public void OnChunkBatchGenerated(WorldChunkBatch toGenerate)
     {
+        toGenerate.IsActive = true;
         SpawnUnitsForGeneratedChunkBatch(toGenerate);
         //ZombieSpawner.OnWorldChunkBatchGenerated(toGenerate);
     }
 
     public void OnChunkBatchUnloaded(WorldChunkBatch unloading)
     {
+        unloading.IsActive = false;
+        Debug.Log("On Chunk unloaded " + unloading.coords);
         for (int x=0;x< unloading.Chunks.GetLength(0);x++)
         {
             for (int y = 0; y < unloading.Chunks.GetLength(1); y++)
             {
-                for(int i =0;i< unloading.Chunks[x, y].UnitsInChunk.Count; i++)
+                while(unloading.Chunks[x, y].UnitsInChunk.Count > 0)
                 {
-                    ConvertUnitToALifeEntity(unloading.Chunks[x, y].UnitsInChunk[i]);
+                    ConvertUnitToALifeEntity(unloading.Chunks[x, y].UnitsInChunk[0], unloading);
+                    unloading.Chunks[x, y].UnitsInChunk.RemoveAt(0);
                 }
+               
             }
         }
     }
@@ -124,6 +129,7 @@ public class GameLifeManager : MonoBehaviour
             }
 
         }
+        tile.UnitsInTile.Clear();
     }
     void ConvertALifeEntityCoordsToChunkAndTile(Vector2Int input,out Vector2Int chunk, out Vector2Int tile)
     {
@@ -132,10 +138,19 @@ public class GameLifeManager : MonoBehaviour
         
     }
 
-
-    void ConvertUnitToALifeEntity(Unit u)
+    Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
+    void ConvertUnitToALifeEntity(Unit u,WorldChunkBatch chunkImIn)
     {
-
+        if(u==null) return;
+        CachedUnitData data = UnitTypesController.Instance.UnitData[u.MyType.ToString()];
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(u.transform.position.x,u.transform.position.y,out batch,out chunk,out local);
+        ALifeEntity entity = new ALifeEntity(chunk, u.MyFaction.MyFactionID, u.MyType.ToString(), local, data.MoveSpeed, data.AttackRate, data.RangeMax);
+        entity.SetUnitDetails(data);
+        entity.UpdateDetailsFromActiveUnit(u);
+        entity.SetID(u.MyUID().Value);
+        
+        OverworldGenerator.Instance.OverworldTiles[chunkImIn.OverworldCoords.x, chunkImIn.OverworldCoords.y].AddALifeEntity(entity);
+        u.DestroyUnit();
     }
 
 }

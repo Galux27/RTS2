@@ -39,6 +39,13 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         }
     }
 
+    public void DestroyUnit()
+    {
+        UpdateUnitRenderer(false);
+      //  RemoveUnitFromChunkItsIn();
+        GameObject.Destroy(this.gameObject);
+    }
+
     public void UpdateUnitRenderer(bool show)
     {
         if (this.transform == null)

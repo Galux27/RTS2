@@ -15,6 +15,19 @@ public class ALifeChunk
     public Vector2Int coords;
     public Dictionary<string, ALifeFactionGroup> UnitsInTile = new Dictionary<string, ALifeFactionGroup>();
     ALifeCombat Combat = null;
+
+    void CheckForEntityWithSameID(ALifeFactionGroup group,ulong id)
+    {
+        for(int x=0;x<group.FactionEntities.Count;x++)
+        {
+            if (group.FactionEntities[x].ID == id)
+            {
+                group.FactionEntities.RemoveAt(x);
+                return;
+            }
+        }
+    }
+
     public void AddALifeEntity(ALifeEntity entity, bool CheckForExisting = true)
     {
 

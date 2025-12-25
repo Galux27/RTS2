@@ -135,6 +135,10 @@ public class WorldChunkManager : MonoBehaviour
     {
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
         {
+            if (kvp.Value.IsActive == false)
+            {
+                continue;
+            }
             if (kvp.Value.CheckToUnloadChunkData())
             {
                 return;
@@ -246,6 +250,10 @@ public class WorldChunkManager : MonoBehaviour
        
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
         {
+            if (kvp.Value.IsActive == false)
+            {
+                continue;
+            }
             if (kvp.Value.RenderChunk())
             {
 
