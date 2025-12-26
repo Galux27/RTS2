@@ -158,7 +158,7 @@ public class WorldChunkBatch : MonoBehaviour
         this.coords = coords;
         UpperBound = coords + new Vector2Int(WorldChunkManager.ChunksPerBatch * WorldChunkManager.ChunkSize, WorldChunkManager.ChunksPerBatch * WorldChunkManager.ChunkSize);
         gameObject.name = "World Chunk Batch" + coords.ToString();
-
+        this.transform.position = new Vector3(coords.x, coords.y);
     }
 
 
@@ -308,20 +308,20 @@ public class WorldChunkBatch : MonoBehaviour
        
     }
     public bool IsRendered = false;
+    public int RenderCount = 0;
     public bool RenderChunk()
     {
         if (IsRendered)
         {
             return false;
         }
-        int count = 0;
+        RenderCount = 0;
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
                 if (Chunks[x, y].CheckIfChunkNeedsToRender() || Chunks[x,y].DoesChunkNeedRefresh())
                 {
-                    Debug.Log("Generating: render call" + coords);
 
                     WorldRenderer.Instance.RenderChunk(Chunks[x, y].ChunkTiles);
                     Chunks[x, y].RenderEnvironmentObjects();
@@ -329,14 +329,14 @@ public class WorldChunkBatch : MonoBehaviour
                     Chunks[x, y].RefreshWalls();
                     Chunks[x, y].IsRendered = true;
                     Chunks[x, y].NeedsUpdate = false;
-                    count++;
+                    RenderCount++;
                 }else if (Chunks[x, y].IsRendered)
                 {
-                    count++;
+                    RenderCount++;
                 }
             }
         }
-        IsRendered = (count==Chunks.GetLength(0)*Chunks.GetLength(1));
+        IsRendered = (RenderCount==Chunks.GetLength(0)*Chunks.GetLength(1));
         return true;
     }
 
@@ -429,35 +429,43 @@ public class WorldChunkBatch : MonoBehaviour
         }
     }
     const float DistToUnloadChunkBatch = 750f;
-    public bool CheckToUnloadChunkData()
+    public float distToCam = 0f;
+   
+    public bool IsFarEnoughAwayToUnload(Vector2Int CamPos)
     {
-        Vector3 cameraPosition = CameraController.Instance.transform.position;
-        if(Vector2Int.Distance(new Vector2Int(Mathf.RoundToInt(cameraPosition.x), Mathf.RoundToInt(cameraPosition.y)), coords) > DistToUnloadChunkBatch)
+        distToCam = Vector2Int.Distance(CamPos, coords);
+        return distToCam > DistToUnloadChunkBatch;
+    }
+
+    public void UnloadChunkData()
+    {
+        bool DoWeNeedToUpdateData = false;
+        for (int x = 0; x < Chunks.GetLength(0); x++)
         {
-            bool DoWeNeedToUpdateData = false;
-            for(int x=0;x<Chunks.GetLength(0); x++)
+            for (int y = 0; y < Chunks.GetLength(1); y++)
             {
-                for(int y=0;y<Chunks.GetLength(1);y++)
+                if (Chunks[x, y].HasChunkBeenModified())
                 {
-                    if (Chunks[x, y].HasChunkBeenModified())
-                    {
-                        DoWeNeedToUpdateData = true;
-                        break;
-                    }
+                    DoWeNeedToUpdateData = true;
+                    break;
                 }
             }
-
-            GameLifeManager.Instance.OnChunkBatchUnloaded(this);
-            //Write chunk data to some live save place as its changed from the savegame
-            if (DoWeNeedToUpdateData)
-            {
-                MultiThreadedManager.Instance.AddAction(() => { SerializationHelpers.SaveChunkBatchToWorkingCopy(this); UnloadChunk(); },() => WorldChunkManager.Instance.ChunkBatches.Remove(this.coords));
-            }
-            
-            return true;
         }
-        return false;
+
+        GameLifeManager.Instance.OnChunkBatchUnloaded(this);
+        //Write chunk data to some live save place as its changed from the savegame
+        if (DoWeNeedToUpdateData)
+        {
+            MultiThreadedManager.Instance.AddAction(() => { SerializationHelpers.SaveChunkBatchToWorkingCopy(this); UnloadChunk(); }, () => WorldChunkManager.Instance.ChunkBatches.Remove(this.coords));
+        }
+        else
+        {
+            UnloadChunk();
+        }
+
     }
+
+  
 
     void UnloadChunk()
     {
@@ -465,7 +473,7 @@ public class WorldChunkBatch : MonoBehaviour
         //go through chunks on the edge and remove pathfinding neighbours that 
         UnlinkBatchFromOtherBatches();
         //reset all environment objects and remove UIDs
-        Debug.Log("Unloading chunk at " + this.coords);
+        Debug.Log("Chunk Loading: Unloading chunk at " + this.coords);
     }
 
     void UnloadChunks()
@@ -693,7 +701,7 @@ public class WorldChunkBatch : MonoBehaviour
         }
         }
 
-
+    Vector2Int batchCache = new Vector2Int(), chunkCache = new Vector2Int(), localCache = new Vector2Int();
         Vector2Int getCoordsCache = new Vector2Int();
     public Vector2Int GetChunkCoordsFromWorldPos(Vector3 worldPos)
     {
@@ -982,17 +990,20 @@ public class WorldChunkBatch : MonoBehaviour
     {
         return x >= 0 && y >= 0 && x < Chunks.GetLength(0) && y < Chunks.GetLength(1);
     }
+
+
+
     public void OnUnitCreated(Unit u)
     {
-        GetChunkCoordsFromWorldPos(u.transform.position);
-        Chunks[getCoordsCache.x, getCoordsCache.y].AddUnitToChunk(u);
-        u.UpdateChunk(Chunks[getCoordsCache.x, getCoordsCache.y]);
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(u.transform.position.x, u.transform.position.y, out batchCache, out chunkCache, out localCache);
+        Chunks[chunkCache.x, chunkCache.y].AddUnitToChunk(u);
+        u.UpdateChunk(Chunks[chunkCache.x, chunkCache.y]);
     }
 
     public void OnUnitMove(Unit u)
     {
-        GetChunkCoordsFromWorldPos(u.transform.position);
-        u.UpdateChunk(Chunks[getCoordsCache.x, getCoordsCache.y]);
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(u.transform.position.x, u.transform.position.y, out batchCache, out chunkCache, out localCache);
+        u.UpdateChunk(Chunks[chunkCache.x, chunkCache.y]);
     }
 
     public void OnUnitDeath(Unit u)

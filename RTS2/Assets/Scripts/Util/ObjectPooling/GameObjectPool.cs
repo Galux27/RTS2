@@ -26,6 +26,7 @@ public class GameObjectPool
     public void ReturnObjectToPool(GameObject g)
     {
         Active.Remove(g);
+        g.transform.parent = null;
         g.SetActive(false);
         Inactive.Add(g);
     }

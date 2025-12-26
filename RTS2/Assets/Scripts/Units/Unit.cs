@@ -22,12 +22,19 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public void UpdateChunk(WorldChunk newChunk)
     {
         RemoveUnitFromChunkItsIn();
-        MyCurrentChunk = new Vector2Int(newChunk.LocalXCoord, newChunk.LocalYCoord) ;
-        MyCurrentBatch = newChunk.BatchCoords;
-        newChunk.AddUnitToChunk(this);
-        UpdateUnitRenderer(newChunk.IsRendered);
-       
+      
         SetChunk = true;
+        if (!WorldChunkManager.Instance.ChunkBatches[newChunk.BatchCoords].IsActive)
+        {
+            GameLifeManager.Instance.ConvertUnitToALifeEntity(this, WorldChunkManager.Instance.ChunkBatches[newChunk.BatchCoords]);
+        }
+        else
+        {
+            MyCurrentChunk = new Vector2Int(newChunk.LocalXCoord, newChunk.LocalYCoord);
+            MyCurrentBatch = newChunk.BatchCoords;
+            newChunk.AddUnitToChunk(this);
+            UpdateUnitRenderer(newChunk.IsRendered);
+        }
     }
 
  
@@ -42,13 +49,14 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public void DestroyUnit()
     {
         UpdateUnitRenderer(false);
+        MyHealth.OnObjectHidden(this.gameObject);
       //  RemoveUnitFromChunkItsIn();
         GameObject.Destroy(this.gameObject);
     }
 
     public void UpdateUnitRenderer(bool show)
     {
-        if (this.transform == null)
+        if (this==null|| this.transform == null)
         {
             return;
         }

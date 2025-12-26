@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,15 +27,15 @@ public class GameLifeManager : MonoBehaviour
 
     public void OnChunkBatchGenerated(WorldChunkBatch toGenerate)
     {
-        toGenerate.IsActive = true;
-        SpawnUnitsForGeneratedChunkBatch(toGenerate);
+        Debug.Log("Chunk Loading: generating units from ALife " + toGenerate.coords);
+        SpawnUnitsFromALife(toGenerate);
         //ZombieSpawner.OnWorldChunkBatchGenerated(toGenerate);
     }
 
     public void OnChunkBatchUnloaded(WorldChunkBatch unloading)
     {
-        unloading.IsActive = false;
-        Debug.Log("On Chunk unloaded " + unloading.coords);
+        Debug.Log("Chunk Loading: Unloading chunk units at" + unloading.coords);
+
         for (int x=0;x< unloading.Chunks.GetLength(0);x++)
         {
             for (int y = 0; y < unloading.Chunks.GetLength(1); y++)
@@ -97,7 +96,7 @@ public class GameLifeManager : MonoBehaviour
     }
 
 
-    void SpawnUnitsForGeneratedChunkBatch(WorldChunkBatch batch)
+    public void SpawnUnitsFromALife(WorldChunkBatch batch)
     {
         OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(batch.OverworldCoords);
         GameObject enemy = null;
@@ -139,12 +138,13 @@ public class GameLifeManager : MonoBehaviour
     }
 
     Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
-    void ConvertUnitToALifeEntity(Unit u,WorldChunkBatch chunkImIn)
+    public void ConvertUnitToALifeEntity(Unit u,WorldChunkBatch chunkImIn)
     {
         if(u==null) return;
         CachedUnitData data = UnitTypesController.Instance.UnitData[u.MyType.ToString()];
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(u.transform.position.x,u.transform.position.y,out batch,out chunk,out local);
-        ALifeEntity entity = new ALifeEntity(chunk, u.MyFaction.MyFactionID, u.MyType.ToString(), local, data.MoveSpeed, data.AttackRate, data.RangeMax);
+        Vector2Int aLifePos = new Vector2Int(local.x + (chunk.x * WorldChunkManager.ChunkSize), local.y + (chunk.y * WorldChunkManager.ChunkSize));
+        ALifeEntity entity = new ALifeEntity(chunk, u.MyFaction.MyFactionID, u.MyType.ToString(), aLifePos, data.MoveSpeed, data.AttackRate, data.RangeMax);
         entity.SetUnitDetails(data);
         entity.UpdateDetailsFromActiveUnit(u);
         entity.SetID(u.MyUID().Value);

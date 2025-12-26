@@ -81,7 +81,7 @@ public class WorldController : MonoBehaviour
 
             }
         }
-        WorldChunkManager.Instance.RenderWorldChunks();
+        WorldChunkManager.Instance.UpdateWorldChunks();
        // WallManager.RenderWalls(BuildingTilemap);
 
     }

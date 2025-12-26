@@ -5319,8 +5319,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 20.3834, y: -9.3868}
-  m_SizeDelta: {x: 992.7667, y: 752.7736}
+  m_AnchoredPosition: {x: 885, y: -204}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &746229881
 MonoBehaviour:
@@ -5338,6 +5338,7 @@ MonoBehaviour:
   ChunksWithCombat: []
   UpdateTex: 0
   ToUpdate: 0
+  DrawHazard: 0
 --- !u!114 &746229882
 MonoBehaviour:
   m_ObjectHideFlags: 0

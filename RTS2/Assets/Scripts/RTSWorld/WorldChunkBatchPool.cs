@@ -39,6 +39,7 @@ public static class WorldChunkBatchPool
 
     public static WorldChunkBatch GetChunkBatch()
     {
+        return CreateWorldChunkBatch();
         if (!Init)
         {
             InitPool();

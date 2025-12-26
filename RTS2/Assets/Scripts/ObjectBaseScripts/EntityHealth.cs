@@ -38,12 +38,18 @@ public class EntityHealth
         }
     }
     HealthUI healthUI;
-
+    
     public void OnObjectRender(GameObject parent)
     {
         if (healthUI == null)
         {
-            healthUI = GameObjectPoolManager.Instance.GetObjectFromPool("WorldspaceHealthBar").GetComponent<HealthUI>();
+            GameObject healthBar = GameObjectPoolManager.Instance.GetObjectFromPool("WorldspaceHealthBar");
+            if (healthBar == null)
+            {
+                Debug.LogError("Got null health bar");
+                return;
+            }
+            healthUI = healthBar.GetComponent<HealthUI>();
             healthUI.gameObject.SetActive(true);
             healthUI.LinkToHealth(this,parent);
         }

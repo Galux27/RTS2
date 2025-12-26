@@ -14,7 +14,7 @@ public static class Pathfinding
         PathfindingNode node = GetNodeFromCoords(x, y);
         if (node == null)
         {
-            Debug.LogError("Null node at " + x+"," + y);
+           // Debug.LogError("Null node at " + x+"," + y);
             return;
         }
 

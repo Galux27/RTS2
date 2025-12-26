@@ -75,7 +75,7 @@ public static class OverworldPathfinding
         List<BasicOverworldPathfindingNode> basicPath = OverworldBasicPathfinding.GetPathFromSimplified(startPos, targetPos, out posInStart, out posInEnd);
         if (basicPath == null||basicPath.Count==0)
         {
-            Debug.LogError("Could not get simplifeid path between " + startPos + " " + targetPos);
+            //Debug.LogError("Could not get simplifeid path between " + startPos + " " + targetPos);
             return null;
         }
         List<OverworldPathfindingNode> retVal = new List<OverworldPathfindingNode>();

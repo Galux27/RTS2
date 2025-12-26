@@ -54,4 +54,9 @@ public class HealthUI : MonoBehaviour
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.InverseLerp(0,GetMaxHealth(), GetHealth()) * MaxValWidth);
 
     }
+
+    private void OnDestroy()
+    {
+        Debug.LogError("Destroying health ui...");
+    }
 }

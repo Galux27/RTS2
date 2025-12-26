@@ -105,9 +105,10 @@ public class WorldChunkManager : MonoBehaviour
     public void PerformCreateNewChunksCheck()
     {
         Vector3 cameraPos = CameraController.Instance.transform.position;
-        Vector2Int cameraCoords = ConvertPositionToChunkBatchCoords(cameraPos);
-        List<Vector2Int> coords = GetAdjacentBatchCoords(cameraCoords);
-        coords.Add(cameraCoords);
+        ConvertPositionToChunkAndLocalCoords(cameraPos.x, cameraPos.y, out batch, out chunk, out local);
+        //Vector2Int cameraCoords = ConvertPositionToChunkBatchCoords(cameraPos);
+        List<Vector2Int> coords = GetAdjacentBatchCoords(batch);
+        coords.Add(batch);
         bool needToRender = false;
         int count = 0;
 
@@ -116,6 +117,7 @@ public class WorldChunkManager : MonoBehaviour
             if (!ChunkBatches.ContainsKey(coords[x]))
             {
                 CreateChunkBatch(coords[x]);
+                Debug.Log("Chunk Loading: loading new chunk as we didn't have coords " + coords[x]);
                 needToRender = true;
                 count++;
             }
@@ -125,24 +127,23 @@ public class WorldChunkManager : MonoBehaviour
             }
         }
        
-            if (needToRender||DoWeHaveUndrawnChunks())
+        if (needToRender||DoWeHaveUndrawnChunks())
         {
-            RenderWorldChunks();
+            UpdateWorldChunks();
         }
     }
 
     void PerformUnloadChunksCheck()
     {
-        foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
+        Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, (int)CameraController.Instance.transform.position.y);
+        foreach (KeyValuePair<Vector2Int, WorldChunkBatch> kvp in ChunkBatches)
         {
-            if (kvp.Value.IsActive == false)
+            if(kvp.Value.IsActive && kvp.Value.RenderCount == 0 &&kvp.Value.IsFarEnoughAwayToUnload(camPos))
             {
-                continue;
+                kvp.Value.IsActive = false;
+                kvp.Value.UnloadChunkData();
             }
-            if (kvp.Value.CheckToUnloadChunkData())
-            {
-                return;
-            }
+           
         }
     }
 
@@ -245,24 +246,34 @@ public class WorldChunkManager : MonoBehaviour
     {
         return  Mathf.CeilToInt(value / roundTo) * roundTo;
     }
-    public void RenderWorldChunks()
+    public void UpdateWorldChunks()
     {
        
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
         {
-            if (kvp.Value.IsActive == false)
-            {
-                continue;
-            }
+            
             if (kvp.Value.RenderChunk())
             {
-
+                if (!kvp.Value.IsActive&&kvp.Value.RenderCount>0)
+                {
+                    Debug.Log("Chunk Loading: loading chunks in " + kvp.Value.coords+","+kvp.Key);
+                    kvp.Value.IsActive = true;
+                    OnChunkBatchReactivated(kvp.Value);
+                }
             }
             
-             kvp.Value.CheckForCleanup();
             
+            kvp.Value.CheckForCleanup();
+
         }
     }
+
+    void OnChunkBatchReactivated(WorldChunkBatch batch)
+    {
+        GameLifeManager.Instance.SpawnUnitsFromALife(batch);
+    }
+
+
     public Dictionary<Vector2Int, string> ExistingChunkData;
 
     public bool DoesChunkExist(Vector2Int coords)
@@ -330,15 +341,17 @@ public class WorldChunkManager : MonoBehaviour
 
             return ChunkBatches[coords];
     }
+    Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
 
     public WorldChunkBatch GetWorldChunkBatchFromPosition(Vector3 pos,bool canCreateNew = false)
     {
-        Vector2Int coords = ConvertPositionToChunkBatchCoords(pos);
-        if (!ChunkBatches.ContainsKey(coords))
+
+        ConvertPositionToChunkAndLocalCoords(pos.x,pos.y, out batch, out chunk, out local);
+        if (!ChunkBatches.ContainsKey(batch))
         {
             if (canCreateNew)
             {
-                CreateChunkBatch(coords);
+                CreateChunkBatch(batch);
             }
             else
             {
@@ -346,7 +359,7 @@ public class WorldChunkManager : MonoBehaviour
             }
         }
 
-            return ChunkBatches[coords];
+            return ChunkBatches[batch];
     }
 
 
@@ -634,13 +647,14 @@ public class WorldChunkManager : MonoBehaviour
 
     public void OnUnitCreated(Unit u)
     {
+       
         try
         {
             GetWorldChunkBatchFromPosition(u.transform.position).OnUnitCreated(u);
         }
-        catch
+        catch(System.Exception e)
         {
-            Debug.LogError("Error creating unit from " + u.transform.position);
+            Debug.LogError("Error creating unit from " + u.transform.position+"/"+batch+" ");
         }
     }
 

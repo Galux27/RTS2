@@ -55,6 +55,7 @@ public class WorldChunk:ISerialize
         Vector3 cameraPos = CameraController.Instance.transform.position;
         float dist = Vector2.Distance(new Vector2(X + (WorldChunkManager.ChunkSize / 2),
             Y + (WorldChunkManager.ChunkSize / 2)), new Vector2(cameraPos.x, cameraPos.y));
+
         return NeedsToRender || dist<CameraRenderDistance && IsRendered==false;
     }
 
