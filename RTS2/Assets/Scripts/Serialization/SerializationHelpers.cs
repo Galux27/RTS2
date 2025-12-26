@@ -299,6 +299,7 @@ public static class SerializationHelpers
 
     static void ReadUnitFile(string name)
     {
+        return;
         if (!File.Exists(SerializationHelpers.GetUnitFilePath(name)))
         {
             return;

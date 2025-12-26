@@ -21,9 +21,13 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 
     public void UpdateChunk(WorldChunk newChunk)
     {
+        bool isSame = MyCurrentChunk!=null && newChunk.LocalXCoord == MyCurrentChunk.x && newChunk.LocalYCoord == MyCurrentChunk.y;
+        if (isSame)
+        {
+            return;
+        }
         RemoveUnitFromChunkItsIn();
       
-        SetChunk = true;
         if (!WorldChunkManager.Instance.ChunkBatches[newChunk.BatchCoords].IsActive)
         {
             GameLifeManager.Instance.ConvertUnitToALifeEntity(this, WorldChunkManager.Instance.ChunkBatches[newChunk.BatchCoords]);
@@ -34,6 +38,8 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
             MyCurrentBatch = newChunk.BatchCoords;
             newChunk.AddUnitToChunk(this);
             UpdateUnitRenderer(newChunk.IsRendered);
+            SetChunk = true;
+
         }
     }
 

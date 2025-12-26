@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -549,6 +547,9 @@ public class WorldChunk:ISerialize
 
     public void AddUnitToChunk(Unit unit)
     {
+        if (UnitsInChunk.Contains(unit)) {
+            return;
+        }
         UnitsInChunk.Add(unit);
     }
 

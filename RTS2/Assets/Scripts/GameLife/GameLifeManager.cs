@@ -35,19 +35,20 @@ public class GameLifeManager : MonoBehaviour
     public void OnChunkBatchUnloaded(WorldChunkBatch unloading)
     {
         Debug.Log("Chunk Loading: Unloading chunk units at" + unloading.coords);
-
         for (int x=0;x< unloading.Chunks.GetLength(0);x++)
         {
             for (int y = 0; y < unloading.Chunks.GetLength(1); y++)
             {
-                while(unloading.Chunks[x, y].UnitsInChunk.Count > 0)
+                for(int q=0;q< unloading.Chunks[x, y].UnitsInChunk.Count; q++)
                 {
-                    ConvertUnitToALifeEntity(unloading.Chunks[x, y].UnitsInChunk[0], unloading);
-                    unloading.Chunks[x, y].UnitsInChunk.RemoveAt(0);
+                    ConvertUnitToALifeEntity(unloading.Chunks[x, y].UnitsInChunk[q], unloading);
                 }
-               
+             
+                    unloading.Chunks[x, y].UnitsInChunk.Clear();
             }
         }
+        Debug.Log(OverworldGenerator.Instance.OverworldTiles[unloading.OverworldCoords.x,unloading.OverworldCoords.y].ALifeChunk.UnitsInTile.Count);
+
     }
     public bool SpawnedInitialUserUnits = false;
     public void OnNewGameStarted()
@@ -102,7 +103,8 @@ public class GameLifeManager : MonoBehaviour
         GameObject enemy = null;
         int failCount = 0;
         Vector2Int tileCoords = new Vector2Int(),chunkCoords= new Vector2Int();
-        foreach(KeyValuePair<string,ALifeFactionGroup> kvp in tile.UnitsInTile) 
+
+        foreach (KeyValuePair<string,ALifeFactionGroup> kvp in tile.UnitsInTile) 
         {
             for (int x = 0; x < tile.UnitsInTile[kvp.Key].FactionEntities.Count; x++)
             {
