@@ -103,6 +103,7 @@ public class GameLifeManager : MonoBehaviour
         GameObject enemy = null;
         int failCount = 0;
         Vector2Int tileCoords = new Vector2Int(),chunkCoords= new Vector2Int();
+        Debug.Log("Chunk Loading Units: generating units from ALife " +batch.coords);
 
         foreach (KeyValuePair<string,ALifeFactionGroup> kvp in tile.UnitsInTile) 
         {

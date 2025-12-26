@@ -163,6 +163,8 @@ public static class Pathfinding
         return FindPath(new Vector3(start.x, start.y, 0), new Vector3(end.x, end.y, 0));
     }
 
+    const int MaxNodesCanCheck = 3000;
+
     /// <summary>
     /// Finds a path without considering the unit performing the path
     /// Used in calculating whether a building is enclosed or not
@@ -176,16 +178,16 @@ public static class Pathfinding
         PathfindingNode seekerNode = GetNodeFromPosition(startPos);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos);
         Debug.Log("Starting path from " + startPos + " to " + targetPos + " start null " + (seekerNode == null) + "," + (targetNode == null));
-
+        int count = 0;
         openSet.Clear();
         closedSet.Clear();
 
         openSet.Add(seekerNode);
 
         //calculates path for pathfinding
-        while (openSet.Count > 0)
+        while (openSet.Count > 0 && count<MaxNodesCanCheck)
         {
-
+            count++;
             //iterates through openSet and finds lowest FCost
             PathfindingNode node = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
@@ -203,6 +205,7 @@ public static class Pathfinding
             //If target found, retrace path
             if (node == targetNode)
             {
+                Debug.Log("Path Count " + count);
                 return RetracePath(seekerNode, targetNode);
 
             }
@@ -252,11 +255,11 @@ public static class Pathfinding
         openSet.Clear();
         closedSet.Clear();
         openSet.Add(seekerNode);
-
+        int count = 0;
         //calculates path for pathfinding
-        while (openSet.Count > 0)
+        while (openSet.Count > 0 && count < MaxNodesCanCheck)
         {
-
+            count++;
             //iterates through openSet and finds lowest FCost
             PathfindingNode node = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
@@ -274,6 +277,8 @@ public static class Pathfinding
             //If target found, retrace path
             if (node == targetNode)
             {
+                Debug.Log("Path Count " + count);
+
                 return RetracePath(seekerNode, targetNode);
                 
             }
@@ -315,15 +320,16 @@ public static class Pathfinding
 
             return null;
         }
+        int count = 0;
         Debug.Log("Getting path " + seekerNode.worldPos + "|" + targetNode.worldPos + "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count);
         openSet.Clear();
         closedSet.Clear();
         openSet.Add(seekerNode);
 
         //calculates path for pathfinding
-        while (openSet.Count > 0)
+        while (openSet.Count > 0 && count < MaxNodesCanCheck)
         {
-
+            count++;
             //iterates through openSet and finds lowest FCost
             PathfindingNode node = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
@@ -341,6 +347,8 @@ public static class Pathfinding
             //If target found, retrace path
             if (node == targetNode)
             {
+                Debug.Log("Path Count " + count);
+
                 return RetracePath(seekerNode, targetNode);
 
             }

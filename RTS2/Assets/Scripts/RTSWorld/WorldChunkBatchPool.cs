@@ -6,7 +6,7 @@ public static class WorldChunkBatchPool
 {
     public static List<WorldChunkBatch> AvailableBatches=new List<WorldChunkBatch>();
     static bool Init = false;
-    const int NumberOfBatchesToInit = 20;
+    const int NumberOfBatchesToInit = 40;
 
     public static void ClearPool()
     {
@@ -39,7 +39,6 @@ public static class WorldChunkBatchPool
 
     public static WorldChunkBatch GetChunkBatch()
     {
-        return CreateWorldChunkBatch();
         if (!Init)
         {
             InitPool();
