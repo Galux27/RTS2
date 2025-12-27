@@ -221,7 +221,7 @@ public class ALifeEntity
     public Vector2Int CurrentBatchCoords,PreviousBatchCoords,LocalCoords;
     public bool isActive,isDead,HasID,PerformedCombatAction;
     public ulong ID;
-    public string Faction,UnitType;
+    public string Faction, UnitType, OrdersData, BehaviourData;
     public int MoveSpeed;
     public float  AttackRate,AttackMaxRange,AttackMinRange,Health,MaxHealth,RangedDamage,AttackDamage;
     public ALifeCombat CombatImPartOf;
@@ -283,6 +283,34 @@ public class ALifeEntity
     public void SetID(ulong id) { 
         ID = id;
         HasID = true;
+    }
+
+    public void SetOrdersData(UnitOrders orders)
+    {
+        OrdersData = SerializeDataHelpers.SerializeData(DataKeys.Orders, orders);
+    }
+
+    public void SetBehaviourDetails(BehaviourBase behaviour)
+    {
+        BehaviourData = SerializeDataHelpers.SerializeData(DataKeys.Behaviour, behaviour);
+    }
+
+    public void LoadOrderData(Unit u)
+    {
+        if (OrdersData == string.Empty||OrdersData==null)
+        {
+            return;
+        }
+        u.MyOrders.SetOrdersFromFile(DataReaders.ParseDataObject(DataKeys.Orders, OrdersData) as Dictionary<string, bool>);
+    }
+
+    public void LoadBehaviourData(Unit u)
+    {
+        if (BehaviourData == string.Empty||BehaviourData==null)
+        {
+            return;
+        }
+        BehaviourDeserializer.DeserializeBehaviour(BehaviourData, u);
     }
 }
 

@@ -104,7 +104,8 @@ public class GameLifeManager : MonoBehaviour
         int failCount = 0;
         Vector2Int tileCoords = new Vector2Int(),chunkCoords= new Vector2Int();
         Debug.Log("Chunk Loading Units: generating units from ALife " +batch.coords);
-
+        Unit u = null;
+        Dictionary<ALifeEntity, Unit> deserializedALifeEntites = new Dictionary<ALifeEntity, Unit>();
         foreach (KeyValuePair<string,ALifeFactionGroup> kvp in tile.UnitsInTile) 
         {
             for (int x = 0; x < tile.UnitsInTile[kvp.Key].FactionEntities.Count; x++)
@@ -120,8 +121,12 @@ public class GameLifeManager : MonoBehaviour
                             ,chunkCoords.x,chunkCoords.y,tileCoords.x,tileCoords.y);
                         if (enemy != null)
                         {
+                            u = enemy.GetComponent<Unit>();
                             tile.UnitsInTile[kvp.Key].FactionEntities[x].SetActive(true);
                             tile.UnitsInTile[kvp.Key].FactionEntities[x].SetID(enemy.GetComponent<Unit>().GetMyUID().Value);
+                            deserializedALifeEntites.Add(tile.UnitsInTile[kvp.Key].FactionEntities[x], u);
+                          //  tile.UnitsInTile[kvp.Key].FactionEntities[x].LoadBehaviourData(u);
+                         //   tile.UnitsInTile[kvp.Key].FactionEntities[x].LoadOrderData(u);
                         }
                         failCount++;
                     }
@@ -131,6 +136,12 @@ public class GameLifeManager : MonoBehaviour
             }
 
         }
+        foreach(KeyValuePair<ALifeEntity,Unit> kvp in deserializedALifeEntites)
+        {
+            kvp.Key.LoadBehaviourData(kvp.Value);
+            kvp.Key.LoadOrderData(kvp.Value);
+        }
+        deserializedALifeEntites.Clear();
         tile.UnitsInTile.Clear();
     }
     void ConvertALifeEntityCoordsToChunkAndTile(Vector2Int input,out Vector2Int chunk, out Vector2Int tile)
@@ -151,7 +162,8 @@ public class GameLifeManager : MonoBehaviour
         entity.SetUnitDetails(data);
         entity.UpdateDetailsFromActiveUnit(u);
         entity.SetID(u.MyUID().Value);
-        
+        entity.SetBehaviourDetails(u.BehaviourRunner.CurrentBehaviour);
+        entity.SetOrdersData(u.MyOrders);
         OverworldGenerator.Instance.OverworldTiles[chunkImIn.OverworldCoords.x, chunkImIn.OverworldCoords.y].AddALifeEntity(entity);
         u.DestroyUnit();
     }
