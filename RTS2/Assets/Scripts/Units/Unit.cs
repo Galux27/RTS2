@@ -170,6 +170,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         OnObjectDeselected();
         UnitMoniter.Instance.RemoveUnit(this);
         RemoveUnitFromChunkItsIn();
+        
         Destroy(this.gameObject);
     }
 

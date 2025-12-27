@@ -34,7 +34,9 @@ public class EntityHealth
 
         if (CurrentHealth <= 0)
         {
+            OnObjectHidden(null);
             OnDeath?.Invoke();
+            
         }
     }
     HealthUI healthUI;
@@ -61,7 +63,6 @@ public class EntityHealth
         {
             healthUI.Cleanup();
             GameObjectPoolManager.Instance.ReturnObjectToPool(healthUI.gameObject, "WorldspaceHealthBar");
-            //GameObject.Destroy(healthUI.gameObject);
         }
     }
 }
