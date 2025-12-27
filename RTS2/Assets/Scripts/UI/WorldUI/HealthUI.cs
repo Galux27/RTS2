@@ -14,12 +14,23 @@ public class HealthUI : MonoBehaviour
         if(toDisplay==null) return;
         health = toDisplay;
         this.transform.parent = parent.transform;
+        toDisplay.OnHealthUpdate += OnUpdateHealth;
         this.transform.localPosition = new Vector3(0, 1.6f, 0);
+    }
+
+    public void Cleanup()
+    {
+        if (health != null)
+        {
+            health.OnHealthUpdate -= OnUpdateHealth;
+            health = null;
+        }
     }
 
     public void LinkToObjectInfo(ObjectInfo objectInfo)
     {
         objectHealth= objectInfo;
+        
         UpdateHealth();
     }
 
@@ -46,6 +57,11 @@ public class HealthUI : MonoBehaviour
             return objectHealth.MaxHealth();
         }
         return 0f;
+    }
+
+    void OnUpdateHealth(float val)
+    {
+        UpdateHealth();
     }
 
     public void UpdateHealth()

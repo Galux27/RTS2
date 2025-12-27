@@ -135,6 +135,8 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
         }
         if (healthUI != null)
         {
+            healthUI.Cleanup();
+
             GameObjectPoolManager.Instance.ReturnObjectToPool(healthUI.gameObject, "WorldspaceHealthBar");
         }
         myChunk.RemoveEnvironmentObject(this);

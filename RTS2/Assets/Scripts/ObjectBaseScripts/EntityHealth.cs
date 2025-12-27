@@ -59,6 +59,7 @@ public class EntityHealth
     {
         if (healthUI != null)
         {
+            healthUI.Cleanup();
             GameObjectPoolManager.Instance.ReturnObjectToPool(healthUI.gameObject, "WorldspaceHealthBar");
             //GameObject.Destroy(healthUI.gameObject);
         }

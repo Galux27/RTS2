@@ -282,6 +282,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
         WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile,false);
         if (healthUI != null)
         {
+            healthUI.Cleanup();
             GameObjectPoolManager.Instance.ReturnObjectToPool(healthUI.gameObject, "WorldspaceHealthBar");
         }
     }
