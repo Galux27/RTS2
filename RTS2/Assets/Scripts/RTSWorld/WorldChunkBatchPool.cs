@@ -55,5 +55,6 @@ public static class WorldChunkBatchPool
     public static void ReturnChunkBatch(WorldChunkBatch toReturn)
     {
         AvailableBatches.Add(toReturn);
+        WorldChunkManager.Instance.ChunkBatches.Remove(toReturn.coords);
     }
 }

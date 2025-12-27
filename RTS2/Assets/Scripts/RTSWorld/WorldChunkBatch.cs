@@ -473,6 +473,7 @@ public class WorldChunkBatch : MonoBehaviour
         //go through chunks on the edge and remove pathfinding neighbours that 
         UnlinkBatchFromOtherBatches();
         //reset all environment objects and remove UIDs
+        WorldChunkBatchPool.ReturnChunkBatch(this);
         Debug.Log("Chunk Loading: Unloading chunk at " + this.coords);
     }
 

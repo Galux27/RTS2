@@ -142,6 +142,7 @@ public class WorldChunkManager : MonoBehaviour
             {
                 kvp.Value.IsActive = false;
                 kvp.Value.UnloadChunkData();
+                return;
             }
            
         }
