@@ -17,7 +17,7 @@ public static class MiscDataSerialization
         return new SerializedData(retVal);
    }
     static bool DisplayedOne = false;
-    public static void DeserialzieOverworld(List<string> data)
+    public static void DeserialzieOverworld(List<string> data,List<string> UnitData)
     {
         string[] overworld = data[0].Substring(4, data[0].Length-4).Split(SerializeDataHelpers.LIST_ELEMENT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
         OverworldTile[,] overworldData = new OverworldTile[OverworldGenerator.Instance.OverworldWidth, OverworldGenerator.Instance.OverworldHeight];
@@ -30,8 +30,25 @@ public static class MiscDataSerialization
             overworldData[toAdd.X, toAdd.Y] = toAdd;
         }
         OverworldGenerator.Instance.OverworldTiles = overworldData;
+
+        ALifeEntity loading = null;
+        CachedUnitData unitData = null;
+        for(int x = 0; x < UnitData.Count; x++)
+        {
+            loading = new ALifeEntity();
+            loading.Deserialize(UnitData[x]);
+            unitData = UnitTypesController.Instance.UnitData[loading.UnitType];
+            loading.SetUnitDetails(unitData);
+            OverworldGenerator.Instance.OverworldTiles[loading.CurrentBatchCoords.x, loading.CurrentBatchCoords.y].AddALifeEntity(loading);
+        }
+
+
+
+
         OverworldRenderer.Instance.RenderWorld();
     }
+
+    
 
     static OverworldTile DeserializeData(string data)
     {

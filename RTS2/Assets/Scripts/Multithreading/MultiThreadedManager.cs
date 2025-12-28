@@ -55,7 +55,7 @@ public class MultiThreadedManager : MonoBehaviour
     }
 
 
-    void StopAllActions()
+    public void StopAllActions()
     {
         for(int x=0;x<actions.Count; x++)
         {
@@ -68,5 +68,6 @@ public class MultiThreadedManager : MonoBehaviour
 
             }
         }
+        actions.Clear();
     }
 }

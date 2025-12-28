@@ -62,7 +62,11 @@ public static class SerializationHelpers
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "OVERWORLD" + OverworldExtension);
 
     }
+    public static string GetALifeUnitsFilePath(string saveName)
+    {
+        return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "OVERWORLD_UNITS" + OverworldExtension);
 
+    }
     public static string GetMiscFilePath(string saveName)
     {
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName, "MISC" + MiscExtension);
@@ -108,6 +112,10 @@ public static class SerializationHelpers
         {
             WriteToFile(saveName, name, dataWriting);
         }
+
+
+        name = "OVERWORLD_UNITS" + OverworldExtension;
+        WriteToFile(saveName, name, OverworldGenerator.Instance.ALifeSystem.GetALifeUnitData());
     }
 
     static void CopyWorkingCopyToSaveDir(string saveName)
@@ -252,6 +260,7 @@ public static class SerializationHelpers
     {
         Debug.Log("Loading game " + name);
         EasyStopwatch.StartStopwatch();
+        MultiThreadedManager.Instance.StopAllActions();
         ClearWorkingCopyDirectory();
         ReadMiscFile(name);
         ReadOverworld(name);
@@ -268,13 +277,22 @@ public static class SerializationHelpers
         {
             RoomManager.Instance.roomList[x].RefreshRoom();
         }
+        ReInitializeAfterLoad();
         Debug.Log("reading took " + EasyStopwatch.GetStopwatchElapsedTime() + "s");
+    }
+
+    static void ReInitializeAfterLoad()
+    {
+        FactionController.Instance.ToString();
+        UnitTypesController.Instance.ToString();
+        
     }
 
     static void ReadOverworld(string name)
     {
         List<string> dataFromFile = SerializationHelpers.ReadFile(SerializationHelpers.GetOverworldFilePath(name));
-        MiscDataSerialization.DeserialzieOverworld(dataFromFile);
+        List<string> ALifeData = SerializationHelpers.ReadFile(SerializationHelpers.GetALifeUnitsFilePath(name));
+        MiscDataSerialization.DeserialzieOverworld(dataFromFile,ALifeData);
     }
 
     static void ReadMiscFile(string name)
@@ -388,6 +406,7 @@ public class DataKeys
     public const string OverSettlement = "O_SET";
     public const string Overworld = "OVER";
     public const string OverRiverCoords = "OVR_RI";
+    public const string ALifeUnits = "ALI";
 }
 
 public enum DataType
@@ -599,6 +618,7 @@ public static class SerializeDataHelpers
                 data.Add(kvp.Value.Quantity.ToString());
                 data.Add(LIST_ELEMENT_SPLIT.ToString());
             }
+            data.Add(DATA_ELEMENT_SPLIT.ToString());
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), data);
         }else if(key == DataKeys.OverSettlement)
         {

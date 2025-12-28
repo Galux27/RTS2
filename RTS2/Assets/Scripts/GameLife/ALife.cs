@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Text;
 using UnityEngine;
 
-public class ALife
+public class ALife:ISerialize
 {
     const float ALifeUpdateRate=.1f;
     float UpdateTimer = 0f;
@@ -214,6 +216,70 @@ public class ALife
         ToGenerate.Clear();
         CanUpdateUnits = false;
     }
+
+    public List<string> GetALifeUnitData()
+    {
+        List<string> ALifeUnitData = new List<string>();
+
+        for (int x = 0; x < OverworldGenerator.Instance.OverworldWidth; x++)
+        {
+            for (int y = 0; y < OverworldGenerator.Instance.OverworldHeight; y++)
+            {
+                foreach (KeyValuePair<string, ALifeFactionGroup> kvp in OverworldGenerator.Instance.OverworldTiles[x, y].ALifeChunk.UnitsInTile)
+                {
+                    for (int q = 0; q < kvp.Value.FactionEntities.Count; q++)
+                    {
+                        ALifeUnitData.Add(kvp.Value.FactionEntities[q].SerializeALifeEntity());
+                    }
+                }
+            }
+        }
+        return ALifeUnitData;
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+        List<string> ALifeUnitData = new List<string>();
+
+        for (int x = 0; x < OverworldGenerator.Instance.OverworldWidth; x++)
+        {
+            for (int y = 0; y < OverworldGenerator.Instance.OverworldHeight; y++)
+            {
+                foreach(KeyValuePair<string,ALifeFactionGroup> kvp in OverworldGenerator.Instance.OverworldTiles[x, y].ALifeChunk.UnitsInTile)
+                {
+                    for(int q = 0; q < kvp.Value.FactionEntities.Count; q++)
+                    {
+                        ALifeUnitData.Add(kvp.Value.FactionEntities[q].SerializeALifeEntity());
+                    }
+                } 
+            }
+        }
+
+        retVal.AddDataToSerialize(DataKeys.ALifeUnits, ALifeUnitData);
+
+        return retVal;
+    }
+
+    public SerializedData Serialize()
+    {
+        return new SerializedData(GetDataToSerialize());
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new NotImplementedException();
+    }
+
+    public UID GetMyUID()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class ALifeEntity
@@ -221,14 +287,68 @@ public class ALifeEntity
     public Vector2Int CurrentBatchCoords,PreviousBatchCoords,LocalCoords;
     public bool isActive,isDead,HasID,PerformedCombatAction;
     public ulong ID;
-    public string Faction, UnitType, OrdersData, BehaviourData;
+    public string Faction, UnitType, OrdersData=string.Empty, BehaviourData=string.Empty;
     public int MoveSpeed;
     public float  AttackRate,AttackMaxRange,AttackMinRange,Health,MaxHealth,RangedDamage,AttackDamage;
     public ALifeCombat CombatImPartOf;
     int attackRangeInt;
+    static StringBuilder serializationBuilder = new StringBuilder();
+    const string Comma = ",", BehavourDetailsSplit = "BHV";
+    public string SerializeALifeEntity()
+    {
+        serializationBuilder.Clear();
+        serializationBuilder.Append(CurrentBatchCoords.x.ToString());
+        serializationBuilder.Append(Comma);
+        serializationBuilder.Append(CurrentBatchCoords.y.ToString());
+        serializationBuilder.Append(Comma);
+
+        serializationBuilder.Append(LocalCoords.x.ToString());
+        serializationBuilder.Append(Comma);
+        serializationBuilder.Append(LocalCoords.y.ToString());
+        serializationBuilder.Append(Comma);
+        serializationBuilder.Append(ID.ToString());
+        serializationBuilder.Append(Comma);
+        serializationBuilder.Append(UnitType);
+        serializationBuilder.Append(Comma);
+        serializationBuilder.Append(isDead.ToString());
+        serializationBuilder.Append(Comma);
+        serializationBuilder.Append(Health.ToString());
+        serializationBuilder.Append(Comma);
+        serializationBuilder.Append(Faction);
+        serializationBuilder.Append(Comma);
+        serializationBuilder.Append(BehavourDetailsSplit);
+        serializationBuilder.Append(OrdersData.ToString());
+        serializationBuilder.Append(BehavourDetailsSplit);
+        serializationBuilder.Append(BehaviourData.ToString());
+        return serializationBuilder.ToString();
+    }
+
+    public void Deserialize(String data)
+    {
+        string[] firstSplit = data.Split(BehavourDetailsSplit);
+        string[] secondSplit = firstSplit[0].Split(Comma);
+        CurrentBatchCoords = new Vector2Int(int.Parse(secondSplit[0]), int.Parse(secondSplit[1]));
+        LocalCoords = new Vector2Int(int.Parse(secondSplit[2]), int.Parse(secondSplit[3]));
+        SetID(ulong.Parse(secondSplit[4]));
+        UnitType = secondSplit[5];
+        isDead = bool.Parse(secondSplit[6]);
+        Health = float.Parse(secondSplit[7]);
+        Faction= secondSplit[8];
+        OrdersData = firstSplit[1];
+        BehaviourData = firstSplit[2];
+    }
+
     public int GetDangerDistance()
     {
         return attackRangeInt + MoveSpeed + 10;
+    }
+
+    public ALifeEntity()
+    {
+        isActive = false;
+        isDead = false;
+        HasID = false;
+        ID = 0;
     }
 
     public ALifeEntity(Vector2Int startCoords,string faction,string type,Vector2Int localCoords,float moveSpeed,float attackRate,float attackRange)
