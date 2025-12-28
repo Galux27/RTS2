@@ -302,7 +302,8 @@ public class WorldChunkBatch : MonoBehaviour
                 }
             }
         }
-        WorldChunkManager.Instance.LoadChunkBatchUnits(coords);
+      //  WorldChunkManager.Instance.LoadChunkBatchUnits(coords);
+        GameLifeManager.Instance.OnChunkBatchGenerated(this);
         LinkBatchToOtherBatches();
 
        

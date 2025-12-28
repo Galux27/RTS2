@@ -83,10 +83,22 @@ public static class SerializationHelpers
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory);
     }
 
+    public static void PreSaveGame()
+    {
+        //need to add something to convert units to ALifeEntities when saving the game so that they get loaded correctly but not delete them if the user continues playing
+        foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in WorldChunkManager.Instance.ChunkBatches)
+        {
+           // if (kvp.Value.IsActive)
+            {
+                GameLifeManager.Instance.OnChunkBatchUnloaded(kvp.Value,false);
+            }
+        }
+    }
+
     public static void SaveGame(string saveName)
     {
         EasyStopwatch.StartStopwatch();
-
+        PreSaveGame();
         string path = GetSaveDir();
         EnsureDirectoryExists(path);
         path=Path.Combine(path,saveName);
@@ -143,8 +155,8 @@ public static class SerializationHelpers
         {
             Directory.Delete(workingPath, true);
         }
-        }
-        public static void SaveMiscData(string path)
+    }
+    public static void SaveMiscData(string path)
     {
         string name = "MISC" + MiscExtension;
         List<string> dataWriting = new List<string>();

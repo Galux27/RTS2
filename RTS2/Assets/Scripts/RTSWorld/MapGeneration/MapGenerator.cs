@@ -35,6 +35,7 @@ public class MapGenerator : MonoBehaviour
     {
         if (toGenerateIn.NeedsGeneration == false)
         {
+            toGenerateIn.SetChunksLoaded();
             return;
         }
         OverworldTile overworldTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
@@ -83,7 +84,6 @@ public class MapGenerator : MonoBehaviour
 
 
         toGenerateIn.NeedsGeneration = false;
-        GameLifeManager.Instance.OnChunkBatchGenerated(toGenerateIn);
         toGenerateIn.SetChunksLoaded();
     }
 

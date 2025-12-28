@@ -39,10 +39,10 @@ public static class MiscDataSerialization
             loading.Deserialize(UnitData[x]);
             unitData = UnitTypesController.Instance.UnitData[loading.UnitType];
             loading.SetUnitDetails(unitData);
-            OverworldGenerator.Instance.OverworldTiles[loading.CurrentBatchCoords.x, loading.CurrentBatchCoords.y].AddALifeEntity(loading);
+            OverworldGenerator.Instance.OverworldTiles[loading.CurrentBatchCoords.x, loading.CurrentBatchCoords.y].AddALifeEntity(loading,false);
         }
 
-
+        Debug.Log("Chunk Loading Units: loaded units into overworld tiles");
 
 
         OverworldRenderer.Instance.RenderWorld();

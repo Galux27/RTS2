@@ -32,7 +32,7 @@ public class GameLifeManager : MonoBehaviour
         //ZombieSpawner.OnWorldChunkBatchGenerated(toGenerate);
     }
 
-    public void OnChunkBatchUnloaded(WorldChunkBatch unloading)
+    public void OnChunkBatchUnloaded(WorldChunkBatch unloading,bool clearExistingUnits=true)
     {
         Debug.Log("Chunk Loading: Unloading chunk units at" + unloading.coords);
         for (int x=0;x< unloading.Chunks.GetLength(0);x++)
@@ -41,13 +41,15 @@ public class GameLifeManager : MonoBehaviour
             {
                 for(int q=0;q< unloading.Chunks[x, y].UnitsInChunk.Count; q++)
                 {
-                    ConvertUnitToALifeEntity(unloading.Chunks[x, y].UnitsInChunk[q], unloading);
+                    ConvertUnitToALifeEntity(unloading.Chunks[x, y].UnitsInChunk[q], unloading,clearExistingUnits);
                 }
-             
+                if (clearExistingUnits)
+                {
                     unloading.Chunks[x, y].UnitsInChunk.Clear();
+                }
+                }
             }
-        }
-        Debug.Log(OverworldGenerator.Instance.OverworldTiles[unloading.OverworldCoords.x,unloading.OverworldCoords.y].ALifeChunk.UnitsInTile.Count);
+        Debug.Log("Chunk Loading Units: units found in "+unloading.coords+","+unloading.OverworldCoords+"," + OverworldGenerator.Instance.OverworldTiles[unloading.OverworldCoords.x,unloading.OverworldCoords.y].ALifeChunk.UnitsInTile.Count);
 
     }
     public bool SpawnedInitialUserUnits = false;
@@ -103,7 +105,7 @@ public class GameLifeManager : MonoBehaviour
         GameObject enemy = null;
         int failCount = 0;
         Vector2Int tileCoords = new Vector2Int(),chunkCoords= new Vector2Int();
-        Debug.Log("Chunk Loading Units: generating units from ALife " +batch.coords);
+        Debug.Log("Chunk Loading Units: generating units from ALife " +batch.coords+","+batch.OverworldCoords+" "+tile.UnitsInTile.Count);
         Unit u = null;
         Dictionary<ALifeEntity, Unit> deserializedALifeEntites = new Dictionary<ALifeEntity, Unit>();
         foreach (KeyValuePair<string,ALifeFactionGroup> kvp in tile.UnitsInTile) 
@@ -152,20 +154,24 @@ public class GameLifeManager : MonoBehaviour
     }
 
     Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
-    public void ConvertUnitToALifeEntity(Unit u,WorldChunkBatch chunkImIn)
+    public void ConvertUnitToALifeEntity(Unit u,WorldChunkBatch chunkImIn,bool destroyUnits=true)
     {
         if(u==null) return;
         CachedUnitData data = UnitTypesController.Instance.UnitData[u.MyType.ToString()];
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(u.transform.position.x,u.transform.position.y,out batch,out chunk,out local);
         Vector2Int aLifePos = new Vector2Int(local.x + (chunk.x * WorldChunkManager.ChunkSize), local.y + (chunk.y * WorldChunkManager.ChunkSize));
-        ALifeEntity entity = new ALifeEntity(chunk, u.MyFaction.MyFactionID, u.MyType.ToString(), aLifePos, data.MoveSpeed, data.AttackRate, data.RangeMax);
+
+        ALifeEntity entity = new ALifeEntity(WorldChunkManager.Instance.ChunkBatches[batch].OverworldCoords, u.MyFaction.MyFactionID, u.MyType.ToString(), aLifePos, data.MoveSpeed, data.AttackRate, data.RangeMax);
         entity.SetUnitDetails(data);
         entity.UpdateDetailsFromActiveUnit(u);
         entity.SetID(u.MyUID().Value);
         entity.SetBehaviourDetails(u.BehaviourRunner.CurrentBehaviour);
         entity.SetOrdersData(u.MyOrders);
         OverworldGenerator.Instance.OverworldTiles[chunkImIn.OverworldCoords.x, chunkImIn.OverworldCoords.y].AddALifeEntity(entity);
-        u.DestroyUnit();
-    }
+        if (destroyUnits)
+        {
+            u.DestroyUnit();
+        }
+        }
 
-}
+    }
