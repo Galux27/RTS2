@@ -24,6 +24,8 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         bool isSame = MyCurrentChunk!=null && newChunk.LocalXCoord == MyCurrentChunk.x && newChunk.LocalYCoord == MyCurrentChunk.y;
         if (isSame)
         {
+            UpdateUnitRenderer(newChunk.IsRendered);
+
             return;
         }
         RemoveUnitFromChunkItsIn();
