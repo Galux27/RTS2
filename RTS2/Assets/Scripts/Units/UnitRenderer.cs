@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnitRenderer : MonoBehaviour
 {
-    public SpriteRenderer Head, Torso, Legs, LeftHand, RightHand;
+    public SpriteRenderer Head, Torso, Legs,Hair,Face;//, LeftHand, RightHand;
     public void OnChangeChunkIn(WorldChunk chunkIn)
     {
         if (chunkIn.IsRendered)
@@ -22,8 +22,8 @@ public class UnitRenderer : MonoBehaviour
         Head.sprite = visual.Head;
         Torso.sprite = visual.Torso;
         Legs.sprite = visual.Legs;
-        LeftHand.sprite = visual.LeftHand;
-        RightHand.sprite = visual.RightHand;
+       // LeftHand.sprite = visual.LeftHand;
+       // RightHand.sprite = visual.RightHand;
     }
 
 
@@ -32,8 +32,10 @@ public class UnitRenderer : MonoBehaviour
         Head.gameObject.SetActive(true);
         Torso.gameObject.SetActive(true);
         Legs.gameObject.SetActive(true);
-        LeftHand.gameObject.SetActive(true);
-        RightHand.gameObject.SetActive(true);
+        Hair.gameObject.SetActive(true);
+        Face.gameObject.SetActive(true);
+     //   LeftHand.gameObject.SetActive(true);
+     //   RightHand.gameObject.SetActive(true);
 
     }
 
@@ -42,7 +44,7 @@ public class UnitRenderer : MonoBehaviour
         Head.gameObject.SetActive(false);
         Torso.gameObject.SetActive(false);
         Legs.gameObject.SetActive(false);
-        LeftHand.gameObject.SetActive(false);
-        RightHand.gameObject.SetActive(false);
+        Hair.gameObject.SetActive(false);
+        Face.gameObject.SetActive(false);
     }
 }
