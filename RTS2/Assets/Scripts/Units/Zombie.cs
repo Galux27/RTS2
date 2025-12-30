@@ -7,9 +7,10 @@ public class Zombie : Unit
 
     protected void Awake()
     {
+    
+        base.Awake();
         this.GetComponent<BehaviourRunner>().SetDecisionMaker(new Zombie_BehaviourDecisionMaker());
         this.GetComponent<BehaviourRunner>().SetUnitPerforming(this);
-        base.Awake();
     }
 
     public override float Speed()

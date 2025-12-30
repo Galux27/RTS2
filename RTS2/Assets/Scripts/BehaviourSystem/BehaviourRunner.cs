@@ -1,9 +1,10 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BehaviourRunner : MonoBehaviour
+public class BehaviourRunner : MonoBehaviour, Updater
 {
     Unit UnitPerforming;
     BehaviourDecisionMaker myDecisionMaker;
@@ -34,6 +35,8 @@ public class BehaviourRunner : MonoBehaviour
     {
         UnitPerforming = toPerform;
         toPerform.OnAttacked += myDecisionMaker.OnUnitAttacked;
+        Init();
+        
     }
 
 
@@ -50,36 +53,6 @@ public class BehaviourRunner : MonoBehaviour
     }
     public bool IsBehaviourNull = true;
     public string behaviourName;
-    private void Update()
-    {
-       
-
-        IsBehaviourNull = CurrentBehaviour == null;
-        if (!IsBehaviourNull)
-        {
-            behaviourName = CurrentBehaviour.GetType().ToString();
-        }
-        if (myDecisionMaker == null) { return; }
-        if (CurrentBehaviour == null)
-        {
-            myDecisionMaker.PerformBehaivourUpdate(UnitPerforming);
-        }
-        if ( CurrentBehaviour != null)
-        {
-            if(CurrentBehaviour!=null && CurrentBehaviour.CanPerformBehaviour())
-            {
-
-                CurrentBehaviour.PerformBehaviour();
-            }
-
-            if (CurrentBehaviour!=null && CurrentBehaviour.IsBehaviourComplete())
-            {
-
-                OnBehaviourComplete();
-            }
-
-        }
-    }
 
     void OnBehaviourComplete()
     {
@@ -89,5 +62,64 @@ public class BehaviourRunner : MonoBehaviour
         {
             SetBehaviour( null);
         }
+    }
+    UpdaterType MyType;
+    public UpdaterType GetUpdaterType()
+    { 
+        return MyType;
+    }
+    public void Init()
+    {
+        if (UnitPerforming.MyFaction.MyFactionID == FactionController.USER_FACTION)
+        {
+            MyType = UpdaterType.User;
+        }
+        else
+        {
+            MyType = UpdaterType.AI;
+        }
+        ManualUpdater.Instance.AddUpdater(this);
+
+    }
+
+    public void OnEveryFrame()
+    {
+        IsBehaviourNull = CurrentBehaviour == null;
+      
+        if (CurrentBehaviour != null)
+        {
+            if (CurrentBehaviour != null && CurrentBehaviour.CanPerformBehaviour())
+            {
+
+                CurrentBehaviour.PerformBehaviour();
+            }
+
+            if (CurrentBehaviour != null && CurrentBehaviour.IsBehaviourComplete())
+            {
+
+                OnBehaviourComplete();
+            }
+
+        }
+    }
+
+    public void LimitedUpdate()
+    {
+        IsBehaviourNull = CurrentBehaviour == null;
+
+        if (!IsBehaviourNull)
+        {
+            behaviourName = CurrentBehaviour.GetType().ToString();
+        }
+        if (myDecisionMaker == null) { return; }
+        if (CurrentBehaviour == null)
+        {
+            myDecisionMaker.PerformBehaivourUpdate(UnitPerforming);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        ManualUpdater.Instance.RemoveUpdater(this);
     }
 }

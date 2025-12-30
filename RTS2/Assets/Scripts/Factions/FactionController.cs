@@ -19,6 +19,7 @@ public class FactionController : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
         LoadFactions();
     }
 

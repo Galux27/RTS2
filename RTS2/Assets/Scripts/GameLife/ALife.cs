@@ -149,6 +149,7 @@ public class ALife:ISerialize
         }
         ALifeEntity spawning = null;
         CachedUnitData data = UnitTypesController.Instance.UnitData["Zombie"];
+       
         for(int x = 0; x < toSpawn; x++)
         {
             spawning = new ALifeEntity(

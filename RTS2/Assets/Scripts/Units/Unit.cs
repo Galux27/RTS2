@@ -272,7 +272,9 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     private void Update()
     {
         HasMovedThisFrame = false;
+#if UNITY_EDITOR
         SelectionUtilities.DrawBounds(this.transform.position, GetSize(),Color.cyan);
+#endif
     }
 
     public virtual void AttackUnit(float damage,Unit isAttackingMe=null)

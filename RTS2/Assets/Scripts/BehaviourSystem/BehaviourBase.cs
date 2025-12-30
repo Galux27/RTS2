@@ -96,5 +96,5 @@ public class BehaviourBase:ISerialize
     public void SetMyUID(ulong uid)
     {
         throw new NotImplementedException();
-    }
+    } 
 }
