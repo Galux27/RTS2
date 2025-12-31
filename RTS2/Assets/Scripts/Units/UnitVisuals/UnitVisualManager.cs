@@ -18,21 +18,22 @@ public class UnitVisualManager : MonoBehaviour
         }
     }
 
-    public Dictionary<UnitType, UnitVisual> AllVisuals;
+    public Dictionary<VisualType, Dictionary<string,UnitVisual>> AllVisuals;
     const string FilePath = "UnitVisuals";
-
+    public SkinColourData SkinColourData;
     void Init()
     {
-        AllVisuals = new Dictionary<UnitType, UnitVisual>();
+        AllVisuals = new Dictionary<VisualType, Dictionary<string, UnitVisual>>();
 
         Object[] items = Resources.LoadAll(FilePath);
         for (int x = 0; x < items.Length; x++)
         {
             UnitVisual i = (UnitVisual)items[x];
-            if (AllVisuals.ContainsKey(i.TypeFor) == false)
+            if (!AllVisuals.ContainsKey(i.type))
             {
-                AllVisuals.Add(i.TypeFor, i);
+                AllVisuals.Add(i.type, new Dictionary<string, UnitVisual>());
             }
+            AllVisuals[i.type].Add(i.ID, i);
         }
     }
 }

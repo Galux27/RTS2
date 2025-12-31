@@ -19,9 +19,9 @@ public class UnitRenderer : MonoBehaviour
 
     public void SetUnitVisuals(UnitVisual visual)
     {
-        Head.sprite = visual.Head;
-        Torso.sprite = visual.Torso;
-        Legs.sprite = visual.Legs;
+        //Head.sprite = visual.Head;
+      //  Torso.sprite = visual.Torso;
+       // Legs.sprite = visual.Legs;
        // LeftHand.sprite = visual.LeftHand;
        // RightHand.sprite = visual.RightHand;
     }

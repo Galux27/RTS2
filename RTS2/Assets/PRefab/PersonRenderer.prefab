@@ -356,8 +356,8 @@ MonoBehaviour:
   Head: {fileID: 248890243372082714}
   Torso: {fileID: 690341959024596243}
   Legs: {fileID: 2261976169361973604}
-  Hair: {fileID: 0}
-  Face: {fileID: 0}
+  Hair: {fileID: 6322727225763340180}
+  Face: {fileID: 6915237477101601476}
 --- !u!1 &7502509060190182895
 GameObject:
   m_ObjectHideFlags: 0

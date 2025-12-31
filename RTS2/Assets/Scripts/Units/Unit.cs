@@ -75,7 +75,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
                 MyRender = GameObjectPoolManager.Instance.GetObjectFromPool("UnitRenderer").GetComponent<UnitRenderer>();
                 MyRender.transform.parent = this.transform;
                 MyRender.transform.localPosition = Vector3.zero;
-                MyRender.SetUnitVisuals(UnitVisualManager.Instance.AllVisuals[MyType]);
+               // MyRender.SetUnitVisuals(UnitVisualManager.Instance.AllVisuals[MyType]);
             }
             MyRender.DrawUnit();
             MyHealth.OnObjectRender(this.gameObject);

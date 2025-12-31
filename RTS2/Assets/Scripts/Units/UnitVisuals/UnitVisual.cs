@@ -4,6 +4,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Unit Visual", menuName = "UnitVisuals/New Unit Visual", order = 1)]
 public class UnitVisual : ScriptableObject
 {
-    public UnitType TypeFor;
-    public Sprite Head,Torso,Legs,LeftHand,RightHand;
+    public VisualType type;
+    public string ID;
+    public Sprite Front, Back, Side;
+}
+public enum VisualType
+{
+    Hair,
+    Face,
+    Head,
+    Torso,
+    Legs
 }
