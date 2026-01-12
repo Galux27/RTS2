@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9e652550ad8e4fc4f9e4f988f1111cf6
+guid: c1b89717b9fcfca4dbbe6ffb39309301
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -71,8 +71,21 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 256
     resizeAlgorithm: 0
-    textureFormat: 4
+    textureFormat: -1
     textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -106,30 +119,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
-    maxTextureSize: 1024
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: FaceMask_0
+      name: Trackies_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
-        height: 32
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,20 +137,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4e2d67ae917dc884fa69798adba581f8
-      internalID: -825031693
+      spriteID: dae8ea195cbf99d41817d9a1bc514532
+      internalID: -616963150
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: FaceMask_1
+      name: Trackies_1
       rect:
         serializedVersion: 2
         x: 32
         y: 0
         width: 32
-        height: 32
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,20 +158,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c7fee0e4fd09f9d41a6ed3eb6f112948
-      internalID: 1929584808
+      spriteID: c8b7c0473f16c8e4fa7a08b41ee8da81
+      internalID: -632484739
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: FaceMask_2
+      name: Trackies_2
       rect:
         serializedVersion: 2
         x: 64
         y: 0
         width: 32
-        height: 32
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -179,8 +179,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f7aed2272d21184489206a6b9605da07
-      internalID: 666352088
+      spriteID: 34689dbd635f9f04aa48704e438bbeb3
+      internalID: 1422664703
       vertices: []
       indices: 
       edges: []
@@ -196,9 +196,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      FaceMask_0: -825031693
-      FaceMask_1: 1929584808
-      FaceMask_2: 666352088
+      Trackies_0: -616963150
+      Trackies_1: -632484739
+      Trackies_2: 1422664703
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

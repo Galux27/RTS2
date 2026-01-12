@@ -7,12 +7,5 @@ public class UnitVisual : ScriptableObject
     public VisualType type;
     public string ID;
     public Sprite Front, Back, Side;
-}
-public enum VisualType
-{
-    Hair,
-    Face,
-    Head,
-    Torso,
-    Legs
+    public ColourPalleteCollection ColourPalletes;
 }

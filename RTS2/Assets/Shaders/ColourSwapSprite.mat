@@ -72,15 +72,21 @@ Material:
     m_Floats:
     - _EnableExternalAlpha: 0
     m_Colors:
+    - _ClothesColourDark: {r: 0.05273228, g: 0.05273228, b: 0.14150941, a: 0}
+    - _ClothesColourLight: {r: 0.10898005, g: 0.11075122, b: 0.2924528, a: 0}
+    - _ClothesMaskDark: {r: 0.38823533, g: 0.7137255, b: 0.2627451, a: 0}
+    - _ClothesMaskLight: {r: 0.21568629, g: 0.58431375, b: 0.43137258, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DarkSkinColour: {r: 0.6226415, g: 0.40295476, b: 0.4372808, a: 0}
     - _DarkSkinMapColour: {r: 0.46274513, g: 0.25882354, b: 0.5372549, a: 0}
     - _EyeColour: {r: 1, g: 0, b: 0, a: 0}
     - _EyeMapColour: {r: 0.7411765, g: 0.3803922, b: 0.70980394, a: 0}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _HairColour: {r: 0.40000004, g: 0.40000004, b: 0.40000004, a: 0}
+    - _HairColour: {r: 0.9245283, g: 0.9185453, b: 0.6061766, a: 0}
     - _HairMapColour: {r: 0.6039216, g: 0.90196085, b: 0.30980393, a: 0}
     - _LightSkinColour: {r: 0.7509433, g: 0.4973228, b: 0.5358153, a: 0}
     - _LightSkinMapColour: {r: 0.83921576, g: 0.48627454, b: 0.73333335, a: 0}
+    - _OutlineColour: {r: 0, g: 0, b: 0, a: 0}
+    - _OutlineMask: {r: 0, g: 0.6745098, b: 1, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

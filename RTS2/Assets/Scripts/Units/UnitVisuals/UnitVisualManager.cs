@@ -37,3 +37,36 @@ public class UnitVisualManager : MonoBehaviour
         }
     }
 }
+[System.Serializable]
+public class ColourPallete
+{
+    public ColourType ColourType;
+    public Color Colour;
+}
+[System.Serializable]
+public class ColourPalleteCollection 
+{ 
+    public List<ColourPallete> ColourPalletes;
+}
+
+
+public enum ColourType
+{
+    None,
+    SkinLight,
+    SkinDark,
+    Eye,
+    ClothesLight,
+    ClothesDark,
+    Hair
+}
+
+public enum VisualType
+{
+    None,
+    Head,
+    Face,
+    Hair,
+    Torso,
+    Legs
+}
