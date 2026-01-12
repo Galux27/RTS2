@@ -9206,26 +9206,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 690341959024596243, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 1441318542, guid: 5561cf27a954a9745ba2311decefcccf, type: 3}
-    - target: {fileID: 690341959024596243, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
-      propertyPath: m_SortingOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 690341959024596243, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: be5c269debe67814abf7380e2d8ef401, type: 2}
-    - target: {fileID: 2030135724538911000, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.652
-      objectReference: {fileID: 0}
-    - target: {fileID: 2261976169361973604, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -616963150, guid: c1b89717b9fcfca4dbbe6ffb39309301, type: 3}
     - target: {fileID: 3716723911969938547, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.9393096
@@ -9269,10 +9249,6 @@ PrefabInstance:
     - target: {fileID: 6482684324076282870, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
       propertyPath: m_Name
       value: PersonRenderer
-      objectReference: {fileID: 0}
-    - target: {fileID: 7777534021660789963, guid: 772da81a7a8f21e4ea77426c7451ed7b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.031
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
