@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7916a30f7a5d2648b0360977f0ac594, type: 3}
+  m_Name: HighVisTop
+  m_EditorClassIdentifier: 
+  type: 4
+  ID: HighVisTop
+  Front: {fileID: 1483877993, guid: 344bf540c67551f449b011daf8f75c9c, type: 3}
+  Back: {fileID: 1835543340, guid: 344bf540c67551f449b011daf8f75c9c, type: 3}
+  Side: {fileID: 1668136662, guid: 344bf540c67551f449b011daf8f75c9c, type: 3}
+  ColourPalletes:
+    ColourPalletes:
+    - Elements:
+      - ColourType: 4
+        Colour: {r: 0.93333334, g: 0.93333334, b: 0.93333334, a: 0}
+      - ColourType: 5
+        Colour: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0}
+    - Elements:
+      - ColourType: 4
+        Colour: {r: 0.20784314, g: 0.20784314, b: 0.20784314, a: 0}
+      - ColourType: 5
+        Colour: {r: 0.16078432, g: 0.16078432, b: 0.16078432, a: 0}

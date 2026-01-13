@@ -38,11 +38,16 @@ public class UnitVisualManager : MonoBehaviour
     }
 }
 [System.Serializable]
-public class ColourPallete
+public class ColourPalleteElement
 {
     public ColourType ColourType;
     public Color Colour;
 }
+[System.Serializable]
+public class ColourPallete { 
+    public List<ColourPalleteElement> Elements;
+}
+
 [System.Serializable]
 public class ColourPalleteCollection 
 { 
