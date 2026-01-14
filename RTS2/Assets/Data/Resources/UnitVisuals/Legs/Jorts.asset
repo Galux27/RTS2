@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Jorts
   m_EditorClassIdentifier: 
   type: 5
-  ID: Jeans
+  ID: Jorts
   Front: {fileID: -450685497, guid: b9d8024fadd0ee343bd337a84b5057a9, type: 3}
   Back: {fileID: 1753283945, guid: b9d8024fadd0ee343bd337a84b5057a9, type: 3}
   Side: {fileID: 960282859, guid: b9d8024fadd0ee343bd337a84b5057a9, type: 3}

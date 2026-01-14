@@ -8,4 +8,5 @@ public class UnitVisual : ScriptableObject
     public string ID;
     public Sprite Front, Back, Side;
     public ColourPalleteCollection ColourPalletes;
+
 }

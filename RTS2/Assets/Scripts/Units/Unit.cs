@@ -18,7 +18,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public UnitFaction MyFaction;
     public UnitSenses MySenses;
     public UnitRenderer MyRender;
-
+    public UnitVisualStore MyVisualStore;
     public void UpdateChunk(WorldChunk newChunk)
     {
         bool isSame = MyCurrentChunk!=null && newChunk.LocalXCoord == MyCurrentChunk.x && newChunk.LocalYCoord == MyCurrentChunk.y;
@@ -77,6 +77,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
                 MyRender.transform.localPosition = Vector3.zero;
                // MyRender.SetUnitVisuals(UnitVisualManager.Instance.AllVisuals[MyType]);
             }
+            MyRender.SetUnitVisuals(MyVisualStore);
             MyRender.DrawUnit();
             MyHealth.OnObjectRender(this.gameObject);
         }
@@ -130,6 +131,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         MyOrders= this.GetComponent<UnitOrders>();
         MyFaction = this.GetComponent<UnitFaction>();
         MySenses = this.GetComponent<UnitSenses>();
+        MyVisualStore = this.GetComponent<UnitVisualStore>();
     }
 
     public bool GetOrderVal(string key)

@@ -5,4 +5,5 @@ using UnityEngine;
 public class SkinColourData : ScriptableObject
 {
     public List<Color> HumanSkinTones, ZombieSkinTones, HumanEyeColours, ZombieEyeColours,HairColours;
+    public Color DarkShadeOffset;
 }

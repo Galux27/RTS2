@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 1874797377567117355}
   - component: {fileID: 6038645235570199553}
   - component: {fileID: 5320751917793463815}
+  - component: {fileID: 1818212556175051728}
   m_Layer: 8
   m_Name: Person
   m_TagString: Untagged
@@ -136,12 +137,12 @@ MonoBehaviour:
   MyType: 4
   MyAttackController: {fileID: 0}
   MyOrders: {fileID: 0}
-  MyHealth: {fileID: 0}
   MyCurrentChunk: {x: 0, y: 0}
   MyCurrentBatch: {x: 0, y: 0}
   MyFaction: {fileID: 0}
   MySenses: {fileID: 0}
   MyRender: {fileID: 0}
+  MyVisualStore: {fileID: 0}
   lastCoords: {x: 0, y: 0}
   HasBeenSwapped: 0
   HasMovedThisFrame: 0
@@ -322,6 +323,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemsToAdd:
   - Rifle
+--- !u!114 &1818212556175051728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589492439018105632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6c2e0389cb3f546ab72ccc3e9b01f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitHead: Head
+  InitHair: Hair
+  InitFace: Face
+  InitTorso: TracksuitTop
+  InitLegs: TracksuitPants
+  Head: {fileID: 0}
+  Hair: {fileID: 0}
+  Face: {fileID: 0}
+  Torso: {fileID: 0}
+  Legs: {fileID: 0}
+  HeadPallete: 0
+  HairPallete: 0
+  TorsoPallete: 0
+  LegsPallete: 0
+  IsZombie: 0
+  IsDrawn: 0
 --- !u!1 &6811121207978078810
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class UnitRenderer : MonoBehaviour
 {
-    public SpriteRenderer Head, Torso, Legs,Hair,Face;//, LeftHand, RightHand;
+    public SpriteRenderer Head, Torso, Legs,Hair,Face;
+    UnitVisualStore UnitImRendering;
     public void OnChangeChunkIn(WorldChunk chunkIn)
     {
         if (chunkIn.IsRendered)
@@ -17,13 +18,84 @@ public class UnitRenderer : MonoBehaviour
         }
     }
 
-    public void SetUnitVisuals(UnitVisual visual)
+    public void SetUnitVisuals(UnitVisualStore visual)
     {
-        //Head.sprite = visual.Head;
-      //  Torso.sprite = visual.Torso;
-       // Legs.sprite = visual.Legs;
-       // LeftHand.sprite = visual.LeftHand;
-       // RightHand.sprite = visual.RightHand;
+        UnitImRendering = visual;
+        Head.sprite = visual.Head.Front;
+        Face.sprite = visual.Face.Front;
+        Hair.sprite = visual.Hair.Front;
+        Torso.sprite = visual.Torso.Front;
+        Legs.sprite = visual.Legs.Front;
+        UpdatePalletes(visual);
+    }
+
+    void UpdatePalletes(UnitVisualStore visual)
+    {
+        Color skinLight = visual.GetLightSkinTone();
+        Color skinDark = visual.GetDarkSkinTone();
+        Color hairLight = visual.GetLightHairTone();
+        SpriteRenderer sr = GetSpriteRendererFromType(VisualType.Head);
+        sr.material.SetColor(ColourPallete.GetMaterialKeyword(ColourType.SkinLight), skinLight);
+        sr.material.SetColor(ColourPallete.GetMaterialKeyword(ColourType.SkinDark), skinDark);
+        sr = GetSpriteRendererFromType(VisualType.Face);
+        sr.material.SetColor(ColourPallete.GetMaterialKeyword(ColourType.SkinLight), skinLight);
+        sr.material.SetColor(ColourPallete.GetMaterialKeyword(ColourType.SkinDark), skinDark);
+        sr = GetSpriteRendererFromType(VisualType.Hair);
+        sr.material.SetColor(ColourPallete.GetMaterialKeyword(ColourType.Hair),hairLight);
+        SetPallete(visual.Torso, visual.TorsoPallete);
+        SetPallete(visual.Legs, visual.LegsPallete);
+
+    }
+
+
+    void SetPallete(UnitVisual visual,int palleteIndex)
+    {
+        SpriteRenderer sr = GetSpriteRendererFromType(visual);
+        if (sr != null)
+        {
+            try
+            {
+                ColourPallete pallete = visual.ColourPalletes.ColourPalletes[palleteIndex];
+                for (int x = 0; x < pallete.Elements.Count; x++)
+                {
+                    sr.material.SetColor(ColourPallete.GetMaterialKeyword(pallete.Elements[x].ColourType), pallete.Elements[x].Colour);
+                }
+            }
+            catch {
+                Debug.LogError("Pallete error " + palleteIndex + "/" + visual.ColourPalletes.ColourPalletes.Count+"/"+visual.type);
+            }
+         
+       }
+    }
+    SpriteRenderer GetSpriteRendererFromType(UnitVisual visual)
+    {
+        return GetSpriteRendererFromType(visual.type);
+    }
+    SpriteRenderer GetSpriteRendererFromType(VisualType visual)
+    {
+        switch (visual)
+        {
+            case VisualType.None:
+                break;
+            case VisualType.Head:
+                return Head;
+                break;
+            case VisualType.Face:
+                return Face;
+                break;
+            case VisualType.Hair:
+                return Hair;
+                break;
+            case VisualType.Torso:
+                return Torso;
+                break;
+            case VisualType.Legs:
+                return Legs;
+                break;
+            default:
+                break;
+        }
+        return null;
     }
 
 
@@ -34,9 +106,6 @@ public class UnitRenderer : MonoBehaviour
         Legs.gameObject.SetActive(true);
         Hair.gameObject.SetActive(true);
         Face.gameObject.SetActive(true);
-     //   LeftHand.gameObject.SetActive(true);
-     //   RightHand.gameObject.SetActive(true);
-
     }
 
     public void HideUnit()

@@ -15,7 +15,7 @@ public class HealthUI : MonoBehaviour
         health = toDisplay;
         this.transform.parent = parent.transform;
         toDisplay.OnHealthUpdate += OnUpdateHealth;
-        this.transform.localPosition = new Vector3(0, 1.6f, 0);
+        this.transform.localPosition = new Vector3(0, 2.1f, 0);
     }
 
     public void Cleanup()

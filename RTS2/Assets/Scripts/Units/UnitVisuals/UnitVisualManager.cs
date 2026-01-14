@@ -17,7 +17,13 @@ public class UnitVisualManager : MonoBehaviour
             return instance;
         }
     }
-
+    private void Awake()
+    {
+        if(AllVisuals==null)
+        {
+            Init();
+        }
+    }
     public Dictionary<VisualType, Dictionary<string,UnitVisual>> AllVisuals;
     const string FilePath = "UnitVisuals";
     public SkinColourData SkinColourData;
@@ -28,14 +34,32 @@ public class UnitVisualManager : MonoBehaviour
         Object[] items = Resources.LoadAll(FilePath);
         for (int x = 0; x < items.Length; x++)
         {
-            UnitVisual i = (UnitVisual)items[x];
+            UnitVisual i = items[x] as UnitVisual;
+            if (i == null)
+            {
+                continue;
+            }
             if (!AllVisuals.ContainsKey(i.type))
             {
                 AllVisuals.Add(i.type, new Dictionary<string, UnitVisual>());
             }
+            if (AllVisuals[i.type].ContainsKey(i.name))
+            {
+                continue;
+            }
             AllVisuals[i.type].Add(i.ID, i);
         }
+        Debug.Log("Total visuals found "+ AllVisuals.Count);
     }
+
+    public UnitVisual GetUnitVisual( string key, VisualType type) {
+        if (AllVisuals[type].ContainsKey(key))
+        {
+            return AllVisuals[type][key];
+        }
+        return null;
+    }
+
 }
 [System.Serializable]
 public class ColourPalleteElement
@@ -46,6 +70,35 @@ public class ColourPalleteElement
 [System.Serializable]
 public class ColourPallete { 
     public List<ColourPalleteElement> Elements;
+    public static string GetMaterialKeyword(ColourType type)
+    {
+        switch (type)
+        {
+            case ColourType.None:
+                break;
+            case ColourType.SkinLight:
+                return "_LightSkinColour";
+                break;
+            case ColourType.SkinDark:
+                return "_DarkSkinColour";
+                break;
+            case ColourType.Eye:
+                return "_EyeColour";
+                break;
+            case ColourType.ClothesLight:
+                return "_ClothesColourLight";
+                break;
+            case ColourType.ClothesDark:
+                return "_ClothesColourDark";
+                break;
+            case ColourType.Hair:
+                return "_HairColour";
+                break;
+            default:
+                break;
+        }
+        return string.Empty;
+    }
 }
 
 [System.Serializable]
@@ -63,7 +116,7 @@ public enum ColourType
     Eye,
     ClothesLight,
     ClothesDark,
-    Hair
+    Hair,
 }
 
 public enum VisualType

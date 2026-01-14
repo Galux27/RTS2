@@ -54,6 +54,7 @@ public class EntityHealth
             healthUI = healthBar.GetComponent<HealthUI>();
             healthUI.gameObject.SetActive(true);
             healthUI.LinkToHealth(this,parent);
+            
         }
     }
 
