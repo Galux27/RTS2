@@ -10,7 +10,30 @@ public class UnitVisualStore : MonoBehaviour
     public UnitVisual Head, Hair, Face, Torso, Legs;
     public int HeadPallete,HairPallete,TorsoPallete,LegsPallete;
     public bool IsZombie = false,IsDrawn=false;
-  
+    public UnitVisualDirection Direction;
+
+    public bool OnStandStill()
+    {
+        if (Direction != UnitVisualDirection.Backward)
+        {
+            Direction=UnitVisualDirection.Backward;
+            return true;
+        }
+        return false;
+    }
+
+    public bool OnMovement(Vector3 lastPos, Vector3 curPos)
+    {
+        UnitVisualDirection newDir = UnitVisual.CalculateDirection(lastPos, curPos);
+        if(newDir!=Direction)
+        {
+            Direction = newDir;
+            return true;
+        }
+
+        return false;
+    }
+
 
     private void Awake()
     {
@@ -156,3 +179,4 @@ public class UnitVisualStore : MonoBehaviour
        return UnitVisualManager.Instance.SkinColourData.HairColours;  
     }
 }
+

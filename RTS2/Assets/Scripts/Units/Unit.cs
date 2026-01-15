@@ -230,9 +230,28 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 
     }
 
+    public void OnUnitStandstill()
+    {
+        if (MyVisualStore.OnStandStill())
+        {
+            if (MyRender != null)
+            {
+                MyRender.SetUnitVisuals(MyVisualStore);
+            }
+        }
+    }
+
     public void MoveUnit(Vector3 direction)
     {
-        this.transform.position += (direction * Speed() * DeltaTimeWrapper.GameplayDelta);
+        Vector3 transformation = (direction * Speed() * DeltaTimeWrapper.GameplayDelta);
+        if (MyVisualStore.OnMovement(this.transform.position, this.transform.position + transformation))
+        {
+            if (MyRender != null)
+            {
+                MyRender.SetUnitVisuals(MyVisualStore);
+            }
+        }
+        this.transform.position += transformation;
         HasMovedThisFrame = true;
         WorldChunkManager.Instance.OnUnitMove(this);
         OnUnitMove();
@@ -273,7 +292,14 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 
     private void Update()
     {
-        HasMovedThisFrame = false;
+        if (HasMovedThisFrame)
+        {
+            HasMovedThisFrame = false;
+        }
+        else
+        {
+            OnUnitStandstill();
+        }
 #if UNITY_EDITOR
         SelectionUtilities.DrawBounds(this.transform.position, GetSize(),Color.cyan);
 #endif

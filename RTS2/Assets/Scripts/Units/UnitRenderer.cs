@@ -6,6 +6,7 @@ public class UnitRenderer : MonoBehaviour
 {
     public SpriteRenderer Head, Torso, Legs,Hair,Face;
     UnitVisualStore UnitImRendering;
+   
     public void OnChangeChunkIn(WorldChunk chunkIn)
     {
         if (chunkIn.IsRendered)
@@ -21,11 +22,11 @@ public class UnitRenderer : MonoBehaviour
     public void SetUnitVisuals(UnitVisualStore visual)
     {
         UnitImRendering = visual;
-        Head.sprite = visual.Head.Front;
-        Face.sprite = visual.Face.Front;
-        Hair.sprite = visual.Hair.Front;
-        Torso.sprite = visual.Torso.Front;
-        Legs.sprite = visual.Legs.Front;
+        Head.sprite = visual.Head.GetDirectionalSprite(visual.Direction);
+        Face.sprite = visual.Face.GetDirectionalSprite(visual.Direction);
+        Hair.sprite = visual.Hair.GetDirectionalSprite(visual.Direction);
+        Torso.sprite = visual.Torso.GetDirectionalSprite(visual.Direction);
+        Legs.sprite = visual.Legs.GetDirectionalSprite(visual.Direction);
         UpdatePalletes(visual);
     }
 
