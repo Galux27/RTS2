@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b46d0b3f69683ed4f83e111219ddca16
+guid: 433edc93b1dcba84686b96a4b24ff4c4
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,259 +123,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: HillTiles2_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 192
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 805b2adfc2148c441be16300b0aba5c3
-      internalID: 691821194
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_1
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 192
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 12388b3fe80bac14c85f81c675e2deae
-      internalID: 601230616
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_2
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 192
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 16d5cfd55bd43554b8fb51fd66e67114
-      internalID: -1297550543
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_3
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 192
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2fe80fda33e76224e93886e9f208fbe2
-      internalID: -66447280
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_4
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 128
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f95a7eb672d5e494f984b06d17436397
-      internalID: 39029390
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_5
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 128
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6dbd6a6e57ff1c2458620d28874938d6
-      internalID: -270596134
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_6
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 128
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 08e6ab53068beaa4aa0b7d7d700c1b0b
-      internalID: 1012616261
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_7
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 128
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3b8af6e509ec94c4bb16ab59a6c58a6b
-      internalID: 88860810
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_8
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 64
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f5a46aca4d6bb764e82f7849e3f05aee
-      internalID: -111778961
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_9
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 64
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: faccb43446c5fd14da5ffea0f5c22cf5
-      internalID: 1329461921
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_10
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 64
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: dc8e5423ef5f6d84ab49d74801f7a37b
-      internalID: -248001971
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_11
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 64
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e8d8430faf89d094385d172b5f4d3d3e
-      internalID: -738038490
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HillTiles2_12
+      name: TestNewTiles_0
       rect:
         serializedVersion: 2
         x: 0
@@ -389,14 +137,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b93c13210f779864c8b55c862be77b04
-      internalID: 1592698897
+      spriteID: 91a33c1727cab9649853be6f66d70f8a
+      internalID: -2094230212
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HillTiles2_13
+      name: TestNewTiles_1
       rect:
         serializedVersion: 2
         x: 64
@@ -410,14 +158,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 96716751e0d459a4bb898a2475fcc546
-      internalID: 1125370243
+      spriteID: d1dc925a0acacf24eb59b23ac32f7158
+      internalID: -1911676477
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HillTiles2_14
+      name: TestNewTiles_2
       rect:
         serializedVersion: 2
         x: 128
@@ -431,14 +179,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7d017f6eb900cd24ba061b5206fff19f
-      internalID: 663807551
+      spriteID: 62bfb6c4a354078418e166a2a2d06fa9
+      internalID: 1998659627
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HillTiles2_15
+      name: TestNewTiles_3
       rect:
         serializedVersion: 2
         x: 192
@@ -452,8 +200,71 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6baf9ccbbdee82d40a7f4fd7007cc803
-      internalID: -1532334835
+      spriteID: 5689e60411f850d448a5e4c5645b2333
+      internalID: -111472222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TestNewTiles_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e8b369f11108724a847ba5995074dad
+      internalID: -82307946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TestNewTiles_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7b21e2cb3d1eb9409c864ab2e0cbc67
+      internalID: -309027398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TestNewTiles_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d588e175edbc1324fae64f5899878ba2
+      internalID: -1321294819
       vertices: []
       indices: 
       edges: []
@@ -469,22 +280,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      HillTiles2_0: 691821194
-      HillTiles2_1: 601230616
-      HillTiles2_10: -248001971
-      HillTiles2_11: -738038490
-      HillTiles2_12: 1592698897
-      HillTiles2_13: 1125370243
-      HillTiles2_14: 663807551
-      HillTiles2_15: -1532334835
-      HillTiles2_2: -1297550543
-      HillTiles2_3: -66447280
-      HillTiles2_4: 39029390
-      HillTiles2_5: -270596134
-      HillTiles2_6: 1012616261
-      HillTiles2_7: 88860810
-      HillTiles2_8: -111778961
-      HillTiles2_9: 1329461921
+      TestNewTiles_0: -2094230212
+      TestNewTiles_1: -1911676477
+      TestNewTiles_2: 1998659627
+      TestNewTiles_3: -111472222
+      TestNewTiles_4: -82307946
+      TestNewTiles_5: -309027398
+      TestNewTiles_6: -1321294819
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

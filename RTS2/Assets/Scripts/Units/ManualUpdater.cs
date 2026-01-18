@@ -57,15 +57,15 @@ public class ManualUpdater : MonoBehaviour
     {
         int updatesPerformed = 0;
         int updateLimit = Mathf.Min(updating[type].Count, max);
-        int totalTypeUnits = updating[type].Count;
         while (updatesPerformed < updateLimit)
         {
-            updating[type][index].LimitedUpdate();
-            index++;
-            if (index >= totalTypeUnits)
+            if (index >= updating[type].Count)
             {
                 index = 0;
             }
+            updating[type][index].LimitedUpdate();
+            index++;
+            
             updatesPerformed++;
         }
     }

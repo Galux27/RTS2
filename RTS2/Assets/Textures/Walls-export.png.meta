@@ -45,10 +45,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 40
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -127,11 +127,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 240
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        y: 384
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -147,12 +147,12 @@ TextureImporter:
       name: Walls-export_1
       rect:
         serializedVersion: 2
-        x: 40
-        y: 240
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 64
+        y: 384
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -168,12 +168,12 @@ TextureImporter:
       name: Walls-export_2
       rect:
         serializedVersion: 2
-        x: 80
-        y: 240
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 128
+        y: 384
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -189,12 +189,12 @@ TextureImporter:
       name: Walls-export_3
       rect:
         serializedVersion: 2
-        x: 120
-        y: 240
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 192
+        y: 384
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -211,11 +211,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 160
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        y: 256
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -231,12 +231,12 @@ TextureImporter:
       name: Walls-export_5
       rect:
         serializedVersion: 2
-        x: 40
-        y: 160
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 64
+        y: 256
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -252,12 +252,12 @@ TextureImporter:
       name: Walls-export_6
       rect:
         serializedVersion: 2
-        x: 80
-        y: 160
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 128
+        y: 256
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -273,12 +273,12 @@ TextureImporter:
       name: Walls-export_7
       rect:
         serializedVersion: 2
-        x: 120
-        y: 160
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 192
+        y: 256
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -295,11 +295,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 80
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        y: 128
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -315,12 +315,12 @@ TextureImporter:
       name: Walls-export_9
       rect:
         serializedVersion: 2
-        x: 40
-        y: 80
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 64
+        y: 128
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -336,12 +336,12 @@ TextureImporter:
       name: Walls-export_10
       rect:
         serializedVersion: 2
-        x: 80
-        y: 80
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 128
+        y: 128
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -357,12 +357,12 @@ TextureImporter:
       name: Walls-export_11
       rect:
         serializedVersion: 2
-        x: 120
-        y: 80
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 192
+        y: 128
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -380,10 +380,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -399,12 +399,12 @@ TextureImporter:
       name: Walls-export_13
       rect:
         serializedVersion: 2
-        x: 40
+        x: 64
         y: 0
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -420,12 +420,12 @@ TextureImporter:
       name: Walls-export_14
       rect:
         serializedVersion: 2
-        x: 80
+        x: 128
         y: 0
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -441,12 +441,12 @@ TextureImporter:
       name: Walls-export_15
       rect:
         serializedVersion: 2
-        x: 120
+        x: 192
         y: 0
-        width: 40
-        height: 80
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        width: 64
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

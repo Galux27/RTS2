@@ -13,17 +13,23 @@ MonoBehaviour:
   m_Name: Tree
   m_EditorClassIdentifier: 
   Name: Tree_1
-  ForwardsSprite: {fileID: 21300000, guid: 8bee7e75d58a0a846bf096a76ba66849, type: 3}
+  ForwardsSprite: {fileID: 1772009929, guid: 75de1b2ec6ca63445a49defd1de0541d, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
+  HarvestedSprite: {fileID: 0}
   BlocksTile: 1
   Width: 1
   Height: 1
   CanHarvest: 1
+  IsDecoration: 0
+  RequiresUpdate: 0
+  DestroyOnHarvest: 1
   Resources:
     resources:
     - ResourceToSpawn: Construction Supplies
       QuantityToSpawn: 200
       RangeToSpawn: {x: 1, y: 1, z: 0}
     HarvestLength: 3
+  CapacityData:
+    CapacityData: []
   MaxHealth: 5
