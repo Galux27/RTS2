@@ -24,9 +24,9 @@ MonoBehaviour:
   - tileType: Tiled
     tileBase: {fileID: 11400000, guid: 7b147e2d95cf4824189a23bb77a7bc62, type: 2}
   - tileType: MajorRoad
-    tileBase: {fileID: 11400000, guid: 7b147e2d95cf4824189a23bb77a7bc62, type: 2}
+    tileBase: {fileID: 11400000, guid: ed308fe68fbb89a49a6ce9b7fc9cf27a, type: 2}
   - tileType: BackRoad
-    tileBase: {fileID: 11400000, guid: 7b147e2d95cf4824189a23bb77a7bc62, type: 2}
+    tileBase: {fileID: 11400000, guid: ed308fe68fbb89a49a6ce9b7fc9cf27a, type: 2}
   - tileType: Error
     tileBase: {fileID: 11400000, guid: 08c875459d09f1344a436f673acf984a, type: 2}
   - tileType: Mountain

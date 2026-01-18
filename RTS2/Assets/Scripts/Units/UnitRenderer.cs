@@ -27,7 +27,24 @@ public class UnitRenderer : MonoBehaviour
         Hair.sprite = visual.Hair.GetDirectionalSprite(visual.Direction);
         Torso.sprite = visual.Torso.GetDirectionalSprite(visual.Direction);
         Legs.sprite = visual.Legs.GetDirectionalSprite(visual.Direction);
+        if (visual.Direction == UnitVisualDirection.Right)
+        {
+            SetRenderersFlipped(true);
+        }
+        else
+        {
+            SetRenderersFlipped(false);
+        }
         UpdatePalletes(visual);
+    }
+
+    void SetRenderersFlipped(bool val)
+    {
+        Head.flipX = val;
+        Face.flipX = val;
+        Hair.flipX = val;
+        Torso.flipX = val;
+        Legs.flipX = val;
     }
 
     void UpdatePalletes(UnitVisualStore visual)
