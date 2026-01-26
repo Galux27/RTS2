@@ -13,16 +13,22 @@ MonoBehaviour:
   m_Name: Bunk Bed
   m_EditorClassIdentifier: 
   Name: Bunk Bed
-  ForwardsSprite: {fileID: 21300000, guid: 1277d4b53e3654549a21729750d71384, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: b5a3a907eb703504990ef2acce03f38c, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
+  HarvestedSprite: {fileID: 0}
   BlocksTile: 1
   Width: 2
   Height: 1
   CanHarvest: 0
+  IsDecoration: 0
+  RequiresUpdate: 0
+  DestroyOnHarvest: 1
   Resources:
     resources: []
     HarvestLength: 0
+  CapacityData:
+    CapacityData: []
   MaxHealth: 30
   Cost: 100
   TimeToBuild: 5

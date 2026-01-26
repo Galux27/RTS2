@@ -251,10 +251,21 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
                 MyRender.SetUnitVisuals(MyVisualStore);
             }
         }
-        this.transform.position += transformation;
+        
+        this.transform.position = RoundPosition(this.transform.position + transformation);
         HasMovedThisFrame = true;
         WorldChunkManager.Instance.OnUnitMove(this);
         OnUnitMove();
+    }
+
+    const float increment = 1f / 64;
+    Vector3 RoundPosition(Vector3 pos)
+    {
+        pos.x = (pos.x * increment) / increment;
+        pos.y = (pos.y * increment) / increment;
+        pos.z = (pos.z * increment) / increment;
+
+        return pos;
     }
 
     public Vector2Int lastCoords = new Vector2Int();

@@ -13,18 +13,22 @@ MonoBehaviour:
   m_Name: RadioTower
   m_EditorClassIdentifier: 
   Name: Radio Tower
-  ForwardsSprite: {fileID: 21300000, guid: 1e7279b5f8737a54894e6b911f9524e1, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: 0cb7ec5e9981aeb4389eed35dd032c79, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
+  HarvestedSprite: {fileID: 0}
   BlocksTile: 1
   Width: 2
   Height: 4
   CanHarvest: 0
   IsDecoration: 0
   RequiresUpdate: 1
+  DestroyOnHarvest: 1
   Resources:
     resources: []
     HarvestLength: 0
+  CapacityData:
+    CapacityData: []
   MaxHealth: 50
   Cost: 0
   TimeToBuild: 10

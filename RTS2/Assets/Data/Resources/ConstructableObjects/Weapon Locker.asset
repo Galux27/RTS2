@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: Weapon Locker
   m_EditorClassIdentifier: 
   Name: Weapon Locker
-  ForwardsSprite: {fileID: 21300000, guid: b17b76f2c12b80749990a3a49155ef38, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: c197e3831cce21b4aba079b777e1c65b, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
+  HarvestedSprite: {fileID: 0}
   BlocksTile: 1
   Width: 2
   Height: 1
   CanHarvest: 0
   IsDecoration: 0
   RequiresUpdate: 0
+  DestroyOnHarvest: 1
   Resources:
     resources: []
     HarvestLength: 0
