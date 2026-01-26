@@ -51,9 +51,18 @@ public class CameraController : MonoBehaviour
 
         GameCamera.orthographicSize = Mathf.Clamp(GameCamera.orthographicSize, ZoomInLimit, ZoomOutLimit);
 
-        
+        this.transform.position = RoundPosition(this.transform.position);
     }
 
+    const float increment = 1f / 64;
+    Vector3 RoundPosition(Vector3 pos)
+    {
+        pos.x = (pos.x * increment) / increment;
+        pos.y = (pos.y * increment) / increment;
+        pos.z = (pos.z * increment) / increment;
+
+        return pos;
+    }
     public float GetCameraZoom()
     {
         return GameCamera.orthographicSize;
