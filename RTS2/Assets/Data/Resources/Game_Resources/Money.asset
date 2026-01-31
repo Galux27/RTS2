@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Money
   m_EditorClassIdentifier: 
   Name: Money
-  Item: {fileID: -1564680637, guid: d5bad1d0399fd85408a0566b60be470f, type: 3}
+  Item: {fileID: -651753766, guid: ef3d2c0819e9d6144b87858297a2e831, type: 3}
   ContainersICanBeStoredIn:
   - Box
   - Crate

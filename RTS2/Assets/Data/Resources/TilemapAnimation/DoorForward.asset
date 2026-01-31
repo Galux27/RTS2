@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: DoorForward
   m_EditorClassIdentifier: 
   AnimationFrames:
-  - {fileID: 11400000, guid: 61a5b88a752b323429aed00725ddf133, type: 2}
-  - {fileID: 11400000, guid: ab186640e4cef8844b9a518de625f1e1, type: 2}
-  - {fileID: 11400000, guid: cede7774b392e6d4dab07baf965ca53a, type: 2}
-  - {fileID: 11400000, guid: 032d67d45f8e39649a14175c56e46b0b, type: 2}
-  - {fileID: 11400000, guid: 4c4d4bc4382183c45a373cfb29280ed9, type: 2}
-  - {fileID: 11400000, guid: 3efdfd554a5cec5488cf029be269b600, type: 2}
-  - {fileID: 11400000, guid: 001b85973e115854f8f0b2811a598825, type: 2}
-  - {fileID: 11400000, guid: 4f8f7209c5107964b9de10853ff887f3, type: 2}
-  - {fileID: 11400000, guid: 0ae042042a894ad498a822a47fc6c15f, type: 2}
+  - {fileID: 11400000, guid: 4dba4fde1c45bb94ea968de2ccae6341, type: 2}
+  - {fileID: 11400000, guid: d0773ca418212d64798656e39fd29825, type: 2}
+  - {fileID: 11400000, guid: 83e088eecaffb1f429e8261dd484a5d0, type: 2}
+  - {fileID: 11400000, guid: e76514be9415d8a499f777c422e25729, type: 2}
+  - {fileID: 11400000, guid: eb7b009f7f037b54381c3578a17cee2a, type: 2}
+  - {fileID: 11400000, guid: f047c59a71461074ca063ad374ab4e26, type: 2}
+  - {fileID: 11400000, guid: c6a4ab4df5e237744ab7a327961a7209, type: 2}
+  - {fileID: 11400000, guid: 8ba9f7bf7fc2c5c4fb86bbabf75ba3ef, type: 2}
+  - {fileID: 11400000, guid: 2f1c92f49ae499143b5d9328be70c575, type: 2}
+  - {fileID: 11400000, guid: dbdd0f693baedb44bb4d4b4f662a4bec, type: 2}
   TimePerFrame: 0.01
   AnimationID: DoorBwd

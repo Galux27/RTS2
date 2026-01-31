@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: FuelTank
   m_EditorClassIdentifier: 
   Name: Fuel Tank
-  ForwardsSprite: {fileID: 21300000, guid: 316ea435d19ae2649902334398dccd10, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: 89d1927e7c35c634aac87b0432161c60, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
+  HarvestedSprite: {fileID: 0}
   BlocksTile: 0
   Width: 2
   Height: 1
   CanHarvest: 0
   IsDecoration: 0
   RequiresUpdate: 0
+  DestroyOnHarvest: 1
   Resources:
     resources: []
     HarvestLength: 0

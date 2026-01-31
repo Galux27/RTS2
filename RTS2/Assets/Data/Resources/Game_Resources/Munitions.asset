@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Munitions
   m_EditorClassIdentifier: 
   Name: Munitions
-  Item: {fileID: 986318475, guid: d5bad1d0399fd85408a0566b60be470f, type: 3}
+  Item: {fileID: -1032056847, guid: ef3d2c0819e9d6144b87858297a2e831, type: 3}
   ContainersICanBeStoredIn:
   - Box
   - Shelf

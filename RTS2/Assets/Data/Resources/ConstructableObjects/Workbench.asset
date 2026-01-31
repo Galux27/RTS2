@@ -13,16 +13,22 @@ MonoBehaviour:
   m_Name: Workbench
   m_EditorClassIdentifier: 
   Name: Workbench
-  ForwardsSprite: {fileID: 21300000, guid: 674ba6cd76222554591a4def767e17e0, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: 4a076c5fbf8f73242a9f0fa6f78bc36b, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
+  HarvestedSprite: {fileID: 0}
   BlocksTile: 1
   Width: 2
   Height: 1
   CanHarvest: 0
+  IsDecoration: 0
+  RequiresUpdate: 0
+  DestroyOnHarvest: 1
   Resources:
     resources: []
     HarvestLength: 0
+  CapacityData:
+    CapacityData: []
   MaxHealth: 30
   Cost: 100
   TimeToBuild: 5

@@ -13,17 +13,24 @@ MonoBehaviour:
   m_Name: TankTrap
   m_EditorClassIdentifier: 
   Name: Tank Trap
-  ForwardsSprite: {fileID: 21300000, guid: 824ee7e98dc7bd84b89b1f365e8f29bf, type: 3}
+  ForwardsSprite: {fileID: 21300000, guid: 23ff688aa4419cf4f9eb94ed0d4f691d, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
+  HarvestedSprite: {fileID: 0}
   BlocksTile: 1
   Width: 1
   Height: 1
   CanHarvest: 0
+  IsDecoration: 0
+  RequiresUpdate: 0
+  DestroyOnHarvest: 1
   Resources:
     resources: []
     HarvestLength: 0
+  CapacityData:
+    CapacityData: []
   MaxHealth: 30
   Cost: 100
   TimeToBuild: 5
+  RequirementsToBuild: []
   MyBehaviour: {fileID: 0}
