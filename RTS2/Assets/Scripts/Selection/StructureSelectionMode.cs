@@ -161,7 +161,7 @@ public class StructureSelectionMode: SelectionMode
         CursorIcon.Instance.SetWallPlaceIcon();
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        Sprite icon = WallTypeManager.Instance.WallIcon;
+        Sprite icon = WallTypeManager.Instance.DoorIcon;
         CursorIcon.Instance.SetPosition(new Vector3(coords.x + .5f, coords.y + .5f, 0f));
         CursorIcon.Instance.SetCustomIcon(icon);
 
