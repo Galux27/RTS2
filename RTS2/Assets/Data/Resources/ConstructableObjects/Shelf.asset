@@ -17,9 +17,9 @@ MonoBehaviour:
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   HarvestedSprite: {fileID: 0}
-  BlocksTile: 0
+  BlocksTile: 1
   Width: 2
-  Height: 1
+  Height: 2
   CanHarvest: 0
   IsDecoration: 0
   RequiresUpdate: 0

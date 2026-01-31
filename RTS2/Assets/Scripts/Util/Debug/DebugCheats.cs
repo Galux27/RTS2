@@ -34,5 +34,11 @@ public class DebugCheats : MonoBehaviour
 #endif
         return true;
     }
+
+    public bool DrawDebugPathfinding = false;
+    public bool DoWeDrawDebugPathfinidng()
+    {
+        return DrawDebugPathfinding;
+    }
 }
 

@@ -20,15 +20,8 @@ public class CursorIcon : MonoBehaviour
     public Vector2Int CurrentChunkBatch, CurrentChunk, mouseCoords;
     private void Update()
     {
-        //mouseCoords = new Vector2Int(Mathf.RoundToInt(this.transform.position.x), Mathf.RoundToInt(this.transform.position.y));
-        //WorldChunkBatch batch = WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(mouseCoords);
-        //if (batch != null)
-        //{
-        //    CurrentChunkBatch = batch.coords;
-
-        //    CurrentChunk = batch.GetChunkCoordsFromTileCoords(mouseCoords,true);//WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(mouseCoords);
-        //}
-                                                                           PathfindingNode node = Pathfinding.GetNodeFromPosition(this.transform.position,null,true);
+      
+        PathfindingNode node = Pathfinding.GetNodeFromPosition(this.transform.position,null,true);
         if (node != null)
         {
             Debug.DrawLine(this.transform.position, node.worldPos, Color.blue);

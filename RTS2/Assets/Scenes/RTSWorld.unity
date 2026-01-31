@@ -4007,6 +4007,7 @@ GameObject:
   - component: {fileID: 519420035}
   - component: {fileID: 519420036}
   - component: {fileID: 519420037}
+  - component: {fileID: 519420038}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4260,6 +4261,62 @@ MonoBehaviour:
   LastRightClick: 0
   WasLastRightClickDoubleClick: 0
   PriorRightClick: 0
+--- !u!114 &519420038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c74a8132b7816d4dbbd89428b3c464a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BatchImIn: {fileID: 0}
+  ChunkImIn:
+    UnitsInChunk: []
+    ResourceObjectsInChunk: []
+    StaticContainersInChunk: []
+    DebugColor: {r: 0, g: 0, b: 0, a: 0}
+    X: 0
+    Y: 0
+    LocalXCoord: 0
+    LocalYCoord: 0
+    WorldCoords: {x: 0, y: 0}
+    BatchCoords: {x: 0, y: 0}
+    NeedsToRender: 0
+    IsRendered: 0
+    NeedsUpdate: 0
+    HasChunkFinishedLoading: 0
+  OverworldTileImIn:
+    X: 0
+    Y: 0
+    Elevation: 0
+    Features: 
+    Population: 0
+    Settlement: 
+    RiverPoint: {x: 0, y: 0}
+  TileImIn:
+    x: 0
+    y: 0
+    traversable: 0
+    CanPutDecorationsOn: 0
+    tileType: 
+    TileID: 0
+    Elevation:
+      DirectionsForEdge: 
+      coords: {x: 0, y: 0, z: 0}
+      IsCorner: 0
+      IsEdge: 0
+      IsGoingUp: 0
+      Elevation: 0
+      isDrawn: 0
+    Chunk: {x: 0, y: 0}
+    Batch: {x: 0, y: 0}
+    Local: {x: 0, y: 0}
+    TileContents: 
+  RangeToDraw: 50
 --- !u!1 &547945194
 GameObject:
   m_ObjectHideFlags: 0
@@ -10903,6 +10960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InstantConstructVal: 1
   CareAboutResources: 0
+  DrawDebugPathfinding: 1
 --- !u!114 &1606643383
 MonoBehaviour:
   m_ObjectHideFlags: 0
