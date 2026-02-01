@@ -82,7 +82,7 @@ public class WorldChunkManager : MonoBehaviour
 
             ChunkBatches[coords].InitWorldChunks();
             MapGenerator.Instance.GenerateMap(ChunkBatches[coords]);
-
+            ChunkBatches[coords].GeneratePathfindingGroups();
         }
     }
     public bool IsChunkInWorkingCopy(Vector2Int v)

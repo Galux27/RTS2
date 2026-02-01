@@ -76,7 +76,7 @@ public class PathfindingDebugView : MonoBehaviour
         }
         else
         {
-            return Color.green;
+            return PathfindingNode.GetPathGroupColour(node.PathNodeGroupID);
         }
     }
 

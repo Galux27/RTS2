@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[System.Serializable]
 public class PathfindingNode
 {
     //The cumulative cost from the starting point to the current point
@@ -16,9 +16,19 @@ public class PathfindingNode
 
     public List<PathfindingNode> neighbours;
     public Vector3 worldPos;
-
-
-
+    //id to identify different sub groups in an id
+    public int PathNodeGroupID = -1;
+    //represents the highest path node used to make sure they're all unique
+    public static int CurrentPathNodeID=0;
+    static Dictionary<int, Color> PathGroupColours = new Dictionary<int, Color>();
+    public static Color GetPathGroupColour(int id)
+    {
+        if (!PathGroupColours.ContainsKey(id))
+        {
+            PathGroupColours.Add(id, new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)));
+        }
+        return PathGroupColours[id];
+    }
 
     public PathfindingNode(int x, int y, bool passable)
     {

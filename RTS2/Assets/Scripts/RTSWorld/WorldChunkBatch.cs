@@ -302,11 +302,23 @@ public class WorldChunkBatch : MonoBehaviour
                 }
             }
         }
-      //  WorldChunkManager.Instance.LoadChunkBatchUnits(coords);
+
+
+
+        //  WorldChunkManager.Instance.LoadChunkBatchUnits(coords);
         GameLifeManager.Instance.OnChunkBatchGenerated(this);
         LinkBatchToOtherBatches();
+    }
 
-       
+    public void GeneratePathfindingGroups()
+    {
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                Chunks[x, y].GeneratePathfindingGroups();
+            }
+        }
     }
     public bool IsRendered = false;
     public int RenderCount = 0;

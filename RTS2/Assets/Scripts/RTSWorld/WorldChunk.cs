@@ -257,6 +257,141 @@ public class WorldChunk:ISerialize
         }
     }
 
+    public void GeneratePathfindingGroups()
+    {
+        List<PathfindingNode> toCheck = new List<PathfindingNode>();
+        HashSet<PathfindingNode> checkedNodes = new HashSet<PathfindingNode>();
+        HashSet<PathfindingNode> allChunk = new HashSet<PathfindingNode>();
+        for(int x = 0; x < WorldChunkManager.ChunkSize; x++)
+        {
+            for (int y = 0; y< WorldChunkManager.ChunkSize; y++)
+            {
+                allChunk.Add(PathfindingNodes[x,y]);
+            }
+        }
+        toCheck.Add(PathfindingNodes[0,0]);
+
+        PathfindingNode checking = toCheck[0];
+        int startX = PathfindingNodes[0,0].X; int startY = PathfindingNodes[0, 0].Y;
+        PathfindingNode.CurrentPathNodeID++;
+        int currentID = PathfindingNode.CurrentPathNodeID;
+        int passible = 0, impassible = 0;
+        while (toCheck.Count > 0)
+        {
+            checking = toCheck[0];
+
+            if (checking.IsPassable)
+            {
+                passible++;
+            }
+            else
+            {
+                impassible++;
+            }
+            if (allChunk.Contains(checking))
+            {
+                if (checking.IsPassable && checking.PathNodeGroupID == -1)
+                {
+                    checking.PathNodeGroupID = currentID;
+                    for (int x = 0; x < checking.neighbours.Count; x++)
+                    {
+                        if (!checkedNodes.Contains(checking.neighbours[x])
+                            && checking.neighbours[x].PathNodeGroupID == -1
+                            && checking.neighbours[x].IsPassable
+                          )
+                        {
+                            toCheck.Add(checking.neighbours[x]);
+                        }
+                    }
+                }
+            }
+            checkedNodes.Add(toCheck[0]);
+            toCheck.RemoveAt(0);
+        }
+
+        bool CheckForMore = true;
+        Vector2Int missedCoords = new Vector2Int(-1, -1);
+        while (CheckForMore)
+        {
+            CheckForMore = DoWeHaveNodesToSetBatchFor(out missedCoords);
+            if (CheckForMore)
+            {
+                PathfindingNode.CurrentPathNodeID++;
+                currentID = PathfindingNode.CurrentPathNodeID;
+                toCheck.Add(PathfindingNodes[ missedCoords.x,missedCoords.y]);
+                while (toCheck.Count > 0)
+                {
+                    
+                    checking = toCheck[0];
+                    if (allChunk.Contains(checking))
+                    {
+                        if (checking.IsPassable)
+                        {
+                            passible++;
+                        }
+                        else
+                        {
+                            impassible++;
+                        }
+
+                        if (checking.IsPassable && checking.PathNodeGroupID == -1)
+                        {
+                            checking.PathNodeGroupID = currentID;
+                            for (int x = 0; x < checking.neighbours.Count; x++)
+                            {
+                                if (!checkedNodes.Contains(checking.neighbours[x])
+                                    && checking.neighbours[x].PathNodeGroupID == -1
+                                    && checking.neighbours[x].IsPassable
+                                    )
+                                {
+                                    toCheck.Add(checking.neighbours[x]);
+                                }
+                            }
+                        }
+                    }
+                        checkedNodes.Add(toCheck[0]);
+                    toCheck.RemoveAt(0);
+                }
+            }
+        }
+
+        Debug.Log("Pathing id is now " + 
+            PathfindingNode.CurrentPathNodeID+","+WorldCoords+","+passible+"/"+impassible+"/"+(16*16)+","+startX+","+startY);
+        
+    }
+    bool IsInChunk(int startX,int startY,PathfindingNode node)
+    {
+        if(node.X>=startX&&node.X<startX+WorldChunkManager.ChunkSize
+            && node.X >= startY && node.Y < startY + WorldChunkManager.ChunkSize)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    bool DoWeHaveNodesToSetBatchFor(out Vector2Int coords)
+    {
+        coords = new Vector2Int(-1, -1);
+        int length = PathfindingNodes.GetLength(0);
+        for(int x = 0; x < length; x++)
+        {
+            for (int y = 0; y < length; y++)
+            {
+                if (PathfindingNodes[x, y].IsPassable 
+                    && PathfindingNodes[x, y].PathNodeGroupID == -1
+                    )
+                {
+                    coords.x = x;
+                    coords.y = y;
+                    return true;
+                }
+            }
+        }
+
+
+        return false;
+    }
+
     public void LinkNodesToAdjacentChunksInBatch(WorldChunkBatch batch)
     {
         Vector2Int MyCoords = new Vector2Int(LocalXCoord, LocalYCoord);
