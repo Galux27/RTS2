@@ -357,8 +357,74 @@ public class WorldChunk:ISerialize
 
         Debug.Log("Pathing id is now " + 
             PathfindingNode.CurrentPathNodeID+","+WorldCoords+","+passible+"/"+impassible+"/"+(16*16)+","+startX+","+startY);
-        
     }
+
+    public void MergeIds(HashSet<PathfindingNode> allChunk)
+    {
+        for (int q = 0; q < 3; q++)
+        {
+
+            Dictionary<int, int> swapsToMake = new Dictionary<int, int>();
+            PathfindingNode checking = null;
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                checking = PathfindingNodes[x, 0];
+
+                GrabDifferentIDs(checking, ref swapsToMake, allChunk);
+                checking = PathfindingNodes[x, WorldChunkManager.ChunkSize - 1];
+                GrabDifferentIDs(checking, ref swapsToMake, allChunk);
+
+            }
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                checking = PathfindingNodes[0, y];
+                GrabDifferentIDs(checking, ref swapsToMake, allChunk);
+                checking = PathfindingNodes[WorldChunkManager.ChunkSize - 1, y];
+                GrabDifferentIDs(checking, ref swapsToMake, allChunk);
+            }
+
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+                {
+                    if (swapsToMake.ContainsKey(PathfindingNodes[x, y].PathNodeGroupID))
+                    {
+                        PathfindingNodes[x, y].PathNodeGroupID = swapsToMake[PathfindingNodes[x, y].PathNodeGroupID];
+                    }
+                }
+            }
+            NodeIDPathing.ClearOutSwaps(swapsToMake);
+        }
+    }
+
+    void GrabDifferentIDs(PathfindingNode nodes, ref Dictionary<int, int> swapsToMake,HashSet<PathfindingNode> NodesInChunk)
+    {
+        for (int x = 0; x < nodes.neighbours.Count; x++)
+        {
+            if (nodes.neighbours[x].IsPassable 
+                && nodes.neighbours[x].PathNodeGroupID!=nodes.PathNodeGroupID 
+                && nodes.neighbours[x].PathNodeGroupID !=-1
+                && NodesInChunk.Contains(nodes.neighbours[x]))
+            {
+                if (nodes.neighbours[x].PathNodeGroupID < nodes.PathNodeGroupID)
+                {
+                    if (!swapsToMake.ContainsKey(nodes.PathNodeGroupID))
+                    {
+                        swapsToMake.Add(nodes.PathNodeGroupID, nodes.neighbours[x].PathNodeGroupID);
+                    }
+                    else
+                    {
+                        if (swapsToMake[nodes.PathNodeGroupID] < nodes.neighbours[x].PathNodeGroupID)
+                        {
+                            swapsToMake[nodes.PathNodeGroupID] = nodes.neighbours[x].PathNodeGroupID;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     bool IsInChunk(int startX,int startY,PathfindingNode node)
     {
         if(node.X>=startX&&node.X<startX+WorldChunkManager.ChunkSize

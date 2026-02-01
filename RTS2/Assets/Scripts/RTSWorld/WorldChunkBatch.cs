@@ -312,14 +312,114 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void GeneratePathfindingGroups()
     {
-        for (int x = 0; x < Chunks.GetLength(0); x++)
+
+        for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
         {
-            for (int y = 0; y < Chunks.GetLength(1); y++)
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
             {
                 Chunks[x, y].GeneratePathfindingGroups();
             }
         }
+
+
+        HashSet<PathfindingNode> allChunk = new HashSet<PathfindingNode>();
+        for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
+            {
+                for (int x1 = 0; x1 < WorldChunkManager.ChunkSize; x1++)
+                {
+                    for (int y1 = 0; y1 < WorldChunkManager.ChunkSize; y1++)
+                    {
+                        allChunk.Add(Chunks[x, y].PathfindingNodes[x1, y1]);
+                    }
+                }
+            }
+        }
+       
+        for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
+            {
+                Chunks[x, y].MergeIds(allChunk) ;
+            }
+        }
+        BuildPathfindingIDMap();
     }
+
+    public void BuildPathfindingIDMap()
+    {
+        WorldChunk myChunk = null;
+        WorldChunk opposingChunk = null;
+        PathfindingNode myNode = null, opposingNode = null;
+        Vector2Int neighbouringChunkCoords = this.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+        
+        if (WorldChunkManager.Instance.DoesBatchExist(neighbouringChunkCoords) && WorldChunkManager.Instance.ChunkBatches[neighbouringChunkCoords].NeedsGeneration==false)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
+            {
+                myChunk = Chunks[WorldChunkManager.ChunksPerBatch - 1, y];
+                opposingChunk = WorldChunkManager.Instance.ChunkBatches[neighbouringChunkCoords].Chunks[0, y];
+
+                for(int y1 = 0; y1 < WorldChunkManager.ChunkSize; y1++)
+                {
+                    myNode = myChunk.PathfindingNodes[WorldChunkManager.ChunkSize - 1, y1];
+                    opposingNode = opposingChunk.PathfindingNodes[0, y1];
+                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, opposingNode.PathNodeGroupID, this.coords, neighbouringChunkCoords);
+                }
+            }
+        }
+        neighbouringChunkCoords = this.coords - new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
+        if (WorldChunkManager.Instance.DoesBatchExist(neighbouringChunkCoords) && WorldChunkManager.Instance.ChunkBatches[neighbouringChunkCoords].NeedsGeneration == false)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
+            {
+                myChunk = Chunks[0, y];
+                opposingChunk = WorldChunkManager.Instance.ChunkBatches[neighbouringChunkCoords].Chunks[WorldChunkManager.ChunksPerBatch - 1, y];
+
+                for (int y1 = 0; y1 < WorldChunkManager.ChunkSize; y1++)
+                {
+                    myNode = myChunk.PathfindingNodes[0, y1];
+                    opposingNode = opposingChunk.PathfindingNodes[WorldChunkManager.ChunkSize - 1, y1];
+                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, opposingNode.PathNodeGroupID, this.coords, neighbouringChunkCoords);
+                }
+            }
+        }
+
+        neighbouringChunkCoords = this.coords + new Vector2Int( 0, WorldChunkManager.ChunkBatchSize);
+        if (WorldChunkManager.Instance.DoesBatchExist(neighbouringChunkCoords) && WorldChunkManager.Instance.ChunkBatches[neighbouringChunkCoords].NeedsGeneration == false)
+        {
+            for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
+            {
+                myChunk = Chunks[x,WorldChunkManager.ChunksPerBatch - 1];
+                opposingChunk = WorldChunkManager.Instance.ChunkBatches[neighbouringChunkCoords].Chunks[x, 0];
+
+                for (int x1 = 0; x1 < WorldChunkManager.ChunkSize; x1++)
+                {
+                    myNode = myChunk.PathfindingNodes[ x1,WorldChunkManager.ChunkSize - 1];
+                    opposingNode = opposingChunk.PathfindingNodes[x1, 0];
+                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, opposingNode.PathNodeGroupID, this.coords, neighbouringChunkCoords);
+                }
+            }
+        }
+        neighbouringChunkCoords = this.coords - new Vector2Int(0, WorldChunkManager.ChunkBatchSize);
+        if (WorldChunkManager.Instance.DoesBatchExist(neighbouringChunkCoords) && WorldChunkManager.Instance.ChunkBatches[neighbouringChunkCoords].NeedsGeneration == false)
+        {
+            for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
+            {
+                myChunk = Chunks[x, 0];
+                opposingChunk = WorldChunkManager.Instance.ChunkBatches[neighbouringChunkCoords].Chunks[x, WorldChunkManager.ChunksPerBatch - 1];
+
+                for (int x1 = 0; x1 < WorldChunkManager.ChunkSize; x1++)
+                {
+                    myNode = myChunk.PathfindingNodes[x1, 0];
+                    opposingNode = opposingChunk.PathfindingNodes[x1, WorldChunkManager.ChunkSize - 1];
+                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, opposingNode.PathNodeGroupID, this.coords, neighbouringChunkCoords);
+                }
+            }
+        }
+    }
+
     public bool IsRendered = false;
     public int RenderCount = 0;
     public bool RenderChunk()

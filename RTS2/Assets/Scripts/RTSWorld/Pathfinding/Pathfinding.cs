@@ -1,15 +1,16 @@
-using System.Collections;
+
 using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.VisualScripting;
+
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
+
 
 public static class Pathfinding
 {
+
+  
+
     static int worldWidth, worldHeight;
-       public static void UpdateNodeData(int x,int y,bool traversable)
+    public static void UpdateNodeData(int x,int y,bool traversable)
     {
         PathfindingNode node = GetNodeFromCoords(x, y);
         if (node == null)
@@ -17,8 +18,6 @@ public static class Pathfinding
            // Debug.LogError("Null node at " + x+"," + y);
             return;
         }
-
-
        node.UpdatePassable(traversable);
     }
     public static void AddPathNodeModifier(int x,int y,PathNodeModifier toAdd)
@@ -402,5 +401,92 @@ public static class Pathfinding
         if (dstX > dstY)
             return 14 * dstY + 10 * (dstX - dstY);
         return 14 * dstX + 10 * (dstY - dstX);
+    }
+}
+
+public static class NodeIDPathing
+{
+    public static Dictionary<int, PathNodeID> PathNodeIDs=new Dictionary<int, PathNodeID>();
+    public static void AddPathfindingIDLink(int id1, int id2, Vector2Int batch1, Vector2Int batch2)
+    {
+        if (!PathNodeIDs.ContainsKey(id1))
+        {
+            PathNodeIDs.Add(id1, new PathNodeID(id1, batch1));
+
+        }
+        if (!PathNodeIDs.ContainsKey(id2))
+        {
+            PathNodeIDs.Add(id2, new PathNodeID(id2, batch2));
+        }
+        PathNodeIDs[id1].AddNeighbour(id2);
+        PathNodeIDs[id2].AddNeighbour(id1);
+    }
+
+    public static void ClearOutSwaps(Dictionary<int, int> toRemove)
+    {
+        PathNodeID id = null, neighbour = null;
+        foreach (KeyValuePair<int, int> kvp in toRemove)
+        {
+            id = GetPathNodeID(kvp.Key);
+            if (id == null)
+            {
+                continue;
+            }
+            for (int x = 0; x < id.NeighbouringIDs.Count; x++)
+            {
+                neighbour = GetPathNodeID(id.NeighbouringIDs[x]);
+                if (neighbour != null)
+                {
+                    neighbour.RemoveNeighbour(kvp.Key);
+                }
+            }
+        }
+
+        foreach (KeyValuePair<int, int> kvp in toRemove)
+        {
+            if (PathNodeIDs.ContainsKey(kvp.Key))
+            {
+                PathNodeIDs.Remove(kvp.Key);
+            }
+        }
+    }
+
+    public static PathNodeID GetPathNodeID(int id)
+    {
+        if (PathNodeIDs.ContainsKey(id))
+        {
+            return PathNodeIDs[id];
+        }
+        return null;
+    }
+}
+[System.Serializable]
+public class PathNodeID {
+    public int NodeID;
+    public Vector2Int ChunkBatch;
+    public List<int> NeighbouringIDs;
+
+    public PathNodeID(int id,Vector2Int chunkBatch)
+    {
+        NodeID = id;
+        ChunkBatch = chunkBatch;
+        NeighbouringIDs= new List<int>();
+    }
+
+    public void RemoveNeighbour(int id)
+    {
+        if (NeighbouringIDs.Contains(id))
+        {
+            NeighbouringIDs.Remove(id);
+        }
+    }
+
+    public void AddNeighbour(int id)
+    {
+        if(NeighbouringIDs.Contains(id))
+        {
+            return;
+        }
+        NeighbouringIDs.Add(id);
     }
 }

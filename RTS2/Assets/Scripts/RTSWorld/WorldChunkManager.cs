@@ -16,6 +16,16 @@ public class WorldChunkManager : MonoBehaviour
     public Dictionary<Vector2Int, WorldChunkBatch> ChunkBatches;
     public List<Vector2Int> ChunksLoaded;
 
+
+    public bool DoesBatchExist(Vector2Int coords)
+    {
+        if (ChunkBatches == null)
+        {
+            return false;
+        }
+        return ChunkBatches.ContainsKey(coords);
+    }
+
     public WorldChunkBatch GetChunkBatch(Vector2Int coords)
     {
         if (ExistingChunkData.ContainsKey(coords) && !ChunkBatches.ContainsKey(coords))

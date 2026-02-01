@@ -10,6 +10,8 @@ public class CamerDebugInfo : MonoBehaviour
     public OverworldTile OverworldTileImIn;
     public WorldTile TileImIn;
     public int NodeImOver;
+    public PathNodeID IdImIn;
+
     // Update is called once per frame
     void Update()
     {
@@ -22,6 +24,7 @@ public class CamerDebugInfo : MonoBehaviour
             ChunkImIn = BatchImIn.Chunks[coords.x, coords.y];
             TileImIn = BatchImIn.GetTileFromPosition(this.transform.position);
             NodeImOver = ChunkImIn.PathfindingNodes[TileImIn.Local.x, TileImIn.Local.y].PathNodeGroupID;
+            IdImIn = NodeIDPathing.GetPathNodeID(NodeImOver);
             if (TileImIn != null)
             {
                 Debug.DrawLine(this.transform.position, new Vector3(TileImIn.Coords().x, TileImIn.Coords().y, 0), Color.cyan);
