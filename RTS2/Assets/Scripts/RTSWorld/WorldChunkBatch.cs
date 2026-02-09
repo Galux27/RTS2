@@ -365,7 +365,11 @@ public class WorldChunkBatch : MonoBehaviour
                 {
                     myNode = myChunk.PathfindingNodes[WorldChunkManager.ChunkSize - 1, y1];
                     opposingNode = opposingChunk.PathfindingNodes[0, y1];
-                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, opposingNode.PathNodeGroupID, this.coords, neighbouringChunkCoords);
+                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, 
+                        opposingNode.PathNodeGroupID, 
+                        this.coords, neighbouringChunkCoords,
+                        new Vector2Int(myNode.X, myNode.Y),
+                        new Vector2Int(opposingNode.X, opposingNode.Y));
                 }
             }
         }
@@ -381,7 +385,12 @@ public class WorldChunkBatch : MonoBehaviour
                 {
                     myNode = myChunk.PathfindingNodes[0, y1];
                     opposingNode = opposingChunk.PathfindingNodes[WorldChunkManager.ChunkSize - 1, y1];
-                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, opposingNode.PathNodeGroupID, this.coords, neighbouringChunkCoords);
+                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID,
+                        opposingNode.PathNodeGroupID,
+                        this.coords, 
+                        neighbouringChunkCoords,
+                        new Vector2Int(myNode.X,myNode.Y),
+                        new Vector2Int(opposingNode.X,opposingNode.Y));
                 }
             }
         }
@@ -398,7 +407,11 @@ public class WorldChunkBatch : MonoBehaviour
                 {
                     myNode = myChunk.PathfindingNodes[ x1,WorldChunkManager.ChunkSize - 1];
                     opposingNode = opposingChunk.PathfindingNodes[x1, 0];
-                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, opposingNode.PathNodeGroupID, this.coords, neighbouringChunkCoords);
+                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, 
+                        opposingNode.PathNodeGroupID, 
+                        this.coords, neighbouringChunkCoords,
+                        new Vector2Int(myNode.X, myNode.Y),
+                        new Vector2Int(opposingNode.X, opposingNode.Y));
                 }
             }
         }
@@ -414,7 +427,12 @@ public class WorldChunkBatch : MonoBehaviour
                 {
                     myNode = myChunk.PathfindingNodes[x1, 0];
                     opposingNode = opposingChunk.PathfindingNodes[x1, WorldChunkManager.ChunkSize - 1];
-                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, opposingNode.PathNodeGroupID, this.coords, neighbouringChunkCoords);
+                    NodeIDPathing.AddPathfindingIDLink(myNode.PathNodeGroupID, 
+                        opposingNode.PathNodeGroupID, 
+                        this.coords, neighbouringChunkCoords
+                        ,
+                        new Vector2Int(myNode.X, myNode.Y),
+                        new Vector2Int(opposingNode.X, opposingNode.Y));
                 }
             }
         }

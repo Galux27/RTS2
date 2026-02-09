@@ -8,9 +8,14 @@ public class DebugPathTesting : MonoBehaviour
     public GameObject Marker1, Marker2;
     public bool FindPath=false,isPathNull=false;
     List<PathfindingNode> path;
+    public List<int> PathGroupPath;
+    public bool IsNull = false;
     public int PathLength = 0;
     TileRaycast tr;
     public int size = 5;
+    PathfindingNode startNode, endNode;
+    public int s, e;
+    public List<int> sN, eN;
     // Start is called before the first frame update
     void Start()
     {
@@ -87,6 +92,14 @@ public class DebugPathTesting : MonoBehaviour
             FindPath = false;
             tr = new TileRaycast(Marker1.transform.position, Marker2.transform.position);
             tr.PerformRaycast();
+            startNode = Pathfinding.GetNodeFromPosition(Marker1.transform.position);
+            endNode = Pathfinding.GetNodeFromPosition(Marker2.transform.position);
+            s = startNode.PathNodeGroupID;
+            e = endNode.PathNodeGroupID;
+            sN = NodeIDPathing.PathNodeIDs[s].NeighbouringIDs;
+            eN = NodeIDPathing.PathNodeIDs[e].NeighbouringIDs;
+            PathGroupPath = NodeIDPathing.GetPath(startNode, endNode);
+            IsNull = PathGroupPath == null;
         }
         if (tr != null)
         {

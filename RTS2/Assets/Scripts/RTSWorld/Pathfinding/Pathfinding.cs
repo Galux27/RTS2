@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 
 public static class Pathfinding
@@ -406,8 +407,8 @@ public static class Pathfinding
 
 public static class NodeIDPathing
 {
-    public static Dictionary<int, PathNodeID> PathNodeIDs=new Dictionary<int, PathNodeID>();
-    public static void AddPathfindingIDLink(int id1, int id2, Vector2Int batch1, Vector2Int batch2)
+    public static Dictionary<int, PathNodeID> PathNodeIDs = new Dictionary<int, PathNodeID>();
+    public static void AddPathfindingIDLink(int id1, int id2, Vector2Int batch1, Vector2Int batch2,Vector2Int batch1Pos,Vector2Int batch2Pos)
     {
         if (!PathNodeIDs.ContainsKey(id1))
         {
@@ -419,7 +420,93 @@ public static class NodeIDPathing
             PathNodeIDs.Add(id2, new PathNodeID(id2, batch2));
         }
         PathNodeIDs[id1].AddNeighbour(id2);
+        PathNodeIDs[id1].AddTile(batch1Pos);
         PathNodeIDs[id2].AddNeighbour(id1);
+        PathNodeIDs[id2].AddTile(batch2Pos);
+    }
+    static float Dist(PathNodeID start,PathNodeID end)
+    {
+
+        float dstX = Mathf.Abs(start.AveragePos.x - end.AveragePos.x);
+        float dstY = Mathf.Abs(start.AveragePos.y - end.AveragePos.y);
+
+        if (dstX > dstY)
+            return 14 * dstY + 10 * (dstX - dstY);
+        return 14 * dstX + 10 * (dstY - dstX);
+    }
+    public static List<int> GetPath(PathfindingNode start, PathfindingNode end)
+    {
+        if (start.PathNodeGroupID == -1 || end.PathNodeGroupID == -1)
+        {
+            return null;
+        }
+        List<int> retVal = new List<int>();
+        if (start.PathNodeGroupID == end.PathNodeGroupID)
+        {
+            retVal.Add(start.PathNodeGroupID);
+            return retVal;
+        }
+        int count = 0;
+        List<int> openSet = new List<int>();
+        HashSet<int> closedSet = new HashSet<int>();
+        openSet.Add(start.PathNodeGroupID);
+        PathNodeID current = PathNodeIDs[ openSet[0]],comparing=null;
+        PathNodeID endNodeID = PathNodeIDs[end.PathNodeGroupID];
+        while (openSet.Count > 0 && count<600)
+        {
+            count++;
+            current = PathNodeIDs[openSet[0]];
+            for (int x = 1; x < openSet.Count; x++)
+            {
+                comparing = PathNodeIDs[openSet[x]];
+                if (comparing.FCost <= current.FCost)
+                {
+                    if (comparing.HCost < current.HCost)
+                    {
+                        current = comparing;
+                    }
+                }
+            }
+            openSet.Remove(current.NodeID);
+            closedSet.Add(current.NodeID);
+            if (current.NodeID == end.PathNodeGroupID)
+            {
+                int curNode = current.NodeID;
+                retVal.Add(current.NodeID);
+                while (curNode != start.PathNodeGroupID && curNode>-1)
+                {
+                    retVal.Add(current.Parent);              
+                    current = PathNodeIDs[current.Parent];
+                    curNode = current.Parent;
+                }
+                retVal.Add(start.PathNodeGroupID);
+                return retVal;
+            }
+
+            for(int x=0;x<current.NeighbouringIDs.Count;x++)
+            {
+                if (closedSet.Contains(current.NeighbouringIDs[x]) 
+                    || PathNodeIDs.ContainsKey(current.NeighbouringIDs[x])==false
+                    || current.NeighbouringIDs[x]==-1)
+                {
+                    continue;
+                }
+                comparing = PathNodeIDs[current.NeighbouringIDs[x]];
+                float newCostToNeighbour = current.GCost + Dist(comparing, current);
+                if(newCostToNeighbour < comparing.GCost || !openSet.Contains(current.NeighbouringIDs[x]))
+                {
+                    comparing.GCost = newCostToNeighbour;
+                    comparing.HCost = Dist(comparing, endNodeID);
+                    comparing.Parent = current.NodeID;
+                    if (!openSet.Contains(current.NeighbouringIDs[x]))
+                    {
+                        openSet.Add(current.NeighbouringIDs[x]);
+                    }
+                }
+            }
+        }
+        return null;
+        
     }
 
     public static void ClearOutSwaps(Dictionary<int, int> toRemove)
@@ -462,9 +549,24 @@ public static class NodeIDPathing
 }
 [System.Serializable]
 public class PathNodeID {
-    public int NodeID;
-    public Vector2Int ChunkBatch;
+    public int NodeID=-1;
+    public Vector2 ChunkBatch,AveragePos;
     public List<int> NeighbouringIDs;
+    public float GCost, HCost;
+    int count = 0;
+    public int Parent=-1;
+    public float FCost
+    {
+        get
+        {
+            return GCost + HCost;
+        }
+    }
+    public void AddTile(Vector2Int tile)
+    {
+        AveragePos = tile;
+    }
+
 
     public PathNodeID(int id,Vector2Int chunkBatch)
     {
