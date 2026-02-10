@@ -15,7 +15,7 @@ public class CamerDebugInfo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        BatchImIn = WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(new Vector2Int((int) this.transform.position.x, (int)this.transform.position.y));
+        BatchImIn = WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(new Vector2Int(Mathf.CeilToInt( this.transform.position.x),Mathf.CeilToInt( this.transform.position.y)));
         if(BatchImIn != null)
         {
             OverworldTileImIn = OverworldGenerator.Instance.GetOverworldTile(BatchImIn.OverworldCoords);

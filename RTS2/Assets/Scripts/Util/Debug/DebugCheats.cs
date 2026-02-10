@@ -40,5 +40,14 @@ public class DebugCheats : MonoBehaviour
     {
         return DrawDebugPathfinding;
     }
+
+    public bool SpawnEnemies = true;
+    public bool DoWeSpawnEnemies()
+    {
+#if UNITY_EDITOR
+        return SpawnEnemies;
+#endif
+        return false;
+    }
 }
 

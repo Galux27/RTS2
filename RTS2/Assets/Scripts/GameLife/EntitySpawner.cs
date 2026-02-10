@@ -6,7 +6,10 @@ public static class EntitySpawner
 {
     public static GameObject SpawnEntity(WorldChunkBatch batch, string entityType,string factionID, int forceChunkX = -1, int forceChunkY = -1,int forceTileX=-1,int forceTileY=-1)
     {
-
+        if (DebugCheats.Instance.DoWeSpawnEnemies() == false && factionID==FactionController.ZOMBIE_FACTION)
+        {
+            return null ;
+        }
         GameObject retVa = null;
         if(UnitTypesController.Instance.UnitKeys.Contains(entityType))
         {

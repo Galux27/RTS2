@@ -57,7 +57,7 @@ public class HumanBehaviour_ChangeUnitType : BehaviourBase
         }
         else
         {
-            return (TargetPosition - unitToMove.transform.position).normalized;
+            return Vector3.zero; //return (TargetPosition - unitToMove.transform.position).normalized;
         }
     }
 

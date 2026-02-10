@@ -191,13 +191,13 @@ public class WorldChunkManager : MonoBehaviour
         }
         else
         {
-            x = RoundToMultiple(pos.x, ChunkBatchSize);
+            x = RoundToMultiple(pos.x , ChunkBatchSize);
         }
         int y = 0;
 
         if (pos.y < 0)
         {
-            y = RoundToMultiple(pos.y, ChunkBatchSize);
+            y = RoundToMultiple(pos.y , ChunkBatchSize);
         }
         else
         {
@@ -235,29 +235,36 @@ public class WorldChunkManager : MonoBehaviour
 
         if (pos.x < 0)
         {
-            x = RoundToMultiple(pos.x, ChunkBatchSize);
+            x = RoundToMultiple(Mathf.Floor( pos.x), ChunkBatchSize, false) - ChunkBatchSize;
         }
         else
         {
-            x = RoundToMultiple(pos.x, ChunkBatchSize);
+            x = RoundToMultiple(Mathf.CeilToInt( pos.x), ChunkBatchSize);
         }
         int y = 0;
 
         if (pos.y < 0)
         {
-            y = RoundToMultiple(pos.y, ChunkBatchSize);
+            y = RoundToMultiple(Mathf.Floor(pos.y), ChunkBatchSize,false) - ChunkBatchSize;
         }
         else
         {
-            y = RoundToMultiple(pos.y, ChunkBatchSize);
+            y = RoundToMultiple(Mathf.CeilToInt(pos.y), ChunkBatchSize);
         }
-        return new Vector2Int(x-ChunkBatchSize, y-ChunkBatchSize);
+        return new Vector2Int(x, y);
     }
-    public int RoundToMultiple(float value, int roundTo)
+    public int RoundToMultiple(float value, int roundTo,bool larger=true)
     {
-        return  Mathf.CeilToInt(value / roundTo) * roundTo;
-    }
-    public void UpdateWorldChunks()
+        if (larger)
+        {
+            return Mathf.CeilToInt(value / roundTo) * roundTo;
+        }
+        else
+        {
+            return Mathf.FloorToInt(value / roundTo) * roundTo;
+        }
+        }
+        public void UpdateWorldChunks()
     {
        
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
@@ -426,6 +433,8 @@ public class WorldChunkManager : MonoBehaviour
     /// <param name="coords">Coords within the chunk that the position was in</param>
     public void ConvertPositionToChunkAndLocalCoords(float x, float y, out Vector2Int chunkBatch,out Vector2Int chunkCoords, out Vector2Int coords)
     {
+        x = Mathf.Ceil(x);
+        y=Mathf.Ceil(y);
         float mod = WorldChunkManager.ChunkBatchSize;
         xMod = Mathf.RoundToInt(x % mod);
         localX =xMod;

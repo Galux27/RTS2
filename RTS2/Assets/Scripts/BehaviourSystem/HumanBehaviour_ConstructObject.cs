@@ -52,7 +52,7 @@ public class HumanBehaviour_ConstructObject : BehaviourBase
         }
         else
         {
-            return (TargetPosition - unitToMove.transform.position).normalized;
+            return Vector3.zero;//(TargetPosition - unitToMove.transform.position).normalized;
         }
     }
 

@@ -46,7 +46,7 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
         }
         else
         {
-            return (TargetPosition - unitToMove.transform.position).normalized;
+            return Vector3.zero;//return (TargetPosition - unitToMove.transform.position).normalized;
         }
     }
     float startTime = 0f;

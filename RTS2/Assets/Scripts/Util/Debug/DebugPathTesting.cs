@@ -16,6 +16,9 @@ public class DebugPathTesting : MonoBehaviour
     PathfindingNode startNode, endNode;
     public int s, e;
     public List<int> sN, eN;
+
+    public float TimeTakenForPath = 0, TimeTakenForGroups = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -88,7 +91,10 @@ public class DebugPathTesting : MonoBehaviour
 
         if (FindPath)
         {
+            EasyStopwatch.StartStopwatch();
            path=  Pathfinding.FindPath(Marker1.transform.position, Marker2.transform.position);
+            EasyStopwatch.StopStopwatch();
+            TimeTakenForPath=EasyStopwatch.GetStopwatchElapsedTime();
             FindPath = false;
             tr = new TileRaycast(Marker1.transform.position, Marker2.transform.position);
             tr.PerformRaycast();
@@ -96,9 +102,16 @@ public class DebugPathTesting : MonoBehaviour
             endNode = Pathfinding.GetNodeFromPosition(Marker2.transform.position);
             s = startNode.PathNodeGroupID;
             e = endNode.PathNodeGroupID;
+
+
+
             sN = NodeIDPathing.PathNodeIDs[s].NeighbouringIDs;
             eN = NodeIDPathing.PathNodeIDs[e].NeighbouringIDs;
+            EasyStopwatch.StartStopwatch();
+
             PathGroupPath = NodeIDPathing.GetPath(startNode, endNode);
+            EasyStopwatch.StopStopwatch();
+            TimeTakenForGroups = EasyStopwatch.GetStopwatchElapsedTime();
             IsNull = PathGroupPath == null;
         }
         if (tr != null)

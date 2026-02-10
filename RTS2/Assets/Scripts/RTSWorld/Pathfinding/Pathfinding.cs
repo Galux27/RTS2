@@ -138,12 +138,30 @@ public static class Pathfinding
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null,bool debug=false)
     {
 
-        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(Position.x, Position.y, out batch, out chunk, out local);
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(Mathf.Ceil(Position.x),Mathf.Ceil( Position.y), out batch, out chunk, out local);
         if (!ValidateCoords())
         {
             return null;
         }
-        return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].PathfindingNodes[local.x, local.y];
+
+        PathfindingNode retVal = WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].PathfindingNodes[local.x, local.y];
+        if (retVal.PathNodeGroupID == -1)
+        {
+            float dist = 22f, dist2 = 0f;
+            for (int x = 0; x < retVal.neighbours.Count; x++)
+            {
+                if (retVal.neighbours[x].PathNodeGroupID != -1)
+                {
+                    dist2 = Vector3.Distance(retVal.neighbours[x].worldPos, Position);
+                    if (dist2 < dist)
+                    {
+                        dist = dist2;
+                        retVal = retVal.neighbours[x];
+                    }
+                }
+            }
+        }
+        return retVal;
     }
 
 
@@ -165,6 +183,21 @@ public static class Pathfinding
 
     const int MaxNodesCanCheck = 3000;
 
+    static bool CanGetPath(PathfindingNode start,PathfindingNode end)
+    {
+        if (NodeIDPathing.PathNodeIDs.ContainsKey(start.PathNodeGroupID) == false || NodeIDPathing.PathNodeIDs.ContainsKey(end.PathNodeGroupID) == false)
+        {
+            return false;
+        }
+
+        if (start.PathNodeGroupID == -1 || end.PathNodeGroupID == -1)
+        {
+            return false;
+        }
+        return NodeIDPathing.GetPath(start, end).Count > 0;
+    }
+
+
     /// <summary>
     /// Finds a path without considering the unit performing the path
     /// Used in calculating whether a building is enclosed or not
@@ -177,6 +210,10 @@ public static class Pathfinding
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos);
+        if (!CanGetPath(seekerNode, targetNode))
+        {
+            return null;
+        }
         Debug.Log("Starting path from " + startPos + " to " + targetPos + " start null " + (seekerNode == null) + "," + (targetNode == null));
         int count = 0;
         openSet.Clear();
@@ -241,6 +278,10 @@ public static class Pathfinding
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos,performing);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos,performing);
+        if (!CanGetPath(seekerNode, targetNode))
+        {
+            return null;
+        }
         Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "
             +seekerNode.worldPos.ToString()
             +" dest node " + targetNode.worldPos.ToString());
@@ -313,6 +354,10 @@ public static class Pathfinding
         Debug.Log("Getting Path from " + startPos + " to " + targetNode.worldPos + " start node "
             + seekerNode.worldPos.ToString()
             + " dest node " + targetNode.worldPos.ToString());
+        if (!CanGetPath(seekerNode, targetNode))
+        {
+            return null;
+        }
         if (seekerNode.IsPassable == false || targetNode.IsPassable == false)
         {
             Debug.Log("Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos +
