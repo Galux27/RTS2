@@ -148,6 +148,7 @@ public static class Pathfinding
         if (retVal.PathNodeGroupID == -1)
         {
             float dist = 22f, dist2 = 0f;
+            bool found = false;
             for (int x = 0; x < retVal.neighbours.Count; x++)
             {
                 if (retVal.neighbours[x].PathNodeGroupID != -1)
@@ -160,6 +161,25 @@ public static class Pathfinding
                     }
                 }
             }
+            found = retVal.PathNodeGroupID != -1;
+            if (!found)
+            {
+                for (int x = 0; x < retVal.neighbours.Count; x++)
+                {
+                    for (int y = 0; y < retVal.neighbours[x].neighbours.Count; y++)
+                    {
+                        if (retVal.neighbours[x].neighbours[y].PathNodeGroupID != -1)
+                        {
+                            dist2 = Vector3.Distance(retVal.neighbours[x].neighbours[y].worldPos, Position);
+                            if (dist2 < dist)
+                            {
+                                dist = dist2;
+                                retVal = retVal.neighbours[x].neighbours[y];
+                            }
+                        }
+                    }
+                    }
+                }
         }
         return retVal;
     }
@@ -168,7 +188,7 @@ public static class Pathfinding
     public static WorldTile GetTileFromPosition(Vector3 Position, Unit performing = null, bool debug = false)
     {
 
-        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(Position.x, Position.y, out batch, out chunk, out local);
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords( Position.x, Position.y, out batch, out chunk, out local);
         if (!ValidateCoords())
         {
             return null;
@@ -285,7 +305,7 @@ public static class Pathfinding
         Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "
             +seekerNode.worldPos.ToString()
             +" dest node " + targetNode.worldPos.ToString());
-        if (seekerNode.IsPassable == false || targetNode.IsPassable == false)
+        if (/*seekerNode.IsPassable == false ||*/ targetNode.IsPassable == false)
         {
             Debug.Log("Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos + 
                 "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count+"|"+seekerNode.IsPassable+"|"+targetNode.IsPassable);
