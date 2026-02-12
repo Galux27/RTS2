@@ -43,7 +43,7 @@ public class ALifeChunk
         {
             if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(coords))
             {
-                Debug.Log("A Life: moved into existing chunk");
+               // Debug.Log("A Life: moved into existing chunk");
                 OverworldGenerator.Instance.ALifeSystem.OnALifeEntityEntersActiveChunk(entity, WorldChunkManager.Instance.ChunkBatches[coords]);
             }
         }
@@ -125,7 +125,7 @@ public class ALifeChunk
             }
         }
         EasyStopwatch.StopStopwatch();
-        Debug.Log("A Life: checking for combatents took " + EasyStopwatch.GetStopwatchElapsedTime());
+       // Debug.Log("A Life: checking for combatents took " + EasyStopwatch.GetStopwatchElapsedTime());
     }
 
     bool IsInRangeOfEnemy(ALifeFactionGroup enemies,ALifeEntity checking,out ALifeEntity target)

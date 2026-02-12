@@ -46,7 +46,7 @@ public class ALife:ISerialize
         if(UpdateTimer > ALifeUpdateRate)
         {
             RunningALifeUpdate = true;
-            Debug.Log("A Life Update: starting a life update");
+           // Debug.Log("A Life Update: starting a life update");
             StartUpdateThread();
             //MultiThreadedManager.Instance.AddAction(()=> { MultithreadedUpdateALife(); },()=> { OnALifeUpdateFinish(); });
             //OverworldGenerator.Instance.StartCoroutine(UpdateALife());
@@ -70,7 +70,7 @@ public class ALife:ISerialize
         else
         {
             CanUpdateUnits = true;
-            Debug.Log("A Life Update: fin");
+           // Debug.Log("A Life Update: fin");
         }
     }
     const int maxPerThread = 10;
@@ -88,7 +88,7 @@ public class ALife:ISerialize
                 count++;
                 if ( MultithreadingStopwatch.GetStopwatchElapsedTime()> MaxUpdateTimeForThread)
                 {
-                    Debug.Log("A Life Update: updated " + count+" "+curX+","+curY);
+                    //Debug.Log("A Life Update: updated " + count+" "+curX+","+curY);
 
                     MultithreadingStopwatch.StopStopwatch();
                     return;
@@ -121,7 +121,7 @@ public class ALife:ISerialize
                 }
             }
         }
-        Debug.Log("A Life: finished a life pass");
+      //  Debug.Log("A Life: finished a life pass");
         RunningALifeUpdate=false;
     }
 
@@ -170,7 +170,7 @@ public class ALife:ISerialize
     {
         int toSpawn = tile.Population / 20;
         ALifeEntity spawning = null;
-        Debug.Log("A Life: Spawning " + toSpawn + " rifleman");
+        //Debug.Log("A Life: Spawning " + toSpawn + " rifleman");
         CachedUnitData data = UnitTypesController.Instance.UnitData[UnitTypesController.BaseRilfeman];
         for (int x = 0; x < toSpawn; x++)
         {
@@ -537,8 +537,8 @@ public class ALifeCombat
                         if (attackChance < distToTarget)
                         {
                             //  Debug.Log("A Life: action 1");
-                            Debug.Log("A Life Combat: attacking target" + "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + " target " + target.Faction
-                              + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange + "/" + " dam " + kvp.Value[x].AttackDamage + "," + kvp.Value[x].RangedDamage);
+                            //Debug.Log("A Life Combat: attacking target" + "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + " target " + target.Faction
+                            //  + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange + "/" + " dam " + kvp.Value[x].AttackDamage + "," + kvp.Value[x].RangedDamage);
 
                             ALifeActions.AttackTarget(kvp.Value[x], target, kvp.Value[x].AttackMaxRange > MinAttackRange
                                 && distToTarget > MinAttackRange);
@@ -548,9 +548,9 @@ public class ALifeCombat
                         else
                         {
                             Vector2Int pos = combatIn.GetPositionToRepositionTo(kvp.Value[x], kvp.Value[x].MoveSpeed);
-                            Debug.Log("A Life Combat: moving to safe location" +
-                                "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + "->" + pos + " target " + target.Faction
-                             + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange);
+                            //Debug.Log("A Life Combat: moving to safe location" +
+                            //    "OVC:" + combatIn.coords + kvp.Value[x].Faction + " " + kvp.Value[x].LocalCoords + "->" + pos + " target " + target.Faction
+                            // + " " + target.LocalCoords + " dist " + distToTarget + "/" + kvp.Value[x].AttackMaxRange);
                             ALifeActions.MoveTowardsPosition(kvp.Value[x], pos);
 
                             if (hazardLevel < 0)
@@ -693,8 +693,8 @@ public class ALifeCombat
 
     void OnAttack(ALifeEntity performing,ALifeEntity target,ref List<ALifeEntity> toRemove)
     {
-        Debug.Log("A Life Combat: type "+performing.UnitType+" pos "+performing.LocalCoords+" hp " +performing.Health 
-            +" target type"+ target.UnitType + " pos " + target.LocalCoords+" hp " + target.Health);
+        //Debug.Log("A Life Combat: type "+performing.UnitType+" pos "+performing.LocalCoords+" hp " +performing.Health 
+        //    +" target type"+ target.UnitType + " pos " + target.LocalCoords+" hp " + target.Health);
         if (performing.isDead &&!toRemove.Contains(performing))
         {
             toRemove.Add(performing);

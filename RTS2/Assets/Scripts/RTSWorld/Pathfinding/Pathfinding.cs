@@ -133,7 +133,21 @@ public static class Pathfinding
         }
         return true;
     }
-
+    static bool IsNodeIDValid(int id)
+    {
+        if (!NodeIDPathing.PathNodeIDs.ContainsKey(id))
+        {
+            return false;
+        }
+        if (NodeIDPathing.PathNodeIDs[id].NeighbouringIDs.Count <= 1)
+        {
+            if (NodeIDPathing.PathNodeIDs[id].NeighbouringIDs.Contains(-1)==true)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null,bool debug=false)
     {
@@ -151,10 +165,10 @@ public static class Pathfinding
             bool found = false;
             for (int x = 0; x < retVal.neighbours.Count; x++)
             {
-                if (retVal.neighbours[x].PathNodeGroupID != -1)
+                if (retVal.neighbours[x].PathNodeGroupID != -1 && IsNodeIDValid(retVal.neighbours[x].PathNodeGroupID))
                 {
                     dist2 = Vector3.Distance(retVal.neighbours[x].worldPos, Position);
-                    if (dist2 < dist)
+                    if (dist2 < dist )
                     {
                         dist = dist2;
                         retVal = retVal.neighbours[x];
@@ -168,7 +182,7 @@ public static class Pathfinding
                 {
                     for (int y = 0; y < retVal.neighbours[x].neighbours.Count; y++)
                     {
-                        if (retVal.neighbours[x].neighbours[y].PathNodeGroupID != -1)
+                        if (retVal.neighbours[x].neighbours[y].PathNodeGroupID != -1 && IsNodeIDValid(retVal.neighbours[x].neighbours[y].PathNodeGroupID))
                         {
                             dist2 = Vector3.Distance(retVal.neighbours[x].neighbours[y].worldPos, Position);
                             if (dist2 < dist)
@@ -207,11 +221,14 @@ public static class Pathfinding
     {
         if (NodeIDPathing.PathNodeIDs.ContainsKey(start.PathNodeGroupID) == false || NodeIDPathing.PathNodeIDs.ContainsKey(end.PathNodeGroupID) == false)
         {
+            Debug.Log("Path Fail: due to being stuck on node with no group");
             return false;
         }
 
         if (start.PathNodeGroupID == -1 || end.PathNodeGroupID == -1)
         {
+            Debug.Log("Path Fail: due to being stuck on impassible node");
+
             return false;
         }
         return NodeIDPathing.GetPath(start, end).Count > 0;
@@ -300,6 +317,7 @@ public static class Pathfinding
         PathfindingNode targetNode = GetNodeFromPosition(targetPos,performing);
         if (!CanGetPath(seekerNode, targetNode))
         {
+            Debug.Log("Path Fail: Could not get path between"+seekerNode.PathNodeGroupID+" and " + targetNode.PathNodeGroupID);
             return null;
         }
         Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "
@@ -307,7 +325,7 @@ public static class Pathfinding
             +" dest node " + targetNode.worldPos.ToString());
         if (/*seekerNode.IsPassable == false ||*/ targetNode.IsPassable == false)
         {
-            Debug.Log("Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos + 
+            Debug.Log("Path Failed: Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos + 
                 "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count+"|"+seekerNode.IsPassable+"|"+targetNode.IsPassable);
 
             return null;
