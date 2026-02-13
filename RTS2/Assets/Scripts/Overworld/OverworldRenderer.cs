@@ -18,15 +18,10 @@ public class OverworldRenderer : MonoBehaviour
     }
 
 
-    public RawImage DrawIn;
-    public Button Generate,Render;
+
     public List<HeightmapColour> Colours;
     public Color RiverColour,SettlementColour,MajorRoadColour, MinorRoadColour,BackroadColour,MinorFeatureColour;
-    private void Awake()
-    {
-        Render.onClick.AddListener(RenderWorld);
-        Generate.onClick.AddListener(OverworldGenerator.Instance.Generate);
-    }
+   
     public void RenderWorld()
     {
         Texture2D texture = new Texture2D(OverworldGenerator.Instance.OverworldWidth,OverworldGenerator.Instance.OverworldHeight);
@@ -60,8 +55,7 @@ public class OverworldRenderer : MonoBehaviour
             }
         }
         texture.Apply();
-        
-        DrawIn.texture = texture;
+        MapScreen_UIElement.Instance.SetMapImage(texture);
     }
 
     bool HasNoneHeightBasedFeautre(int x,int y) {
