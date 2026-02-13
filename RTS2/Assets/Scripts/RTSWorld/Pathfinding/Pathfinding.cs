@@ -396,7 +396,7 @@ public static class Pathfinding
         {
             return null;
         }
-        if (seekerNode.IsPassable == false || targetNode.IsPassable == false)
+        if ( targetNode.IsPassable == false)
         {
             Debug.Log("Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos +
                 "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count + "|" + seekerNode.IsPassable + "|" + targetNode.IsPassable);

@@ -4,6 +4,39 @@ using UnityEngine;
 
 public static class UnitHelpers 
 {
+    public static List<PathfindingNode> GetWalkableNodesNearTarget(List<Selectable> toMove, Vector3 target)
+    {
+
+        List<PathfindingNode> closeResults = new List<PathfindingNode>();
+
+        HashSet<PathfindingNode> checkedNodes = new HashSet<PathfindingNode>();
+        List<PathfindingNode> toCheck = new List<PathfindingNode>();
+        toCheck.Add(Pathfinding.GetNodeFromPosition(target));
+        while (closeResults.Count < toMove.Count && toCheck.Count>0)
+        {
+            List<PathfindingNode> newToCheck = new List<PathfindingNode>();
+            for (int x = 0; x < toCheck.Count; x++)
+            {
+                if (toCheck[x].IsPassable)
+                {
+                    closeResults.Add(toCheck[x]);
+                    checkedNodes.Add(toCheck[x]);
+                }
+                for (int q = 0; q < toCheck[x].neighbours.Count; q++)
+                {
+                    if (checkedNodes.Contains(toCheck[x].neighbours[q]) == false && toCheck[x].neighbours[q].IsPassable)
+                    {
+                        newToCheck.Add(toCheck[x].neighbours[q]);
+                    }
+                }
+            }
+            toCheck = newToCheck;
+        }
+
+        return closeResults;
+    }
+
+
     public static List<Vector3> GetWalkablePositionsNearTarget(List<Selectable> toMove,Vector3 target)
     {
      
@@ -12,7 +45,7 @@ public static class UnitHelpers
         HashSet<PathfindingNode> checkedNodes = new HashSet<PathfindingNode>();
         List<PathfindingNode> toCheck = new List<PathfindingNode>();
         toCheck.Add(Pathfinding.GetNodeFromPosition(target));
-        while (closeResults.Count < toMove.Count)
+        while (closeResults.Count < toMove.Count && toCheck.Count > 0)
         {
             List<PathfindingNode> newToCheck = new List<PathfindingNode>();
             for(int x = 0; x < toCheck.Count; x++)
@@ -24,7 +57,7 @@ public static class UnitHelpers
                 }
                 for(int q = 0; q < toCheck[x].neighbours.Count; q++)
                 {
-                    if (checkedNodes.Contains(toCheck[x].neighbours[q])==false) {
+                    if (checkedNodes.Contains(toCheck[x].neighbours[q])==false && toCheck[x].neighbours[q].IsPassable) {
                         newToCheck.Add(toCheck[x].neighbours[q]);
                     }
                 }
