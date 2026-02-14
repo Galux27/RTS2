@@ -97,4 +97,9 @@ public class BehaviourBase:ISerialize
     {
         throw new NotImplementedException();
     } 
+
+    public virtual void OnDestroy()
+    {
+
+    }
 }

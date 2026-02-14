@@ -67,6 +67,12 @@ public class PathFollower
        
     }
 
+    public Vector3 GetLastNode()
+    {
+        return pathfindingNodes[pathfindingNodes.Count-1].worldPos;
+    }
+
+
     public Vector3 GetDirToNode(Vector3 curPos)
     {
         return (GetCurrentNode()-curPos).normalized;

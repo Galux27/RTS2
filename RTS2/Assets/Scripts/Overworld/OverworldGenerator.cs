@@ -183,8 +183,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                 {
                     coords = new Vector2Int(x, y);
 
-                    if (OverworldTiles[x, y].Features.Contains(OverworldFeature.MajorRoad) 
-                       )
+                    if (OverworldTiles[x, y].Elevation< SeaLevel+25 && OverworldTiles[x, y].Elevation>SeaLevel)
                     {
                         int count = 0;
                         neighbours = GetNeighbours(coords);

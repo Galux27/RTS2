@@ -114,18 +114,24 @@ public class ResourceManager : MonoBehaviour
         Debug.Log("Adding quantity of " + key + " q " + quantity);
         UserResources[key].IncreaseQuantitiy(quantity);
         ResourcesDisplayUI.Instance.UpdateUIElement(UserResources[key]);
-
+        OnRefreshResourceData?.Invoke();
     }
 
     public void ReduceQuantity(string key,int quantity)
     {
         UserResources[key].DecreaseQuantity( quantity);
         ResourcesDisplayUI.Instance.UpdateUIElement(UserResources[key]);
+        OnRefreshResourceData?.Invoke();
     }
 
     public bool DoWeHaveEnoughSpaceForResource(string key)
     {
         return UserResources[key].Quantity < GetResourceCapacity(key);
+    }
+
+    public bool DoWeHaveEnoughOfResource(string key,int needed)
+    {
+        return UserResources[key].Quantity >= needed;
     }
    
 

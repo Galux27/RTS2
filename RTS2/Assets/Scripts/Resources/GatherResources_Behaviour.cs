@@ -17,6 +17,15 @@ public class GatherResources_Behaviour : BehaviourBase
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
 
+    public void InitBehaviour(Unit toPerform, EnvironmentObjectInstance obj,PathfindingNode targetNode)
+    {
+        base.InitBehaviour(toPerform);
+        toHarvest = obj;
+        follower = new PathFollower(toPerform);
+        TargetPosition = toHarvest.GetPosition();
+        follower.GetPath(toPerform.transform.position, targetNode);
+    }
+
     public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
     {
         InitBehaviour(performing, (EnvironmentObjectInstance)IDManager.GetObjectByUID(typeof(EnvironmentObjectInstance), (ulong)data[DataKeys.TargetUID]));
@@ -54,23 +63,32 @@ public class GatherResources_Behaviour : BehaviourBase
         return data;
     }
 
+    bool IsAtTarget()
+    {
+        if (follower.HasPath())
+        {
+            float dist = Vector3.Distance(unitToMove.transform.position, follower.GetLastNode());
+            return dist < 1f;
+        }
+        else
+        {
+            float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);
+            return dist< 1f;
+        }
+            
+    }
+
     public override void PerformBehaviour()
     {
-        float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);
-        if (dist > 1f)
+      
+        if (!IsAtTarget())
         {
             follower.OnUpdate(unitToMove.transform.position);
             unitToMove.MoveUnit(DirectionToTarget());
         }
         else
         {
-            toHarvest.Harvest();
-           
-            //if (toConstruct.IsBuilt() == false)
-            //{
-            //    toConstruct.ConstructObject();
-            //}
-
+            toHarvest.Harvest();  
         }
 
     }

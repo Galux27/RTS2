@@ -10,7 +10,6 @@ public class ResourceUI : MonoBehaviour
     public Image Icon;
     public void Init(string name,int quantity,Sprite icon,int capacity)
     {
-        //Name.text = name;
         Quantitiy.text = quantity.ToString() + "/" + capacity;
         Icon.sprite = icon;
     }
@@ -23,5 +22,18 @@ public class ResourceUI : MonoBehaviour
     public void UpdateRequirement(int val)
     {
         Quantitiy.text = val.ToString();
+    }
+
+    public void SetHasEnoughOfResource(bool val)
+    {
+        if (!val)
+        {
+            GetComponent<Image>().color = Color.red;
+        }
+        else
+        {
+            GetComponent<Image>().color = new Color(85f/255f, 95f / 255f, 115f / 255f, 1f);
+
+        }
     }
 }

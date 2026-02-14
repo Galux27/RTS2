@@ -16,7 +16,10 @@ public class ResourceCostUI : BaseUIElement
             return instance;
         }
     }
-
+    private void Awake()
+    {
+        ResourceManager.Instance.OnRefreshResourceData += OnResourceChange;
+    }
     void InitUI()
     {
 
@@ -54,14 +57,24 @@ public class ResourceCostUI : BaseUIElement
             kvp.Value.gameObject.SetActive(false);
         }
     }
+
+
+    void OnResourceChange()
+    {
+        UpdateUI(lastRequiredResources);
+    }
+
+    List<ResourceRequirement> lastRequiredResources=new List<ResourceRequirement>();
     public void UpdateUI(List<ResourceRequirement> reqs)
     {
         HideAllUI();
+        lastRequiredResources= reqs;
         for(int x=0;x< reqs.Count; x++)
         {
             Debug.Log("Updated requirements " + reqs[x].ResourceName + "," + reqs[x].QuantityRequired);
             ResourceUIElements[reqs[x].ResourceName].gameObject.SetActive(true);
             ResourceUIElements[reqs[x].ResourceName].UpdateRequirement(reqs[x].QuantityRequired);
+            ResourceUIElements[reqs[x].ResourceName].SetHasEnoughOfResource(ResourceManager.Instance.DoWeHaveEnoughOfResource(reqs[x].ResourceName, reqs[x].QuantityRequired));
         }
     }
 }

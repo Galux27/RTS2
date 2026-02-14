@@ -151,6 +151,7 @@ public class Units_SelectionMode : SelectionMode
                 {
                     EnvironmentObjectInstance toHarvest = OnHoverHarvestable;
                     List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    List<PathfindingNode> targetPositions = UnitHelpers.GetWalkableNodesNearTarget(currentlySelected,toHarvest.GetPosition());
 
                     Action Harvest = () =>
                     {
@@ -160,7 +161,7 @@ public class Units_SelectionMode : SelectionMode
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             GatherResources_Behaviour gather = new GatherResources_Behaviour();
-                            gather.InitBehaviour(toPerfrom, toHarvest);
+                            gather.InitBehaviour(toPerfrom, toHarvest, targetPositions[x]);
                             br.SetBehaviour(gather);
 
                         }
@@ -226,6 +227,7 @@ public class Units_SelectionMode : SelectionMode
                 if (OnHoverEnvironmentObject != null)
                 {
                     List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    List<PathfindingNode> targetPositions = UnitHelpers.GetWalkableNodesNearTarget(currentlySelected,OnHoverEnvironmentObject.GetPosition());
 
                     Action Convert = () =>
                     {
@@ -235,7 +237,7 @@ public class Units_SelectionMode : SelectionMode
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, targetPositions[x]);
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);
@@ -252,6 +254,7 @@ public class Units_SelectionMode : SelectionMode
                 if (OnHoverWallSegment != null)
                 {
                     List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    List<PathfindingNode> targetPositions = UnitHelpers.GetWalkableNodesNearTarget(currentlySelected,OnHoverWallSegment.Position());
 
                     Action Convert = () =>
                     {
@@ -261,7 +264,7 @@ public class Units_SelectionMode : SelectionMode
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment, targetPositions[x]);
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);
@@ -573,6 +576,7 @@ public class Units_SelectionMode : SelectionMode
                 if (OnHoverEnvironmentObject != null)
                 {
                     List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    List<PathfindingNode> targetPositions = UnitHelpers.GetWalkableNodesNearTarget(currentlySelected, OnHoverEnvironmentObject.GetPosition());
 
                     Action Convert = () =>
                     {
@@ -582,7 +586,7 @@ public class Units_SelectionMode : SelectionMode
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, targetPositions[x]);
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);
@@ -599,6 +603,7 @@ public class Units_SelectionMode : SelectionMode
                 if (OnHoverWallSegment != null)
                 {
                     List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                    List<PathfindingNode> targetPositions = UnitHelpers.GetWalkableNodesNearTarget(currentlySelected, OnHoverWallSegment.Position());
 
                     Action Convert = () =>
                     {
@@ -608,7 +613,7 @@ public class Units_SelectionMode : SelectionMode
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment, targetPositions[x]);
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);

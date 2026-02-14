@@ -17,6 +17,10 @@ public class BehaviourRunner : MonoBehaviour, Updater
 
     public void SetBehaviour(BehaviourBase toPerform)
     {
+        if (CurrentBehaviour != null)
+        {
+            CurrentBehaviour.OnDestroy();
+        }
         CurrentBehaviour = toPerform;
         OnBehaviourChange?.Invoke(toPerform);
     }

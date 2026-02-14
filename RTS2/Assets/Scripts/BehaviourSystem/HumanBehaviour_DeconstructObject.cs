@@ -16,6 +16,14 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
         TargetPosition = toDeconstruct.Position();
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
+    public void InitBehaviour(Unit toPerform, ObjectInfo obj, PathfindingNode targetNode)
+    {
+        base.InitBehaviour(toPerform);
+        toDeconstruct = obj;
+        follower = new PathFollower(toPerform);
+        TargetPosition = toDeconstruct.Position();
+        follower.GetPath(toPerform.transform.position, targetNode);
+    }
 
     public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
     {
@@ -51,7 +59,20 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
     }
     float startTime = 0f;
     float maxTime = -1f;
+    bool IsAtTarget()
+    {
+        if (follower.HasPath())
+        {
+            float dist = Vector3.Distance(unitToMove.transform.position, follower.GetLastNode());
+            return dist < 2f;
+        }
+        else
+        {
+            float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);
+            return dist < 2f;
+        }
 
+    }
 
     ProgressBarUI progressBarUI;
     public override void PerformBehaviour()
@@ -60,8 +81,7 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
         {
             return;
         }
-        float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);
-        if (dist > 1f)
+        if (!IsAtTarget())
         {
             follower.OnUpdate(unitToMove.transform.position);
             unitToMove.MoveUnit(DirectionToTarget());
@@ -73,25 +93,48 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
                 progressBarUI = ProgressBarUI.CreateProgressBar();
                 progressBarUI.InitProgressBar(MaxProgress(), startTime, toDeconstruct.Position());
             }
+            Debug.Log("Deconstruct: " + toDeconstruct.Health() + "/" + toDeconstruct.MaxHealth());
+            toDeconstruct.AdjustHealth(DeltaTimeWrapper.GameplayDelta * -10f);
 
-            progressBarUI.UpdateCurrent(DeltaTimeWrapper.GameplayDelta+progressBarUI.CurrentValue);
-            Debug.Log("Destroy: progress " + progressBarUI.CurrentValue + "/" + progressBarUI.MaxValue+" is done "+ progressBarUI.IsDone());
-            if (progressBarUI.IsDone())
+            progressBarUI.UpdateCurrent(toDeconstruct.Health());
+            // Debug.Log("Destroy: progress " + progressBarUI.CurrentValue + "/" + progressBarUI.MaxValue+" is done "+ progressBarUI.IsDone());
+
+            if (IsDeconstructed())
             {
                 progressBarUI.ReturnProgressBar();
                 progressBarUI = null;
-                DestroyObject();
                 isDeconstructed = true;
+                DestroyObject();
 
             }
+            
         }
+    }
+
+    public bool IsDeconstructed()
+    {
+        if (toDeconstruct == null)
+        {
+            return true;
+        }
+        if (toDeconstruct as EnvironmentObjectInstance != null)
+        {
+            EnvironmentObjectInstance obj = toDeconstruct as EnvironmentObjectInstance;
+            return obj == null || obj.Health()<= 0;
+        }
+        else if (toDeconstruct as WallSegment != null)
+        {
+            WallSegment wall = toDeconstruct as WallSegment;
+            return wall.HasWall==false || wall.Health()<=0;
+        }
+        return false;
     }
 
     float MaxProgress()
     {
         if(maxTime < 0f)
         {
-            maxTime= toDeconstruct.MaxHealth() / 10f;
+            maxTime= toDeconstruct.MaxHealth();
         }
         return maxTime;
     }
@@ -125,6 +168,17 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
         {
             WallSegment wall = toDeconstruct as WallSegment;
             wall.AdjustHealth(-9999999f);
+        }
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (progressBarUI != null)
+        {
+            progressBarUI.ReturnProgressBar();
+            progressBarUI = null;
+            isDeconstructed = true;
         }
     }
 
