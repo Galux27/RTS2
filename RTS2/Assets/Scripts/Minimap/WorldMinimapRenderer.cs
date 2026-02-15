@@ -6,6 +6,7 @@ public class WorldMinimapRenderer : MinimapRenderer
 {
     Dictionary<Vector2Int, Color[,]> BatchTextures=new Dictionary<Vector2Int, Color[,]>();
     Dictionary<Vector2Int, bool> BatchNeedsUpdating = new Dictionary<Vector2Int, bool>();
+    Color[,] workingCopy = new Color[WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize];
     public WorldChunkBatch BatchImIn;
     Vector3 bottomLeftCorner = Vector3.zero, topRightCorner = Vector3.zero;
     int xc = 0, yc = 0;
@@ -15,20 +16,87 @@ public class WorldMinimapRenderer : MinimapRenderer
     {
         return !updating;
     }
-
+    readonly List<Vector3> Modifiers = new List<Vector3>() { new Vector3(WorldChunkManager.ChunkBatchSize/2, 0,0),
+    new Vector3(-WorldChunkManager.ChunkBatchSize/2, 0,0) ,
+    new Vector3(0, WorldChunkManager.ChunkBatchSize/2,0),
+    new Vector3(0, -WorldChunkManager.ChunkBatchSize/2,0),
+    new Vector3( WorldChunkManager.ChunkBatchSize/2, WorldChunkManager.ChunkBatchSize/2,0),
+    new Vector3( WorldChunkManager.ChunkBatchSize/2, -WorldChunkManager.ChunkBatchSize/2,0),
+    new Vector3(- WorldChunkManager.ChunkBatchSize/2, WorldChunkManager.ChunkBatchSize/2,0),
+    new Vector3(- WorldChunkManager.ChunkBatchSize/2,- WorldChunkManager.ChunkBatchSize/2,0),
+    };
     public Color[,] GetCurChunkColours()
     {
         Vector3 cameraPos = CameraController.Instance.transform.position;
-        BatchImIn = WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(cameraPos);
-        if (BatchImIn != null)
+
+        List<WorldChunkBatch> batchesForMinimap = new List<WorldChunkBatch>();
+
+        for (int x = 0; x < Modifiers.Count; x++)
         {
-            Debug.Log("Minimap: refreshing data from " + BatchImIn.coords+","+ BatchTextures.ContainsKey(BatchImIn.coords));
-            if (BatchTextures.ContainsKey(BatchImIn.coords))
+            cameraPos = CameraController.Instance.transform.position + Modifiers[x];
+            BatchImIn = WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(cameraPos);
+            if (!batchesForMinimap.Contains(BatchImIn) && BatchImIn != null)
             {
-                return BatchTextures[BatchImIn.coords];
+                batchesForMinimap.Add(BatchImIn);
             }
         }
-        return new Color[WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize];
+        cameraPos = CameraController.Instance.transform.position;
+
+        BatchImIn = WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(cameraPos);
+        Vector2Int batch = Vector2Int.zero, chunk = Vector2Int.zero, tile = Vector2Int.zero;
+        Vector3 coords = CameraController.Instance.transform.position -new Vector3(WorldChunkManager.ChunkBatchSize / 2, WorldChunkManager.ChunkBatchSize / 2, 0);
+        
+        float xLerp = 0f, yLerp = 0f;
+        Vector2 startingCoords = new Vector2();
+        Vector2 endingCoords = new Vector2();
+        Vector2Int TextureCoords = new Vector2Int();
+        Vector2Int WorkingCoords = new Vector2Int();
+        Vector2 startWorldCoords = new Vector2();
+        Vector2 endWorldCoords = new Vector2();
+        float increment = 1f / WorldChunkManager.ChunkBatchSize;
+        Color[,] checking = null;
+        for (int q = 0; q < batchesForMinimap.Count; q++) 
+        {
+            checking = BatchTextures[batchesForMinimap[q].coords];
+            batch = batchesForMinimap[q].coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize);
+            startingCoords = new Vector2(Mathf.InverseLerp(batchesForMinimap[q].coords.x, batch.x, bottomLeftCorner.x)
+                , Mathf.InverseLerp(batchesForMinimap[q].coords.y, batch.y, bottomLeftCorner.y));
+
+            endingCoords = new Vector2(Mathf.InverseLerp(batchesForMinimap[q].coords.x, batch.x, topRightCorner.x)
+               , Mathf.InverseLerp(batchesForMinimap[q].coords.y, batch.y, topRightCorner.y));
+
+
+            startWorldCoords.x = Mathf.Lerp(batchesForMinimap[q].coords.x, batch.x, startingCoords.x);
+            startWorldCoords.y = Mathf.Lerp(batchesForMinimap[q].coords.y, batch.y, startingCoords.y);
+
+            endWorldCoords.x = Mathf.Lerp(batchesForMinimap[q].coords.x, batch.x, endingCoords.x);
+            endWorldCoords.y = Mathf.Lerp(batchesForMinimap[q].coords.y, batch.y, endingCoords.y);
+
+            for (float x=startingCoords.x; x < endingCoords.x; x += increment)
+            {
+                TextureCoords.x = Mathf.FloorToInt( Mathf.Lerp(0, WorldChunkManager.ChunkBatchSize, x));
+                WorkingCoords.x = Mathf.FloorToInt(Mathf.InverseLerp(bottomLeftCorner.x, topRightCorner.x, Mathf.Lerp(batchesForMinimap[q].coords.x, batch.x, x)) * WorldChunkManager.ChunkBatchSize);
+                for (float y = startingCoords.y; y < endingCoords.y; y += increment)
+                {
+                    TextureCoords.y = Mathf.FloorToInt(Mathf.Lerp(0, WorldChunkManager.ChunkBatchSize, y));
+                    WorkingCoords.y = Mathf.FloorToInt(Mathf.InverseLerp(bottomLeftCorner.y, topRightCorner.y, Mathf.Lerp(batchesForMinimap[q].coords.y, batch.y, y)) * WorldChunkManager.ChunkBatchSize);
+                    workingCopy[WorkingCoords.x, WorkingCoords.y] = checking[TextureCoords.x, TextureCoords.y];
+                }
+            }
+
+        }
+        
+        return workingCopy;
+
+        //if (BatchImIn != null)
+        //{
+        //    Debug.Log("Minimap: refreshing data from " + BatchImIn.coords+","+ BatchTextures.ContainsKey(BatchImIn.coords));
+        //    if (BatchTextures.ContainsKey(BatchImIn.coords))
+        //    {
+        //        return BatchTextures[BatchImIn.coords];
+        //    }
+        //}
+        //return new Color[WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize];
     }
 
     public void StartRefresh()
