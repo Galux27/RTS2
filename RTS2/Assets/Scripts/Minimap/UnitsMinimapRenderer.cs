@@ -34,7 +34,6 @@ public class UnitsMinimapRenderer : MinimapRenderer
         curCoords.x = xc;
         curCoords.y = yc;
         BatchImIn = WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(curCoords);
-        Debug.Log("Minimap: refreshing data from " + curCoords.ToString() + " batch exists " + (BatchImIn != null));
 
         if (BatchImIn != null)
         {
@@ -78,13 +77,20 @@ public class UnitsMinimapRenderer : MinimapRenderer
      
     }
 
-    public override void RefreshTexture()
+    public override void RefreshTexture(Color[,] prevColours)
     {
         for(int x = 0; x < WorldChunkManager.ChunkBatchSize; x++)
         {
             for (int y = 0; y < WorldChunkManager.ChunkBatchSize; y++)
             {
-                Texture.SetPixel(x, y, Colours[x, y]);
+                if (Colours[x, y].a > 0)
+                {
+                    Texture.SetPixel(x, y, Colours[x, y]);
+                }
+                else
+                {
+                    Texture.SetPixel(x, y, prevColours[x, y]);
+                }
             }
         }
         Texture.filterMode = FilterMode.Point;

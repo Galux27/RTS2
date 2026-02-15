@@ -60,7 +60,17 @@ public class WorldTilesManager
         }
         return 0;
     }
-
+    public Color GetTileMinimapColour(string key)
+    {
+        if (WorldTiles.ContainsKey(key))
+        {
+            return WorldTiles[key].MinimapColour;
+        }
+        else
+        {
+            return Color.cyan;
+        }
+    }
 
     public TileBase GetTileBase(string type)
     {
@@ -79,6 +89,7 @@ public class WorldTileType
 {
     public string tileType;
     public TileBase tileBase;
+    public Color MinimapColour;
 
 }
 [System.Serializable]

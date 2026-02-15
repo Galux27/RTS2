@@ -15,24 +15,34 @@ MonoBehaviour:
   tileTypes:
   - tileType: Ground
     tileBase: {fileID: 11400000, guid: 827f86ba2f2d54046a9aecd64a00917d, type: 2}
+    MinimapColour: {r: 0.18039216, g: 0.14901961, b: 0.09411765, a: 1}
   - tileType: Sand
     tileBase: {fileID: 11400000, guid: fa37ad7b3669d914b82ae4171f069ec5, type: 2}
+    MinimapColour: {r: 0.827451, g: 0.8117647, b: 0.43137255, a: 1}
   - tileType: Mud
     tileBase: {fileID: 11400000, guid: 827f86ba2f2d54046a9aecd64a00917d, type: 2}
+    MinimapColour: {r: 0.30588236, g: 0.23529412, b: 0.16078432, a: 1}
   - tileType: MinorRoad
     tileBase: {fileID: 11400000, guid: ed308fe68fbb89a49a6ce9b7fc9cf27a, type: 2}
+    MinimapColour: {r: 0.16078432, g: 0.16470589, b: 0.19215687, a: 1}
   - tileType: Tiled
     tileBase: {fileID: 11400000, guid: 7b147e2d95cf4824189a23bb77a7bc62, type: 2}
+    MinimapColour: {r: 0.40784314, g: 0.40392157, b: 0.40784314, a: 1}
   - tileType: MajorRoad
     tileBase: {fileID: 11400000, guid: ed308fe68fbb89a49a6ce9b7fc9cf27a, type: 2}
+    MinimapColour: {r: 0.16078432, g: 0.16470589, b: 0.19215687, a: 1}
   - tileType: BackRoad
     tileBase: {fileID: 11400000, guid: ed308fe68fbb89a49a6ce9b7fc9cf27a, type: 2}
+    MinimapColour: {r: 0.16078432, g: 0.16470589, b: 0.19215687, a: 1}
   - tileType: Error
     tileBase: {fileID: 11400000, guid: 08c875459d09f1344a436f673acf984a, type: 2}
+    MinimapColour: {r: 1, g: 0, b: 0.8666667, a: 1}
   - tileType: Mountain
     tileBase: {fileID: 11400000, guid: 2e08aeae967c6324d8efd24e2b431ee0, type: 2}
+    MinimapColour: {r: 0.2901961, g: 0.28627452, b: 0.2901961, a: 1}
   - tileType: Grass
     tileBase: {fileID: 11400000, guid: 970da9c3881c6064cbb90da9f70fc70d, type: 2}
+    MinimapColour: {r: 0.2901961, g: 0.40392157, b: 0.17254902, a: 1}
   WaterTiles:
   - WaterHeight: 1
     Tiles:

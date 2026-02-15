@@ -19,13 +19,14 @@ public class MinimapController : MonoBehaviour
         }
     }
 
-    public RawImage UnitsDisplay;
+    public RawImage MinimapDisplay;
     UnitsMinimapRenderer Units;
-
+    WorldMinimapRenderer World;
     // Start is called before the first frame update
     void Start()
     {
         Units = new UnitsMinimapRenderer();
+        World=new WorldMinimapRenderer();
         StartCoroutine(UpdateMinimap());
 
     }
@@ -34,8 +35,6 @@ public class MinimapController : MonoBehaviour
     bool isUpdatingData = false, updatedTexture = false;
     void Update()
     {
-        Debug.Log("Minimap: update " + Units.IsDataUpdateDone() + "," + isUpdatingData);
-
         if (Units.IsDataUpdateDone()==false)
         {
             isUpdatingData = true;
@@ -46,8 +45,10 @@ public class MinimapController : MonoBehaviour
         {
             if (!updatedTexture)
             {
-                Units.RefreshTexture();
-                UnitsDisplay.texture = Units.Texture;
+                Color[,] baseColours = World.GetCurChunkColours();
+
+                Units.RefreshTexture(baseColours);
+                MinimapDisplay.texture = Units.Texture;
                 updatedTexture = true;
                 StartCoroutine(UpdateMinimap());
 
@@ -61,15 +62,16 @@ public class MinimapController : MonoBehaviour
     {
         yield return new WaitForSeconds(TimeBetweenMinimapUpdates);
         Units.StartRefresh();
+        World.StartRefresh();
         updatedTexture = false;
-        Debug.Log("Minimap: starting refresh..");
     }
 
     IEnumerator RefreshUnitData()
     {
         yield return new WaitForEndOfFrame();
         Units.RefreshData();
-        Debug.Log("Minimap: updating data..");
+        World.RefreshData();
+
 
         isUpdatingData = false;
     }

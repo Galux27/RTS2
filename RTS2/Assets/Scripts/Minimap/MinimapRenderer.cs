@@ -13,7 +13,7 @@ public class MinimapRenderer
 
     }
 
-    public virtual void RefreshTexture()
+    public virtual void RefreshTexture(Color[,] prevColours)
     {
         
     }
@@ -24,7 +24,7 @@ public class MinimapRenderer
         {
             for (int y = 0; y < WorldChunkManager.ChunkBatchSize; y++)
             {
-                Colours[x, y] = Color.gray;
+                Colours[x, y] = Color.clear;
             }
         }
     }
