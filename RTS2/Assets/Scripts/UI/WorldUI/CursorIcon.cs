@@ -36,7 +36,7 @@ public class CursorIcon : MonoBehaviour
 
     public Sprite Move, Attack, Build,WallPlace,Deconstruct,Harvest,Collect,Multiple,Enter,Select;
 
-
+   
     public void SetSelectIcon()
     {
         Icon.sprite = Select;

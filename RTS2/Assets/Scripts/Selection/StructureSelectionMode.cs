@@ -169,8 +169,8 @@ public class StructureSelectionMode: SelectionMode
 
         Constructable ConstructableHoveringOverThisFrame =
             WorldChunkManager.Instance.GetWorldChunkFromPos(cursorPos).GetConstructableAtPosition(coords.x, coords.y, ConstructableType.Wall);
-
-        if (ValidToPlaceStructure(v))
+        Debug.Log("Doors: hover " + coords);
+        if (ValidToPlaceStructure(coords))
         {
             CursorIcon.Instance.SetColor(Color.white);
         }
@@ -198,7 +198,7 @@ public class StructureSelectionMode: SelectionMode
     {
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
-        if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y) && hasEnoughResources)
+        if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y) && hasEnoughResources&& ValidToPlaceStructure(coords))
         {
             WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
             ResourceHelpers.ConsumeResources(WallTypeManager.Instance.SelectedWallTile.RequirementsToBuild);

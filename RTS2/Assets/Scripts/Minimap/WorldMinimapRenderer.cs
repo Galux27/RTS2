@@ -57,6 +57,10 @@ public class WorldMinimapRenderer : MinimapRenderer
         Color[,] checking = null;
         for (int q = 0; q < batchesForMinimap.Count; q++) 
         {
+            if (!BatchTextures.ContainsKey(batchesForMinimap[q].coords))
+            {
+                continue;
+            }
             checking = BatchTextures[batchesForMinimap[q].coords];
             batch = batchesForMinimap[q].coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize);
             startingCoords = new Vector2(Mathf.InverseLerp(batchesForMinimap[q].coords.x, batch.x, bottomLeftCorner.x)

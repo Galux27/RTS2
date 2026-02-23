@@ -316,7 +316,7 @@ public static class WallHelpers
     public static bool CanIPlaceWallAtPosition(int x, int y)
     {
         PathfindingNode node = Pathfinding.GetNodeFromCoords(x, y);
-        if (node == null)
+        if (node == null||node.IsPassable==false)
         {
             return false;   
         }
