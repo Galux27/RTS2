@@ -316,14 +316,15 @@ public static class WallHelpers
     public static bool CanIPlaceWallAtPosition(int x, int y)
     {
         PathfindingNode node = Pathfinding.GetNodeFromCoords(x, y);
-        if (node == null||node.IsPassable==false)
+        if (node == null)
         {
             return false;   
         }
 
          if (DoesUnderConstructionWallExistAtPosition (x,y)
             || DoesConstructedWallExistAtPosition(x,y)
-            ||node.IsPassable==false)
+            ||node.IsPassable==false
+            || DoesConstructedDoorExistAtPosition(x,y))
         {
             return false;
         }
@@ -372,6 +373,8 @@ public static class WallHelpers
     {
         return WallHelpers.GetWallAtCoords(x, y).HasWall;
     }
+
+ 
 
     public static bool DoesConstructedDoorExistAtPosition(int x,int y)
     {
