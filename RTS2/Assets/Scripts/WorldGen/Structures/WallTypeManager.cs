@@ -49,4 +49,14 @@ public class WallTypeManager : MonoBehaviour
             }
         }
     }
+
+    public WallTile GetWallTile(string type)
+    {
+        if (AllObjects.ContainsKey(type))
+        {
+            return AllObjects[type];
+        }
+        return SelectedWallTile;
+    }
+
 }
