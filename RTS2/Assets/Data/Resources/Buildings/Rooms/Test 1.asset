@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c6ea39d6222d0b4d88b96ce1df32000, type: 3}
-  m_Name: Test
+  m_Name: Test 1
   m_EditorClassIdentifier: 
-  RoomID: TestRoom1
-  Wall: Metal
+  RoomID: TestRoom2
+  Wall: Wood
   Door: Wood
-  Floor: Tiled
+  Floor: Concrete
   Props: []
   CanHaveWindows: 0
-  MinWidth: 5
-  MaxWidth: 7
+  MinWidth: 6
+  MaxWidth: 8
   MinHeight: 4
-  MaxHeight: 6
+  MaxHeight: 8

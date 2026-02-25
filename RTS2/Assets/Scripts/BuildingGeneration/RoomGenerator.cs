@@ -6,7 +6,7 @@ public class RoomGenerator
 {
     public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template)
     {
-        GeneratedRoom room = new GeneratedRoom(size, pos);
+        GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID);
         PopulateWallTiles(room, template);
         PopulateFloorTiles(room, template);
 
@@ -49,11 +49,13 @@ public class RoomGenerator
 
 public class GeneratedRoom
 {
+    public string RoomType;
     public RoomTile[,] RoomTiles;
     public Vector2Int Position;
     public Vector2Int size;
-    public GeneratedRoom(Vector2Int size,Vector2Int pos)
+    public GeneratedRoom(Vector2Int size,Vector2Int pos,string type)
     {
+        RoomType = type;
         RoomTiles = new RoomTile[size.x, size.y];
         for(int x=0; x<size.x; x++)
         {
@@ -62,15 +64,34 @@ public class GeneratedRoom
                 RoomTiles[x,y]= new RoomTile(); 
             }
         }
+
         Position = pos;
         this.size = size;
     }
+
+    public Vector2Int GetEdgeCoord()
+    {
+        int x = 0, y = 0;
+        if (Random.Range(0f, 100f) < 50f)
+        {
+            x = Random.Range(0, RoomTiles.GetLength(0));
+            y = RoomTiles.GetLength(1) - 1;
+        }
+        else
+        {
+            y = Random.Range(0, RoomTiles.GetLength(1));
+            x = RoomTiles.GetLength(0) - 1;
+        }
+        return new Vector2Int(Position.x + x, Position.y + y);
+    }
+
 }
 
 public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;
     public bool HasWall = false, HasFloor = false, HasDoor = false;
+
     public void SetWall(string type)
     {
         WallTile = type;
