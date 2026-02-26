@@ -16,13 +16,13 @@ MonoBehaviour:
   PotentialRooms:
   - roomTemplate: {fileID: 11400000, guid: e4f8161e78de6fa44b23876249a32e74, type: 2}
     Min: 1
-    Max: 3
+    Max: 13
   - roomTemplate: {fileID: 11400000, guid: bbd975ceefaeeb74ab8e173f4c6ac025, type: 2}
     Min: 2
-    Max: 2
-  MinWidth: 10
-  MaxWidth: 20
-  MinHeight: 10
-  MaxHeight: 20
-  MinRooms: 0
-  MaxRooms: 0
+    Max: 10
+  MinWidth: 20
+  MaxWidth: 67
+  MinHeight: 20
+  MaxHeight: 193
+  MinRooms: 11
+  MaxRooms: 26

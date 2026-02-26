@@ -19,6 +19,6 @@ MonoBehaviour:
   Props: []
   CanHaveWindows: 0
   MinWidth: 5
-  MaxWidth: 7
+  MaxWidth: 15
   MinHeight: 4
-  MaxHeight: 6
+  MaxHeight: 17

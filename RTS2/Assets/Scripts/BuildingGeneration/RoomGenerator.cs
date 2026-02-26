@@ -90,7 +90,7 @@ public class GeneratedRoom
 public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;
-    public bool HasWall = false, HasFloor = false, HasDoor = false;
+    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false;
 
     public void SetWall(string type)
     {
