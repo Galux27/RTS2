@@ -93,9 +93,7 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     public Tile ToDraw;
     public void SetTile(Tile tile)
     {
-      
-        Debug.Log("Set tile sprite for " + x + "," + y + " to " + tile.sprite.name.ToString()+"|"+WallType);
-        ToDraw = tile;
+              ToDraw = tile;
     }
 
     public void RenderWall()

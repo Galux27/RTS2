@@ -59,7 +59,7 @@ public class BuildableStructure : Constructable,ObjectInfo
         SetBuilt(true);
         WorldChunkManager.Instance.OnBuildableFinished(this);
         Cleanup();
-        Debug.Log("Buildable constructed");
+       // Debug.Log("Buildable constructed");
         onComplete?.Invoke();
     }
 

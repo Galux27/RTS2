@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class RoomGenerator 
 {
-    public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template)
+    public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template,int id)
     {
-        GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID);
+        GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID,id);
         PopulateWallTiles(room, template);
         PopulateFloorTiles(room, template);
 
@@ -53,15 +53,18 @@ public class GeneratedRoom
     public RoomTile[,] RoomTiles;
     public Vector2Int Position;
     public Vector2Int size;
-    public GeneratedRoom(Vector2Int size,Vector2Int pos,string type)
+    public int RoomID = -1;
+    public GeneratedRoom(Vector2Int size,Vector2Int pos,string type,int ID)
     {
+        RoomID = ID;
         RoomType = type;
         RoomTiles = new RoomTile[size.x, size.y];
         for(int x=0; x<size.x; x++)
         {
             for(int y=0; y<size.y; y++)
             {
-                RoomTiles[x,y]= new RoomTile(); 
+                RoomTiles[x,y]= new RoomTile();
+                RoomTiles[x, y].SetID(RoomID);
             }
         }
 
@@ -91,6 +94,13 @@ public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;
     public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false;
+    public int RoomID;
+
+
+    public void SetID(int id)
+    {
+        RoomID = id;
+    }
 
     public void SetWall(string type)
     {

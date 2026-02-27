@@ -12,13 +12,13 @@ public class ConstructableObjectUI : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log("Construction UI enabled");
+      //  Debug.Log("Construction UI enabled");
 
     }
 
     private void OnDisable()
     {
-        Debug.Log("Construction UI disabled");
+      //  Debug.Log("Construction UI disabled");
     }
     public void InitUI(Vector3 size,Vector3 pos)
     {

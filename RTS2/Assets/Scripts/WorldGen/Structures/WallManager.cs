@@ -85,7 +85,6 @@ public class WallManager
         {
             return;
         }
-        Debug.Log("Generating wall collider for " + wall.x + "," + wall.y + "||" + wall.localCoords + "|" + wall.WallType.ToString());
         GameObject col = GameObject.Instantiate(WorldController.Instance.WallCollider, new Vector3(wall.x + .5f, wall.y + .5f, 0), Quaternion.identity);
         col.name = "Wall Collider " + wall.x + "," + wall.y + "||" + wall.localCoords + "|" + wall.WallType.ToString();
         wall.Collider = col;

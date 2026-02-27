@@ -355,8 +355,8 @@ public class WorldChunk:ISerialize
             }
         }
 
-        Debug.Log("Pathing id is now " + 
-            PathfindingNode.CurrentPathNodeID+","+WorldCoords+","+passible+"/"+impassible+"/"+(16*16)+","+startX+","+startY);
+        //Debug.Log("Pathing id is now " + 
+        //    PathfindingNode.CurrentPathNodeID+","+WorldCoords+","+passible+"/"+impassible+"/"+(16*16)+","+startX+","+startY);
     }
 
     public void MergeIds(HashSet<PathfindingNode> allChunk)
@@ -780,7 +780,7 @@ public class WorldChunk:ISerialize
     {
         if (HasChunkFinishedLoading)
         {
-            Debug.Log("Set chunk modifed ");
+          //  Debug.Log("Set chunk modifed ");
             hasChunkBeenModified = true;
         }
     }
@@ -942,7 +942,7 @@ public class WorldChunk:ISerialize
         }
         if (ToBuild.Contains(toRemove))
         {
-            Debug.Log("ADDED TO BUILD removed");
+            //Debug.Log("ADDED TO BUILD removed");
             if (needsCleanup)
             {
                 toRemove.Cleanup();
