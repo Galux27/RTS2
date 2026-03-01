@@ -154,4 +154,12 @@ public class ConstructableObjectManager : MonoBehaviour
         WorldChunkManager.Instance.AddEnvironmentObjectInstanceToChunk(instance);
         WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !AllObjects[toConstruct].BlocksTile);
     }
+
+    public void CreateObject_Generator(Vector2Int coords,Vector3 pos,string toConstruct)
+    {
+        ConstructableObject selectedToConstruct = AllObjects[toConstruct];
+        ConstructableObjectInstance instance = new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name);
+        WorldChunkManager.Instance.AddEnvironmentObjectInstanceToChunk(instance);
+        WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(instance, !AllObjects[toConstruct].BlocksTile);
+    }
 }

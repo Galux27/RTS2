@@ -16,5 +16,5 @@ public class RoomTemplateProp
 {
     public string PropName;
     public int MaxQuantity;
-
+    public bool NeedsEdge = false;
 }

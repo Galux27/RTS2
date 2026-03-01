@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RoomGenerator 
@@ -9,8 +10,85 @@ public class RoomGenerator
         GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID,id);
         PopulateWallTiles(room, template);
         PopulateFloorTiles(room, template);
-
+        PopulateRoomEnvObjects(room, template);
         return room;
+    }
+    const int RoomPropIterations = 50;
+    public void PopulateRoomEnvObjects(GeneratedRoom room, RoomTemplate template)
+    {
+        int count = 0;
+        RoomTemplateProp prop = template.Props[ Random.Range(0,template.Props.Count)];
+        Dictionary<string, int> propCounts = new Dictionary<string, int>();
+        ConstructableObject obj = ConstructableObjectManager.Instance.AllObjects[prop.PropName];
+        int width = obj.Width;
+        int height = obj.Height;
+        if (prop.NeedsEdge)
+        {
+            width += 2;
+            height += 2;
+        }
+        int xStart = Random.Range(0, room.size.x - width), yStart = Random.Range(0, room.size.y - height) ;
+        while (count < RoomPropIterations)
+        {
+            bool valid = true;
+            if (propCounts.ContainsKey(prop.PropName))
+            {
+                if (propCounts[prop.PropName] >= prop.MaxQuantity)
+                {
+                    valid = false;
+                }
+            }
+            if (valid)
+            {
+                for (int x = xStart; x < yStart + width; x++)
+                {
+                    for (int y = yStart; y < room.size.x + height; y++)
+                    {
+                        if (room.IsValid(x, y))
+                        {
+                            if (room.TileHasNothing(x, y) == false)
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (valid)
+            {
+                for (int x = xStart; x < yStart + width; x++)
+                {
+                    for (int y = yStart; y < room.size.x + height; y++)
+                    {
+                        room.RoomTiles[x, y].HasProp = true;
+                    }
+                }
+                room.AddEnvObject(new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart , yStart)));
+                if (!propCounts.ContainsKey(prop.PropName))
+                {
+                    propCounts.Add(prop.PropName, 0);
+                }
+                propCounts[prop.PropName]++;
+            }
+            prop = template.Props[Random.Range(0, template.Props.Count)];
+            obj = ConstructableObjectManager.Instance.AllObjects[prop.PropName];
+            width = obj.Width;
+            height = obj.Height;
+            if (prop.NeedsEdge)
+            {
+                width += 2;
+                height += 2;
+            }
+            xStart = Random.Range(0, room.size.x - width);
+            yStart = Random.Range(0, room.size.y - height);
+            count++;
+        }
     }
 
     void PopulateFloorTiles(GeneratedRoom room, RoomTemplate template)
@@ -53,6 +131,7 @@ public class GeneratedRoom
     public RoomTile[,] RoomTiles;
     public Vector2Int Position;
     public Vector2Int size;
+    public List<GeneratedRoomProp> EnvObjects;
     public int RoomID = -1;
     public GeneratedRoom(Vector2Int size,Vector2Int pos,string type,int ID)
     {
@@ -88,12 +167,41 @@ public class GeneratedRoom
         return new Vector2Int(Position.x + x, Position.y + y);
     }
 
+    public void AddEnvObject(GeneratedRoomProp prop)
+    {
+        if (EnvObjects == null)
+        {
+            EnvObjects = new List<GeneratedRoomProp>();
+        }
+        EnvObjects.Add(prop);
+    }
+
+    public bool IsValid(int x,int y)
+    {
+        return x >= 0 && y >= 0 && x < size.x && y < size.y;
+    }
+
+    public bool TileHasNothing(int x,int y)
+    {
+        return RoomTiles[x, y].HasWall == false && RoomTiles[x, y].HasDoor == false && RoomTiles[x, y].HasProp == false;
+    }
+
+}
+public class GeneratedRoomProp
+{
+    public string ID;
+    public Vector2Int pos;
+    public GeneratedRoomProp(string id,Vector2Int pos)
+    {
+        this.pos = pos;
+        this.ID = id;
+    }
 }
 
 public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;
-    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false;
+    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false;
     public int RoomID;
 
 

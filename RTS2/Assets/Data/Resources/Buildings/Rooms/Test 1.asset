@@ -16,7 +16,11 @@ MonoBehaviour:
   Wall: Wood
   Door: Wood
   Floor: Concrete
-  Props: []
+  Props:
+  - PropName: 
+    MaxQuantity: 0
+  - PropName: 
+    MaxQuantity: 0
   CanHaveWindows: 0
   MinWidth: 6
   MaxWidth: 8

@@ -87,17 +87,17 @@ public class BuildingGenerator : MonoBehaviour
                 {
 
                     //WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
-                   //     WallTypeManager.Instance.GetWallTile("Concrete"), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
+                    //     WallTypeManager.Instance.GetWallTile("Concrete"), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
                     WallHelpers.CreateDoorBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile
                         , new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
                 }
                 else if (cur.HasWall)
                 {
-                    
-                        WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
-                            WallTypeManager.Instance.GetWallTile(cur.WallTile), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
-                    
-                    
+
+                    WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
+                        WallTypeManager.Instance.GetWallTile(cur.WallTile), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
+
+
                 }
 
                 if (cur.HasFloor)
@@ -105,11 +105,23 @@ public class BuildingGenerator : MonoBehaviour
                     WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].UpdateTile(localCoords.x, localCoords.y, cur.FloorTile, ID);
                 }
 
-               
+
+            }
+        }
+
+        Vector2Int envObjPos = new Vector2Int();
+        for (int x = 0; x < b.MyRooms.Count; x++)
+        {
+            if (b.MyRooms[x].EnvObjects != null)
+            {
+                for (int y = 0; y < b.MyRooms[x].EnvObjects.Count; y++)
+                {
+                    envObjPos = b.Position + b.MyRooms[x].Position + b.MyRooms[x].EnvObjects[y].pos;
+                    ConstructableObjectManager.Instance.CreateObject_Generator(envObjPos, new Vector3(envObjPos.x, envObjPos.y), b.MyRooms[x].EnvObjects[y].ID);
+                }
             }
         }
     }
-
     void ApplyRoomToWorld(GeneratedRoom r)
     {
         Vector2Int pos = r.Position;
