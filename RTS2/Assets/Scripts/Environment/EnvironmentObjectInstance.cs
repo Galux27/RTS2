@@ -129,6 +129,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
 
     public void DestroyInstance()
     {
+        Debug.Log("Destroy Object: " + this.Name() + "," + this.position);
         if (!EnvironmentObjectHelpers.GetEnvironmentObject(ObjectKey).DestroyOnHarvest)
         {
             return;

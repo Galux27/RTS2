@@ -257,6 +257,29 @@ public class WorldChunk:ISerialize
         }
     }
 
+    public EnvironmentObjectInstance GetEnvObjectNearPoint(Vector2 point,float maxDist)
+    {
+        if (EnvironmentObjectsInChunk == null || EnvironmentObjectsInChunk.Count == 0)
+        {
+            return null;
+        }
+
+        EnvironmentObjectInstance retVal = null;
+        float dist = 99999f, dist2 = 0f;
+        for(int x = 0; x < EnvironmentObjectsInChunk.Count; x++)
+        {
+            dist2 = Vector2.Distance(point, EnvironmentObjectsInChunk[x].Position());
+            if (dist2 <= maxDist && dist2 < dist)
+            {
+                dist = dist2;
+                retVal = EnvironmentObjectsInChunk[x];
+            }
+        }
+        return retVal ;
+    }
+
+
+
     public void GeneratePathfindingGroups()
     {
         List<PathfindingNode> toCheck = new List<PathfindingNode>();

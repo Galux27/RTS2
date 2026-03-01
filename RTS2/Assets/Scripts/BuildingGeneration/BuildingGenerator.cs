@@ -46,7 +46,7 @@ public class BuildingGenerator : MonoBehaviour
 
                 curRoom = RoomGen.GenerateRoom(startPosition, new Vector2Int(width, height), TestTemplate,building.MyRooms.Count);
                 building.AddRoom(curRoom);
-                startPosition = building.GetEdgeOrStart(new Vector2Int(building.Width, building.Height));
+                startPosition = building.GetEdgeOrStart(new Vector2Int(width,height));
             }     
             count++;
         }
@@ -61,7 +61,7 @@ public class BuildingGenerator : MonoBehaviour
         RoomTile cur = null;
         Vector2Int batchCoords, chunkCoords, localCoords;
         uint ID = 0;
-
+        EnvironmentObjectInstance obj = null;
         for (int x = 0; x < b.Width; x++)
         {
             for (int y = 0; y < b.Height; y++)
@@ -75,25 +75,29 @@ public class BuildingGenerator : MonoBehaviour
                     continue;
                 }
                 WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batchCoords, out chunkCoords, out localCoords);
+                obj = WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].GetEnvObjectNearPoint(pos, 2f);
                 ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(cur.FloorTile);
+                if (obj != null)
+                {
 
+                    obj.DestroyInstance();
+                    obj = null;
+                }
                 if (cur.HasDoor)
                 {
-                    WallHelpers.CreateDoorBuildableStructure(pos.x, pos.y-1, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile
-                        , new Vector3(pos.x, pos.y-1, 0), new Vector3(.5f, .5f, 0f));
+
+                    //WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
+                   //     WallTypeManager.Instance.GetWallTile("Concrete"), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
+                    WallHelpers.CreateDoorBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile
+                        , new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
                 }
                 else if (cur.HasWall)
                 {
-                    if (!cur.IsEdge)
-                    {
+                    
                         WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
                             WallTypeManager.Instance.GetWallTile(cur.WallTile), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
-                    }
-                    else
-                    {
-                        WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
-                            WallTypeManager.Instance.GetWallTile("Concrete"), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
-                    }
+                    
+                    
                 }
 
                 if (cur.HasFloor)
@@ -195,6 +199,46 @@ public class GeneratedBuilding
         return false;
     }
 
+    bool HasWall(int x,int y)
+    {
+        if (y < 0 || x < 0 || x >= Width || y >= Height)
+        {
+            return false;
+        }
+        if (Tiles[x,y] == null)
+        {
+            return false;
+        }
+        return Tiles[x, y].HasWall;
+    }
+    bool HasDoor(int x, int y)
+    {
+        if (y < 0 || x < 0 || x >= Width || y >= Height)
+        {
+            return false;
+        }
+        if (Tiles[x, y] == null)
+        {
+            return false;
+        }
+        return Tiles[x, y].HasDoor;
+    }
+    bool ValidForDoor(int x,int y)
+    {
+        bool above = HasWall(x, y + 1)&&!HasDoor(x, y + 1);
+        bool below = HasWall(x, y - 1) && !HasDoor(x, y - 1);
+        bool left = HasWall(x-1, y) && !HasDoor(x - 1, y);
+        bool right = HasWall(x + 1, y) && !HasDoor(x + 1, y);
+        if (above&&below && !left && !right)
+        {
+            return true;
+        }else if(!above&&!below&&left&&right)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public void GenerateDoors()
     {
         Links = new Dictionary<int, RoomLink>();
@@ -202,7 +246,7 @@ public class GeneratedBuilding
         {
             for (int y = 0; y < Height; y++)
             {
-                if (Tiles[x, y] == null || Tiles[x,y].HasWall==false)
+                if (Tiles[x, y] == null || Tiles[x,y].HasWall==false||!ValidForDoor(x,y))
                 {
                     continue;
                 }
@@ -223,18 +267,36 @@ public class GeneratedBuilding
                             }
                             else
                             {
-                                if (InRange(x1, y1))
+                                if (InRange(x1, y1) )
                                 {
                                     if (Tiles[x1, y1] == null)
                                     {
-                                        Links[id].AddLink(-1, new Vector2Int(x, y));
+                                        if (!Links[id].DoesLinkExist(-1))
+                                        {
+                                            Links[id].AddLink(-1, new Vector2Int(x, y));
+                                        }
 
                                     }
-                                    else if (Tiles[x1, y1].RoomID!= Tiles[x, y].RoomID)
+                                    else if (Tiles[x1, y1].RoomID!= Tiles[x, y].RoomID )
                                     {
-                                        Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
-                                    }     
-                                }
+                                        if (!Links[id].DoesLinkExist(Tiles[x1, y1].RoomID))
+                                        {
+                                            if(Links.ContainsKey(Tiles[x1, y1].RoomID))
+                                            {
+                                                if (!Links[Tiles[x1, y1].RoomID].DoesLinkExist(id))
+                                                {
+                                                    Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
+
+                                            }
+                                        }
+                                        }
+                                    }
                             }
                         }
                     }
@@ -334,17 +396,29 @@ public class GeneratedBuilding
 
     public void ApplyRoom(GeneratedRoom room)
     {
-        Vector2Int Origin = room.Position;
+        Vector2Int Origin =  room.Position;
+        Origin.x -= 1;
+        Origin.y -= 1;
+        Origin.x = Mathf.Clamp(Origin.x, 0, Tiles.GetLength(0) - 1);
+        Origin.y = Mathf.Clamp(Origin.y,0,Tiles.GetLength(1) - 1);
         for(int x = 0; x < room.size.x; x++)
         {
             for(int y=0;y<room.size.y; y++)
             {
-                if (Tiles[x + Origin.x, y + Origin.y] == null)
+                try
                 {
-                    Tiles[x + Origin.x, y + Origin.y] = room.RoomTiles[x, y];
-                    hasAnything = true;
+                    if (Tiles[x + Origin.x, y + Origin.y] == null)
+                    {
+                        Tiles[x + Origin.x, y + Origin.y] = room.RoomTiles[x, y];
+                        hasAnything = true;
+                    }
                 }
-            }
+                catch
+                {
+                    Debug.LogError("error applying " + x + "," + y + " origin " + Origin + 
+                        " dims " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1)+" room " +room.RoomTiles.GetLength(0)+"x"+room.RoomTiles.GetLength(1));
+                }
+                }
         }
     }
 
@@ -444,6 +518,10 @@ public class RoomLink
         Links = new Dictionary<int, List<Vector2Int>>();
     }
 
+    public bool DoesLinkExist(int id)
+    {
+        return Links.ContainsKey(id);
+    }
     public void AddLink(int id,Vector2Int coords)
     {
         if (!Links.ContainsKey(id))
