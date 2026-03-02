@@ -170,12 +170,14 @@ public class GeneratedBuilding
     {
         if (Edges != null)
         {
+            int index = 0;
             Debug.Log("Room Start: Checking for room of size " + size + "," + Edges.Count+" size "+ Width+"x"+Height);
             for (int q = 0; q < Edges.Count; q++)
             {
+                index = Random.Range(0, Edges.Count);
                 bool valid = true;
-                start = Edges[q];
-                Debug.Log("Room Start: Checking edge coords " +Edges[q]);
+                start = Edges[index];
+                Debug.Log("Room Start: Checking edge coords " +Edges[index]);
 
                 if (start.x + size.x < Width && start.y + size.y < Height)
                 {
@@ -192,7 +194,7 @@ public class GeneratedBuilding
                     }
                     if (valid)
                     {
-                        start = Edges[q];
+                        start = Edges[index];
                         return true;
                     }
                 }

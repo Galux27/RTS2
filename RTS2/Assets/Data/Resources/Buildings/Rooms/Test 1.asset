@@ -17,10 +17,12 @@ MonoBehaviour:
   Door: Wood
   Floor: Concrete
   Props:
-  - PropName: 
-    MaxQuantity: 0
-  - PropName: 
-    MaxQuantity: 0
+  - PropName: Shelf
+    MaxQuantity: 5
+    NeedsEdge: 1
+  - PropName: Box
+    MaxQuantity: 6
+    NeedsEdge: 0
   CanHaveWindows: 0
   MinWidth: 6
   MaxWidth: 8

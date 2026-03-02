@@ -40,9 +40,9 @@ public class RoomGenerator
             }
             if (valid)
             {
-                for (int x = xStart; x < yStart + width; x++)
+                for (int x = xStart; x < xStart + width; x++)
                 {
-                    for (int y = yStart; y < room.size.x + height; y++)
+                    for (int y = yStart; y < yStart + height; y++)
                     {
                         if (room.IsValid(x, y))
                         {
@@ -62,9 +62,9 @@ public class RoomGenerator
             }
             if (valid)
             {
-                for (int x = xStart; x < yStart + width; x++)
+                for (int x = xStart; x < xStart + width; x++)
                 {
-                    for (int y = yStart; y < room.size.x + height; y++)
+                    for (int y = yStart; y < yStart + height; y++)
                     {
                         room.RoomTiles[x, y].HasProp = true;
                     }
@@ -195,6 +195,7 @@ public class GeneratedRoomProp
     {
         this.pos = pos;
         this.ID = id;
+        Debug.Log("Room Prop: " + id + " at " + pos);
     }
 }
 

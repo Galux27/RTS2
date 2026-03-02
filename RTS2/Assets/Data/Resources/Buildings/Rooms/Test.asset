@@ -18,7 +18,8 @@ MonoBehaviour:
   Floor: Tiled
   Props:
   - PropName: Bunk Bed
-    MaxQuantity: -1
+    MaxQuantity: 5
+    NeedsEdge: 1
   CanHaveWindows: 0
   MinWidth: 5
   MaxWidth: 15
