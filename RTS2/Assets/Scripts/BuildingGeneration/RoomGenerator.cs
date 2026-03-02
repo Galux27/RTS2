@@ -124,7 +124,7 @@ public class RoomGenerator
         }
     }
 }
-
+[System.Serializable]
 public class GeneratedRoom
 {
     public string RoomType;

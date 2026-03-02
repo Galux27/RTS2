@@ -25,6 +25,7 @@ public class BuildingGenerator : MonoBehaviour
     public RoomTemplate TestTemplate;
     public BuildingTemplate BuildingTemplate;
     const int MaxGenerationPasses = 50;
+    public GeneratedRoom MyRoom;
     public void GenerateBuilding()
     {
         int width = Random.Range(BuildingTemplate.MinWidth, BuildingTemplate.MaxWidth);
@@ -43,11 +44,14 @@ public class BuildingGenerator : MonoBehaviour
             if (TestTemplate != null) {
                 width = Random.Range(TestTemplate.MinWidth, TestTemplate.MaxWidth);
                 height = Random.Range(TestTemplate.MinHeight, TestTemplate.MaxHeight);
+                if (building.GetValidStartPosition( new Vector2Int(width, height),out startPosition))
+                {
+                    curRoom = RoomGen.GenerateRoom(startPosition, new Vector2Int(width, height), TestTemplate, building.MyRooms.Count);
+                    building.AddRoom(curRoom);
+                }
+               // startPosition = building.GetEdgeOrStart(new Vector2Int(width, height));
 
-                curRoom = RoomGen.GenerateRoom(startPosition, new Vector2Int(width, height), TestTemplate,building.MyRooms.Count);
-                building.AddRoom(curRoom);
-                startPosition = building.GetEdgeOrStart(new Vector2Int(width,height));
-            }     
+            }
             count++;
         }
         building.GenerateDoors();
@@ -122,40 +126,7 @@ public class BuildingGenerator : MonoBehaviour
             }
         }
     }
-    void ApplyRoomToWorld(GeneratedRoom r)
-    {
-        Vector2Int pos = r.Position;
-        RoomTile cur = null;
-        Vector2Int batchCoords, chunkCoords, localCoords;
-        uint ID = 0;
-
-        for (int x = 0; x <  r.size.x; x++)
-        {
-            for (int y = 0; y < r.size.y; y++)
-            {
-                pos = r.Position;
-                pos.x += x;
-                pos.y += y;
-                cur = r.RoomTiles[x,y];
-                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batchCoords, out chunkCoords, out localCoords);
-                ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(cur.FloorTile);
-
-                if (cur.HasWall)
-                {
-                    WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap, 
-                        WallTypeManager.Instance.GetWallTile(cur.WallTile),new Vector3(pos.x,pos.y,0), new Vector3(.5f, .5f, 0f));
-
-                }
-
-                if (cur.HasFloor)
-                {
-                    WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].UpdateTile(localCoords.x, localCoords.y, cur.FloorTile, ID);
-                }
-
-            }
-        }
-    }
-
+ 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -164,7 +135,7 @@ public class BuildingGenerator : MonoBehaviour
         }
     }
 }
-
+[System.Serializable]
 public class GeneratedBuilding
 {
     public List<GeneratedRoom> MyRooms;
@@ -195,20 +166,74 @@ public class GeneratedBuilding
         return false;
     }
 
+    public bool GetValidStartPosition(Vector2Int size,out Vector2Int start)
+    {
+        if (Edges != null)
+        {
+            Debug.Log("Room Start: Checking for room of size " + size + "," + Edges.Count+" size "+ Width+"x"+Height);
+            for (int q = 0; q < Edges.Count; q++)
+            {
+                bool valid = true;
+                start = Edges[q];
+                Debug.Log("Room Start: Checking edge coords " +Edges[q]);
+
+                if (start.x + size.x < Width && start.y + size.y < Height)
+                {
+                    for (int x = start.x; x < start.x + size.x; x++)
+                    {
+                        for (int y = start.y; y < start.y + size.y; y++)
+                        {
+                            if (HasAnything(x, y))
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (valid)
+                    {
+                        start = Edges[q];
+                        return true;
+                    }
+                }
+            }
+        }
+        start = Vector2Int.zero;// new Vector2Int(Random.Range(0, Width - size.x), Random.Range(0, Height - size.y));
+        return Edges==null|| Edges.Count==0;
+    }
+
+
     public bool IsValid(Vector2Int start,Vector2Int size)
     {
         if (start.x + size.x < Width && start.y + size.y < Height)
         {
+            for (int x = start.x; x < start.x + size.x; x++)
+            {
+                for (int y = start.y; y < start.y + size.y; y++)
+                {
+                    if (HasAnything(x, y))
+                    {
+                        return false;
+                    }
+                }
+            }
             return true;
-            //for(int x=start.x;x<start.x+size.x;x++)
-            //{
-            //    for(int y=start.y;y<start.y+size.y;y++)
-            //    {
-                    
-            //    }
-            //}
         }
         return false;
+    }
+
+    bool HasAnything(int x,int y)
+    {
+
+        if (y < 0 || x < 0 || x >= Width || y >= Height)
+        {
+            return false;
+        }
+        if (Tiles[x, y] == null)
+        {
+            return false;
+        }
+        return Tiles[x, y].HasFloor;
     }
 
     bool HasWall(int x,int y)
@@ -353,7 +378,8 @@ public class GeneratedBuilding
     public void UpdateEdgeTiles()
     {
         Edges = new List<Vector2Int>();
-        for(int x=0; x<Width; x++)
+        Vector2Int neighbour = Vector2Int.zero;
+        for (int x=0; x<Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
@@ -364,6 +390,7 @@ public class GeneratedBuilding
                 else
                 {
                     int nullNeighbours = 0, nonNullNeighbours = 0,total=0;
+                    List<Vector2Int> tileEdges = new List<Vector2Int>();
                     for(int x1 = x - 1; x1 <= x + 1; x1++)
                     {
                         for (int y1 = y - 1; y1 <= y + 1; y1++)
@@ -376,10 +403,17 @@ public class GeneratedBuilding
                             {
                                 if (InRange(x1, y1))
                                 {
+                                   
                                     total++;
                                     if (Tiles[x1, y1] == null)
                                     {
                                         nullNeighbours++;
+                                        neighbour.x = x1;
+                                        neighbour.y = y1;
+                                        if (!Edges.Contains(neighbour))
+                                        {
+                                            tileEdges.Add(neighbour);
+                                        }
                                     }
                                     else
                                     {
@@ -392,7 +426,7 @@ public class GeneratedBuilding
 
                     if (nullNeighbours > 0||total<8)
                     {
-                        Edges.Add(new Vector2Int(x, y));
+                        Edges.AddRange(tileEdges);
                         Tiles[x, y].IsEdge = true;
                     }
                     else
