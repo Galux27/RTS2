@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fe5742114abe4f448387c979245c094, type: 3}
   m_Name: Tree 3
   m_EditorClassIdentifier: 
-  Name: Tree_2
-  ForwardsSprite: {fileID: 1772009929, guid: 75de1b2ec6ca63445a49defd1de0541d, type: 3}
+  Name: Tree_3
+  ForwardsSprite: {fileID: -8228251932406343076, guid: 9cbe18f5dd96c2f479a7429cf30f021f, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   HarvestedSprite: {fileID: 0}
   BlocksTile: 1
-  Width: 1
+  Width: 2
   Height: 1
   CanHarvest: 1
   IsDecoration: 0

@@ -5735,6 +5735,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TestTemplate: {fileID: 11400000, guid: e4f8161e78de6fa44b23876249a32e74, type: 2}
   BuildingTemplate: {fileID: 11400000, guid: d68b8cb2932680d4b9b1823408537479, type: 2}
+  MyRoom:
+    RoomType: 
+    Position: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+    RoomID: 0
 --- !u!4 &813720143
 Transform:
   m_ObjectHideFlags: 0

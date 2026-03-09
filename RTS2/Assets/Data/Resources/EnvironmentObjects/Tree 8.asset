@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1fe5742114abe4f448387c979245c094, type: 3}
-  m_Name: Tree
+  m_Name: Tree 8
   m_EditorClassIdentifier: 
-  Name: Tree_1
-  ForwardsSprite: {fileID: 1773521851897588589, guid: 9cbe18f5dd96c2f479a7429cf30f021f, type: 3}
+  Name: Tree_8
+  ForwardsSprite: {fileID: -585213753391576781, guid: 9cbe18f5dd96c2f479a7429cf30f021f, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   HarvestedSprite: {fileID: 0}
   BlocksTile: 1
-  Width: 1
-  Height: 1
+  Width: 2
+  Height: 2
   CanHarvest: 1
   IsDecoration: 0
   RequiresUpdate: 0
@@ -27,9 +27,9 @@ MonoBehaviour:
   Resources:
     resources:
     - ResourceToSpawn: Construction Supplies
-      QuantityToSpawn: 25
+      QuantityToSpawn: 200
       RangeToSpawn: {x: 1, y: 1, z: 0}
-    HarvestLength: 1
+    HarvestLength: 3
   CapacityData:
     CapacityData: []
   MaxHealth: 5

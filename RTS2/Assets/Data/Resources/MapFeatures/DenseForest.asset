@@ -13,11 +13,19 @@ MonoBehaviour:
   m_Name: DenseForest
   m_EditorClassIdentifier: 
   FeatureName: DenseForest
-  MinWidth: 10
-  MaxWidth: 20
-  MinHeight: 10
-  MaxHeight: 20
+  MinWidth: 30
+  MaxWidth: 90
+  MinHeight: 40
+  MaxHeight: 90
   ValidObjectsForFeature:
   - Tree_1
-  MinQuantityToSpawn: 25
-  MaxQuantityToSpawn: 100
+  - Tree_2
+  - Tree_3
+  - Tree_4
+  - Tree_5
+  - Tree_6
+  - Tree_7
+  - Tree_8
+  - Tree_9
+  MinQuantityToSpawn: 100
+  MaxQuantityToSpawn: 400
