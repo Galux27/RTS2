@@ -194,6 +194,13 @@ public class WorldTile:ISerialize
     public ElevationTile Elevation;
     public Vector2Int Chunk, Batch,Local;
     public List<WorldTileContents> TileContents=new List<WorldTileContents>();
+    
+    public bool CanGeneratePropOnTile()
+    {
+        return CanPutDecorationsOn && traversable;
+    }
+    
+    
     public void AddContents(WorldTileContents toAdd)
     {
         if (!TileContents.Contains(toAdd))
