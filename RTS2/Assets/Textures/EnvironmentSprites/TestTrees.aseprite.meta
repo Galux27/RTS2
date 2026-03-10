@@ -391,26 +391,26 @@ ScriptedImporter:
     - name: TestTrees_Frame_0
       frameIndex: 0
       cellRect:
-        x: 52
+        x: 51
         y: 0
-        width: 328
-        height: 385
+        width: 330
+        height: 386
       spriteId: d329db06bd53b08428af4626eae95477
     - name: TestTrees_Frame_1
       frameIndex: 1
       cellRect:
-        x: 140
+        x: 139
         y: 0
-        width: 267
-        height: 487
+        width: 269
+        height: 488
       spriteId: f229b05351ddfe748a8ecc55074b32ef
     - name: TestTrees_Frame_2
       frameIndex: 2
       cellRect:
-        x: 88
+        x: 87
         y: 0
-        width: 291
-        height: 481
+        width: 293
+        height: 482
       spriteId: cabad0e74689c4740a4c9b00d26ba8aa
     - name: TestTrees_Frame_3
       frameIndex: 3

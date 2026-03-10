@@ -24,10 +24,9 @@ public class Forest_MapFeature :MapFeatureBase
         {
             x = Random.Range(- width, width);
             y = Random.Range(- height,  height);
-           
+       
             {
                 objectToCreate = Random.Range(0, ValidObjectsForFeature.Count);
-                Debug.Log("Tree: trying to Creating tree at " + center +","+ new Vector2Int(x, y));
 
                 GenerateTree(center+ new Vector2Int(x, y), ValidObjectsForFeature[objectToCreate]);   
             }
@@ -71,7 +70,6 @@ public class Forest_MapFeature :MapFeatureBase
         {
             WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(coords.x, coords.y, out batch, out chunk, out tile);
 
-            Debug.Log("Tree: Creating tree at " + coords);
             EnvironmentObjectInstance toAdd = new EnvironmentObjectInstance(coords.x,coords.y, objectToCreate);
             WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].AddEnvironmentObject(toAdd);
             WorldController.Instance.SetTilesAroundEnvrionmentObjectTraversable(toAdd, !obj.BlocksTile);
