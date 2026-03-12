@@ -57,6 +57,7 @@ public class BuildingGenerator : MonoBehaviour
             }
             count++;
         }
+        building.UpdateCorridorEdgeTiles();
         building.GenerateDoors();
        ApplyBuidlingToWorld(building);
 
@@ -467,6 +468,73 @@ public class GeneratedBuilding
         }
     }
 
+    public void UpdateCorridorEdgeTiles()
+    {
+        Vector2Int neighbour = Vector2Int.zero;
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                if (Tiles[x, y] != null)
+                {
+                    continue;
+                }
+                else
+                {
+                    int nullNeighbours = 0, nonNullNeighbours = 0, total = 0;
+                    List<Vector2Int> tileEdges = new List<Vector2Int>();
+                    bool hasCorridorNeighbour = false;
+                    for (int x1 = x - 1; x1 <= x + 1; x1++)
+                    {
+                        for (int y1 = y - 1; y1 <= y + 1; y1++)
+                        {
+                            if (x1 == x && y1 == y)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                if (InRange(x1, y1))
+                                {
+
+                                    total++;
+                                    if (Tiles[x1, y1] == null)
+                                    {
+                                        nullNeighbours++;
+                                        neighbour.x = x1;
+                                        neighbour.y = y1;
+                                        if (!Edges.Contains(neighbour))
+                                        {
+                                            tileEdges.Add(neighbour);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Tiles[x1, y1].IsCorridor)
+                                        {
+                                            hasCorridorNeighbour = true;
+                                        }
+                                        nonNullNeighbours++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (hasCorridorNeighbour)
+                    {
+                        Tiles[x, y] = new RoomTile();
+                        Tiles[x, y].HasWall = true;
+                        Tiles[x, y].HasFloor = true;
+                        Tiles[x, y].FloorTile = "Tiled";
+                        Tiles[x, y].WallTile = "Concrete";
+                        
+                    }
+                    
+                }
+            }
+        }
+    }
 
     public void ApplyRoom(GeneratedRoom room)
     {
