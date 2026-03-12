@@ -202,7 +202,7 @@ public class GeneratedRoomProp
 public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;
-    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false;
+    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false,IsCorridor=false;
     public int RoomID;
 
 

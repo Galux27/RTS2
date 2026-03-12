@@ -415,10 +415,10 @@ ScriptedImporter:
     - name: TestTrees_Frame_3
       frameIndex: 3
       cellRect:
-        x: 78
+        x: 77
         y: 0
-        width: 367
-        height: 467
+        width: 369
+        height: 468
       spriteId: 917228ff67ab71e429e09ee1fc4e83b2
     linkedCells: []
     parentIndex: -1

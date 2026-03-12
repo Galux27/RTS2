@@ -38,6 +38,9 @@ public class BuildingGenerator : MonoBehaviour
         RoomGen = new RoomGenerator();
         GeneratedRoom curRoom = null;
         Vector2Int startPosition = building.GetEdgeOrStart(new Vector2Int(building.Width,building.Height)) ;
+        TShapeCorridorGenerator corridor = new TShapeCorridorGenerator();
+        corridor.GenerateCorridor(new Vector2Int(10, 10), building, 3);
+        building.UpdateEdgeTiles();
         while (count <MaxGenerationPasses && !building.HasFinishedBuildingGen(BuildingTemplate))
         {
             TestTemplate = building.GetRoomToGenerate(BuildingTemplate);
@@ -204,6 +207,17 @@ public class GeneratedBuilding
         return Edges==null|| Edges.Count==0;
     }
 
+    public void SetTileAsCorridor(Vector2Int coords)
+    {
+        Debug.Log("Corridor: Setting tile as corridor " + coords);
+        if (Tiles[coords.x, coords.y] == null)
+        {
+            Tiles[coords.x, coords.y] = new RoomTile();
+        }
+        Tiles[coords.x, coords.y].IsCorridor = true;
+        Tiles[coords.x, coords.y].HasFloor = true;
+        Tiles[coords.x, coords.y].FloorTile = "Mud";
+    }
 
     public bool IsValid(Vector2Int start,Vector2Int size)
     {
@@ -393,6 +407,7 @@ public class GeneratedBuilding
                 {
                     int nullNeighbours = 0, nonNullNeighbours = 0,total=0;
                     List<Vector2Int> tileEdges = new List<Vector2Int>();
+                    bool hasCorridorNeighbour = false;
                     for(int x1 = x - 1; x1 <= x + 1; x1++)
                     {
                         for (int y1 = y - 1; y1 <= y + 1; y1++)
@@ -419,6 +434,10 @@ public class GeneratedBuilding
                                     }
                                     else
                                     {
+                                        if(Tiles[x1, y1].IsCorridor)
+                                        {
+                                            hasCorridorNeighbour = true;
+                                        }
                                         nonNullNeighbours++;
                                     }
                                 }
@@ -426,10 +445,17 @@ public class GeneratedBuilding
                         }
                     }
 
-                    if (nullNeighbours > 0||total<8)
+                    if (hasCorridorNeighbour)
                     {
-                        Edges.AddRange(tileEdges);
-                        Tiles[x, y].IsEdge = true;
+                        if (nullNeighbours > 0 || total < 8)
+                        {
+                            Edges.AddRange(tileEdges);
+                            Tiles[x, y].IsEdge = true;
+                        }
+                        else
+                        {
+                            Tiles[x, y].IsEdge = false;
+                        }
                     }
                     else
                     {
