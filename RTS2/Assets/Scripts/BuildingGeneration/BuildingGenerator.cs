@@ -33,11 +33,12 @@ public class BuildingGenerator : MonoBehaviour
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
             (int)CameraController.Instance.transform.position.y);
         
-        GeneratedBuilding building = new GeneratedBuilding(width, height, camPos);
+        GeneratedBuilding building = new GeneratedBuilding(width, height, camPos-new Vector2Int(width/2,height/2));
         int count = 0;
         RoomGen = new RoomGenerator();
         GeneratedRoom curRoom = null;
         Vector2Int startPosition = building.GetEdgeOrStart(new Vector2Int(building.Width,building.Height)) ;
+        Vector2Int modifier = Vector2Int.zero;
         TShapeCorridorGenerator corridor = new TShapeCorridorGenerator();
         corridor.GenerateCorridor(new Vector2Int(width/2, height/2), building, 3);
         building.UpdateEdgeTiles();
@@ -47,9 +48,10 @@ public class BuildingGenerator : MonoBehaviour
             if (TestTemplate != null) {
                 width = Random.Range(TestTemplate.MinWidth, TestTemplate.MaxWidth);
                 height = Random.Range(TestTemplate.MinHeight, TestTemplate.MaxHeight);
-                if (building.GetValidStartPosition( new Vector2Int(width, height),out startPosition))
+                if (building.GetValidStartPosition( new Vector2Int(width, height),out startPosition,out modifier))
                 {
-                    curRoom = RoomGen.GenerateRoom(startPosition, new Vector2Int(width, height), TestTemplate, building.MyRooms.Count);
+
+                    curRoom = RoomGen.GenerateRoom(startPosition+new Vector2Int((width-1)*modifier.x,(height-1)*modifier.y), new Vector2Int(width, height), TestTemplate, building.MyRooms.Count);
                     building.AddRoom(curRoom);
                 }
                // startPosition = building.GetEdgeOrStart(new Vector2Int(width, height));
@@ -170,7 +172,7 @@ public class GeneratedBuilding
         return false;
     }
 
-    public bool GetValidStartPosition(Vector2Int size,out Vector2Int start)
+    public bool GetValidStartPosition(Vector2Int size,out Vector2Int start,out Vector2Int mod)
     {
         if (Edges != null)
         {
@@ -198,19 +200,96 @@ public class GeneratedBuilding
                     }
                     if (valid)
                     {
+                        mod = new Vector2Int(0, 0);
+                        start = Edges[index];
+                        return true;
+                    }
+                }
+                if(start.x-size.x>0 && start.y + size.y < Height)
+                {
+                    valid = true;
+                    for (int x = start.x; x > start.x - size.x; x--)
+                    {
+                        for (int y = start.y; y < start.y + size.y; y++)
+                        {
+                            if (HasAnything(x, y))
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (valid)
+                    {
+                        mod = new Vector2Int(-1, 0);
+
+                        start = Edges[index];
+                        return true;
+                    }
+                }
+
+                if (start.x + size.x < Width && start.y - size.y > 0)
+                {
+                    valid = true;
+
+                    for (int x = start.x; x < start.x + size.x; x++)
+                    {
+                        for (int y = start.y; y > start.y - size.y; y--)
+                        {
+                            if (HasAnything(x, y))
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (valid)
+                    {
+                        mod = new Vector2Int(0, -1);
+
+                        start = Edges[index];
+                        return true;
+                    }
+                }
+
+                if (start.x - size.x > 0 && start.y - size.y > 0)
+                {
+                    valid = true;
+                    for (int x = start.x; x > start.x - size.x; x--)
+                    {
+                        for (int y = start.y; y > start.y - size.y; y--)
+                        {
+                            if (HasAnything(x, y))
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (valid)
+                    {
+                        mod = new Vector2Int(-1, -1);
+
                         start = Edges[index];
                         return true;
                     }
                 }
             }
         }
+        mod = new Vector2Int(1, 1);
+
         start = Vector2Int.zero;// new Vector2Int(Random.Range(0, Width - size.x), Random.Range(0, Height - size.y));
         return Edges==null|| Edges.Count==0;
     }
 
     public void SetTileAsCorridor(Vector2Int coords)
     {
-        Debug.Log("Corridor: Setting tile as corridor " + coords);
+
+        Debug.Log("Corridor: Setting tile as corridor " + coords+" dims "+  Tiles.GetLength(0)+"x"+Tiles.GetLength(1));
+        if (!InRange(coords.x, coords.y))
+        {
+            return;
+        }
         if (Tiles[coords.x, coords.y] == null)
         {
             Tiles[coords.x, coords.y] = new RoomTile();
@@ -250,7 +329,7 @@ public class GeneratedBuilding
         {
             return false;
         }
-        return Tiles[x, y].HasFloor;
+        return Tiles[x, y].HasFloor||Tiles[x,y].IsCorridor;
     }
 
     bool HasWall(int x,int y)

@@ -36,6 +36,17 @@ public class TShapeCorridorGenerator : CorridorGenerator
         }
 
         Vector2Int startCoord = new Vector2Int(axis.x*(toPopulate.Tiles.GetLength(0)-1), axis.y * (toPopulate.Tiles.GetLength(1) - 1));
+
+        r = Random.Range(0, 100);
+        if (r < 50)
+        {
+            startCoord.x = Random.Range(width, (toPopulate.Tiles.GetLength(0) - (width + 1)));
+        }
+        else
+        {
+            startCoord.y = Random.Range(width, (toPopulate.Tiles.GetLength(1) - (width + 1)));
+        }
+
         Vector2Int mod = axis;
         if (mod.x >0)
         {
@@ -60,6 +71,7 @@ public class TShapeCorridorGenerator : CorridorGenerator
         {
             for(int y = 0; y < width; y++)
             {
+               
                 toPopulate.SetTileAsCorridor(curCoords);
                 curCoords.y += mod.y;
             }
@@ -67,7 +79,7 @@ public class TShapeCorridorGenerator : CorridorGenerator
             curCoords.x += mod.x;
         }
 
-        curCoords.x = startCoord.x + (mod.x * size.x);
+        curCoords.x = startCoord.x + (mod.x * (size.x/2));
         curCoords.y = startCoord.y;
         Debug.Log("Corridor: second pass " + curCoords+ "," + size + "," + axis + "," + mod + "," + toPopulate.Tiles.GetLength(0) + "," + toPopulate.Tiles.GetLength(1));
 
@@ -78,7 +90,7 @@ public class TShapeCorridorGenerator : CorridorGenerator
                 toPopulate.SetTileAsCorridor(curCoords);
                 curCoords.x += mod.x*-1;
             }
-            curCoords.x = startCoord.x + (mod.x  * size.x);
+            curCoords.x = startCoord.x + (mod.x  * (size.x / 2));
             curCoords.y += mod.y;
         }
     }
