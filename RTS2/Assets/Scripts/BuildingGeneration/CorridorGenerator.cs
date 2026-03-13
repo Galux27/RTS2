@@ -76,9 +76,9 @@ public class TShapeCorridorGenerator : CorridorGenerator
             for(int x=0; x < width; x++)
             {
                 toPopulate.SetTileAsCorridor(curCoords);
-                curCoords.x += mod.x;
+                curCoords.x += mod.x*-1;
             }
-            curCoords.x = startCoord.x + (mod.x * size.x);
+            curCoords.x = startCoord.x + (mod.x  * size.x);
             curCoords.y += mod.y;
         }
     }

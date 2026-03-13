@@ -39,7 +39,7 @@ public class BuildingGenerator : MonoBehaviour
         GeneratedRoom curRoom = null;
         Vector2Int startPosition = building.GetEdgeOrStart(new Vector2Int(building.Width,building.Height)) ;
         TShapeCorridorGenerator corridor = new TShapeCorridorGenerator();
-        corridor.GenerateCorridor(new Vector2Int(10, 10), building, 3);
+        corridor.GenerateCorridor(new Vector2Int(width/2, height/2), building, 3);
         building.UpdateEdgeTiles();
         while (count <MaxGenerationPasses && !building.HasFinishedBuildingGen(BuildingTemplate))
         {
@@ -331,6 +331,14 @@ public class GeneratedBuilding
                                         }
 
                                     }
+                                    else if (Tiles[x1, y1].IsCorridor)
+                                    {
+                                        if (!Links[id].HasCorridorLink)
+                                        {
+                                            Links[id].CorridorLink = new Vector2Int(x, y);
+                                            Links[id].HasCorridorLink = true;
+                                        }
+                                    }
                                     else if (Tiles[x1, y1].RoomID!= Tiles[x, y].RoomID )
                                     {
                                         if (!Links[id].DoesLinkExist(Tiles[x1, y1].RoomID))
@@ -371,6 +379,10 @@ public class GeneratedBuilding
    
         foreach(KeyValuePair<int,RoomLink> kvp in Links)
         {
+            if (kvp.Value.HasCorridorLink)
+            {
+                Tiles[kvp.Value.CorridorLink.x, kvp.Value.CorridorLink.y].HasDoor = true;
+            }
             foreach(KeyValuePair<int,List<Vector2Int>> kvp2 in kvp.Value.Links)
             {
                 Vector2Int val = kvp2.Value[ Random.Range(0,kvp2.Value.Count)];
@@ -475,11 +487,11 @@ public class GeneratedBuilding
         {
             for (int y = 0; y < Height; y++)
             {
-                if (Tiles[x, y] != null)
-                {
-                    continue;
-                }
-                else
+                //if (Tiles[x, y] != null)
+                //{
+                //    continue;
+                //}
+              // else
                 {
                     int nullNeighbours = 0, nonNullNeighbours = 0, total = 0;
                     List<Vector2Int> tileEdges = new List<Vector2Int>();
@@ -521,10 +533,13 @@ public class GeneratedBuilding
                         }
                     }
 
-                    if (hasCorridorNeighbour)
+                    if (hasCorridorNeighbour && (Tiles[x, y] == null || Tiles[x,y].IsCorridor==false)||total<8&& (Tiles[x, y] != null&& Tiles[x, y].IsCorridor))
                     {
-                        Tiles[x, y] = new RoomTile();
-                        Tiles[x, y].HasWall = true;
+                        if (Tiles[x, y] == null)
+                        {
+                            Tiles[x, y] = new RoomTile();
+                        }
+                            Tiles[x, y].HasWall = true;
                         Tiles[x, y].HasFloor = true;
                         Tiles[x, y].FloorTile = "Tiled";
                         Tiles[x, y].WallTile = "Concrete";
@@ -654,6 +669,8 @@ public class RoomLink
 {
     public int MyID;
     public Dictionary<int, List<Vector2Int>> Links;
+    public Vector2Int CorridorLink;
+    public bool HasCorridorLink = false;
     public RoomLink(int id)
     {
         MyID = id;
