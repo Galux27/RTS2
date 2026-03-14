@@ -61,7 +61,7 @@ public class Projectile : MonoBehaviour
 
     void DestroyProjectile()
     {
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         GameObjectPoolManager.Instance.ReturnObjectToPool(this.gameObject, "Projectile");
     }
 }

@@ -8,6 +8,7 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  importerVersion: 1
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -77,6 +78,7 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
@@ -89,6 +91,7 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
@@ -103,6 +106,7 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -121,9 +125,10 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: WoodDoor_Frame_0
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 0.5, y: -0.5925926}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -141,9 +146,10 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 124}
   - name: WoodDoor_Frame_8
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 0.5, y: -0.52678573}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -161,9 +167,10 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 4}
   - name: WoodDoor_Frame_9
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 0.5614035, y: -0.41322312}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -181,9 +188,10 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 240}
   - name: WoodDoor_Frame_1
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 0.6037736, y: -0.31538463}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -201,9 +209,10 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 369}
   - name: WoodDoor_Frame_2
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 0.68085104, y: -0.27611938}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 76
@@ -224,6 +233,7 @@ ScriptedImporter:
     pivot: {x: 0.84210527, y: -0.25735295}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 76
@@ -241,9 +251,10 @@ ScriptedImporter:
     uvTransform: {x: 76, y: 146}
   - name: WoodDoor_Frame_4
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 1.1034483, y: -0.23913044}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 76
@@ -261,9 +272,10 @@ ScriptedImporter:
     uvTransform: {x: 76, y: 290}
   - name: WoodDoor_Frame_5
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 1.6, y: -0.25735295}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 131
@@ -281,9 +293,10 @@ ScriptedImporter:
     uvTransform: {x: 131, y: 4}
   - name: WoodDoor_Frame_6
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 2.909091, y: -0.2647059}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 131
@@ -301,9 +314,10 @@ ScriptedImporter:
     uvTransform: {x: 131, y: 148}
   - name: WoodDoor_Frame_7
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 10.666667, y: -0.368}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 65
@@ -322,86 +336,96 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    guid: -1325794767
+    guid: -1355659211
     name: WoodDoor
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: WoodDoor_Frame_0
+    - name: Frame_0
       frameIndex: 0
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 64
         width: 64
         height: 108
       spriteId: dac578e267368044b986300a30e343c1
-    - name: WoodDoor_Frame_1
+    - name: Frame_1
       frameIndex: 1
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 59
         width: 64
         height: 112
       spriteId: 1c4324b2dd0d99f4888804f3f1f174a2
-    - name: WoodDoor_Frame_2
+    - name: Frame_2
       frameIndex: 2
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 50
         width: 57
         height: 121
       spriteId: be68c3715250b304bbfaa32ba5e2e132
-    - name: WoodDoor_Frame_3
+    - name: Frame_3
       frameIndex: 3
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 41
         width: 53
         height: 130
       spriteId: 6a573c92688a04845bbe0e7cf091fcb1
-    - name: WoodDoor_Frame_4
+    - name: Frame_4
       frameIndex: 4
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 37
         width: 47
         height: 134
       spriteId: 6322c7c57a658ec40a09f4c0c6bee578
-    - name: WoodDoor_Frame_5
+    - name: Frame_5
       frameIndex: 5
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 35
         width: 38
         height: 136
       spriteId: 19e0f3287c36455409f27496b510aa53
-    - name: WoodDoor_Frame_6
+    - name: Frame_6
       frameIndex: 6
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 33
         width: 29
         height: 138
       spriteId: ae4fd7ca7436b8847ab6ca4a55847e53
-    - name: WoodDoor_Frame_7
+    - name: Frame_7
       frameIndex: 7
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 35
         width: 20
         height: 136
       spriteId: d5432392a2ae7bb4788c0c6fbc1c6003
-    - name: WoodDoor_Frame_8
+    - name: Frame_8
       frameIndex: 8
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 36
         width: 11
         height: 136
       spriteId: d4ce87767ef37334799da3714becb25f
-    - name: WoodDoor_Frame_9
+    - name: Frame_9
       frameIndex: 9
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 46
@@ -411,6 +435,8 @@ ScriptedImporter:
     linkedCells: []
     parentIndex: -1
   platformSettings: []
+  generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 64, y: 192}
+  previousTextureSize: {x: 256, y: 512}
