@@ -15,7 +15,7 @@ public class ItemHolder : MonoBehaviour
     {
         CurrentlyHolding= toHold;
         CurrentlyHolding.transform.parent = HandsSlot;
-        CurrentlyHolding.transform.localPosition = Vector3.zero;
+        CurrentlyHolding.transform.localPosition =new Vector3(0, 0);
         CurrentlyHolding.transform.localRotation = Quaternion.identity;
         CurrentlyHolding.transform.localScale = Vector3.one;
         OnSetHolding?.Invoke(toHold);

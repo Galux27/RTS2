@@ -74,7 +74,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
             {
                 MyRender = GameObjectPoolManager.Instance.GetObjectFromPool("UnitRenderer").GetComponent<UnitRenderer>();
                 MyRender.transform.parent = this.transform;
-                MyRender.transform.localPosition = Vector3.zero;
+                MyRender.transform.localPosition = new Vector3(0, -0.77f, 0);
                // MyRender.SetUnitVisuals(UnitVisualManager.Instance.AllVisuals[MyType]);
             }
             MyRender.SetUnitVisuals(MyVisualStore);
@@ -153,7 +153,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 
     void OnHoldItem(ItemInWorld holding)
     {
-        holding.sr.sortingOrder = 3;
+        holding.sr.sortingOrder = 11;
     }
 
 

@@ -36,6 +36,7 @@ public class GameObjectPoolManager : MonoBehaviour
         {
             return;
         }
+        Debug.Log("Returning to pool " + poolName);
         AllPools[poolName].ReturnObjectToPool(inst);
     }
 }

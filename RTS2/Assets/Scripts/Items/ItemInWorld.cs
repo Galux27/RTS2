@@ -12,6 +12,7 @@ public class ItemInWorld : MonoBehaviour,InventoryObject
         ItemInWorld iw = g.AddComponent<ItemInWorld>();
         iw.SetItem(toCreate);
         SpriteRenderer sr = g.AddComponent<SpriteRenderer>();
+        sr.spriteSortPoint = SpriteSortPoint.Pivot;
         sr.sprite = toCreate.Sprite;
         iw.sr = sr;
         return iw;

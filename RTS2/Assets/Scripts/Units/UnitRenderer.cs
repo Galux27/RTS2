@@ -119,6 +119,7 @@ public class UnitRenderer : MonoBehaviour
 
     public void DrawUnit()
     {
+        this.gameObject.SetActive(true);
         Head.gameObject.SetActive(true);
         Torso.gameObject.SetActive(true);
         Legs.gameObject.SetActive(true);
@@ -128,6 +129,8 @@ public class UnitRenderer : MonoBehaviour
 
     public void HideUnit()
     {
+        this.gameObject.SetActive(false);
+
         Head.gameObject.SetActive(false);
         Torso.gameObject.SetActive(false);
         Legs.gameObject.SetActive(false);

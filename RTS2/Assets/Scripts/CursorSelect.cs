@@ -31,7 +31,8 @@ public class CursorSelect : MonoBehaviour
 
 
     public Vector3 MouseOffset = Vector3.zero;
-
+    public Vector3 tileMousePos = Vector3.zero;
+    Vector2Int batch, chunk, tile;
     /// <summary>
     /// Gets mouse position in world
     /// </summary>
@@ -48,6 +49,8 @@ public class CursorSelect : MonoBehaviour
         {
             GotPositionThisFrame = true;
             cachedPosition = hit.point + new Vector2( MouseOffset.x,MouseOffset.y);
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(cachedPosition.x, cachedPosition.y, out batch, out chunk, out tile);
+            tileMousePos = WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y].WorldPos()+new Vector3(-.5f,-.5f);
             return cachedPosition;
         }
         else
@@ -55,6 +58,8 @@ public class CursorSelect : MonoBehaviour
             return Vector3.zero;
         }
     }
+
+
 
     public bool IsMouseDown()
     {
@@ -97,10 +102,11 @@ public class CursorSelect : MonoBehaviour
         {
             mouseDown = false;
         }
+        GetMousePosition();
         CursorUI.Instance.SetShouldRender(mouseDown);
         if (UpdateCursorPos)
         {
-            CursorIcon.Instance.SetPosition(GetMousePosition());
+            CursorIcon.Instance.SetPosition(tileMousePos);
         }
         CursorIcon.Instance.SetVisible(!mouseDown);
         MouseOffset = Vector3.zero;
