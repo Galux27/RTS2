@@ -484,9 +484,24 @@ public static class WallHelpers
         {
             return null;
         }
-        coordsCache = coordsCache - toGetFrom.WorldCoords;
-        toGetFrom.WallSegments[coordsCache.x, coordsCache.y] = new DoorSegment(x, y, toPlaceOn, wallType,coordsCache.x,coordsCache.y);
-        return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
+        try
+        {
+            coordsCache = coordsCache - toGetFrom.WorldCoords;
+            coordsCache = ClampCoords(coordsCache);
+            toGetFrom.WallSegments[coordsCache.x, coordsCache.y] = new DoorSegment(x, y, toPlaceOn, wallType, coordsCache.x, coordsCache.y);
+            return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
+        }
+        catch(System.Exception e)
+        {
+            Debug.LogError(e);
+            Debug.LogError("Fucked coords " + coordsCache.ToSafeString() + " pos " + x + "," + y + " world coords " + toGetFrom.WorldCoords + " " + chunkForWall);
+            return null;
+        }
     }
-
+    static Vector2Int ClampCoords(Vector2Int coords)
+    {
+        coords.x = Mathf.Clamp(coords.x, 0, WorldChunkManager.ChunkSize - 1);
+        coords.y = Mathf.Clamp(coords.y, 0, WorldChunkManager.ChunkSize-1);
+        return coords;
+    }
 }
