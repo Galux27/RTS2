@@ -221,13 +221,13 @@ public static class Pathfinding
     {
         if (NodeIDPathing.PathNodeIDs.ContainsKey(start.PathNodeGroupID) == false || NodeIDPathing.PathNodeIDs.ContainsKey(end.PathNodeGroupID) == false)
         {
-            Debug.Log("Path Fail: due to being stuck on node with no group");
+            Debug.Log("Unit Path: fail due to being stuck on node with no group");
             return false;
         }
 
         if (start.PathNodeGroupID == -1 || end.PathNodeGroupID == -1)
         {
-            Debug.Log("Path Fail: due to being stuck on impassible node");
+            Debug.Log("Unit Path: faoil due to being stuck on impassible node " + start.PathNodeGroupID+","+end.PathNodeGroupID);
 
             return false;
         }
@@ -312,8 +312,19 @@ public static class Pathfinding
     static List<PathfindingNode> openSet=new List<PathfindingNode>();
     public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,Unit performing)
     {
-        //get player and target position in grid coords
-        PathfindingNode seekerNode = GetNodeFromPosition(startPos,performing);
+        PathfindingNode seekerNode = null;
+        if (performing.LastNode != null)
+        {
+            Debug.Log("Unit Path: start node is last node at " + performing.LastNode.worldPos);
+            seekerNode = performing.LastNode;
+        }
+        else
+        {
+            seekerNode = GetNodeFromCoords(performing.lastCoords.x, performing.lastCoords.y);
+            Debug.Log("Unit Path: start node is found node at " + seekerNode.worldPos);
+
+        }
+        //        GetNodeFromPosition(startPos,performing);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos,performing);
         if (!CanGetPath(seekerNode, targetNode))
         {
@@ -388,8 +399,19 @@ public static class Pathfinding
     public static List<PathfindingNode> FindPath(Vector3 startPos, PathfindingNode targetNode, Unit performing)
     {
         //get player and target position in grid coords
-        PathfindingNode seekerNode = GetNodeFromPosition(startPos, performing);
-        Debug.Log("Getting Path from " + startPos + " to " + targetNode.worldPos + " start node "
+        PathfindingNode seekerNode = null;
+        if (performing.hasLastNode)
+        {
+            Debug.Log("Unit Path: start node is last node at " + performing.LastNode.worldPos+","+performing.LastNode.IsPassable);
+            seekerNode = performing.LastNode;
+        }
+        else
+        {
+            seekerNode = GetNodeFromPosition(startPos) ;
+            Debug.Log("Unit Path: start node is found node at " + seekerNode.worldPos);
+
+        }
+        Debug.Log("Unit Path: Getting Path from " + startPos + " to " + targetNode.worldPos + " start node "
             + seekerNode.worldPos.ToString()
             + " dest node " + targetNode.worldPos.ToString());
         if (!CanGetPath(seekerNode, targetNode))

@@ -26,8 +26,10 @@ public class BuildingGenerator : MonoBehaviour
     public BuildingTemplate BuildingTemplate;
     const int MaxGenerationPasses = 50;
     public GeneratedRoom MyRoom;
+    public bool IsGenerating = false;
     public void GenerateBuilding()
     {
+        IsGenerating = true;
         int width = Random.Range(BuildingTemplate.MinWidth, BuildingTemplate.MaxWidth);
         int height = Random.Range(BuildingTemplate.MinHeight, BuildingTemplate.MaxHeight);
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
@@ -62,7 +64,7 @@ public class BuildingGenerator : MonoBehaviour
         building.UpdateCorridorEdgeTiles();
         building.GenerateDoors();
        ApplyBuidlingToWorld(building);
-
+        IsGenerating = false;
     }
 
     void ApplyBuidlingToWorld(GeneratedBuilding b)
@@ -72,6 +74,8 @@ public class BuildingGenerator : MonoBehaviour
         Vector2Int batchCoords, chunkCoords, localCoords;
         uint ID = 0;
         EnvironmentObjectInstance obj = null;
+        float elevation = 0f;
+        int count = 0;
         for (int x = 0; x < b.Width; x++)
         {
             for (int y = 0; y < b.Height; y++)
@@ -85,7 +89,7 @@ public class BuildingGenerator : MonoBehaviour
                     continue;
                 }
                 WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batchCoords, out chunkCoords, out localCoords);
-                obj = WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].GetEnvObjectNearPoint(pos, 2f);
+                obj = WorldChunkManager.Instance.GetChunkBatch(batchCoords).Chunks[chunkCoords.x, chunkCoords.y].GetEnvObjectNearPoint(pos, 2f);
                 ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(cur.FloorTile);
                 if (obj != null)
                 {
@@ -93,6 +97,7 @@ public class BuildingGenerator : MonoBehaviour
                     obj.DestroyInstance();
                     obj = null;
                 }
+                
                 if (cur.HasDoor)
                 {
 
@@ -114,9 +119,43 @@ public class BuildingGenerator : MonoBehaviour
                 {
                     WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].UpdateTile(localCoords.x, localCoords.y, cur.FloorTile, ID);
                 }
-
+                elevation += WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].ChunkTiles[localCoords.x, localCoords.y].Elevation.GetElevation();
+                count++;
 
             }
+        }
+        elevation /= count;
+        List<Vector2Int> batches = new List<Vector2Int>();
+        for (int x = 0; x < b.Width; x++)
+        {
+            for (int y = 0; y < b.Height; y++)
+            {
+                pos = b.Position;
+                pos.x += x;
+                pos.y += y;
+                cur = b.Tiles[x, y];
+                if (cur == null)
+                {
+                    continue;
+                }
+               // if (cur.HasFloor||cur.IsCorridor)
+                {
+                    WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batchCoords, out chunkCoords, out localCoords);
+                    WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y]
+                        .ChunkTiles[localCoords.x, localCoords.y].SetElevation(elevation) ;
+                    if (!batches.Contains(batchCoords))
+                    {
+                        batches.Add(batchCoords);
+                    }
+                    WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].NeedsUpdate = true;
+                }
+                }
+            }
+        for(int x = 0; x < batches.Count; x++)
+        {
+            WorldChunkManager.Instance.ChunkBatches[batches[x]].UpdateElevations();
+            WorldChunkManager.Instance.ChunkBatches[batches[x]].RefreshElevationTiles();
+            WorldChunkManager.Instance.ChunkBatches[batches[x]].RefreshElevationTiles();
         }
 
         Vector2Int envObjPos = new Vector2Int();

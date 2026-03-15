@@ -86,6 +86,17 @@ public class PathfindingNode
 
     public void UpdatePassable(bool val)
     {
+        if (PathNodeGroupID == -1 && val && BuildingGenerator.Instance.IsGenerating)
+        {
+            for(int x=0;x<neighbours.Count;x++)
+            {
+                if (neighbours[x].PathNodeGroupID != -1 && neighbours[x].IsPassable)
+                {
+                    PathNodeGroupID = neighbours[x].PathNodeGroupID;
+                    break;
+                }
+            }
+        }
         IsPassable = val;
     }
 

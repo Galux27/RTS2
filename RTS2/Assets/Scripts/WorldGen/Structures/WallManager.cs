@@ -81,6 +81,7 @@ public class WallManager
 
     public void GenerateWallCollider(WallSegment wall)
     {
+        return;
         if (wall.Collider != null||wall.WallType==WallType.None)
         {
             return;

@@ -154,13 +154,13 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     public override DataToSerialize GetExtraDataToSerialize()
     {
-        if (inventoryObject != null)
-        {
-            DataToSerialize data = new DataToSerialize();
-            data.AddDataToSerialize(DataKeys.InventoryUID, inventoryObject.GetComponent<Inventory>().GetMyUID().Value);
-            data.AddDataToSerialize(DataKeys.Inventory, inventoryObject.GetComponent<Inventory>().Serialize().Data);
-            return data;
-        }
+        //if (inventoryObject != null)
+       // {
+           // DataToSerialize data = new DataToSerialize();
+           // data.AddDataToSerialize(DataKeys.InventoryUID, inventoryObject.GetComponent<Inventory>().GetMyUID().Value);
+          //  data.AddDataToSerialize(DataKeys.Inventory, inventoryObject.GetComponent<Inventory>().Serialize().Data);
+          //  return data;
+       // }
         return null;
     }
 

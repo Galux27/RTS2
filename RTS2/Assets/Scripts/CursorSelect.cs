@@ -50,8 +50,11 @@ public class CursorSelect : MonoBehaviour
             GotPositionThisFrame = true;
             cachedPosition = hit.point + new Vector2( MouseOffset.x,MouseOffset.y);
             WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(cachedPosition.x, cachedPosition.y, out batch, out chunk, out tile);
-            tileMousePos = WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y].WorldPos()+new Vector3(-.5f,-.5f);
-            return cachedPosition;
+            if (WorldChunkManager.Instance.DoesBatchExist(batch))
+            {
+                tileMousePos = WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y].WorldPos() + new Vector3(-.5f, -.5f);
+            }
+                return cachedPosition;
         }
         else
         {

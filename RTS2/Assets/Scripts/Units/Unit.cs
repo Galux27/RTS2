@@ -19,6 +19,19 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public UnitSenses MySenses;
     public UnitRenderer MyRender;
     public UnitVisualStore MyVisualStore;
+    public PathfindingNode LastNode;
+
+    public bool hasLastNode = false;
+    public void SetLastNode(PathfindingNode node)
+    {
+        if (node.IsPassable == false)
+        {
+            return;
+        }
+        LastNode = node;
+        hasLastNode = true;
+    }
+
     public void UpdateChunk(WorldChunk newChunk)
     {
         bool isSame = MyCurrentChunk!=null && newChunk.LocalXCoord == MyCurrentChunk.x && newChunk.LocalYCoord == MyCurrentChunk.y;

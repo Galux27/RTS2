@@ -62,7 +62,13 @@ public class WorldChunkBatch : MonoBehaviour
                  
             }
         }
+        UpdateElevations();
+    }
+
+    public void UpdateElevations()
+    {
         BlendEdgeElevations();
+
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
@@ -524,6 +530,14 @@ public class WorldChunkBatch : MonoBehaviour
                 Chunks[x, y].UpdateElevationType(this);
             }
         }
+        for (int x = 0; x < Chunks.GetLength(0); x++)
+        {
+            for (int y = 0; y < Chunks.GetLength(1); y++)
+            {
+                WorldRenderer.Instance.RefreshElevation(Chunks[x, y].ChunkTiles);
+            }
+        }
+
     }
 
     public void RefreshGroundTiles()

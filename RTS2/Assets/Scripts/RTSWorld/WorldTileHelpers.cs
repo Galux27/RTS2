@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public static class WorldTileHelpers
@@ -38,7 +39,6 @@ public static class WorldTileHelpers
 
     static Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
 
-
     public static WorldTile GetTileFromCoords(Vector2Int coords)
     {
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(coords.x, coords.y, out batch, out chunk, out local);
@@ -64,11 +64,19 @@ public static class WorldTileHelpers
         }
         return true;
     }
-    public static void UpdateTileTraversible(int x,int y,bool val,WorldTileContents toAdd=WorldTileContents.None)
+    public static bool UpdateTileTraversible(int x,int y,bool val,WorldTileContents toAdd=WorldTileContents.None)
     {
         WorldTile worldTile= GetTileFromCoords(x, y);
+        
         if (worldTile != null)
         {
+            if(WorldChunkManager.Instance.ChunkBatches[worldTile.Batch].Chunks[worldTile.Chunk.x, worldTile.Chunk.y].WallSegments[worldTile.Local.x, worldTile.Local.y].HasWall)
+            {
+                if (val == true)
+                {
+                    return false;
+                }
+            }
             worldTile.traversable = val;
             if (toAdd != WorldTileContents.None)
             {
@@ -78,14 +86,18 @@ public static class WorldTileHelpers
                 }
                 else
                 {
+                    
                     worldTile.RemoveContents(toAdd);
                 }
+
             }
-            }
-            else
+            return true;
+        }
+        else
         {
             //Debug.LogError("No node found at " + x + "," + y);
         }
-        }
-
+        return false;
     }
+    
+}

@@ -118,11 +118,10 @@ public class WorldController : MonoBehaviour
 
     public void SetTraversible(int x,int y,bool traversable,WorldTileContents conents=WorldTileContents.None)
     {
-        
-        WorldTileHelpers.UpdateTileTraversible(x, y, traversable,conents);
-        Pathfinding.UpdateNodeData(x, y, traversable);
-        
-
+        if (WorldTileHelpers.UpdateTileTraversible(x, y, traversable, conents))
+        {
+            Pathfinding.UpdateNodeData(x, y, traversable);
+        }
    }
 
     public void AddPathfindingModifier(int x,int y, PathNodeModifier toAdd)

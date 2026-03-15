@@ -166,6 +166,13 @@ public struct ElevationTile
         return IsCorner || IsEdge;
     }
 
+    public void Reset()
+    {
+        
+        ElevationController.Instance.ElevationTilemap.SetTile(coords,null);
+    }
+
+
     /// <summary>
     /// Do one pass over the tiles to mark the ones that could be considered the edge of an elevation change
     /// Do anothe pass over these tiles to check adjacent tiles that are also an elevation change and set tiles based off this

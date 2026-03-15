@@ -19,7 +19,6 @@ public class PathFollower
 
     Unit followingPath;
 
-
     public bool debugDrawPath = true;
     const float MinDistToPoint = .15f;
     List<PathfindingNode> pathfindingNodes;
@@ -103,7 +102,11 @@ public class PathFollower
             DoorCheck();
             if (Vector3.Distance(curPos, GetCurrentNode()) < MinDistToPoint)
             {
-                currentIndex++;
+                if (followingPath != null)
+                {
+                    followingPath.SetLastNode(pathfindingNodes[currentIndex]);
+                }
+                    currentIndex++;
               
                 if(currentIndex >= pathfindingNodes.Count-1) {
                     isPathDone = true;
