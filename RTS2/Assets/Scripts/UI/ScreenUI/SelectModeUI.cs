@@ -59,7 +59,7 @@ public class SelectModeUI : MonoBehaviour
         BuildingUI.SetActive(false);
         ConstructionUI.SetActive(false);
         RoomsUI.SetActive(false);
-        CursorIcon.Instance.SetCustomIcon(null);
+        CursorIcon.Instance.SetCustomIcon(null,Vector3.zero);
         CursorIcon.Instance.SetColor(Color.white);
         ConstructableObjectManager.Instance.GetCursor().SetActive(false);
 

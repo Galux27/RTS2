@@ -15,7 +15,7 @@ MonoBehaviour:
   RoomID: TestRoom2
   Wall: Wood
   Door: Wood
-  Floor: Concrete
+  Floor: Wood
   Props:
   - PropName: Shelf
     MaxQuantity: 5

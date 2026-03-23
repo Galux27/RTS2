@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class SelectedOutlineManager : MonoBehaviour
@@ -46,6 +47,13 @@ public class SelectedOutlineManager : MonoBehaviour
         inUseSelectionOutlines.Add(g);
     }
 
+    public GameObject OnWallSelected(WallSegment wall, Vector3 size = default, Vector3 offset = default)
+    {
+        GameObject g = GetFreeSelectionOutline();
+        g.GetComponent<SelectedOutline>().ApplyToWall(wall, size, offset);
+        inUseSelectionOutlines.Add(g);
+        return g;
+    }
 
     public void OnDeselectObject(GameObject deselected)
     {

@@ -121,17 +121,14 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
             GameObject.Destroy(Collider);
         }
     }
-
+    GameObject SelectionOutline;
     public void OnObjectDeselected()
     {
-        if (Collider!=null && Collider.gameObject.GetComponentInChildren<SelectedOutline>())
-        {
-            Collider.gameObject.GetComponentInChildren<SelectedOutline>()?.OnDeselect();
-        }
-    }
+        SelectedOutlineManager.Instance.OnDeselectObject(SelectionOutline);
+     }
         public void OnObjectSelected()
     {
-        SelectedOutlineManager.Instance.OnSelectObject(Collider,GetSize());
+        SelectionOutline = SelectedOutlineManager.Instance.OnWallSelected(this,GetSize());
     }
 
 

@@ -40,50 +40,61 @@ public class CursorIcon : MonoBehaviour
     public void SetSelectIcon()
     {
         Icon.sprite = Select;
+        Icon.transform.localPosition = Vector3.zero;
     }
 
     public void SetMoveIcon()
     {
         Icon.sprite = Move;
+        Icon.transform.localPosition = Vector3.zero;
     }
 
     public void SetAttackIcon()
     {
         Icon.sprite= Attack;
+        Icon.transform.localPosition = Vector3.zero;
     }
 
     public void SetBuildIcon()
     {
         Icon.sprite= Build;
+        Icon.transform.localPosition = Vector3.zero;
     }
 
     public void SetDeconstructIcon()
     {
         Icon.sprite = Deconstruct;
+        Icon.transform.localPosition = Vector3.zero;
     }
 
     public void SetMultipleActionIcon()
     {
         Icon.sprite = Multiple;
+        Icon.transform.localPosition = Vector3.zero;
     }
 
     public void SetCollectIcon()
     {
         Icon.sprite = Collect;
+        Icon.transform.localPosition = Vector3.zero;
     }
 
     public void SetHarvestIcon()
     {
         Icon.sprite = Harvest;
+        Icon.transform.localPosition = Vector3.zero;
     }
     public void SetWallPlaceIcon()
     {
         Icon.sprite= WallPlace;
+        Icon.transform.localPosition = Vector3.zero;
+
     }
 
-    public void SetCustomIcon(Sprite icon)
+    public void SetCustomIcon(Sprite icon,Vector3 offset)
     {
         Icon.sprite= icon;
+        Icon.transform.localPosition = offset;
     }
 
 

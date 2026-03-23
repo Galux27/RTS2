@@ -26,3 +26,5 @@ MonoBehaviour:
   MaxHeight: 183
   MinRooms: 75
   MaxRooms: 100
+  CorridorFloor: Wood
+  CorridorWall: Wood

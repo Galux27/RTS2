@@ -15,7 +15,7 @@ MonoBehaviour:
   RoomID: TestRoom1
   Wall: Metal
   Door: Wood
-  Floor: Tiled
+  Floor: Industrial
   Props:
   - PropName: Bunk Bed
     MaxQuantity: 5

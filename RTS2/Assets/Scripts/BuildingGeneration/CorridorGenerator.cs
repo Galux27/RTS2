@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CorridorGenerator
 {
-    public virtual void GenerateCorridor(Vector2Int size,GeneratedBuilding toPopulate,int width)
+    public virtual void GenerateCorridor(Vector2Int size,GeneratedBuilding toPopulate,int width, BuildingTemplate template)
     {
 
     }
@@ -12,7 +12,7 @@ public class CorridorGenerator
 
 public class TShapeCorridorGenerator : CorridorGenerator
 {
-    public override void GenerateCorridor(Vector2Int size, GeneratedBuilding toPopulate, int width)
+    public override void GenerateCorridor(Vector2Int size, GeneratedBuilding toPopulate, int width,BuildingTemplate template)
     {
         Vector2Int axis = new Vector2Int();
         int r = Random.Range(0, 100);
@@ -72,7 +72,7 @@ public class TShapeCorridorGenerator : CorridorGenerator
             for(int y = 0; y < width; y++)
             {
                
-                toPopulate.SetTileAsCorridor(curCoords);
+                toPopulate.SetTileAsCorridor(curCoords,template.CorridorFloor);
                 curCoords.y += mod.y;
             }
             curCoords.y = startCoord.y;
@@ -87,7 +87,7 @@ public class TShapeCorridorGenerator : CorridorGenerator
         {
             for(int x=0; x < width; x++)
             {
-                toPopulate.SetTileAsCorridor(curCoords);
+                toPopulate.SetTileAsCorridor(curCoords, template.CorridorFloor);
                 curCoords.x += mod.x*-1;
             }
             curCoords.x = startCoord.x + (mod.x  * (size.x / 2));

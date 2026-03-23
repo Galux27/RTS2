@@ -42,7 +42,7 @@ public class BuildingGenerator : MonoBehaviour
         Vector2Int startPosition = building.GetEdgeOrStart(new Vector2Int(building.Width,building.Height)) ;
         Vector2Int modifier = Vector2Int.zero;
         TShapeCorridorGenerator corridor = new TShapeCorridorGenerator();
-        corridor.GenerateCorridor(new Vector2Int(width/2, height/2), building, 3);
+        corridor.GenerateCorridor(new Vector2Int(width/2, height/2), building, 3,BuildingTemplate);
         building.UpdateEdgeTiles();
         while (count <MaxGenerationPasses && !building.HasFinishedBuildingGen(BuildingTemplate))
         {
@@ -61,7 +61,7 @@ public class BuildingGenerator : MonoBehaviour
             }
             count++;
         }
-        building.UpdateCorridorEdgeTiles();
+        building.UpdateCorridorEdgeTiles(BuildingTemplate);
         building.GenerateDoors();
        ApplyBuidlingToWorld(building);
         IsGenerating = false;
@@ -321,7 +321,7 @@ public class GeneratedBuilding
         return Edges==null|| Edges.Count==0;
     }
 
-    public void SetTileAsCorridor(Vector2Int coords)
+    public void SetTileAsCorridor(Vector2Int coords,string floor)
     {
 
         Debug.Log("Corridor: Setting tile as corridor " + coords+" dims "+  Tiles.GetLength(0)+"x"+Tiles.GetLength(1));
@@ -335,7 +335,7 @@ public class GeneratedBuilding
         }
         Tiles[coords.x, coords.y].IsCorridor = true;
         Tiles[coords.x, coords.y].HasFloor = true;
-        Tiles[coords.x, coords.y].FloorTile = "Mud";
+        Tiles[coords.x, coords.y].FloorTile = floor;
     }
 
     public bool IsValid(Vector2Int start,Vector2Int size)
@@ -598,7 +598,7 @@ public class GeneratedBuilding
         }
     }
 
-    public void UpdateCorridorEdgeTiles()
+    public void UpdateCorridorEdgeTiles(BuildingTemplate template)
     {
         Vector2Int neighbour = Vector2Int.zero;
         for (int x = 0; x < Width; x++)
@@ -659,8 +659,8 @@ public class GeneratedBuilding
                         }
                             Tiles[x, y].HasWall = true;
                         Tiles[x, y].HasFloor = true;
-                        Tiles[x, y].FloorTile = "Tiled";
-                        Tiles[x, y].WallTile = "Concrete";
+                        Tiles[x, y].FloorTile = template.CorridorFloor;
+                        Tiles[x, y].WallTile = template.CorridorWall;
                         
                     }
                     

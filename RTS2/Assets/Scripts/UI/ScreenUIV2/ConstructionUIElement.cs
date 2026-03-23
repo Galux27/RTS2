@@ -24,7 +24,7 @@ public class ConstructionUIElement : BaseUIElement
         StructureSelectionMode.Mode = StructureSelectionType.None;   
         SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.None);
         CursorIcon.Instance.SetVisible(false);
-        CursorIcon.Instance.SetCustomIcon(null);
+        CursorIcon.Instance.SetCustomIcon(null,Vector3.zero);
 
     }
 
