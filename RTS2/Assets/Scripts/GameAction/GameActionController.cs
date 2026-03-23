@@ -55,6 +55,21 @@ public class GameActionController : MonoBehaviour
         }
     }
 
+    public bool DoesActionListContainMoveAction()
+    {
+        if (currentValidGameActions != null)
+        {
+            for (int x = 0; x < currentValidGameActions.Count; x++)
+            {
+                if (currentValidGameActions[x].ActionName == "Move")
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     void ForceToDoNonMoveAction()
     {
         for(int x = 0; x < currentValidGameActions.Count; x++)

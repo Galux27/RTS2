@@ -69,9 +69,7 @@ public class DoorSegment : WallSegment
         currentState = DoorState.Opening;
         DoorAnimator.Reverse = false;
         DoorAnimator.StartAnimation();
-        
-        Collider.SetActive(false);
-    }
+     }
 
     public void CloseDoor()
     {
@@ -99,8 +97,6 @@ public class DoorSegment : WallSegment
         }else if (currentState == DoorState.Closing)
         {
             currentState = DoorState.Closed;
-            Collider.SetActive(true);
-
         }
     }
 }

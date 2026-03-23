@@ -50,29 +50,30 @@ public class Units_SelectionMode : SelectionMode
                 Ray r = CursorSelect.Instance.Camera.ScreenPointToRay(Input.mousePosition);
 
                 RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, 999f, CursorSelect.Instance.UnitLayermask);
-                if (hit.collider != null)
-                {
-                    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
-                    Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
-                    System.Action attack = () =>
-                    {
-                        for (int x = 0; x < currentlySelected.Count; x++)
-                        {
-                            Unit toPerfrom = ((Unit)currentlySelected[x]);
-                            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                            HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
-                            attack.InitBehaviour(targetUnit, toPerfrom);
-                            attack.IsUserInstruction = true;
-                            br.SetBehaviour(attack);
+                //if (hit.collider != null)
+                //{
+                //    List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
+                //    Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
+                //    System.Action attack = () =>
+                //    {
+                //        for (int x = 0; x < currentlySelected.Count; x++)
+                //        {
+                //            Unit toPerfrom = ((Unit)currentlySelected[x]);
+                //            BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                //            HumanAttackUnit_Behaviour attack = new HumanAttackUnit_Behaviour();
+                //            attack.InitBehaviour(targetUnit, toPerfrom);
+                //            attack.IsUserInstruction = true;
+                //            br.SetBehaviour(attack);
 
-                        }
-                    };
+                //        }
+                //    };
 
-                    GameAction ga = new GameAction("Attack", attack, InputController.Instance.GetShortcutFromType(typeof(HumanAttackUnit_Behaviour)));
-                    GameActionController.Instance.AddAction(ga);
-                    //DoneCommand = true;
-                }
-                else if (OnHoverEnemyUnit != null)
+                //    GameAction ga = new GameAction("Attack", attack, InputController.Instance.GetShortcutFromType(typeof(HumanAttackUnit_Behaviour)));
+                //    GameActionController.Instance.AddAction(ga);
+                //    //DoneCommand = true;
+                //}
+                //else 
+                if (OnHoverEnemyUnit != null)
                 {
                     List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
                     Unit enemy = OnHoverEnemyUnit;
@@ -370,7 +371,7 @@ public class Units_SelectionMode : SelectionMode
             CursorIcon.Instance.SetBuildIcon();
         }
 
-        if (OnHoverEnvironmentObject != null)
+        if (OnHoverEnvironmentObject != null||OnHoverWallSegment!=null)
         {
             CursorIcon.Instance.SetDeconstructIcon();
         }
@@ -379,7 +380,8 @@ public class Units_SelectionMode : SelectionMode
         {
             CursorIcon.Instance.SetAttackIcon();
         }
-        if(GameActionController.Instance.currentValidGameActions!=null&& GameActionController.Instance.currentValidGameActions.Count > 2)
+        if(GameActionController.Instance.currentValidGameActions!=null
+            && GameActionController.Instance.currentValidGameActions.Count > 2 && GameActionController.Instance.DoesActionListContainMoveAction()==false)
         {
             CursorIcon.Instance.SetMultipleActionIcon();
         }
