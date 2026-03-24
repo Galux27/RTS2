@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Rendering.BuiltIn.ShaderGraph;
 using UnityEngine;
 
 public class BuildingGenerator : MonoBehaviour
@@ -34,36 +33,9 @@ public class BuildingGenerator : MonoBehaviour
         int height = Random.Range(BuildingTemplate.MinHeight, BuildingTemplate.MaxHeight);
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
             (int)CameraController.Instance.transform.position.y);
-        
-        GeneratedBuilding building = new GeneratedBuilding(width, height, camPos-new Vector2Int(width/2,height/2));
-        int count = 0;
+        BuildingFloorplan floorplan =new SquareBuildingFloorplan(10,new Vector2Int(5,5));
         RoomGen = new RoomGenerator();
-        GeneratedRoom curRoom = null;
-        Vector2Int startPosition = building.GetEdgeOrStart(new Vector2Int(building.Width,building.Height)) ;
-        Vector2Int modifier = Vector2Int.zero;
-        TShapeCorridorGenerator corridor = new TShapeCorridorGenerator();
-        corridor.GenerateCorridor(new Vector2Int(width/2, height/2), building, 3,BuildingTemplate);
-        building.UpdateEdgeTiles();
-        while (count <MaxGenerationPasses && !building.HasFinishedBuildingGen(BuildingTemplate))
-        {
-            TestTemplate = building.GetRoomToGenerate(BuildingTemplate);
-            if (TestTemplate != null) {
-                width = Random.Range(TestTemplate.MinWidth, TestTemplate.MaxWidth);
-                height = Random.Range(TestTemplate.MinHeight, TestTemplate.MaxHeight);
-                if (building.GetValidStartPosition( new Vector2Int(width, height),out startPosition,out modifier))
-                {
-
-                    curRoom = RoomGen.GenerateRoom(startPosition+new Vector2Int((width-1)*modifier.x,(height-1)*modifier.y), new Vector2Int(width, height), TestTemplate, building.MyRooms.Count);
-                    building.AddRoom(curRoom);
-                }
-               // startPosition = building.GetEdgeOrStart(new Vector2Int(width, height));
-
-            }
-            count++;
-        }
-        building.UpdateCorridorEdgeTiles(BuildingTemplate);
-        building.GenerateDoors();
-       ApplyBuidlingToWorld(building);
+        ApplyBuidlingToWorld(floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), BuildingTemplate, MaxGenerationPasses));
         IsGenerating = false;
     }
 

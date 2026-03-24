@@ -20,11 +20,11 @@ MonoBehaviour:
   - roomTemplate: {fileID: 11400000, guid: bbd975ceefaeeb74ab8e173f4c6ac025, type: 2}
     Min: 2
     Max: 51
-  MinWidth: 41
-  MaxWidth: 88
-  MinHeight: 39
-  MaxHeight: 183
-  MinRooms: 75
-  MaxRooms: 100
+  MinWidth: 20
+  MaxWidth: 30
+  MinHeight: 20
+  MaxHeight: 30
+  MinRooms: 10
+  MaxRooms: 25
   CorridorFloor: Wood
   CorridorWall: Wood
