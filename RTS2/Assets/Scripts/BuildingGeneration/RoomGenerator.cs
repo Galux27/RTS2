@@ -27,7 +27,7 @@ public class RoomGenerator
             width += 2;
             height += 2;
         }
-        int xStart = Random.Range(0, room.size.x - width), yStart = Random.Range(0, room.size.y - height) ;
+        int xStart = Random.Range(1, (room.size.x - width-1)), yStart = Random.Range(1, (room.size.y - height-1)) ;
         while (count < RoomPropIterations)
         {
             bool valid = true;
@@ -211,6 +211,11 @@ public class RoomTile
         RoomID = id;
     }
 
+    public void ClearWall()
+    {
+        WallTile = "";
+        HasWall = false;
+    }
     public void SetWall(string type)
     {
         WallTile = type;

@@ -73,48 +73,131 @@ public class SquareBuildingFloorplan : BuildingFloorplan
             }
             count++;
         }
+
+        for(int x = 0; x < CurrentSplits.Count; x++)
+        {
+            Debug.Log("Final Split: " + CurrentSplits[x].ToString());
+        }
+
+
         RoomTemplate roomTemplate = null;
         for (int x = 0; x < CurrentSplits.Count; x++)
         {
             roomTemplate = building.GetRoomToGenerate(template);
             if (roomTemplate != null)
-            {
-               
-               
-
-                    curRoom = RoomGen.GenerateRoom(CurrentSplits[x].coords, CurrentSplits[x].size, roomTemplate, building.MyRooms.Count);
-                    building.AddRoom(curRoom);
-                
-                // startPosition = building.GetEdgeOrStart(new Vector2Int(width, height));
-
+            { 
+                curRoom = RoomGen.GenerateRoom(CurrentSplits[x].coords, CurrentSplits[x].size, roomTemplate, building.MyRooms.Count);
+                building.AddRoom(curRoom);
             }
         }
+        FixBuildingInteriorWalls(building);
+        building.UpdateEdgeTiles();
+
         building.GenerateDoors();
         return building;
     }
+
+
+    void FixBuildingInteriorWalls(GeneratedBuilding building)
+    {
+      
+        List<Vector2Int> toClear = new List<Vector2Int>();
+        for(int x = 1; x < building.Tiles.GetLength(0)-1; x++)
+        {
+            for(int y=1;y<building.Tiles.GetLength(1)-1; y++)
+            {
+                if (building.Tiles[x, y] != null)
+                {
+                    bool HasLeft = false, HasUp = false,HasRight=false,HasDown=false;
+                    int count = 0;
+                    if (building.Tiles[x + 1, y] != null)
+                    {
+                        if (building.Tiles[x, y].HasWall 
+                            && building.Tiles[x + 1, y].HasWall 
+                            && building.Tiles[x + 1, y].RoomID != building.Tiles[x, y].RoomID)
+                        {
+                            HasLeft = true;
+                            count++;
+                        }
+                    }
+                    
+                    if (building.Tiles[x , y + 1] != null)
+                    {
+                        if (building.Tiles[x, y].HasWall 
+                            && building.Tiles[x , y + 1].HasWall 
+                            && building.Tiles[x , y + 1].RoomID != building.Tiles[x, y].RoomID)
+                        {
+                            HasUp = true;
+                            count++;
+                        }
+                    }
+
+
+                    if (building.Tiles[x - 1, y] != null)
+                    {
+                        if (building.Tiles[x, y].HasWall
+                            && building.Tiles[x - 1, y].HasWall
+                           /* && building.Tiles[x - 1, y].RoomID != building.Tiles[x, y].RoomID*/)
+                        {
+                            HasRight = true;
+                            count++;
+                        }
+                    }
+
+                    if (building.Tiles[x, y - 1] != null)
+                    {
+                        if (building.Tiles[x, y].HasWall
+                            && building.Tiles[x, y - 1].HasWall
+                           /* && building.Tiles[x, y - 1].RoomID != building.Tiles[x, y].RoomID*/)
+                        {
+                            HasDown = true;
+                            count++;
+                        }
+                    }
+                    if (HasUp&&!HasDown||HasLeft&&!HasDown||HasLeft&&!HasRight||HasLeft&&HasUp)
+                    {
+                        toClear.Add(new Vector2Int(x, y));
+                         //building.Tiles[x, y].ClearWall();
+                       
+                    }
+                }
+                }
+            }
+        for (int x = 0; x < toClear.Count; x++) {
+            building.Tiles[toClear[x].x, toClear[x].y].ClearWall();
+        }
+    }
+   
 
     List<SplitRoom> SplitRoom(SplitRoom room)
     {
         List<SplitRoom> split = new List<SplitRoom>();
         Vector2Int SplitPoint = room.coords;
         int r = Random.Range(0, 100);
+        int size1 = 0, size2 = 0;
         if (r < 50)
         {
             float lerp = Random.Range(.25f, .75f);
-            SplitPoint.x = Mathf.RoundToInt(SplitPoint.x+ (room.size.x * lerp));
-            split.Add(new SplitRoom(room.coords, new Vector2Int(Mathf.RoundToInt( room.size.x *lerp), room.size.y))) ;
-            split.Add(new SplitRoom(SplitPoint, new Vector2Int(Mathf.RoundToInt(room.size.x *(1f-lerp)), room.size.y)));
+            size1 = Mathf.FloorToInt(room.size.x /2);
+           size2 = (room.size.x -  size1);
+            SplitPoint.x = (SplitPoint.x+ size1);
+            split.Add(new SplitRoom(room.coords, new Vector2Int(size1, room.size.y))) ;
+            split.Add(new SplitRoom(SplitPoint, new Vector2Int(size2, room.size.y)));
+            Debug.Log("Split Size:x " + (size1 + "," + size2) + "=>" + room.size.x + "||" + split[0].coords.x + "," + split[1].coords.x);
 
         }
         else
         {
             float lerp = Random.Range(.25f, .75f);
-            SplitPoint.y = Mathf.RoundToInt(SplitPoint.y + (room.size.y * lerp));
-            split.Add(new SplitRoom(room.coords, new Vector2Int( room.size.x, Mathf.RoundToInt( room.size.y*lerp))));
-            split.Add(new SplitRoom(SplitPoint, new Vector2Int( room.size.x, Mathf.RoundToInt(room.size.y *(1f-lerp)))));
-        }
+            size1 =(room.size.y /2);
+            size2 = (room.size.y - size1);
+            SplitPoint.y = (SplitPoint.y + size1);
+            split.Add(new SplitRoom(room.coords, new Vector2Int( room.size.x,  size1 )));
+            split.Add(new SplitRoom(SplitPoint, new Vector2Int( room.size.x, size2)));
+            Debug.Log("Split Size:y " + (size1 +","+ size2) + "=>" + room.size.y + "||" + split[0].coords.y + "," + split[1].coords.y);
 
-        for(int x = 0; x < split.Count; x++)
+        }
+        for (int x = 0; x < split.Count; x++)
         {
             Vector2Int end = split[x].coords + split[x].size;
             if (end.x > size.x || end.y > size.y)
