@@ -21,7 +21,6 @@ public class BuildingGenerator : MonoBehaviour
     }
 
     public RoomGenerator RoomGen;
-    public RoomTemplate TestTemplate;
     public BuildingTemplate BuildingTemplate;
     const int MaxGenerationPasses = 50;
     public GeneratedRoom MyRoom;
@@ -33,7 +32,7 @@ public class BuildingGenerator : MonoBehaviour
         int height = Random.Range(BuildingTemplate.MinHeight, BuildingTemplate.MaxHeight);
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
             (int)CameraController.Instance.transform.position.y);
-        BuildingFloorplan floorplan =new SquareBuildingFloorplan(10,new Vector2Int(5,5));
+        BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
         RoomGen = new RoomGenerator();
         ApplyBuidlingToWorld(floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), BuildingTemplate, MaxGenerationPasses));
         IsGenerating = false;

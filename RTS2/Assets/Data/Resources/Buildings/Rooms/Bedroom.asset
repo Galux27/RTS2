@@ -10,18 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c6ea39d6222d0b4d88b96ce1df32000, type: 3}
-  m_Name: Test
+  m_Name: Bedroom
   m_EditorClassIdentifier: 
   RoomID: TestRoom1
-  Wall: Metal
+  Wall: Wood
   Door: Wood
-  Floor: Industrial
+  Floor: BlueCarpet
   Props:
-  - PropName: Bunk Bed
-    MaxQuantity: 5
-    NeedsEdge: 1
+  - PropName: SingleBed
+    MaxQuantity: 1
+    NeedsEdge: 0
+  - PropName: BedsideCupboard
+    MaxQuantity: 1
+    NeedsEdge: 0
+  - PropName: BedsideDraws
+    MaxQuantity: 2
+    NeedsEdge: 0
   CanHaveWindows: 0
+  CanHaveExternalDoor: 0
   MinWidth: 5
-  MaxWidth: 15
+  MaxWidth: 7
   MinHeight: 4
-  MaxHeight: 17
+  MaxHeight: 7

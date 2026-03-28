@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a57896610a77a024ba59f95e22968c95, type: 3}
-  m_Name: Cooker
+  m_Name: KitchenCounter
   m_EditorClassIdentifier: 
-  Name: Cooker
-  ForwardsSprite: {fileID: -918421177, guid: b35ba9191e4a7a64dae0a54c900d637a, type: 3}
+  Name: KitchenCounter
+  ForwardsSprite: {fileID: -2222264930844470383, guid: ecc0ec80129438540893dd7e63c78cdd, type: 3}
   SideSprite: {fileID: 0}
   BackwardsSprite: {fileID: 0}
   HarvestedSprite: {fileID: 0}
   BlocksTile: 1
-  Width: 2
+  Width: 1
   Height: 1
   CanHarvest: 0
   IsDecoration: 0
@@ -32,5 +32,7 @@ MonoBehaviour:
   MaxHealth: 30
   Cost: 100
   TimeToBuild: 5
-  RequirementsToBuild: []
+  RequirementsToBuild:
+  - ResourceName: Construction Supplies
+    QuantityRequired: 100
   MyBehaviour: {fileID: 0}

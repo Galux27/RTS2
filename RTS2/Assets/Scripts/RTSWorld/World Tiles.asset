@@ -52,6 +52,18 @@ MonoBehaviour:
   - tileType: IndustrialRusty
     tileBase: {fileID: 11400000, guid: 6e5386797425e2841936d63d11c3d35c, type: 2}
     MinimapColour: {r: 0.34901962, g: 0.34117648, b: 0.34117648, a: 1}
+  - tileType: BlackWhiteTiled
+    tileBase: {fileID: 11400000, guid: 7416dcf569335c14f8f2988c4015f06b, type: 2}
+    MinimapColour: {r: 0, g: 0, b: 0, a: 1}
+  - tileType: WhiteTiled
+    tileBase: {fileID: 11400000, guid: 9cdaff0845fdcd04aa772fc2d1504c62, type: 2}
+    MinimapColour: {r: 1, g: 1, b: 1, a: 1}
+  - tileType: BlueCarpet
+    tileBase: {fileID: 11400000, guid: 41c0a5b312060cc40adc2c18742f8338, type: 2}
+    MinimapColour: {r: 0.27058825, g: 0.44705886, b: 0.89019614, a: 1}
+  - tileType: GreenCarpet
+    tileBase: {fileID: 11400000, guid: 7ffee2b4810f20e40b941c5be880e66e, type: 2}
+    MinimapColour: {r: 0.3647059, g: 0.60784316, b: 0.47450984, a: 1}
   WaterTiles:
   - WaterHeight: 1
     Tiles:

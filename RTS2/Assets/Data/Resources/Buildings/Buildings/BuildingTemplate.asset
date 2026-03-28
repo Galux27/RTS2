@@ -12,19 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04a53a824c9acec4b9a6a77978517078, type: 3}
   m_Name: BuildingTemplate
   m_EditorClassIdentifier: 
-  BuildingName: Test
+  BuildingName: House
   PotentialRooms:
   - roomTemplate: {fileID: 11400000, guid: e4f8161e78de6fa44b23876249a32e74, type: 2}
     Min: 1
-    Max: 69
+    Max: 3
   - roomTemplate: {fileID: 11400000, guid: bbd975ceefaeeb74ab8e173f4c6ac025, type: 2}
-    Min: 2
-    Max: 51
-  MinWidth: 20
-  MaxWidth: 30
-  MinHeight: 20
-  MaxHeight: 30
-  MinRooms: 10
-  MaxRooms: 25
+    Min: 1
+    Max: 1
+  - roomTemplate: {fileID: 11400000, guid: f7ae538e8d04e2246bae060adae0118f, type: 2}
+    Min: 1
+    Max: 1
+  - roomTemplate: {fileID: 11400000, guid: 7fc7df044b3350a43851308b912c0b79, type: 2}
+    Min: 1
+    Max: 1
+  MinWidth: 10
+  MaxWidth: 15
+  MinHeight: 10
+  MaxHeight: 17
+  MinRooms: 6
+  MaxRooms: 10
   CorridorFloor: Wood
   CorridorWall: Wood
