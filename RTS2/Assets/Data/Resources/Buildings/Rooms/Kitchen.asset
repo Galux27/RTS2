@@ -20,21 +20,27 @@ MonoBehaviour:
   - PropName: Cooker
     MaxQuantity: 1
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   - PropName: Fridge
     MaxQuantity: 1
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   - PropName: WashingMachine
     MaxQuantity: 1
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   - PropName: KitchenCounterSink
     MaxQuantity: 1
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   - PropName: KitchenCounter
     MaxQuantity: 3
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   - PropName: Table
     MaxQuantity: 1
-    NeedsEdge: 1
+    NeedsEdge: 0
+    MustBeOnRoomEdge: 0
   CanHaveWindows: 0
   CanHaveExternalDoor: 1
   MinWidth: 6

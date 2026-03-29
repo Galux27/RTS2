@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a57896610a77a024ba59f95e22968c95, type: 3}
-  m_Name: KitchenCounterSink 1
+  m_Name: Table
   m_EditorClassIdentifier: 
   Name: Table
   ForwardsSprite: {fileID: -5426797270658418664, guid: ecc0ec80129438540893dd7e63c78cdd, type: 3}

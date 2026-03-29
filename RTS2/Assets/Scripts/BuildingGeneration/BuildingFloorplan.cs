@@ -7,7 +7,7 @@ public class BuildingFloorplan
     public virtual GeneratedBuilding Generate(RoomGenerator RoomGen,int width,int height,Vector2Int pos,BuildingTemplate template,int maxPasses)
     {
         
-        GeneratedBuilding building = new GeneratedBuilding(width, height, pos );
+        GeneratedBuilding building = new GeneratedBuilding(width, height, pos,template.BuildingName );
         int count = 0;
         GeneratedRoom curRoom = null;
         Vector2Int startPosition = building.GetEdgeOrStart(new Vector2Int(building.Width, building.Height));
@@ -26,7 +26,7 @@ public class BuildingFloorplan
                 if (building.GetValidStartPosition(new Vector2Int(width, height), out startPosition, out modifier))
                 {
 
-                    curRoom = RoomGen.GenerateRoom(startPosition + new Vector2Int((width - 1) * modifier.x, (height - 1) * modifier.y), new Vector2Int(width, height), roomTemplate, building.MyRooms.Count);
+                    curRoom = RoomGen.GenerateRoom(startPosition + new Vector2Int((width - 1) * modifier.x, (height - 1) * modifier.y), new Vector2Int(width, height), roomTemplate, building.MyRooms.Count,building);
                     building.AddRoom(curRoom);
                 }
                 // startPosition = building.GetEdgeOrStart(new Vector2Int(width, height));
@@ -54,7 +54,7 @@ public class SquareBuildingFloorplan : BuildingFloorplan
     public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
     {
         size = new Vector2Int(width, height);
-        GeneratedBuilding building = new GeneratedBuilding(width, height,pos);
+        GeneratedBuilding building = new GeneratedBuilding(width, height,pos, template.BuildingName);
         int count = 0;
         GeneratedRoom curRoom = null;
         Vector2Int modifier = Vector2Int.zero;
@@ -86,11 +86,11 @@ public class SquareBuildingFloorplan : BuildingFloorplan
             roomTemplate = building.GetRoomToGenerate(template);
             if (roomTemplate != null)
             { 
-                curRoom = RoomGen.GenerateRoom(CurrentSplits[x].coords, CurrentSplits[x].size, roomTemplate, building.MyRooms.Count);
+                curRoom = RoomGen.GenerateRoom(CurrentSplits[x].coords, CurrentSplits[x].size, roomTemplate, building.MyRooms.Count,building);
                 building.AddRoom(curRoom);
             }
         }
-        FixBuildingInteriorWalls(building);
+        //FixBuildingInteriorWalls(building);
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();

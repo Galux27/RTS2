@@ -161,13 +161,15 @@ public class GeneratedBuilding
     List<Vector2Int> Edges;
     public Dictionary<int, RoomLink> Links;
     bool hasAnything = false;
-    public GeneratedBuilding(int width, int height, Vector2Int pos)
+    string buildingType;
+    public GeneratedBuilding(int width, int height, Vector2Int pos,string type)
     {
         Width = width;
         Height = height;
         Position =pos;
         MyRooms = new List<GeneratedRoom>();
         Tiles=new RoomTile[width,height];   
+        buildingType=type;
     }
     bool InRange(int x,int y)
     {
@@ -294,7 +296,6 @@ public class GeneratedBuilding
 
     public void SetTileAsCorridor(Vector2Int coords,string floor)
     {
-
         Debug.Log("Corridor: Setting tile as corridor " + coords+" dims "+  Tiles.GetLength(0)+"x"+Tiles.GetLength(1));
         if (!InRange(coords.x, coords.y))
         {
@@ -354,6 +355,19 @@ public class GeneratedBuilding
         }
         return Tiles[x, y].HasWall;
     }
+
+    bool HasProp(int x, int y)
+    {
+        if (y < 0 || x < 0 || x >= Width || y >= Height)
+        {
+            return false;
+        }
+        if (Tiles[x, y] == null)
+        {
+            return false;
+        }
+        return Tiles[x, y].HasProp;
+    }
     bool HasDoor(int x, int y)
     {
         if (y < 0 || x < 0 || x >= Width || y >= Height)
@@ -368,10 +382,10 @@ public class GeneratedBuilding
     }
     bool ValidForDoor(int x,int y)
     {
-        bool above = HasWall(x, y + 1)&&!HasDoor(x, y + 1);
-        bool below = HasWall(x, y - 1) && !HasDoor(x, y - 1);
-        bool left = HasWall(x-1, y) && !HasDoor(x - 1, y);
-        bool right = HasWall(x + 1, y) && !HasDoor(x + 1, y);
+        bool above = HasWall(x, y + 1) && !HasDoor(x, y + 1) && !HasProp(x, y + 1);
+        bool below = HasWall(x, y - 1) && !HasDoor(x, y - 1) && !HasProp(x, y - 1);
+        bool left = HasWall(x - 1, y) && !HasDoor(x - 1, y) && !HasProp(x - 1, y);
+        bool right = HasWall(x + 1, y) && !HasDoor(x + 1, y) && !HasProp(x + 1, y);
         if (above&&below && !left && !right)
         {
             return true;
@@ -383,13 +397,12 @@ public class GeneratedBuilding
     }
     public void GenerateExteriorDoors()
     {
-        return;
-        Links = new Dictionary<int, RoomLink>();
         for (int x = 0; x < Width ; x++)
         {
             for (int y = 0; y < Height; y++)
             {
-                if (Tiles[x, y] == null || Tiles[x, y].HasWall == false || !ValidForDoor(x, y))
+                if (Tiles[x, y] == null || Tiles[x, y].HasWall == false || !ValidForDoor(x, y) || Tiles[x,y].IsValidForDoor==false
+                    ||BuildingDataManager.Instance.RoomTemplates[MyRooms[ Tiles[x,y].RoomID].RoomType].CanHaveExternalDoor==false)
                 {
                     continue;
                 }
@@ -400,39 +413,19 @@ public class GeneratedBuilding
                     {
                         Links.Add(id, new RoomLink(id));
                     }
-                    for (int x1 = x - 1; x1 <= x + 1; x1++)
+                    if (x == 0 || y == 0 || x == Width - 1 || y == Height - 1)
                     {
-                        for (int y1 = y - 1; y1 <= y + 1; y1++)
+                        if ((BuildingDataManager.Instance.RoomTemplates[MyRooms[id].RoomType].CanHaveExternalDoor)
+                                         && !Links[id].DoesLinkExist(-1))
                         {
-                            if (x1 == x && y1 == y || !isDirectlyAdjacent(x, x1) || !isDirectlyAdjacent(y, y1))
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                if (InRange(x1, y1))
-                                {
-                                    //if (Tiles[x1, y1] == null)
-                                    {
-
-                                        Debug.Log("Links: Generating room type " + MyRooms[id].RoomType + "," + id);
-                                        if ((BuildingDataManager.Instance.RoomTemplates[MyRooms[id].RoomType].CanHaveExternalDoor)
-                                            && !Links[id].DoesLinkExist(-1))
-                                        {
-                                            Links[id].AddLink(-1, new Vector2Int(x, y));
-                                        }
-
-                                    }
-                                   
-                                }
-                            }
+                            Links[id].AddLink(-1, new Vector2Int(x, y));
                         }
                     }
-
                 }
             }
         }
-
+        int count = 0;
+        int max = BuildingDataManager.Instance.BuildingTemplates[buildingType].MaxExternalDoors;
         foreach (KeyValuePair<int, RoomLink> kvp in Links)
         {
             if (kvp.Value.HasCorridorLink)
@@ -443,6 +436,11 @@ public class GeneratedBuilding
             {
                 Vector2Int val = kvp2.Value[Random.Range(0, kvp2.Value.Count)];
                 Tiles[val.x, val.y].HasDoor = true;
+                count++;
+            }
+            if (count >= max)
+            {
+                break;
             }
         }
 
@@ -455,9 +453,18 @@ public class GeneratedBuilding
         {
             for (int y = 1; y < Height-1; y++)
             {
-                if (Tiles[x, y] == null || Tiles[x,y].HasWall==false||!ValidForDoor(x,y))
+                if (Tiles[x, y] == null || Tiles[x,y].HasWall==false||!ValidForDoor(x,y)||!Tiles[x, y].IsValidForDoor)
                 {
-                    continue;
+                    if (Tiles[x, y] == null) 
+                    {
+                        Debug.Log("Door Gen: Skipping " + x + "," + y + " due to null");
+                    }
+                    else
+                    {
+                        Debug.Log("Door Gen: Skipping " + x + "," + y + " due to "+(Tiles[x, y].HasWall == false)+","+ (!ValidForDoor(x, y)) +","+ (!Tiles[x, y].IsValidForDoor));
+
+                    }
+                    //continue;
                 }
                 else
                 {
@@ -472,7 +479,9 @@ public class GeneratedBuilding
                         {
                             if (x1 == x && y1 == y || !isDirectlyAdjacent(x, x1) || !isDirectlyAdjacent(y, y1))
                             {
-                                continue;
+                              //  Debug.Log("Door Gen: Skipping " + x + "," + y + " due to "+(!isDirectlyAdjacent(x, x1)) +","+()+",");
+
+                              //  continue;
                             }
                             else
                             {
@@ -490,22 +499,22 @@ public class GeneratedBuilding
                                         }
                                         else if (Tiles[x1, y1].RoomID != Tiles[x, y].RoomID)
                                         {
-                                            if (!Links[id].DoesLinkExist(Tiles[x1, y1].RoomID))
-                                            {
-                                                if (Links.ContainsKey(Tiles[x1, y1].RoomID))
-                                                {
-                                                    if (!Links[Tiles[x1, y1].RoomID].DoesLinkExist(id))
-                                                    {
-                                                        Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
+                                            Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
 
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
+                                            //if (!Links[id].DoesLinkExist(Tiles[x1, y1].RoomID))
+                                            //{
+                                            //    if (Links.ContainsKey(Tiles[x1, y1].RoomID))
+                                            //    {
+                                            //        if (!Links[Tiles[x1, y1].RoomID].DoesLinkExist(id))
+                                            //        {
+                                            //            Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
+                                            //        }
+                                            //    }
+                                            //    else
+                                            //    {
 
-                                                }
-                                            }
+                                            //    }
+                                            //}
                                         }
                                     }
                                     
@@ -519,18 +528,37 @@ public class GeneratedBuilding
             }
             GenerateExteriorDoors();
         }
-   
-        foreach(KeyValuePair<int,RoomLink> kvp in Links)
+        Debug.Log("Creating doors from link total "  + Links.Count);
+
+        foreach (KeyValuePair<int,RoomLink> kvp in Links)
         {
+            Debug.Log("Creating doors from link val " + kvp.Key+"/" + kvp.Value.Links.Count);
+
             if (kvp.Value.HasCorridorLink)
             {
                 Tiles[kvp.Value.CorridorLink.x, kvp.Value.CorridorLink.y].HasDoor = true;
             }
             foreach(KeyValuePair<int,List<Vector2Int>> kvp2 in kvp.Value.Links)
             {
-                Vector2Int val = kvp2.Value[ Random.Range(0,kvp2.Value.Count)];
-                Tiles[val.x, val.y].HasDoor = true;
-            }
+                if (kvp2.Key == kvp.Key)
+                {
+                    continue;
+                }
+                int count = 0;
+                while (count < kvp2.Value.Count)
+                {
+                    Vector2Int val = kvp2.Value[Random.Range(0, kvp2.Value.Count)];
+                    if (!Tiles[val.x, val.y].HasDoor)
+                    {
+                        Tiles[val.x, val.y].HasDoor = true;
+                        Debug.Log("Creating door from link at" + val.ToString() + " from " + kvp2.Key + "->" + kvp.Value.MyID + "/" + kvp2.Value.Count + "," + Links.Count);
+                        count = kvp2.Value.Count;
+                    }
+                    count++;
+                }
+              
+
+                }
         }
     
     }

@@ -20,9 +20,11 @@ MonoBehaviour:
   - PropName: Sink
     MaxQuantity: 1
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   - PropName: Toilet
     MaxQuantity: 1
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   CanHaveWindows: 0
   CanHaveExternalDoor: 0
   MinWidth: 4

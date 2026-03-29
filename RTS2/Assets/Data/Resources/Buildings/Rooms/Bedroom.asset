@@ -20,12 +20,15 @@ MonoBehaviour:
   - PropName: SingleBed
     MaxQuantity: 1
     NeedsEdge: 0
+    MustBeOnRoomEdge: 0
   - PropName: BedsideCupboard
     MaxQuantity: 1
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   - PropName: BedsideDraws
     MaxQuantity: 2
     NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   CanHaveWindows: 0
   CanHaveExternalDoor: 0
   MinWidth: 5

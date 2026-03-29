@@ -20,9 +20,11 @@ MonoBehaviour:
   - PropName: Shelf
     MaxQuantity: 5
     NeedsEdge: 1
+    MustBeOnRoomEdge: 1
   - PropName: Box
     MaxQuantity: 6
     NeedsEdge: 0
+    MustBeOnRoomEdge: 0
   CanHaveWindows: 0
   CanHaveExternalDoor: 1
   MinWidth: 6

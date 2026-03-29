@@ -5,89 +5,136 @@ using UnityEngine;
 
 public class RoomGenerator 
 {
-    public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template,int id)
+    public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template,int id,GeneratedBuilding building)
     {
         GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID,id);
-        PopulateWallTiles(room, template);
+        PopulateWallTiles(room, template,building);
+        GenerateLocationsForDoors(room);
         PopulateFloorTiles(room, template);
         PopulateRoomEnvObjects(room, template);
         return room;
     }
-    const int RoomPropIterations = 50;
+    const int RoomPropIterations = 1000;
+
+   
+    public void GenerateLocationsForDoors(GeneratedRoom room)
+    {
+        Vector2Int coords = new Vector2Int();
+        coords.x=Random.Range(1,room.size.x-1);
+        room.RoomTiles[coords.x, 0].IsValidForDoor = true ;
+        coords.x = Random.Range(1, room.size.x - 1);
+        room.RoomTiles[coords.x, room.size.y-1].IsValidForDoor = true;
+        coords.y = Random.Range(1, room.size.y - 1);
+        room.RoomTiles[0, coords.y].IsValidForDoor = true;
+        coords.y = Random.Range(1, room.size.y - 1);
+        room.RoomTiles[room.size.x-1, coords.y].IsValidForDoor = true;
+    }
+
+
     public void PopulateRoomEnvObjects(GeneratedRoom room, RoomTemplate template)
     {
-        int count = 0;
-        RoomTemplateProp prop = template.Props[ Random.Range(0,template.Props.Count)];
+        RoomTemplateProp prop = null;
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
-        ConstructableObject obj = ConstructableObjectManager.Instance.AllObjects[prop.PropName];
-        int width = obj.Width;
-        int height = obj.Height;
-        if (prop.NeedsEdge)
-        {
-            width += 2;
-            height += 2;
+        ConstructableObject obj = null;
+        int width=0, height=0;
+        for (int x = 0; x < template.Props.Count; x++) {
+            propCounts.Add(template.Props[x].PropName, 0);
         }
-        int xStart = Random.Range(1, (room.size.x - width-1)), yStart = Random.Range(1, (room.size.y - height-1)) ;
-        while (count < RoomPropIterations)
+
+        for (int yStart = room.size.y - 1; yStart > 0; yStart--)
         {
-            bool valid = true;
-            if (propCounts.ContainsKey(prop.PropName))
+            for (int xStart = room.size.x - 1; xStart > 0; xStart--)
             {
-                if (propCounts[prop.PropName] >= prop.MaxQuantity)
+                for (int p = 0; p < template.Props.Count; p++)
                 {
-                    valid = false;
-                }
-            }
-            if (valid)
-            {
-                for (int x = xStart; x < xStart + width; x++)
-                {
-                    for (int y = yStart; y < yStart + height; y++)
+                    prop = template.Props[p];
+                    if(propCounts[prop.PropName] < prop.MaxQuantity)
                     {
-                        if (room.IsValid(x, y))
+                        obj=ConstructableObjectManager.Instance.AllObjects[prop.PropName];
+                        width = obj.Width;
+                        height = obj.Height;
+                        if (prop.NeedsEdge)
                         {
-                            if (room.TileHasNothing(x, y) == false)
-                            {
-                                valid = false;
-                                break;
-                            }
+                            width += 2;
+                            height += 2;
                         }
-                        else
+
+                        
+                        bool valid = true;
+                        if (xStart + width > room.size.x || yStart + height > room.size.y)
                         {
                             valid = false;
-                            break;
+                        }
+                        // if (valid)
+                        bool foundWall = false;
+                        bool foundDoor = false;
+                        if(valid)
+                        {
+                          for(int x = xStart-1; x < xStart + width+1; x++)
+                          {
+                                for(int y=yStart-1;y< yStart + height+1; y++)
+                                {
+                                    if (room.IsValid(x, y))
+                                    {
+                                        if (x >= xStart && x < xStart + width&& y >= yStart && y < yStart + width)
+                                        {
+                                            if (room.TileHasNothing(x, y) == false)
+                                            {
+                                                valid = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (room.RoomTiles[x, y].HasWall)
+                                            {
+                                                foundWall = true;
+                                            }
+
+                                        }
+
+                                        if (room.RoomTiles[x, y].IsValidForDoor)
+                                        {
+                                            foundDoor = true;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        foundWall = true;
+                                    }
+                                   
+                                }
+                            }
+
+
+                            if (prop.MustBeOnRoomEdge && !foundWall ||foundDoor)
+                            {
+                                valid = false;
+                            }
+                       
+                            if (valid)
+                            {
+                                {
+                                    for (int x = xStart; x < xStart + width; x++)
+                                    {
+                                        for (int y = yStart; y < yStart + height; y++)
+                                        {
+                                            
+                                            room.RoomTiles[x, y].HasProp = true;
+                                        }
+                                    }
+                                    room.AddEnvObject(new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart, yStart)));
+                                    if (!propCounts.ContainsKey(prop.PropName))
+                                    {
+                                        propCounts.Add(prop.PropName, 0);
+                                    }
+                                    propCounts[prop.PropName]++;
+                                }
+                            }
                         }
                     }
                 }
             }
-            if (valid)
-            {
-                for (int x = xStart; x < xStart + width; x++)
-                {
-                    for (int y = yStart; y < yStart + height; y++)
-                    {
-                        room.RoomTiles[x, y].HasProp = true;
-                    }
-                }
-                room.AddEnvObject(new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart , yStart)));
-                if (!propCounts.ContainsKey(prop.PropName))
-                {
-                    propCounts.Add(prop.PropName, 0);
-                }
-                propCounts[prop.PropName]++;
-            }
-            prop = template.Props[Random.Range(0, template.Props.Count)];
-            obj = ConstructableObjectManager.Instance.AllObjects[prop.PropName];
-            width = obj.Width;
-            height = obj.Height;
-            if (prop.NeedsEdge)
-            {
-                width += 2;
-                height += 2;
-            }
-            xStart = Random.Range(0, room.size.x - width);
-            yStart = Random.Range(0, room.size.y - height);
-            count++;
         }
     }
 
@@ -99,28 +146,47 @@ public class RoomGenerator
         {
           for(int y = 0; y < height; y++)
             {
-                room.RoomTiles[x, y].SetFloor(template.Floor);
+                
+
+                    room.RoomTiles[x, y].SetFloor(template.Floor);
+              
             }
 
         }
     }
 
-    void PopulateWallTiles(GeneratedRoom room,RoomTemplate template)
+    void PopulateWallTiles(GeneratedRoom room,RoomTemplate template,GeneratedBuilding building)
     {
         int width = room.RoomTiles.GetLength(0);
         int height = room.RoomTiles.GetLength(1);
-        for(int x=0;x<width; x++)
+
+        bool isXedge=false,isYedge=false;
+        if(room.Position.x+width>=building.Width)
+        {
+            isXedge=true;
+        }
+        if (room.Position.y + height >= building.Height)
+        {
+            isYedge=true;
+        }
+
+        for (int x = 0; x < width; x++)
         {
             room.RoomTiles[x, 0].SetWall(template.Wall);
-            room.RoomTiles[x, height-1].SetWall(template.Wall);
-
+            if (isYedge)
+            {
+                room.RoomTiles[x, height - 1].SetWall(template.Wall);
+            }
+           
         }
 
         for (int x = 0; x < height; x++)
         {
             room.RoomTiles[0, x].SetWall(template.Wall);
-            room.RoomTiles[width-1, x].SetWall(template.Wall);
-
+            if (isXedge)
+            {
+                room.RoomTiles[width - 1, x].SetWall(template.Wall);
+            }
         }
     }
 }
@@ -183,7 +249,7 @@ public class GeneratedRoom
 
     public bool TileHasNothing(int x,int y)
     {
-        return RoomTiles[x, y].HasWall == false && RoomTiles[x, y].HasDoor == false && RoomTiles[x, y].HasProp == false;
+        return RoomTiles[x, y].HasWall == false && RoomTiles[x, y].HasDoor == false && RoomTiles[x, y].HasProp == false&&RoomTiles[x,y].IsValidForDoor==false;
     }
 
 }
@@ -202,7 +268,7 @@ public class GeneratedRoomProp
 public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;
-    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false,IsCorridor=false;
+    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false,IsCorridor=false,IsValidForDoor=false;
     public int RoomID;
 
 
