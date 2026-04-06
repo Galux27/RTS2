@@ -126,7 +126,6 @@ public class BuildingGenerator : MonoBehaviour
         {
             WorldChunkManager.Instance.ChunkBatches[batches[x]].UpdateElevations();
             WorldChunkManager.Instance.ChunkBatches[batches[x]].RefreshElevationTiles();
-            WorldChunkManager.Instance.ChunkBatches[batches[x]].RefreshElevationTiles();
         }
 
         Vector2Int envObjPos = new Vector2Int();

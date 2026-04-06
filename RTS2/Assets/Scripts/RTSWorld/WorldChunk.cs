@@ -148,51 +148,66 @@ public class WorldChunk:ISerialize
 
     public void UpdateElevationType(WorldChunkBatch myBatch)
     {
-        for(int x = 0; x < WorldChunkManager.ChunkSize; x++)
+        if (ElevationController.UseElevation)
         {
-            for(int y=0;y < WorldChunkManager.ChunkSize; y++)
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
             {
-                ChunkTiles[x, y].Elevation.WorkOutStartingEdges(this,x,y,myBatch);
-            }
-        }
-
-        for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
-        {
-            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
-            {
-                ChunkTiles[x, y].Elevation.WorkOutCorners(this, x, y, myBatch);
-            }
-        }
-
-        for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
-        {
-            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
-            {
-                ChunkTiles[x, y].Elevation.FinalBlend(this, x, y, myBatch);
-            }
-        }
-
-        for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
-        {
-            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
-            {
-                if (PathfindingNodes[x, y].IsPassable && ChunkTiles[x,y].Elevation.IsCornerOrEdge(default))
+                for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
                 {
-                    PathfindingNodes[x, y].IsPassable = false;
+                    ChunkTiles[x, y].Elevation.WorkOutStartingEdges(this, x, y, myBatch);
+                }
+            }
+
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+                {
+                    ChunkTiles[x, y].Elevation.WorkOutCorners(this, x, y, myBatch);
+                }
+            }
+
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+                {
+                    ChunkTiles[x, y].Elevation.FinalBlend(this, x, y, myBatch);
+                }
+            }
+
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+                {
+                    if (PathfindingNodes[x, y].IsPassable && ChunkTiles[x, y].Elevation.IsCornerOrEdge(default))
+                    {
+                        PathfindingNodes[x, y].IsPassable = false;
+                    }
                 }
             }
         }
     }
 
+        public bool CoordInRange(int val)
+    {
+        return val>=0&&val<WorldChunkManager.ChunkSize;
+    }
+
     public void UpdateTile(int x, int y, string type,uint tileID)
     {
-        ChunkTiles[x, y].UpdateTileType(type,tileID);
-        NeedsUpdate = true;
+        if (CoordInRange(x) && CoordInRange(y))
+        {
+            ChunkTiles[x, y].UpdateTileType(type, tileID);
+            NeedsUpdate = true;
+        }
+      
     }
 
     public void UpdateWaterLevel(int x, int y,float val)
     {
-        ChunkTiles[x, y].UpdateWaterLevel(val);
+        if (CoordInRange(x) && CoordInRange(y))
+        {
+            ChunkTiles[x, y].UpdateWaterLevel(val);
+        }
     }
 
     void GenerateTilesForChunk()

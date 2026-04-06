@@ -21,7 +21,7 @@ public class ElevationController : MonoBehaviour
 
     public WallTile ElevationWallTiles;
     public Tilemap  ElevationTilemap;
-
+    public const bool UseElevation = false;
   
 
 }
