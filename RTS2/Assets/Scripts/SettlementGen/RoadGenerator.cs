@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Runtime.ConstrainedExecution;
 using UnityEngine;
@@ -12,7 +13,6 @@ public static class RoadGenerator
     static Vector2Int Batch, Chunk, Coords;
    public static void GenerateRoad(RoadData data)
     {
-        batchesChanged = new List<Vector2Int>();
         Edges = new HashSet<Vector2Int>();
         Vector2 Direction = data.EndPos - data.StartPos;
         Direction = Direction.normalized;
@@ -23,167 +23,152 @@ public static class RoadGenerator
         Vector2Int newPosition = Vector2Int.zero;
         bool hitEnd = false;
         int count = 0;
-
         while (!hitEnd)
         {
-            newPosition=new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x),Mathf.RoundToInt(currentCenterPosition.y));
-          //  if (roundedCurrentCenterPosition != newPosition || count == 0)
+            newPosition = new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x), Mathf.RoundToInt(currentCenterPosition.y));
+            //  if (roundedCurrentCenterPosition != newPosition || count == 0)
             {
-                GenerateRoadSegment(roundedCurrentCenterPosition, data, PerpDirection);
-                roundedCurrentCenterPosition=newPosition;
+                GenerateRoadSegmentInterior(roundedCurrentCenterPosition, data, PerpDirection);
+
+                roundedCurrentCenterPosition = newPosition;
             }
-            if (Vector2.Distance(currentCenterPosition, data.EndPos) < Vector2.Distance(currentCenterPosition+Direction, data.EndPos))
+            if (Vector2.Distance(currentCenterPosition, data.EndPos) < Vector2.Distance(currentCenterPosition + Direction, data.EndPos))
             {
                 hitEnd = true;
             }
             currentCenterPosition += Direction;
             count++;
-            if(count>maxIterations)
+            if (count > maxIterations)
+            {
+                hitEnd = true;
+            }
+        }
+        
+        currentCenterPosition = data.StartPos + Direction;
+        hitEnd = false;
+        count = 0;
+        roundedCurrentCenterPosition = data.StartPos;
+        newPosition = Vector2Int.zero;
+
+        while (!hitEnd)
+        {
+            newPosition = new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x), Mathf.RoundToInt(currentCenterPosition.y));
+            //  if (roundedCurrentCenterPosition != newPosition || count == 0)
+            {
+                GenerateRoadSegmentEdges(newPosition, data, PerpDirection);
+            }
+            if (Vector2.Distance(currentCenterPosition, data.EndPos) < Vector2.Distance(currentCenterPosition + Direction, data.EndPos))
+            {
+                hitEnd = true;
+            }
+            currentCenterPosition += Direction;
+            count++;
+            if (count > maxIterations)
             {
                 hitEnd = true;
             }
         }
     }
     static WorldTile currentTile;
-    static List<Vector2Int> batchesChanged = new List<Vector2Int>();
-    static void GenerateRoadSegment(Vector2Int startCoords,RoadData data,Vector2 direction)
+    static HashSet<Vector2Int> updatedTiles = new HashSet<Vector2Int>();
+    static void GenerateRoadSegmentEdges(Vector2Int startCoords,RoadData data,Vector2 direction)
     {
         Vector2 startPos = startCoords-direction*(data.Width/2);
         Vector2 endPos = startCoords + direction* (data.Width / 2);
         uint edgeID = WorldRenderer.Instance.WorldTilesManager.GetTileID(data.EdgeTile);
         uint roadID = WorldRenderer.Instance.WorldTilesManager.GetTileID(data.RoadTile);
-        HashSet<Vector2Int> updatedTiles = new HashSet<Vector2Int>();
+        updatedTiles = new HashSet<Vector2Int>();
         Vector2Int globalCoords = new Vector2Int();
         WorldChunkBatch batch = null;
         currentTile = null;
-        while(Vector2.Distance(startPos,endPos)>Vector2.Distance(startPos+direction, endPos))
+
+        if (data.HasEdge)
         {
-            startPos += direction;
+
             WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out Batch, out Chunk, out Coords);
             batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
             if (batch != null)
             {
-                if (!batchesChanged.Contains(Batch))
-                {
-                    batchesChanged.Add(Batch);
-                }
+
+                currentTile = WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
+                UpdateTile(data.EdgeTile, edgeID, currentTile, Vector2Int.zero);
+              
+            }
+           
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(endPos.x, endPos.y, out Batch, out Chunk, out Coords);
+            batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
+            if (batch != null)
+            {  
+                currentTile = WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
+                UpdateTile(data.EdgeTile, edgeID, currentTile, Vector2Int.zero);
+         
+            }
+        }
+
+
+   
+   
+    }
+    static void GenerateRoadSegmentInterior(Vector2Int startCoords, RoadData data, Vector2 direction)
+    {
+        Vector2 startPos = startCoords - direction * (data.Width / 2);
+        Vector2 endPos = startCoords + direction * (data.Width / 2);
+        uint edgeID = WorldRenderer.Instance.WorldTilesManager.GetTileID(data.EdgeTile);
+        uint roadID = WorldRenderer.Instance.WorldTilesManager.GetTileID(data.RoadTile);
+        updatedTiles = new HashSet<Vector2Int>();
+        Vector2Int globalCoords = new Vector2Int();
+        WorldChunkBatch batch = null;
+        currentTile = null;
+
+        startPos += direction;
+        while (Vector2.Distance(startPos, endPos) > Vector2.Distance(startPos + direction, endPos))
+        {
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out Batch, out Chunk, out Coords);
+            batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
+            if (batch != null)
+            {
                 currentTile = batch.Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
                 globalCoords.x = currentTile.x;
                 globalCoords.y = currentTile.y;
-                if (!updatedTiles.Contains(globalCoords))
-                {
-                    UpdateTile(data.RoadTile, roadID);
-                    updatedTiles.Add(globalCoords);
-
-                    if (!updatedTiles.Contains(globalCoords + Vector2Int.right))
-                    {
-                        WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x + 1, Coords.y, data.RoadTile, roadID);
-                    }
-                    if (!updatedTiles.Contains(globalCoords + Vector2Int.left))
-                    {
-                        WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x - 1, Coords.y, data.RoadTile, roadID);
-                    }
-                    if (!updatedTiles.Contains(globalCoords + Vector2Int.up))
-                    {
-                        WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x, Coords.y + 1, data.RoadTile, roadID);
-                    }
-                    if (!updatedTiles.Contains(globalCoords + Vector2Int.down))
-                    {
-                        WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x, Coords.y - 1, data.RoadTile, roadID);
-                    }
-                }
+               
+                    UpdateTile(data.RoadTile, roadID, currentTile, Vector2Int.zero, false);
+                    UpdateTile(data.RoadTile, roadID, currentTile, Vector2Int.up, false);
+                    UpdateTile(data.RoadTile, roadID, currentTile, Vector2Int.down, false);
+                    UpdateTile(data.RoadTile, roadID, currentTile, Vector2Int.left, false);
+                    UpdateTile(data.RoadTile, roadID, currentTile, Vector2Int.right, false);
+                
             }
-        }
-        if (data.HasEdge)
-        {
             startPos += direction;
 
-            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out Batch, out Chunk, out Coords);
-            batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
-            if (batch != null)
-            {
-                if (!batchesChanged.Contains(Batch))
-                {
-                    batchesChanged.Add(Batch);
-                }
-                currentTile = WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
-                UpdateTile(data.EdgeTile, edgeID);
-                globalCoords = new Vector2Int(currentTile.x, currentTile.y);
-
-                if (!updatedTiles.Contains(globalCoords + Vector2Int.right))
-                {
-                    WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x + 1, Coords.y, data.EdgeTile, edgeID);
-                }
-                if (!updatedTiles.Contains(globalCoords + Vector2Int.left))
-                {
-                    WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x - 1, Coords.y, data.EdgeTile, edgeID);
-                }
-                if (!updatedTiles.Contains(globalCoords + Vector2Int.up))
-                {
-                    WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x, Coords.y + 1, data.EdgeTile, edgeID);
-                }
-                if (!updatedTiles.Contains(globalCoords + Vector2Int.down))
-                {
-                    WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x, Coords.y - 1, data.EdgeTile, edgeID);
-                }
-                Edges.Add(globalCoords);
-                updatedTiles.Add(globalCoords);
-            }
-            startPos = startCoords - direction * (data.Width / 2);
-            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out Batch, out Chunk, out Coords);
-            batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
-            if (batch != null)
-            {
-                if (!batchesChanged.Contains(Batch))
-                {
-                    batchesChanged.Add(Batch);
-                }
-                currentTile = WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
-              UpdateTile(data.EdgeTile, edgeID);
-                globalCoords.x = currentTile.x;
-                globalCoords.y = currentTile.y;
-                if (!updatedTiles.Contains(globalCoords + Vector2Int.right))
-                {
-                    WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x + 1, Coords.y, data.EdgeTile, edgeID);
-                }
-                if (!updatedTiles.Contains(globalCoords + Vector2Int.left))
-                {
-                    WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x - 1, Coords.y, data.EdgeTile, edgeID);
-                }
-                if (!updatedTiles.Contains(globalCoords + Vector2Int.up))
-                {
-                    WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x, Coords.y + 1, data.EdgeTile, edgeID);
-                }
-                if (!updatedTiles.Contains(globalCoords + Vector2Int.down))
-                {
-                    WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x, Coords.y - 1, data.EdgeTile, edgeID);
-                }
-                Edges.Add(globalCoords);
-                updatedTiles.Add(globalCoords);
-            }
         }
 
-        //for (int x = 0; x < batchesChanged.Count; x++)
-        //{
-        //    WorldChunkManager.Instance.ChunkBatches[batchesChanged[x]].UpdateElevations();
-        //    WorldChunkManager.Instance.ChunkBatches[batchesChanged[x]].RefreshElevationTiles();
-        //}
     }
 
-
-    static void UpdateTile(string type,uint id)
+    static void UpdateTile(string type, uint id, WorldTile tile, Vector2Int offset, bool canSetTile = true)
     {
-        WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].UpdateTile(Coords.x, Coords.y, type,id);
-        WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y].SetElevation(OverworldGenerator.Instance.SeaLevel+1);
-        OverworldTile tile = OverworldGenerator.Instance.GetOverworldTile(WorldChunkManager.Instance.ChunkBatches[Batch].OverworldCoords);
-        WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y].Elevation.SetTileToWalkable(tile.Elevation);
+        Vector2Int globalCoords = new Vector2Int(tile.x, tile.y)+offset;
+        if (updatedTiles.Contains(globalCoords))
+        {
+            return;
+        }
+        Vector2Int myCoords = Coords + offset;
+        if(!WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].CoordsValid(myCoords.x, myCoords.y))
+        {
+            return;
+        }
+        WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].UpdateTile(myCoords.x, myCoords.y, type,id);
+        WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].ChunkTiles[myCoords.x, myCoords.y].SetElevation(OverworldGenerator.Instance.SeaLevel+1);
         WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y]
-            .ChunkTiles[Coords.x, Coords.y].UpdateWaterLevel(WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y].WaterData.WaterLevel * -1f);
+            .ChunkTiles[myCoords.x, myCoords.y].UpdateWaterLevel(WorldChunkManager.Instance.ChunkBatches[Batch].Chunks[Chunk.x, Chunk.y].ChunkTiles[myCoords.x, myCoords.y].WaterData.WaterLevel * -1f);
 
         EnvironmentObjectInstance obj = WorldChunkManager.Instance.GetChunkBatch(Batch).Chunks[Chunk.x, Chunk.y].GetEnvObjectNearPoint(new Vector2(currentTile.x,currentTile.y), 2f);
         if (obj != null)
         {
             obj.DestroyInstance();
+        }
+        if (canSetTile)
+        {
+            updatedTiles.Add(globalCoords);
         }
     }
 }
