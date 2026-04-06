@@ -2,17 +2,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Rendering;
 using static UnityEditor.PlayerSettings;
 
 public static class RoadGenerator
 {
+    public static List<RoadData> AllRoads = new List<RoadData>();
     const int maxIterations = 500;
     static HashSet<Vector2Int> Edges=new HashSet<Vector2Int>();
     static Vector2Int Batch, Chunk, Coords;
-   public static void GenerateRoad(RoadData data)
+
+    public static bool IsIntersectingAnything(List<RoadIntersection> AllRoadIntersections,Vector2 pos)
     {
+        for(int x=0;x<AllRoadIntersections.Count;x++)
+        {
+            if (AllRoadIntersections[x].IsPointIntersectintPoints(pos))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+   public static void GenerateRoad(RoadData data)
+   {
+       
+
+        List<RoadIntersection> AllRoadIntersections = new List<RoadIntersection>();
+        RoadIntersection toAdd = null;
+        for(int x = 0; x < AllRoads.Count; x++)
+        {
+            toAdd = AllRoads[x].DoesRoadIntersect(data);
+            if(toAdd != null)
+            {
+                AllRoadIntersections.Add(toAdd);
+                Debug.DrawLine(toAdd.GetFirstPoint(), toAdd.GetLastPoint(),Color.yellow,99f);
+                toAdd = null;
+            }
+        }
+        AllRoads.Add(data);
+
         Edges = new HashSet<Vector2Int>();
         Vector2 Direction = data.EndPos - data.StartPos;
         Direction = Direction.normalized;
@@ -26,7 +57,7 @@ public static class RoadGenerator
         while (!hitEnd)
         {
             newPosition = new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x), Mathf.RoundToInt(currentCenterPosition.y));
-            //  if (roundedCurrentCenterPosition != newPosition || count == 0)
+            //if (!IsIntersectingAnything(AllRoadIntersections, newPosition))
             {
                 GenerateRoadSegmentInterior(roundedCurrentCenterPosition, data, PerpDirection);
 
@@ -47,15 +78,16 @@ public static class RoadGenerator
         currentCenterPosition = data.StartPos + Direction;
         hitEnd = false;
         count = 0;
-        roundedCurrentCenterPosition = data.StartPos;
-        newPosition = Vector2Int.zero;
 
+        roundedCurrentCenterPosition = data.StartPos;
         while (!hitEnd)
         {
             newPosition = new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x), Mathf.RoundToInt(currentCenterPosition.y));
-            //  if (roundedCurrentCenterPosition != newPosition || count == 0)
+            if (!IsIntersectingAnything(AllRoadIntersections, newPosition))
             {
-                GenerateRoadSegmentEdges(newPosition, data, PerpDirection);
+                GenerateRoadSegmentEdges(roundedCurrentCenterPosition, data, PerpDirection);
+                roundedCurrentCenterPosition = newPosition;
+
             }
             if (Vector2.Distance(currentCenterPosition, data.EndPos) < Vector2.Distance(currentCenterPosition + Direction, data.EndPos))
             {
@@ -176,7 +208,206 @@ public static class RoadGenerator
 public class RoadData
 {
     public Vector2Int StartPos, EndPos;
-    public int Width;
+    public Vector2 perp;
+    public int Width,HalfWidth;
     public bool HasEdge = false;
     public string RoadTile, EdgeTile;
+
+    public RoadData(Vector2Int start,Vector2Int end,int width)
+    {
+        StartPos=start; EndPos=end; Width=width;
+        perp = Vector2.Perpendicular((end - start)).normalized*(width/2);
+        
+    }
+
+    public Vector3 DebugStart()
+    {
+        return new Vector3(StartPos.x, StartPos.y);
+    }
+    public Vector3 DebugEnd()
+    {
+        return new Vector3(EndPos.x, EndPos.y);
+    }
+    public Vector3 DebugPerp()
+    {
+        return new Vector3(perp.x, perp.y);
+    }
+    public bool IntersectsLeftEdge(Vector2 start,Vector2Int end,ref Vector2 pos)
+    {
+        return LineIntersection(start, end, StartPos - (perp), EndPos - perp, ref pos);
+    }
+    public bool IntersectsRightEdge(Vector2 start, Vector2Int end, ref Vector2 pos)
+    {
+        return LineIntersection(start, end, StartPos + (perp), EndPos + perp, ref pos);
+    }
+    public bool IntersectsCenterLine(Vector2 start, Vector2Int end, ref Vector2 pos)
+    {
+        return LineIntersection(start, end, StartPos, EndPos, ref pos);
+    }
+    public RoadIntersection DoesRoadIntersect(RoadData road) 
+    {
+        List<Vector2> Intersections = new List<Vector2>();
+        Vector2 intersection = new Vector2();
+        if (IntersectsLeftEdge(road.StartPos, road.EndPos, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+        if (IntersectsCenterLine(road.StartPos,road.EndPos,ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+        if (IntersectsRightEdge(road.StartPos, road.EndPos, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+        if (Intersections.Count ==0)
+        {
+            return null;
+        }else if (Intersections.Count == 1)
+        {
+            Intersections.Add(road.EndPos);
+        }
+        return new RoadIntersection(Intersections) ;
+    }
+
+    static bool LineIntersection(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, ref Vector2 intersection)
+    {
+        float Ax, Bx, Cx, Ay, By, Cy, d, e, f, num, offset;
+        float x1lo, x1hi, y1lo, y1hi;
+
+        Ax = p2.x - p1.x;
+        Bx = p3.x - p4.x;
+
+        // X bound box test/
+        if (Ax < 0)
+        {
+            x1lo = p2.x; x1hi = p1.x;
+        }
+        else
+        {
+            x1hi = p2.x; x1lo = p1.x;
+        }
+
+        if (Bx > 0)
+        {
+            if (x1hi < p4.x || p3.x < x1lo) return false;
+        }
+        else
+        {
+            if (x1hi < p3.x || p4.x < x1lo) return false;
+        }
+
+        Ay = p2.y - p1.y;
+        By = p3.y - p4.y;
+
+        // Y bound box test//
+        if (Ay < 0)
+        {
+            y1lo = p2.y; y1hi = p1.y;
+        }
+        else
+        {
+            y1hi = p2.y; y1lo = p1.y;
+        }
+
+        if (By > 0)
+        {
+            if (y1hi < p4.y || p3.y < y1lo) return false;
+        }
+        else
+        {
+            if (y1hi < p3.y || p4.y < y1lo) return false;
+        }
+
+        Cx = p1.x - p3.x;
+        Cy = p1.y - p3.y;
+        d = By * Cx - Bx * Cy;  // alpha numerator//
+        f = Ay * Bx - Ax * By;  // both denominator//
+
+        // alpha tests//
+        if (f > 0)
+        {
+            if (d < 0 || d > f) return false;
+        }
+        else
+        {
+            if (d > 0 || d < f) return false;
+        }
+
+        e = Ax * Cy - Ay * Cx;  // beta numerator//
+
+        // beta tests //
+        if (f > 0)
+        {
+            if (e < 0 || e > f) return false;
+        }
+        else
+        {
+            if (e > 0 || e < f) return false;
+        }
+
+        // check if they are parallel
+        if (f == 0) return false;
+
+        // compute intersection coordinates //
+        num = d * Ax;   // numerator //
+        offset = same_sign(num, f) ? f * 0.5f : -f * 0.5f;  // round direction //
+        intersection.x = p1.x + (num + offset) / f;
+
+        num = d * Ay;
+        offset = same_sign(num, f) ? f * 0.5f : -f * 0.5f;
+        intersection.y = p1.y + (num + offset) / f;
+
+        return true;
+    }
+
+    private static bool same_sign(float a, float b)
+    {
+        return ((a * b) >= 0f);
+    }
+}
+
+public class RoadIntersection
+{
+    public List<Vector2> RoadPoints;
+    public RoadIntersection(List<Vector2> RoadPoints)
+    {
+        this.RoadPoints= RoadPoints;
+    }
+    public bool IsPointIntersectintPoints(Vector2 pos)
+    {
+        if (RoadPoints.Count > 1)
+        {
+            return BackwardsDot(pos) < 0 && ForwardsDot(pos) < 0;
+        }
+        return false;
+    }
+
+    float ForwardsDot(Vector2 pos)
+    {
+        Vector2 heading = GetFirstPoint() - pos;
+        return Vector2.Dot(heading, GetForwards());
+    }
+
+    float BackwardsDot(Vector2 pos)
+    {
+        Vector2 heading = GetLastPoint() - pos;
+        return Vector2.Dot(heading, GetForwards()*-1);
+    }
+
+    Vector2 GetForwards()
+    {
+        return GetLastPoint() - GetFirstPoint();
+    }
+
+    public Vector2 GetFirstPoint()
+    {
+        return RoadPoints[0];
+    }
+    public Vector2 GetLastPoint()
+    {
+        return RoadPoints[RoadPoints.Count - 1];
+    }
 }
