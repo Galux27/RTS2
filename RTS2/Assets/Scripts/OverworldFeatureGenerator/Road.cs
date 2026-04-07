@@ -67,8 +67,8 @@ public class Road : OverworldFeatureToWorldConverter
             }
             offCenter = new Vector2Int((int)Mathf.Lerp(center.x, target.x, .25f), (int)Mathf.Lerp(center.y, target.y, .25f));
 
-            AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), offCenter, target, width);
-            Debug.Log("Generating road from " + offCenter + " to " + target + " in batch " + toGenerateIn.coords);
+            AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), center, target, width);
+            Debug.Log("Generating road from " + center + " to " + target + " in batch " + toGenerateIn.coords);
 
         }
         toGenerateIn.RefreshGroundTiles();
@@ -76,20 +76,20 @@ public class Road : OverworldFeatureToWorldConverter
 
     bool CheckIfRoadExists(WorldChunkBatch toAddTo,RoadType type,Vector2 end)
     {
-        for(int x = 0; x < toAddTo.Roads.Count; x++)
-        {
-            if (toAddTo.Roads[x].type == type)
-            {
-                if (toAddTo.Roads[x].RoadEnd == end)
-                {
-                    return true;
-                }
-            }
-        }
+        //for(int x = 0; x < toAddTo.Roads.Count; x++)
+        //{
+        //    if (toAddTo.Roads[x].Type == type)
+        //    {
+        //        if (toAddTo.Roads[x].RoadEnd == end)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //}
         return false;
     }
 
-    void AddRoad(WorldChunkBatch toAddTo,RoadType type,Vector2 start,Vector2 end,int width)
+    void AddRoad(WorldChunkBatch toAddTo,RoadType type,Vector2Int start,Vector2Int end,int width)
     {
         if (CheckIfRoadExists(toAddTo, type, end))
         {
@@ -100,16 +100,13 @@ public class Road : OverworldFeatureToWorldConverter
             case RoadType.None:
                 break;
             case RoadType.MajorRoad:
-                toAddTo.AddRoad(new MajorRoad(type, start, end, width));
-
+                toAddTo.AddRoad(new RoadData(start, end, width, type));
                 break;
             case RoadType.MinorRoad:
-                toAddTo.AddRoad(new MinorRoad(type, start, end, width));
-
+                toAddTo.AddRoad(new RoadData(start, end, width, type));
                 break;
             case RoadType.Backroad:
-                toAddTo.AddRoad(new Backroad(type, start, end, width));
-
+                toAddTo.AddRoad(new RoadData(start, end, width, type));
                 break;
             default:
                 break;

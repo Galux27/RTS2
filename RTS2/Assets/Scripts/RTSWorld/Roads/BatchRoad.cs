@@ -108,14 +108,14 @@ public class BatchRoad : ISerialize
         RoadEnd = end;
         this.Width= width;
         Segments = new List<RoadSegment>();
-        Segments.Add(new RoadSegment(start, end));
+        //Segments.Add(new RoadSegment(start, end));
     }
 
 
     public virtual void GenerateRoad()
     {
         Segments = new List<RoadSegment>();
-        Segments.Add(new RoadSegment(RoadStart, RoadEnd));
+       // Segments.Add(new RoadSegment(RoadStart, RoadEnd));
         IsGenerated = true;
     }
 
@@ -386,19 +386,19 @@ public class Backroad : BatchRoad
 
     public override void GenerateRoad()
     {
-        Segments = new List<RoadSegment>();
-        List<PathfindingNode> path = Pathfinding.FindPath(RoadStart, RoadEnd);
-        if (path != null && path.Count > 0)
-        {
-            for (int x = 0; x < path.Count - 1; x++)
-            {
-                Segments.Add(new RoadSegment(path[x].worldPos, path[x + 1].worldPos));
-            }
-        }
-        else
-        {
-            base.GenerateRoad();
-        }
+        //Segments = new List<RoadSegment>();
+        //List<PathfindingNode> path = Pathfinding.FindPath(RoadStart, RoadEnd);
+        //if (path != null && path.Count > 0)
+        //{
+        //    for (int x = 0; x < path.Count - 1; x++)
+        //    {
+        //        Segments.Add(new RoadSegment(path[x].worldPos, path[x + 1].worldPos));
+        //    }
+        //}
+        //else
+        //{
+        //    base.GenerateRoad();
+        //}
         IsGenerated = true;
     }
 
@@ -413,43 +413,43 @@ public class MinorRoad : BatchRoad
 
     public override void GenerateRoad()
     {
-        IsGenerated = true;
-        Segments = new List<RoadSegment>();
-        List<PathfindingNode> path = Pathfinding.FindPath(RoadStart, RoadEnd);
-        Vector2 startPoint = Vector2.zero;
-        Vector2 endPoint = Vector2.zero;
-        Vector2 finalEndPoint = Vector2.zero;
-        Vector2 finalStartPoint = Vector2.zero;
-        if (path != null && path.Count > 0)
-        {
-            for (int x=0;x<path.Count-1;x++)
-            {
+        //IsGenerated = true;
+        //Segments = new List<RoadSegment>();
+        //List<PathfindingNode> path = Pathfinding.FindPath(RoadStart, RoadEnd);
+        //Vector2 startPoint = Vector2.zero;
+        //Vector2 endPoint = Vector2.zero;
+        //Vector2 finalEndPoint = Vector2.zero;
+        //Vector2 finalStartPoint = Vector2.zero;
+        //if (path != null && path.Count > 0)
+        //{
+        //    for (int x=0;x<path.Count-1;x++)
+        //    {
                
-                startPoint = path[x].worldPos;
-                endPoint = path[x+1].worldPos;
+        //        startPoint = path[x].worldPos;
+        //        endPoint = path[x+1].worldPos;
 
-                for (float q = 0f;q < 1f; q += .05f)
-                {
+        //        for (float q = 0f;q < 1f; q += .05f)
+        //        {
 
 
-                    finalEndPoint = Vector2.Lerp(RoadStart, endPoint, q);
-                    finalStartPoint = Vector2.Lerp(startPoint, RoadStart, q);
+        //            finalEndPoint = Vector2.Lerp(RoadStart, endPoint, q);
+        //            finalStartPoint = Vector2.Lerp(startPoint, RoadStart, q);
 
-                    Vector2 p1 = Vector2.Lerp(finalStartPoint, finalEndPoint, q);
-                    Vector2 p2 = Vector2.Lerp(finalStartPoint, finalEndPoint, q + .1f);
+        //            Vector2 p1 = Vector2.Lerp(finalStartPoint, finalEndPoint, q);
+        //            Vector2 p2 = Vector2.Lerp(finalStartPoint, finalEndPoint, q + .1f);
 
-                    // finalStartPoint = Vector2.Lerp(startPoint, endPoint, f);
-                    Segments.Add(new RoadSegment(p1, p2));
+        //            // finalStartPoint = Vector2.Lerp(startPoint, endPoint, f);
+        //            Segments.Add(new RoadSegment(p1, p2));
 
-                }
-            }
-            Vector3 dir = (endPoint - startPoint).normalized;
-            Segments.Add(new RoadSegment(path[path.Count - 1].worldPos, path[path.Count - 1].worldPos + (dir * 4)));
-        }
-        else
-        {
-            base.GenerateRoad();
-        }
+        //        }
+        //    }
+        //    Vector3 dir = (endPoint - startPoint).normalized;
+        //    Segments.Add(new RoadSegment(path[path.Count - 1].worldPos, path[path.Count - 1].worldPos + (dir * 4)));
+        //}
+        //else
+        //{
+        //    base.GenerateRoad();
+        //}
 
        
         
@@ -614,7 +614,7 @@ public class BatchRoadBlend : BatchRoad
                     Vector2 p2 = Vector2.Lerp(finalStartPoint, finalEndPoint, f + .1f);
 
                    // finalStartPoint = Vector2.Lerp(startPoint, endPoint, f);
-                    Segments.Add(new RoadSegment(p1,p2));
+                   // Segments.Add(new RoadSegment(p1,p2));
 
                 }
 
@@ -636,7 +636,7 @@ public class BatchRoadBlend : BatchRoad
                     Vector2 p2 = Vector2.Lerp(finalStartPoint, finalEndPoint, f + .1f);
 
                     // finalStartPoint = Vector2.Lerp(startPoint, endPoint, f);
-                    Segments.Add(new RoadSegment(p1, p2));
+                   // Segments.Add(new RoadSegment(p1, p2));
 
                 }
             }
@@ -725,8 +725,8 @@ public enum RoadType
 
 public class RoadSegment
 {
-    public Vector2 Start, End;
-    public RoadSegment(Vector2 start, Vector2 end)
+    public Vector2Int Start, End;
+    public RoadSegment(Vector2Int start, Vector2Int end)
     {
         Start = start;
         End = end;  

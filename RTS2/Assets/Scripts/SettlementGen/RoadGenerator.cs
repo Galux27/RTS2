@@ -26,15 +26,40 @@ public static class RoadGenerator
         return false;
     }
 
-   public static void GenerateRoad(RoadData data)
-   {
-       
+    public static void PopulateRoadTileData(RoadData data)
+    {
+        switch (data.Type)
+        {
+            case RoadType.None:
+                break;
+            case RoadType.MajorRoad:
+                data.HasEdge = true;
+                data.EdgeTile = "Tiled";
+                data.RoadTile = "MajorRoad";
 
+                break;
+            case RoadType.MinorRoad:
+                data.HasEdge = true;
+                data.EdgeTile = "Tiled";
+                data.RoadTile = "MinorRoad";
+
+                break;
+            case RoadType.Backroad:
+                data.RoadTile = "BackRoad";
+
+                break;
+            default:
+                break;
+        }
+    }
+
+   public static void GenerateRoad(RoadData data, ref List<RoadData> existingRoads)
+   {
         List<RoadIntersection> AllRoadIntersections = new List<RoadIntersection>();
         RoadIntersection toAdd = null;
-        for(int x = 0; x < AllRoads.Count; x++)
+        for(int x = 0; x < existingRoads.Count; x++)
         {
-            toAdd = AllRoads[x].DoesRoadIntersect(data);
+            toAdd = existingRoads[x].DoesRoadIntersect(data);
             if(toAdd != null)
             {
                 AllRoadIntersections.Add(toAdd);
@@ -42,7 +67,6 @@ public static class RoadGenerator
                 toAdd = null;
             }
         }
-        AllRoads.Add(data);
 
         Edges = new HashSet<Vector2Int>();
         Vector2 Direction = data.EndPos - data.StartPos;
@@ -205,19 +229,20 @@ public static class RoadGenerator
     }
 }
 
-public class RoadData
+public class RoadData : ISerialize
 {
     public Vector2Int StartPos, EndPos;
     public Vector2 perp;
     public int Width,HalfWidth;
-    public bool HasEdge = false;
+    public bool HasEdge = false,IsGenerated=false;
     public string RoadTile, EdgeTile;
-
-    public RoadData(Vector2Int start,Vector2Int end,int width)
+    public RoadType Type;
+    public RoadData(Vector2Int start,Vector2Int end,int width,RoadType type)
     {
         StartPos=start; EndPos=end; Width=width;
         perp = Vector2.Perpendicular((end - start)).normalized*(width/2);
-        
+        Type = type;
+        RoadGenerator.PopulateRoadTileData(this);
     }
 
     public Vector3 DebugStart()
@@ -270,6 +295,42 @@ public class RoadData
             Intersections.Add(road.EndPos);
         }
         return new RoadIntersection(Intersections) ;
+    }
+
+    public void Deserialize(SerializedData data)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    List<RoadSegment> Segments()
+    {
+        List<RoadSegment> rs = new List<RoadSegment>();
+        rs.Add(new RoadSegment(StartPos,EndPos));
+        return rs;
+    }
+
+    public DataToSerialize GetDataToSerialize()
+    {
+        DataToSerialize retVal = new DataToSerialize();
+        retVal.AddDataToSerialize(DataKeys.RoadType, Type);
+        retVal.AddDataToSerialize(DataKeys.RoadWidth, Width);
+        retVal.AddDataToSerialize(DataKeys.RoadElement, Segments());
+        return retVal;
+    }
+
+    public UID GetMyUID()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public SerializedData Serialize()
+    {
+        return new SerializedData(GetDataToSerialize());
+    }
+
+    public void SetMyUID(ulong uid)
+    {
+        throw new System.NotImplementedException();
     }
 
     static bool LineIntersection(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, ref Vector2 intersection)

@@ -8,14 +8,14 @@ public class RoadObjects_MapFeature : MapFeatureBase
 
     public int MinToGenerate=0,MaxToGenerate=10;
     public List<string> ValidObjectsForFeature;
-    List<BatchRoad> ValidRoads;
+    List<RoadData> ValidRoads;
 
     void GetValidRoads(WorldChunkBatch toGenerateIn)
     {
-        ValidRoads = new List<BatchRoad>();
+        ValidRoads = new List<RoadData>();
         for(int x=0;x<toGenerateIn.Roads.Count;x++)
         {
-            if (toGenerateIn.Roads[x].IsBlend() == false)
+            //if (toGenerateIn.Roads[x].IsBlend() == false)
             {
                 ValidRoads.Add(toGenerateIn.Roads[x]);
             }
@@ -33,18 +33,18 @@ public class RoadObjects_MapFeature : MapFeatureBase
 
         for (int i = 0; i < countToGenerate; i++)
         {
-            BatchRoad road = GetRandomRoad(toGenerateIn);
-            if (road.type == RoadType.MajorRoad || road.type == RoadType.MinorRoad)
+            RoadData road = GetRandomRoad(toGenerateIn);
+            if (road.Type == RoadType.MajorRoad || road.Type == RoadType.MinorRoad)
             {
-                RoadSegment rs = GetRandomRoadSegment(road);
+                //RoadSegment rs = GetRandomRoadSegment(road);
                 float point = Random.Range(0.15f, .85f);
-                Vector2 posForObj = Vector2.Lerp(rs.Start, rs.End, point);
+                Vector2 posForObj = Vector2.Lerp(road.StartPos, road.EndPos, point);
                 string objID = GetRandomObjectToSpawn();
                 EnvironmentObject obj = EnvironmentObjectManager.Instance.AllObjects[objID];
                 WorldTile toCheck = null;
                 Vector3 size = obj.Size();
                 bool isValid = true;
-                Vector2 offset = road.RoadEnd - road.RoadStart;
+                Vector2 offset = road.EndPos - road.StartPos;
                 offset = offset.normalized * (road.Width/2f);
                 offset *= Random.Range(0f, 1f);
                 float val = offset.x;
@@ -74,7 +74,7 @@ public class RoadObjects_MapFeature : MapFeatureBase
                 if (isValid)
                 {
                     Debug.Log("Generating road objects, creating road ojbects "+ obj.name + " at "+ posForObj+" offset " + offset+"Road points "
-                        + rs.Start+","+rs.End+" chunk batch "+ toGenerateIn.coords+","+toPutOn.Coords()+","+toPutOn.Batch+","+road.IsGenerated+","+road.IsDrawn);
+                        + road .StartPos+ ","+ road.EndPos+ " chunk batch "+ toGenerateIn.coords+","+toPutOn.Coords()+","+toPutOn.Batch+","+road.IsGenerated+","+road.IsGenerated);
 
                     EnvironmentObjectInstance toAdd = new EnvironmentObjectInstance(toPutOn.x,toPutOn.y,objID);
                     WorldChunkManager.Instance.ChunkBatches[toPutOn.Batch].Chunks[toPutOn.Chunk.x, toPutOn.Chunk.y].AddEnvironmentObject(toAdd);
@@ -91,7 +91,7 @@ public class RoadObjects_MapFeature : MapFeatureBase
         return ValidObjectsForFeature[Random.Range(0, ValidObjectsForFeature.Count)];
     }
 
-    BatchRoad GetRandomRoad(WorldChunkBatch batch)
+    RoadData GetRandomRoad(WorldChunkBatch batch)
     {
         return ValidRoads[Random.Range(0, ValidRoads.Count)];
     }

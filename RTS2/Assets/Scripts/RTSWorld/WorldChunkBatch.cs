@@ -15,9 +15,11 @@ public class WorldChunkBatch : MonoBehaviour
     public bool NeedsGeneration = true;
     public Vector2Int OverworldCoords = new Vector2Int();
     public List<WorldTileBlend> BlendList = new List<WorldTileBlend>();
-    public List<BatchRoad> Roads = new List<BatchRoad>();
+    public List<RoadData> Roads = new List<RoadData>();
     public WorldChunkBatchUnits UnitsInBatch;
 
+
+    
 
     public static WorldChunkBatch CreateWorldChunkBatch(Vector2Int coords, Vector2Int overworld)
     {
@@ -97,26 +99,26 @@ public class WorldChunkBatch : MonoBehaviour
         WorldTileBlending.OnWorldChunkBatchGenerated(this);
     }
 
-    public void AddRoad(BatchRoad road)
+    public void AddRoad(RoadData road)
     {
         Roads.Add(road);
-        road.GenerateRoad();
+        //road.GenerateRoad();
     }
 
     public void GenerateRoadBlends(RoadType toGen)
     {
-        List<BatchRoad> toGenerateBlendFor = new List<BatchRoad>();
-        for (int x = 0; x < Roads.Count; x++)
-        {
-            if (Roads[x].type == toGen)
-            {
-                toGenerateBlendFor.Add(Roads[x]);
-            }
-        }
-        if (toGenerateBlendFor.Count > 1)
-        {
-            AddRoad(new BatchRoadBlend(toGen, Center(), toGenerateBlendFor[0].RoadEnd, toGenerateBlendFor[0].Width,toGenerateBlendFor));
-        }
+        //List<BatchRoad> toGenerateBlendFor = new List<BatchRoad>();
+        //for (int x = 0; x < Roads.Count; x++)
+        //{
+        //    if (Roads[x].Type == toGen)
+        //    {
+        //        toGenerateBlendFor.Add(Roads[x]);
+        //    }
+        //}
+        //if (toGenerateBlendFor.Count > 1)
+        //{
+        //    AddRoad(new BatchRoadBlend(toGen, Center(), toGenerateBlendFor[0].RoadEnd, toGenerateBlendFor[0].Width,toGenerateBlendFor));
+        //}
     }
 
     public void GenerateRoads(RoadType toGen)
@@ -131,13 +133,14 @@ public class WorldChunkBatch : MonoBehaviour
 
         for (int x = 0; x < Roads.Count; x++)
         {
-            if (Roads[x].type == toGen)
+            if (Roads[x].Type == toGen)
             {
-                Roads[x].RenderRoad(this);
-                Roads[x].LogCount();
+                RoadGenerator.GenerateRoad(Roads[x],ref Roads);
+               // Roads[x].RenderRoad(this);
+               // Roads[x].LogCount();
             }
         }
-            RefreshElevationTiles();
+          //  RefreshElevationTiles();
         
     }
 
@@ -779,8 +782,8 @@ public class WorldChunkBatch : MonoBehaviour
                 RoadPoints = RoadSplit[2].Split(SerializeDataHelpers.KEY_OBJECT_SPLIT, System.StringSplitOptions.RemoveEmptyEntries)[1].Split(SerializeDataHelpers.DATA_SPLIT, System.StringSplitOptions.RemoveEmptyEntries);
                 for (int x = 0; x < RoadPoints.Length; x += 4)
                 {
-                    RoadSegment segment = new RoadSegment(new Vector2(int.Parse(RoadPoints[0]), int.Parse(RoadPoints[1]))
-                        , new Vector2(int.Parse(RoadPoints[2]), int.Parse(RoadPoints[3])));
+                    RoadSegment segment = new RoadSegment(new Vector2Int(int.Parse(RoadPoints[0]), int.Parse(RoadPoints[1]))
+                        , new Vector2Int(int.Parse(RoadPoints[2]), int.Parse(RoadPoints[3])));
                     segments.Add(segment);
                 }
             AddSerializedRoad(rtype, width, segments);
@@ -798,14 +801,13 @@ public class WorldChunkBatch : MonoBehaviour
             case RoadType.None:
                 break;
             case RoadType.MajorRoad:
-                AddRoad(new MajorRoad(type, segments[0].Start, segments[segments.Count - 1].End, width));
-                break;
+                AddRoad(new RoadData(segments[0].Start, segments[segments.Count - 1].End, width, type));                break;
             case RoadType.MinorRoad:
-                AddRoad(new MinorRoad(type, segments[0].Start, segments[segments.Count - 1].End, width));
+                AddRoad(new RoadData(segments[0].Start, segments[segments.Count - 1].End, width, type));
 
                 break;
             case RoadType.Backroad:
-                AddRoad(new Backroad(type, segments[0].Start, segments[segments.Count - 1].End, width));
+                AddRoad(new RoadData(segments[0].Start, segments[segments.Count - 1].End, width, type));
 
                 break;
             default:
