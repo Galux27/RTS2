@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76ae18e6de6743a4a8a6a3da359e62e6, type: 3}
+  m_Name: WindowWall
+  m_EditorClassIdentifier: 
+  NoNeighbours: {fileID: 11400000, guid: f032e550c70870a429d3814c860e3d34, type: 2}
+  Left: {fileID: 11400000, guid: e9eb10797522e864eb8f1f4abe98ab8c, type: 2}
+  Right: {fileID: 11400000, guid: 2c5507d50b4de8540aa504cb1c27f7fc, type: 2}
+  Above: {fileID: 11400000, guid: 00e22a02d3fbc68409887e8b704ac104, type: 2}
+  Below: {fileID: 11400000, guid: 3cdbb63bc5a7ec048bf06f2f0400085b, type: 2}
+  LeftBelow: {fileID: 11400000, guid: 3600f38b46c68f244ae6cd7f11b41181, type: 2}
+  LeftAbove: {fileID: 11400000, guid: 438443c0388e8ff47bb4c25a98a5b7bc, type: 2}
+  RightBelow: {fileID: 11400000, guid: 5785ee10c958ec947a67984a78ee6563, type: 2}
+  RightAbove: {fileID: 11400000, guid: d1f8da75135a3604e8fa40ebc1f0b275, type: 2}
+  LeftRight: {fileID: 11400000, guid: abd2d8f04b40b8c4b88d7759508025ad, type: 2}
+  UpDown: {fileID: 11400000, guid: fda88db844863cc4e90de07c889734f9, type: 2}
+  LeftRightBelow: {fileID: 11400000, guid: f74293f1426025c4c8872218ad4b4c81, type: 2}
+  LeftRightAbove: {fileID: 11400000, guid: ccda6659cb5b33e4dae5358c168e5ffa, type: 2}
+  TopBottomLeft: {fileID: 11400000, guid: 609ffceeba6d21e41992bdd862750680, type: 2}
+  TopBottomRight: {fileID: 11400000, guid: b4a320cc05d7ce2459f2fbf6765dc5e4, type: 2}
+  Cross: {fileID: 11400000, guid: fbe69dba77d7a5b43a077d74c4bf0e0f, type: 2}
+  WallName: Window
+  Health: 10
+  RequirementsToBuild:
+  - ResourceName: Construction Supplies
+    QuantityRequired: 3
