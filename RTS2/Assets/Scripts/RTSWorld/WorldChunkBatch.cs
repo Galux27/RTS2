@@ -121,6 +121,42 @@ public class WorldChunkBatch : MonoBehaviour
         //}
     }
 
+    public RoadIntersection GetFirstRoadIntersection(RoadData checking,RoadData toIgnore)
+    {
+        RoadIntersection intersection = null,currentInt=null;
+        float dist = 9999999f,dist2=0f;
+        for (int x = 0; x < Roads.Count; x++)
+        {
+            if (Roads[x] == toIgnore)
+            {
+                continue;
+            }
+            currentInt = Roads[x].DoesRoadIntersect(checking);
+            if (currentInt!=null&&currentInt.RoadPoints.Count>0)
+            {
+                if (intersection == null)
+                {
+                    intersection = currentInt;
+                    dist = Vector2.Distance(currentInt.GetFirstPoint(), checking.StartPos);
+                }
+                else
+                {
+                    dist2 = Vector2.Distance(currentInt.GetFirstPoint(), checking.StartPos);
+                    if (dist2 < dist)
+                    {
+                        dist = dist2;
+                        intersection = currentInt;
+                        
+                    }
+                    currentInt = null;
+                    dist2 = 0;
+                }
+            }
+        }
+
+        return intersection;
+    }
+
     public void GenerateRoads(RoadType toGen)
     {
         //for(int x = 0; x < Roads.Count; x++)

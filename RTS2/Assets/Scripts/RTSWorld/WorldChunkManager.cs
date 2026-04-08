@@ -26,6 +26,33 @@ public class WorldChunkManager : MonoBehaviour
         return ChunkBatches.ContainsKey(coords);
     }
 
+    public List<WorldChunkBatch> GetAdjacentChunkBatches(Vector2Int coords)
+    {
+        List<WorldChunkBatch> batches = new List<WorldChunkBatch>();
+        WorldChunkBatch checking = null;
+        checking = GetChunkBatch(coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0));
+        if (checking != null)
+        {
+            batches.Add(checking);
+        }
+        checking = GetChunkBatch(coords - new Vector2Int(WorldChunkManager.ChunkBatchSize, 0));
+        if (checking != null)
+        {
+            batches.Add(checking);
+        }
+        checking = GetChunkBatch(coords + new Vector2Int( 0, WorldChunkManager.ChunkBatchSize));
+        if (checking != null)
+        {
+            batches.Add(checking);
+        }
+        checking = GetChunkBatch(coords - new Vector2Int(0, WorldChunkManager.ChunkBatchSize));
+        if (checking != null)
+        {
+            batches.Add(checking);
+        }
+        return batches;
+    }
+
     public WorldChunkBatch GetChunkBatch(Vector2Int coords)
     {
         if (ExistingChunkData.ContainsKey(coords) && !ChunkBatches.ContainsKey(coords))

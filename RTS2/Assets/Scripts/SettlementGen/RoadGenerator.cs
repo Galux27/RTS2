@@ -53,19 +53,45 @@ public static class RoadGenerator
         }
     }
 
+    static bool IsPositionNearStartOrEndOfPositions(Vector2 pos,List<RoadData> roads)
+    {
+        for(int x = 0; x < roads.Count; x++)
+        {
+            if (Vector2.Distance(pos, roads[x].StartPos) < roads[x].HalfWidth
+                || Vector2.Distance(pos, roads[x].EndPos) < roads[x].HalfWidth)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
    public static void GenerateRoad(RoadData data, ref List<RoadData> existingRoads)
    {
+        List<RoadData> intersectingRoads = new List<RoadData>();
         List<RoadIntersection> AllRoadIntersections = new List<RoadIntersection>();
         RoadIntersection toAdd = null;
         for(int x = 0; x < existingRoads.Count; x++)
         {
             toAdd = existingRoads[x].DoesRoadIntersect(data);
-            if(toAdd != null)
+            if(toAdd != null&&toAdd.RoadPoints.Count>0)
             {
                 AllRoadIntersections.Add(toAdd);
+                intersectingRoads.Add(existingRoads[x]);
                 Debug.DrawLine(toAdd.GetFirstPoint(), toAdd.GetLastPoint(),Color.yellow,99f);
-                toAdd = null;
             }
+            else
+            {
+                toAdd = existingRoads[x].ReverseDoesRoadIntersect(data);
+                if (toAdd != null && toAdd.RoadPoints.Count > 0)
+                {
+                    AllRoadIntersections.Add(toAdd);
+                    intersectingRoads.Add(existingRoads[x]);
+                    Debug.DrawLine(toAdd.GetFirstPoint(), toAdd.GetLastPoint(), Color.cyan, 99f);
+                }
+            }
+            toAdd = null;
+
         }
 
         Edges = new HashSet<Vector2Int>();
@@ -102,16 +128,19 @@ public static class RoadGenerator
         currentCenterPosition = data.StartPos + Direction;
         hitEnd = false;
         count = 0;
-
+        newPosition = Vector2Int.zero;
         roundedCurrentCenterPosition = data.StartPos;
         while (!hitEnd)
         {
             newPosition = new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x), Mathf.RoundToInt(currentCenterPosition.y));
-            if (!IsIntersectingAnything(AllRoadIntersections, newPosition))
+            //if (Vector2.Distance(newPosition, data.StartPos) > data.Width && Vector2.Distance(newPosition, data.EndPos) > data.Width)
             {
-                GenerateRoadSegmentEdges(roundedCurrentCenterPosition, data, PerpDirection);
-                roundedCurrentCenterPosition = newPosition;
+                if (!IsIntersectingAnything(AllRoadIntersections, newPosition) && !IsPositionNearStartOrEndOfPositions(newPosition, intersectingRoads))
+                {
+                    GenerateRoadSegmentEdges(newPosition, data, PerpDirection);
+                    roundedCurrentCenterPosition = newPosition;
 
+                }
             }
             if (Vector2.Distance(currentCenterPosition, data.EndPos) < Vector2.Distance(currentCenterPosition + Direction, data.EndPos))
             {
@@ -231,8 +260,11 @@ public static class RoadGenerator
 
 public class RoadData : ISerialize
 {
-    public Vector2Int StartPos, EndPos;
-    public Vector2 perp;
+    public Vector2Int StartPos, EndPos,LeftStart,LeftEnd,RightStart,RightEnd;
+
+
+
+    public Vector2 perp,dir;
     public int Width,HalfWidth;
     public bool HasEdge = false,IsGenerated=false;
     public string RoadTile, EdgeTile;
@@ -241,9 +273,21 @@ public class RoadData : ISerialize
     {
         StartPos=start; EndPos=end; Width=width;
         perp = Vector2.Perpendicular((end - start)).normalized*(width/2);
+        dir = end - start;
+        dir = dir.normalized;
+        RightStart = Vec2ToInt(StartPos + perp);
+        RightEnd = Vec2ToInt(EndPos + perp);
+        LeftStart = Vec2ToInt(StartPos - perp);
+        LeftEnd=Vec2ToInt(EndPos - perp);
         Type = type;
         RoadGenerator.PopulateRoadTileData(this);
     }
+
+    Vector2Int Vec2ToInt(Vector2 val)
+    {
+        return new Vector2Int(Mathf.RoundToInt(val.x),Mathf.RoundToInt(val.y));
+    }
+
 
     public Vector3 DebugStart()
     {
@@ -259,42 +303,131 @@ public class RoadData : ISerialize
     }
     public bool IntersectsLeftEdge(Vector2 start,Vector2Int end,ref Vector2 pos)
     {
-        return LineIntersection(start, end, StartPos - (perp), EndPos - perp, ref pos);
+        return LineIntersection(start, end, (StartPos-dir) - (perp*1.1f), (EndPos + dir) - (perp * 1.1f), ref pos);
     }
     public bool IntersectsRightEdge(Vector2 start, Vector2Int end, ref Vector2 pos)
     {
-        return LineIntersection(start, end, StartPos + (perp), EndPos + perp, ref pos);
+        return LineIntersection(start, end, (StartPos-dir) + (perp * 1.1f), (EndPos+dir )+ (perp * 1.1f), ref pos);
     }
     public bool IntersectsCenterLine(Vector2 start, Vector2Int end, ref Vector2 pos)
     {
-        return LineIntersection(start, end, StartPos, EndPos, ref pos);
+        return LineIntersection(start, end, StartPos-dir, EndPos+dir, ref pos);
     }
-    public RoadIntersection DoesRoadIntersect(RoadData road) 
+
+    public RoadIntersection ReverseDoesRoadIntersect(RoadData road)
     {
         List<Vector2> Intersections = new List<Vector2>();
         Vector2 intersection = new Vector2();
-        if (IntersectsLeftEdge(road.StartPos, road.EndPos, ref intersection))
+        if (IntersectsLeftEdge(road.EndPos, road.StartPos, ref intersection))
         {
             Intersections.Add(intersection);
         }
 
-        if (IntersectsCenterLine(road.StartPos,road.EndPos,ref intersection))
+        if (IntersectsCenterLine(road.EndPos, road.StartPos, ref intersection))
         {
             Intersections.Add(intersection);
         }
 
-        if (IntersectsRightEdge(road.StartPos, road.EndPos, ref intersection))
+        if (IntersectsRightEdge(road.EndPos, road.StartPos, ref intersection))
         {
             Intersections.Add(intersection);
         }
-        if (Intersections.Count ==0)
+
+
+        if (Intersections.Count == 1)
         {
-            return null;
-        }else if (Intersections.Count == 1)
+            Intersections.Add(road.StartPos);
+        }
+        if (Intersections.Count > 0)
+        {
+            return new RoadIntersection(Intersections);
+        }
+        return null;
+    }
+
+        public RoadIntersection DoesRoadIntersect(RoadData road) 
+    {
+        List<Vector2> Intersections = new List<Vector2>();
+        Vector2 intersection = new Vector2();
+
+        Vector2Int dir = road.EndPos - road.StartPos;
+
+        if (IntersectsLeftEdge(road.StartPos-dir, road.EndPos+dir, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+        if (IntersectsCenterLine(road.StartPos - dir, road.EndPos + dir, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+        if (IntersectsRightEdge(road.StartPos - dir, road.EndPos + dir, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+
+        
+        if (Intersections.Count > 0)
+        {
+
+            return new RoadIntersection(Intersections);
+        }
+        return null;
+        if (IntersectsLeftEdge(road.LeftStart, road.LeftEnd, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+        if (IntersectsCenterLine(road.LeftStart, road.LeftEnd, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+        if (IntersectsRightEdge(road.LeftStart, road.LeftEnd, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+
+
+        if (Intersections.Count == 1)
         {
             Intersections.Add(road.EndPos);
         }
-        return new RoadIntersection(Intersections) ;
+        if (Intersections.Count > 0)
+        {
+            return new RoadIntersection(Intersections);
+        }
+
+        if (IntersectsLeftEdge(road.RightStart, road.RightEnd, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+        if (IntersectsCenterLine(road.RightStart, road.RightEnd, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+        if (IntersectsRightEdge(road.RightStart, road.RightEnd, ref intersection))
+        {
+            Intersections.Add(intersection);
+        }
+
+
+
+        if (Intersections.Count == 1)
+        {
+            Intersections.Add(road.EndPos);
+        }
+        //if (Intersections.Count > 0)
+        {
+            return new RoadIntersection(Intersections);
+        }
+
+
     }
 
     public void Deserialize(SerializedData data)
@@ -441,7 +574,7 @@ public class RoadIntersection
     {
         if (RoadPoints.Count > 1)
         {
-            return BackwardsDot(pos) < 0 && ForwardsDot(pos) < 0;
+            return BackwardsDot(pos) < 0f && ForwardsDot(pos) <0f;
         }
         return false;
     }

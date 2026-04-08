@@ -13,7 +13,7 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
 
     public override void GenerateFeature(OverworldTile[,] world)
     {
-        Settlement[] settlements=new Settlement[NumberOfSettlements];
+        OverworldSettlement[] settlements=new OverworldSettlement[NumberOfSettlements];
         Vector2Int coords = new Vector2Int();
         width = world.GetLength(0);
         height = world.GetLength(1);
@@ -28,7 +28,7 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
                 coords.x = Random.Range(0, width);
                 coords.y = Random.Range(0, height);
             }
-            settlements[x] = new Settlement(Random.Range(SettlementPopulationMinimum, SettlementPopulationMaximum));
+            settlements[x] = new OverworldSettlement(Random.Range(SettlementPopulationMinimum, SettlementPopulationMaximum));
             settlements[x].AddTile(coords,ref world);
             Neighbours(coords, world);
             for(int q = 0; q < neighbourCache.Count; q++)
@@ -58,7 +58,7 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
         OverworldGenerator.Instance.Settlements = settlements;
     }
 
-    void ExpandSettlement(Settlement toExpand,ref OverworldTile[,] world)
+    void ExpandSettlement(OverworldSettlement toExpand,ref OverworldTile[,] world)
     {
         List<Vector2Int> coordsToAdd = new List<Vector2Int>();
 
@@ -135,14 +135,14 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
     }
 }
 
-public class Settlement
+public class OverworldSettlement
 {
     static int BaseSettlmentID = 0;
     public int Id;
     public List<Vector2Int> pointsInSettlement,waitingRoom;
     public int RemainingPopulationToDistribute,TotalPopulation;
 
-    public Settlement(int pop)
+    public OverworldSettlement(int pop)
     {
         Id=BaseSettlmentID;
         BaseSettlmentID++;

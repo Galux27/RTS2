@@ -38,7 +38,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
     public float MaxElevation, SeaLevel;
    public OverworldTile[,] OverworldTiles;
     public List<OverworldFeatureGenerator> FeatureGenerators;
-    public Settlement[] Settlements;
+    public OverworldSettlement[] Settlements;
     public void Generate()
     {
         EasyStopwatch.StartStopwatch();
@@ -189,7 +189,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                         neighbours = GetNeighbours(coords);
                         for (int i = 0; i < neighbours.Count; i++)
                         {
-                            if (neighbours[i].Features.Contains(OverworldFeature.MajorRoad))
+                            if (neighbours[i].Features.Contains(OverworldFeature.Settlement))
                             {
                                 count++;
                                 //hasSetOverworldStartingCoords = true;
@@ -371,7 +371,7 @@ public class OverworldTile: ISerialize
         }
     }
 
-    public void SetPopulation(Settlement settlement,int pop)
+    public void SetPopulation(OverworldSettlement settlement,int pop)
     {
         this.Settlement = settlement.Id.ToString();
         this.Population = pop;

@@ -11,7 +11,7 @@ public class OverworldMajorRoadGenerator : OverworldFeatureGenerator
 
       
         List<OverworldPathfindingNode> path=null;
-        List<Settlement> MajorSettlements = new List<Settlement>(), MinorSettlements = new List<Settlement>() ;
+        List<OverworldSettlement> MajorSettlements = new List<OverworldSettlement>(), MinorSettlements = new List<OverworldSettlement>() ;
         int averagePop = 0;
         for (int x = 0; x < OverworldGenerator.Instance.Settlements.Length - 1; x++)
         {
@@ -48,7 +48,7 @@ public class OverworldMajorRoadGenerator : OverworldFeatureGenerator
             }
             OverworldBasicPathfinding.UpdateBasicWeightings();
         }
-        Settlement closestMajor = null;
+        OverworldSettlement closestMajor = null;
         float dist = 9999999f;
         float dist2 = 0f;
         for (int x = 0; x < MinorSettlements.Count; x++)
