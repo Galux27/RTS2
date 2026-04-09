@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Settlement : OverworldFeatureToWorldConverter
@@ -11,6 +12,21 @@ public class Settlement : OverworldFeatureToWorldConverter
 
     public override void GenerateFeature(WorldChunkBatch toGenerateIn)
     {
+        List<RoadData> roadsAtStart = toGenerateIn.Roads;
+        List<Bounds> ExistingBounds = new List<Bounds>();   
+        for(int x = 0; x < roadsAtStart.Count; x++)
+        {
+            Bounds b = new Bounds(Vector2.Lerp(roadsAtStart[x].StartPos, roadsAtStart[x].EndPos, .5f),Vector3.one);
+            b.Encapsulate(new Vector3(roadsAtStart[x].LeftStart.x, roadsAtStart[x].LeftEnd.y,0));
+            b.Encapsulate(new Vector3(roadsAtStart[x].RightEnd.x, roadsAtStart[x].RightEnd.y, 0));
+            b.Encapsulate(new Vector3(roadsAtStart[x].StartPos.x, roadsAtStart[x].StartPos.y, 0));
+            b.Encapsulate(new Vector3(roadsAtStart[x].EndPos.x, roadsAtStart[x].EndPos.y, 0));
+
+            DrawBounds(b, Color.magenta, 99f);
+            ExistingBounds.Add(b);
+        }
+        //create splits that make existing roads into their own chunks that can't be split
+        Debug.Log("Roads at start " + toGenerateIn.Roads.Count+" at " + toGenerateIn.coords);
         List<SettlementArea> areas = new List<SettlementArea>();
         areas.Add(new SettlementArea(toGenerateIn.coords, new Vector2(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize),toGenerateIn.coords));
         int count = 0;
@@ -44,10 +60,58 @@ public class Settlement : OverworldFeatureToWorldConverter
         }
         for(int x = 0; x < data.Count; x++)
         {
-           
-            toGenerateIn.AddRoad(data[x]);
-        }
-        Debug.Log("Generated settlement, final road count " + toGenerateIn.Roads.Count+" in " + toGenerateIn.coords);
+            bool valid = true;
+            for(int q = 0; q < ExistingBounds.Count; q++)
+            {
+                if (ExistingBounds[q].Contains( Vec2IntToVec(data[x].StartPos)) && ExistingBounds[q].Contains(Vec2IntToVec(data[x].EndPos))
+                    || ExistingBounds[q].Contains(Vec2IntToVec(data[x].LeftStart)) && ExistingBounds[q].Contains(Vec2IntToVec(data[x].LeftEnd))
+                    || ExistingBounds[q].Contains(Vec2IntToVec(data[x].RightStart)) && ExistingBounds[q].Contains(Vec2IntToVec(data[x].RightEnd)))
+                {
+                    valid = false; break;
+                }
+            }
+            
+            if (valid)
+            {
+
+                toGenerateIn.AddRoad(data[x]);
+            }
+            }
+            Debug.Log("Generated settlement, final road count " + toGenerateIn.Roads.Count+" in " + toGenerateIn.coords);
+    }
+    void DrawBounds(Bounds b,Color c, float delay = 0)
+    {
+        // bottom
+        var p1 = new Vector3(b.min.x, b.min.y, b.min.z);
+        var p2 = new Vector3(b.max.x, b.min.y, b.min.z);
+        var p3 = new Vector3(b.max.x, b.min.y, b.max.z);
+        var p4 = new Vector3(b.min.x, b.min.y, b.max.z);
+
+        Debug.DrawLine(p1, p2, c, delay);
+        Debug.DrawLine(p2, p3, c, delay);
+        Debug.DrawLine(p3, p4,c, delay);
+        Debug.DrawLine(p4, p1, c, delay);
+
+        // top
+        var p5 = new Vector3(b.min.x, b.max.y, b.min.z);
+        var p6 = new Vector3(b.max.x, b.max.y, b.min.z);
+        var p7 = new Vector3(b.max.x, b.max.y, b.max.z);
+        var p8 = new Vector3(b.min.x, b.max.y, b.max.z);
+
+        Debug.DrawLine(p5, p6, c, delay);
+        Debug.DrawLine(p6, p7, c, delay);
+        Debug.DrawLine(p7, p8, c, delay);
+        Debug.DrawLine(p8, p5, c, delay);
+
+        // sides
+        Debug.DrawLine(p1, p5, c, delay);
+        Debug.DrawLine(p2, p6, c, delay);
+        Debug.DrawLine(p3, p7, c, delay);
+        Debug.DrawLine(p4, p8, c, delay);
+    }
+    Vector2 Vec2IntToVec(Vector2Int val)
+    {
+        return new Vector2(val.x, val.y);
     }
 
     bool IsSplitValid(SettlementArea area)

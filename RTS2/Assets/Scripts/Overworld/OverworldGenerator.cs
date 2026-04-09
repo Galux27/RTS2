@@ -189,7 +189,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                         neighbours = GetNeighbours(coords);
                         for (int i = 0; i < neighbours.Count; i++)
                         {
-                            if (neighbours[i].Features.Contains(OverworldFeature.Settlement))
+                            if (neighbours[i].Features.Contains(OverworldFeature.Settlement) && neighbours[i].Features.Contains(OverworldFeature.MajorRoad))
                             {
                                 count++;
                                 //hasSetOverworldStartingCoords = true;
