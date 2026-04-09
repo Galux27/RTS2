@@ -13513,7 +13513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InstantConstructVal: 1
   CareAboutResources: 0
-  DrawDebugPathfinding: 1
+  DrawDebugPathfinding: 0
   SpawnEnemies: 0
 --- !u!4 &1959966592
 Transform:

@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class Settlement : OverworldFeatureToWorldConverter
 {
 
     const int MaxRoads = 25;
 
-
+    //make it so top & right edges have the size edited on the split and not the road generation
+    //have building sections check for intersections with roads and divide them based on that
+    //split starting area manually based on starting roads
+    //add summit to stop minor road connections being generated if a major one exists in the same direction
     public override void GenerateFeature(WorldChunkBatch toGenerateIn)
     {
-        List<RoadData> roadsAtStart = toGenerateIn.Roads;
-        List<Bounds> ExistingBounds = new List<Bounds>();   
+        List<RoadData> roadsAtStart = new List<RoadData>();
+        roadsAtStart.AddRange(toGenerateIn.Roads);
+        List<Bounds> ExistingBounds = new List<Bounds>();
+        List<ForcedSplit> forcedSplits = new List<ForcedSplit>();
         for(int x = 0; x < roadsAtStart.Count; x++)
         {
             Bounds b = new Bounds(Vector2.Lerp(roadsAtStart[x].StartPos, roadsAtStart[x].EndPos, .5f),Vector3.one);
@@ -23,12 +29,64 @@ public class Settlement : OverworldFeatureToWorldConverter
             b.Encapsulate(new Vector3(roadsAtStart[x].EndPos.x, roadsAtStart[x].EndPos.y, 0));
 
             DrawBounds(b, Color.magenta, 99f);
+
+            if (roadsAtStart[x].StartPos.x == roadsAtStart[x].EndPos.x)
+            {
+                ForcedSplit leftSplit = new ForcedSplit();
+
+                leftSplit.axisToSplit = Axis.Horizontal;
+                leftSplit.Position = roadsAtStart[x].LeftStart;
+
+                ForcedSplit rightSplit = new ForcedSplit();
+
+                rightSplit.axisToSplit = Axis.Horizontal;
+                rightSplit.Position = roadsAtStart[x].RightStart;
+
+                forcedSplits.Add(leftSplit); forcedSplits.Add(rightSplit);
+            }
+            else
+            {
+                ForcedSplit leftSplit = new ForcedSplit();
+
+                leftSplit.axisToSplit = Axis.Vertical;
+                leftSplit.Position = roadsAtStart[x].LeftStart;
+
+                ForcedSplit rightSplit = new ForcedSplit();
+
+                rightSplit.axisToSplit = Axis.Vertical;
+                rightSplit.Position = roadsAtStart[x].RightStart;
+
+                forcedSplits.Add(leftSplit); forcedSplits.Add(rightSplit);
+            }
+
             ExistingBounds.Add(b);
         }
+
+
+
+
         //create splits that make existing roads into their own chunks that can't be split
         Debug.Log("Roads at start " + toGenerateIn.Roads.Count+" at " + toGenerateIn.coords);
         List<SettlementArea> areas = new List<SettlementArea>();
-        areas.Add(new SettlementArea(toGenerateIn.coords, new Vector2(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize),toGenerateIn.coords));
+        areas.Add(new SettlementArea(toGenerateIn.coords, new Vector2(WorldChunkManager.ChunkBatchSize-4, WorldChunkManager.ChunkBatchSize - 4),toGenerateIn.coords));
+        for(int x = 0; x < forcedSplits.Count; x++)
+        {
+            int ix = 0;
+            while (ix < areas.Count)
+            {
+                if (areas[ix].CanSplitOnManualSplit(forcedSplits[x]))
+                {
+                    areas.AddRange(areas[ix].SplitManually(forcedSplits[x]));
+                    areas.Remove(areas[ix]);
+                }
+                else
+                {
+                    ix++;
+                }
+            }
+        }
+        
+        
         int count = 0;
         int index = 0;
         SettlementArea[] split = null;
@@ -63,22 +121,61 @@ public class Settlement : OverworldFeatureToWorldConverter
             bool valid = true;
             for(int q = 0; q < ExistingBounds.Count; q++)
             {
-                if (ExistingBounds[q].Contains( Vec2IntToVec(data[x].StartPos)) && ExistingBounds[q].Contains(Vec2IntToVec(data[x].EndPos))
-                    || ExistingBounds[q].Contains(Vec2IntToVec(data[x].LeftStart)) && ExistingBounds[q].Contains(Vec2IntToVec(data[x].LeftEnd))
-                    || ExistingBounds[q].Contains(Vec2IntToVec(data[x].RightStart)) && ExistingBounds[q].Contains(Vec2IntToVec(data[x].RightEnd)))
+                if (ExistingBounds[q].Contains( Vec2IntToVec(data[x].StartPos)) && ExistingBounds[q].Contains(Vec2IntToVec(data[x].EndPos)))
                 {
-                    valid = false; break;
+                    valid = false; 
+                    break;
                 }
             }
             
             if (valid)
             {
-
                 toGenerateIn.AddRoad(data[x]);
             }
+        }
+        List<SettlementArea> zonesToSplitOnRoad = new List<SettlementArea>();
+        List<List<Vector2>> splitPositions = new List<List<Vector2>>();
+        List<Vector2> splits = new List<Vector2>();
+        for(int x = 0; x < areas.Count; x++)
+        {
+            bool valid = true;
+            List<Vector2> allSplits = new List<Vector2>();
+            for(int y=0;y< roadsAtStart.Count; y++)
+            {
+                splits = areas[x].buildingZone.IntersectsRoad(roadsAtStart[y]);
+                if (splits.Count>0)
+                {
+                    allSplits.AddRange(splits);
+                    valid = false;
+                    break;
+                }
             }
-            Debug.Log("Generated settlement, final road count " + toGenerateIn.Roads.Count+" in " + toGenerateIn.coords);
+            if (valid==false)
+            {
+                zonesToSplitOnRoad.Add(areas[x]);
+                splitPositions.Add(allSplits);
+            }
+            splits = new List<Vector2>();
+
+            if (valid)
+            {
+                DrawBounds(areas[x].buildingZone.GetBounds(), Color.red, 99f);
+            }
+            else
+            {
+                DrawBounds(areas[x].buildingZone.GetBounds(), Color.yellow, 99f);
+
+            }
+
+        }
+
+
+
+        Debug.Log("Generated settlement, final road count " + toGenerateIn.Roads.Count+" in " + toGenerateIn.coords);
     }
+
+
+
     void DrawBounds(Bounds b,Color c, float delay = 0)
     {
         // bottom
@@ -177,41 +274,7 @@ public class Settlement : OverworldFeatureToWorldConverter
         return OverworldFeature.Settlement;
     }
     
-    void AddRoad(WorldChunkBatch toAddTo, RoadType type, Vector2Int start, Vector2Int end, int width,RoadData comingOff)
-    {
-        RoadData road = new RoadData(start, end, width, type);
-        
-        //RoadIntersection roadIntersection = null;
-        //for (int x = 0; x < toAddTo.Roads.Count; x++)
-        //{
-        //    int minDist = Mathf.Max(width, toAddTo.Roads[x].Width);
-        //    if (Vector2Int.Distance(start, toAddTo.Roads[x].StartPos) <minDist
-        //        || Vector2Int.Distance(end, toAddTo.Roads[x].StartPos) < minDist
-        //        || Vector2Int.Distance(start, toAddTo.Roads[x].EndPos) < minDist
-        //        || Vector2Int.Distance(end, toAddTo.Roads[x].EndPos) < minDist)
-        //    {
-        //        return;
-        //    }
-        //}
-       
-        switch (type)
-        {
-            case RoadType.None:
-                break;
-            case RoadType.MajorRoad:
-                toAddTo.AddRoad(road);
-                break;
-            case RoadType.MinorRoad:
-                toAddTo.AddRoad(road);
-                break;
-            case RoadType.Backroad:
-                toAddTo.AddRoad(road);
-                break;
-            default:
-                break;
-        }
-    }
-
+  
 
     static bool LineIntersection(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, ref Vector2 intersection)
     {
@@ -315,28 +378,63 @@ public class SettlementArea
 {
     public Vector2 position, size;
     public Vector2Int parentChunkBatch;
+    public BuildingZone buildingZone;
     public SettlementArea(Vector2 pos, Vector2 s, Vector2Int parent)
     {
         this.position = pos;
         this.size = s;
         parentChunkBatch = parent;
+
+        buildingZone = new BuildingZone(
+           new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y)),
+           new Vector2Int(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y)), 0);
     }
 
     public void CreateRoadsFromSplit(ref List<RoadData> toAddTo)
     {
         Vector2Int start = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y + size.y));
-        if(start.y>(parentChunkBatch.y+ WorldChunkManager.ChunkBatchSize - 7))
-        {
-            start.y = (parentChunkBatch.y + WorldChunkManager.ChunkBatchSize - 7);
-        }
         Vector2Int start2 = new Vector2Int(Mathf.RoundToInt(position.x+size.x), Mathf.RoundToInt(position.y));
-        if (start2.x > (parentChunkBatch.x + WorldChunkManager.ChunkBatchSize - 7))
-        {
-            start2.x = (parentChunkBatch.x + WorldChunkManager.ChunkBatchSize - 7);
-        }
         Vector2Int end = new Vector2Int(start2.x, start.y);
         toAddTo.Add(new RoadData(start, end+Vector2Int.right, 7, RoadType.MinorRoad));
         toAddTo.Add(new RoadData(start2,end+Vector2Int.up,7, RoadType.MinorRoad));
+        buildingZone = new BuildingZone(
+            new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y)),
+            new Vector2Int(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y)), 7);
+    }
+
+    public bool CanSplitOnManualSplit(ForcedSplit toUse)
+    {
+        if (toUse.axisToSplit == Axis.Horizontal)
+        {
+            return toUse.Position.x > position.x && toUse.Position.x < (position.x + size.x);
+        }
+        else
+        {
+            return toUse.Position.y > position.y && toUse.Position.y < (position.y + size.y);
+        }
+    }
+
+
+    public SettlementArea[] SplitManually(ForcedSplit toUse)
+    {
+        SettlementArea[] retVal = new SettlementArea[2];
+        if (toUse.axisToSplit == Axis.Horizontal)
+        {
+            float x = toUse.Position.x;
+            float firstSize = x - position.x;
+            float secondSize = (position.x + size.x) - x;
+            retVal[0] = new SettlementArea(position, new Vector2(firstSize, size.y), parentChunkBatch);
+            retVal[1] = new SettlementArea(new Vector2(x, position.y), new Vector2(secondSize, size.y), parentChunkBatch);
+        }
+        else
+        {
+            float y = toUse.Position.y;
+            float firstSize = y - position.y;
+            float secondSize = (position.y + size.y) - y;
+            retVal[0] = new SettlementArea(position, new Vector2(size.x, firstSize), parentChunkBatch);
+            retVal[1] = new SettlementArea(new Vector2(position.x, y), new Vector2(size.x, secondSize), parentChunkBatch);
+        }
+        return retVal;
     }
 
     public SettlementArea[] Split()
@@ -363,5 +461,126 @@ public class SettlementArea
 
         return retVal;
     }
+
+    public List<SettlementArea> SplitOnRoadIntersection(List<Vector2> points)
+    {
+        List<SettlementArea> retVal = new List<SettlementArea>();
+        Vector2 max = position + size;
+
+        Vector2 MinSplit = max;
+        Vector2 MaxSplit = position;
+        string allSplits = "";
+        for(int x = 0; x < points.Count; x++)
+        {
+            allSplits += points[x].ToSafeString() + ",";
+            if (points[x].x < MinSplit.x)
+            {
+                MinSplit.x = points[x].x;
+            }
+            if (points[x].x >MaxSplit.x)
+            {
+                MaxSplit.x = points[x].x;
+            }
+            if (points[x].y < MinSplit.y)
+            {
+                MinSplit.y = points[x].y;
+            }
+            if (points[x].y > MaxSplit.y)
+            {
+                MaxSplit.y = points[x].y;
+            }
+        }
+        Vector2 size1 = new Vector2(Mathf.Abs(MinSplit.x - position.x), Mathf.Abs(MinSplit.y - position.y));
+        Vector2 size2 = new Vector2(Mathf.Abs(max.x - MaxSplit.x), Mathf.Abs(max.y - MaxSplit.y));
+        Debug.Log("Split: " + position + "," + max + "," + MinSplit + "," + MaxSplit+","+size1+","+size2+" all "+ allSplits);
+
+        retVal.Add(new SettlementArea(position,size1, parentChunkBatch));
+        retVal.Add(new SettlementArea(MaxSplit,size2, parentChunkBatch));
+
+
+        return retVal;
+        
+
+        
+    }
+
+}
+public class BuildingZone
+{
+    public Vector2Int Position, Size;
+    public int RoadWidth;
+    Vector2 p1;
+    Vector2 p2 ;
+    Vector2 p3 ;
+    Vector2 p4;
+    public BuildingZone (Vector2Int pos,Vector2Int size,int width)
+    {
+        Position = pos;
+        RoadWidth = width;
+        Size = size;
+        size.x -= RoadWidth;
+        size.y -=RoadWidth;
+        p1 = Position;
+        p2 = Position + new Vector2Int(Size.x, 0);
+        p3 = Position + new Vector2Int(0, Size.y);
+        p4 = Position + Size;
+    }
+    List<Vector2> Intersections = new List<Vector2>();
+
+    public List<Vector2> IntersectsRoad(RoadData data)
+    {
+        Intersections.Clear();
+
+        Intersections.AddRange(CheckIntersections(p1, p2, data));
+        Intersections.AddRange(CheckIntersections(p1, p3, data));
+        Intersections.AddRange(CheckIntersections(p3, p4, data));
+        Intersections.AddRange(CheckIntersections(p2, p4, data));
+
+        string debug = "Intersections for " + p1+","+Size+" ("+Intersections.Count+")";
+        for(int x = 0; x < Intersections.Count; x++)
+        {
+            debug += Intersections[x].ToSafeString() + ",";
+        }
+
+        Debug.Log(debug);
+        return Intersections;
+    }
+    List<Vector2> retVal = new List<Vector2>();
+
+    List<Vector2> CheckIntersections(Vector2 p1,Vector2 p2,RoadData data)
+    {
+        retVal.Clear();
+        Vector2 pos = Vector2.zero;
+        //if (data.IntersectsLeftEdge(p1, p2, ref pos))
+        //{
+        //    retVal.Add(pos);
+        //}
+        if (data.IntersectsCenterLine(p1, p2, ref pos))
+        {
+            retVal.Add(pos);
+        }
+        //if (data.IntersectsRightEdge(p1, p2, ref pos))
+        //{
+        //    retVal.Add(pos);
+        //}
+       
+        return retVal;
+    }
+        
+
+    public Bounds GetBounds()
+    {
+        return new Bounds(new Vector3(Position.x,Position.y)+ new Vector3(Size.x*.5f, Size.y *.5f, 0), new Vector3(Size.x-RoadWidth,Size.y-RoadWidth,0));
+    }
 }
 
+public class ForcedSplit
+{
+    public Vector2Int Position;
+    public Axis axisToSplit;
+}
+public enum Axis
+{
+    Horizontal,
+    Vertical
+}

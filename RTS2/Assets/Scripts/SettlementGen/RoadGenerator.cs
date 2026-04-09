@@ -301,15 +301,15 @@ public class RoadData : ISerialize
     {
         return new Vector3(perp.x, perp.y);
     }
-    public bool IntersectsLeftEdge(Vector2 start,Vector2Int end,ref Vector2 pos)
+    public bool IntersectsLeftEdge(Vector2 start,Vector2 end,ref Vector2 pos)
     {
-        return LineIntersection(start, end, (StartPos-dir) - (perp*1.1f), (EndPos + dir) - (perp * 1.1f), ref pos);
+        return LineIntersection(start, end, (StartPos-dir) - (perp), (EndPos + dir) - (perp), ref pos);
     }
-    public bool IntersectsRightEdge(Vector2 start, Vector2Int end, ref Vector2 pos)
+    public bool IntersectsRightEdge(Vector2 start, Vector2 end, ref Vector2 pos)
     {
-        return LineIntersection(start, end, (StartPos-dir) + (perp * 1.1f), (EndPos+dir )+ (perp * 1.1f), ref pos);
+        return LineIntersection(start, end, (StartPos-dir) + (perp), (EndPos+dir )+ (perp), ref pos);
     }
-    public bool IntersectsCenterLine(Vector2 start, Vector2Int end, ref Vector2 pos)
+    public bool IntersectsCenterLine(Vector2 start, Vector2 end, ref Vector2 pos)
     {
         return LineIntersection(start, end, StartPos-dir, EndPos+dir, ref pos);
     }
