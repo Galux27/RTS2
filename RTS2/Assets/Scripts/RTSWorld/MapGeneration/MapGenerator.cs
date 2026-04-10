@@ -86,7 +86,7 @@ public class MapGenerator : MonoBehaviour
         toGenerateIn.GenerateRoads(RoadType.Backroad);
         toGenerateIn.GenerateRoads(RoadType.MinorRoad);
         toGenerateIn.GenerateRoads(RoadType.MajorRoad);
-      
+       // toGenerateIn.GenerateBuildings();
 
         toGenerateIn.NeedsGeneration = false;
         toGenerateIn.SetChunksLoaded();

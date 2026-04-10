@@ -22,6 +22,10 @@ public class BuildingDataManager
     public Dictionary<string, BuildingTemplate> BuildingTemplates;
     public Dictionary<string,RoomTemplate> RoomTemplates;
     const string BuildingDataPath = "Buildings/Buildings", RoomDataPath = "Buildings/Rooms";
+
+    
+
+
     public void InitBuildingData()
     {
         BuildingTemplates = new Dictionary<string, BuildingTemplate>();

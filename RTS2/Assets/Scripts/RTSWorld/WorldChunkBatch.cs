@@ -156,6 +156,17 @@ public class WorldChunkBatch : MonoBehaviour
 
         return intersection;
     }
+    public List<BuildingZone> Zones = new List<BuildingZone>();
+    public void GenerateBuildings()
+    {
+        for(int x = 0; x < Zones.Count; x++)
+        {
+            for(int y = 0; y < Zones[x].Buildings.Count; y++)
+            {
+                BuildingGenerator.Instance.GenerateBuilding(Zones[x].Buildings[y]);
+            }
+        }
+    }
 
     public void GenerateRoads(RoadType toGen)
     {

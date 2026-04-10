@@ -81,7 +81,6 @@ public class RoomManager : MonoBehaviour
     public void AddRoom(Room room)
     {
         roomList.Add(room);
-        Debug.Log("Room: adding new room " + room.roomName + " of type " + room.roomType);
         RoomDrawrer.Instance.OnCreateRoom(room);
         OnRoomAdded?.Invoke(room);
 
@@ -137,15 +136,13 @@ public class RoomManager : MonoBehaviour
 
         }
     }
-        public void OnConstructableCreated(Vector2Int coords, ConstructableObjectInstance Created)
+    public void OnConstructableCreated(Vector2Int coords, ConstructableObjectInstance Created)
     {
-        Debug.Log("room: trying to Constructable added to room at " + coords+" "+Created.ObjectKey+" "+roomList.Count);
 
         for (int x=0;x< roomList.Count;x++)
         {
             if (roomList[x].DoesRoomContainPoint(coords))
             {
-                Debug.Log("invalid: Constructable added to room at " + coords + "|" + roomList[x].roomType);
                 roomList[x].OnObjectAddedToRoom(Created);
             }
         }
@@ -158,7 +155,6 @@ public class RoomManager : MonoBehaviour
             if (roomList[x].DoesRoomContainPoint(coords))
             {
                 RoomUtils.IsRoomEnclosed(roomList[x]);
-                Debug.Log("Room: wall Removed to room at " + coords + "|" + roomList[x].roomType);
                 roomList[x].IsDrawn = false;
                 OnRoomChange?.Invoke(roomList[x]);
 
@@ -173,7 +169,6 @@ public class RoomManager : MonoBehaviour
             if (roomList[x].DoesRoomContainPoint(coords))
             {
                 RoomUtils.IsRoomEnclosed(roomList[x]);
-                Debug.Log("Room: wall added to room at " + coords + "|" + roomList[x].roomType);
                 roomList[x].IsDrawn = false;
                 OnRoomChange?.Invoke(roomList[x]);
             }

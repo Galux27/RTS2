@@ -15,9 +15,16 @@ public class BuildingGenerator : MonoBehaviour
             if (instance == null)
             {
                 instance=FindObjectOfType<BuildingGenerator>();
+                instance.Init();
             }
             return instance;
         }
+    }
+
+    public void Init()
+    {
+        RoomGen = new RoomGenerator();
+
     }
 
     public RoomGenerator RoomGen;
@@ -33,9 +40,21 @@ public class BuildingGenerator : MonoBehaviour
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
             (int)CameraController.Instance.transform.position.y);
         BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
-        RoomGen = new RoomGenerator();
         ApplyBuidlingToWorld(floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), BuildingTemplate, MaxGenerationPasses));
         IsGenerating = false;
+    }
+
+    public void GenerateBuilding(BuildingZoneBuilding building)
+    {
+        try
+        {
+            BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
+            ApplyBuidlingToWorld(floorplan.Generate(RoomGen, building.Size.x, building.Size.y, building.Position, BuildingDataManager.Instance.BuildingTemplates[building.Template], MaxGenerationPasses));
+        }
+        catch(System.Exception e)
+        {
+            Debug.LogError(e.ToSafeString());
+        }
     }
 
     void ApplyBuidlingToWorld(GeneratedBuilding b)
@@ -188,13 +207,11 @@ public class GeneratedBuilding
         if (Edges != null)
         {
             int index = 0;
-            Debug.Log("Room Start: Checking for room of size " + size + "," + Edges.Count+" size "+ Width+"x"+Height);
             for (int q = 0; q < Edges.Count; q++)
             {
                 index = Random.Range(0, Edges.Count);
                 bool valid = true;
                 start = Edges[index];
-                Debug.Log("Room Start: Checking edge coords " +Edges[index]);
 
                 if (start.x + size.x < Width && start.y + size.y < Height)
                 {
@@ -295,7 +312,6 @@ public class GeneratedBuilding
 
     public void SetTileAsCorridor(Vector2Int coords,string floor)
     {
-        Debug.Log("Corridor: Setting tile as corridor " + coords+" dims "+  Tiles.GetLength(0)+"x"+Tiles.GetLength(1));
         if (!InRange(coords.x, coords.y))
         {
             return;
@@ -454,16 +470,7 @@ public class GeneratedBuilding
             {
                 if (Tiles[x, y] == null || Tiles[x,y].HasWall==false||!ValidForDoor(x,y)||!Tiles[x, y].IsValidForDoor)
                 {
-                    if (Tiles[x, y] == null) 
-                    {
-                        Debug.Log("Door Gen: Skipping " + x + "," + y + " due to null");
-                    }
-                    else
-                    {
-                        Debug.Log("Door Gen: Skipping " + x + "," + y + " due to "+(Tiles[x, y].HasWall == false)+","+ (!ValidForDoor(x, y)) +","+ (!Tiles[x, y].IsValidForDoor));
-
-                    }
-                    //continue;
+                   
                 }
                 else
                 {
@@ -478,9 +485,7 @@ public class GeneratedBuilding
                         {
                             if (x1 == x && y1 == y || !isDirectlyAdjacent(x, x1) || !isDirectlyAdjacent(y, y1))
                             {
-                              //  Debug.Log("Door Gen: Skipping " + x + "," + y + " due to "+(!isDirectlyAdjacent(x, x1)) +","+()+",");
-
-                              //  continue;
+                            
                             }
                             else
                             {
@@ -500,20 +505,7 @@ public class GeneratedBuilding
                                         {
                                             Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
 
-                                            //if (!Links[id].DoesLinkExist(Tiles[x1, y1].RoomID))
-                                            //{
-                                            //    if (Links.ContainsKey(Tiles[x1, y1].RoomID))
-                                            //    {
-                                            //        if (!Links[Tiles[x1, y1].RoomID].DoesLinkExist(id))
-                                            //        {
-                                            //            Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
-                                            //        }
-                                            //    }
-                                            //    else
-                                            //    {
-
-                                            //    }
-                                            //}
+                                           
                                         }
                                     }
                                     
@@ -527,11 +519,9 @@ public class GeneratedBuilding
             }
             GenerateExteriorDoors();
         }
-        Debug.Log("Creating doors from link total "  + Links.Count);
 
         foreach (KeyValuePair<int,RoomLink> kvp in Links)
         {
-            Debug.Log("Creating doors from link val " + kvp.Key+"/" + kvp.Value.Links.Count);
 
             if (kvp.Value.HasCorridorLink)
             {
@@ -550,7 +540,6 @@ public class GeneratedBuilding
                     if (!Tiles[val.x, val.y].HasDoor)
                     {
                         Tiles[val.x, val.y].HasDoor = true;
-                        Debug.Log("Creating door from link at" + val.ToString() + " from " + kvp2.Key + "->" + kvp.Value.MyID + "/" + kvp2.Value.Count + "," + Links.Count);
                         count = kvp2.Value.Count;
                     }
                     count++;
@@ -853,7 +842,6 @@ public class RoomLink
     }
     public void AddLink(int id,Vector2Int coords)
     {
-        Debug.Log("Links: adding link to " + id + " from " + MyID + " at " + coords);
         if (!Links.ContainsKey(id))
         {
             Links.Add(id,new List<Vector2Int>());

@@ -183,8 +183,6 @@ public class SquareBuildingFloorplan : BuildingFloorplan
             SplitPoint.x = (SplitPoint.x+ size1);
             split.Add(new SplitRoom(room.coords, new Vector2Int(size1, room.size.y))) ;
             split.Add(new SplitRoom(SplitPoint, new Vector2Int(size2, room.size.y)));
-            Debug.Log("Split Size:x " + (size1 + "," + size2) + "=>" + room.size.x + "||" + split[0].coords.x + "," + split[1].coords.x);
-
         }
         else
         {
@@ -194,8 +192,6 @@ public class SquareBuildingFloorplan : BuildingFloorplan
             SplitPoint.y = (SplitPoint.y + size1);
             split.Add(new SplitRoom(room.coords, new Vector2Int( room.size.x,  size1 )));
             split.Add(new SplitRoom(SplitPoint, new Vector2Int( room.size.x, size2)));
-            Debug.Log("Split Size:y " + (size1 +","+ size2) + "=>" + room.size.y + "||" + split[0].coords.y + "," + split[1].coords.y);
-
         }
         for (int x = 0; x < split.Count; x++)
         {

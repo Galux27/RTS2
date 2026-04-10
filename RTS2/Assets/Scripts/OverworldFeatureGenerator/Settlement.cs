@@ -6,7 +6,7 @@ public class Settlement : OverworldFeatureToWorldConverter
 {
 
     const int MaxRoads = 25;
-    const int MinBuildingArea = 20* 20;
+    const int MinBuildingArea = 25* 25;
 
     //make it so top & right edges have the size edited on the split and not the road generation
     //have building sections check for intersections with roads and divide them based on that
@@ -156,7 +156,15 @@ public class Settlement : OverworldFeatureToWorldConverter
             splits = new List<Vector2>();
             if (valid && AreBoundsValid(areas[x].buildingZone.GetBounds()))
             {
-                DrawBounds(areas[x].buildingZone.GetBounds(), Color.red, 99f);
+                areas[x].buildingZone.GenerateBuildingZones(BuildingDataManager.Instance.BuildingTemplates["House"]);
+                if (areas[x].buildingZone.Populated)
+                {
+                    toGenerateIn.Zones.Add(areas[x].buildingZone);
+                }
+                for(int o = 0; o < areas[x].buildingZone.Buildings.Count; o++)
+                {
+                    DrawBounds(areas[x].buildingZone.Buildings[o].GetBounds(), Color.red, 99f);
+                }
             }
             else
             {
@@ -166,7 +174,10 @@ public class Settlement : OverworldFeatureToWorldConverter
 
         }
 
-
+        if (toGenerateIn.Zones.Count > 0)
+        {
+            BuildingPlacementController.Instance.BatchesWithBuildings.Add(toGenerateIn);
+        }
 
         Debug.Log("Generated settlement, final road count " + toGenerateIn.Roads.Count+" in " + toGenerateIn.coords);
     }
@@ -478,10 +489,13 @@ public class SettlementArea
 public class BuildingZone
 {
     public Vector2Int Position, Size;
+    
     public int RoadWidth;
+    public bool Populated = false, Generated = false;
+    public List<BuildingZoneBuilding> Buildings = new List<BuildingZoneBuilding>();
     Vector2 p1;
-    Vector2 p2 ;
-    Vector2 p3 ;
+    Vector2 p2;
+    Vector2 p3;
     Vector2 p4;
     public BuildingZone (Vector2Int pos,Vector2Int size,int width)
     {
@@ -536,11 +550,119 @@ public class BuildingZone
        
         return retVal;
     }
-        
 
     public Bounds GetBounds()
     {
         return new Bounds(new Vector3(Position.x,Position.y)+ new Vector3(Size.x*.5f, Size.y *.5f, 0), new Vector3(Size.x-RoadWidth,Size.y-RoadWidth,0));
+    }
+
+    public void GenerateBuildingZones(BuildingTemplate template)
+    {
+        if (Size.x < template.MinWidth || Size.y < template.MinHeight)
+        {
+            Debug.Log("Building Zones: height invalid, returning");
+
+            return;
+        }
+        int Width= Random.Range(template.MinWidth, template.MaxHeight);
+        int Height = Random.Range(template.MinHeight, template.MaxHeight);
+
+        int WidthDivisions = Mathf.Max(1, Mathf.FloorToInt( Size.x/Width)-1);
+        int HeightDivisions = Mathf.Max(1, Mathf.FloorToInt(Size.y/Height)-1);
+        if (WidthDivisions == 0 || HeightDivisions == 0)
+        {
+            bool xvalid = false,yvalid=false;
+            while (!xvalid&&!yvalid)
+            {
+                if (HeightDivisions == 0)
+                {
+                    if (Height < template.MinHeight)
+                    {
+                        yvalid = true;
+                    }
+                    else
+                    {
+                        Height--;
+                        HeightDivisions = Mathf.Max(1, Mathf.FloorToInt(Size.y / Height) - 1);
+                    }
+                }
+                else
+                {
+                    yvalid = true;
+                }
+
+                if (WidthDivisions == 0)
+                {
+                    if (Width < template.MinWidth)
+                    {
+                        xvalid = true;
+                    }
+                    else
+                    {
+                        Width--;
+                        WidthDivisions = Mathf.Max(1, Mathf.FloorToInt(Size.x / Width) - 1);
+                    }
+                }
+                else
+                {
+                    xvalid = true;
+                }
+            }
+            
+        }
+
+        if (WidthDivisions == 0 || HeightDivisions == 0)
+        {
+            return;
+        }
+            float widthremainder = Width % Size.x;
+        float heightremainder = Height % Size.y;
+        Debug.Log("Building Zones: total divisions made " + WidthDivisions + "," + HeightDivisions+","+widthremainder+","+heightremainder);
+        Vector2Int pos = Vector2Int.zero ;
+        Vector2Int StartOffset = new Vector2Int(Mathf.RoundToInt( widthremainder / 2),Mathf.RoundToInt( heightremainder / 2));
+        for(int x = 0; x < WidthDivisions; x++)
+        {
+            for(int y = 0; y < HeightDivisions; y++)
+            {
+                pos= StartOffset+Position + new Vector2Int((x*Width)+x, (y*Height)+y);
+                BuildingZoneBuilding bz = new BuildingZoneBuilding(pos, new Vector2Int(Width, Height), template.BuildingName);
+                if (BoundsContainsBoundsEntirely(GetBounds(),bz.GetBounds()))
+                {
+                    Buildings.Add(bz);
+                }
+            }
+        }
+        Populated = true;
+    }
+
+    bool BoundsContainsBoundsEntirely(Bounds checking,Bounds toCheck)
+    {
+        if(checking.Contains(toCheck.center)&&checking.Contains(toCheck.max)&&checking.Contains(toCheck.min)
+            &&checking.Contains(toCheck.center+new Vector3(toCheck.extents.x,toCheck.extents.y*-1,0))
+            && checking.Contains(toCheck.center + new Vector3(toCheck.extents.x * -1, toCheck.extents.y , 0)))
+        {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+public class BuildingZoneBuilding
+{
+    public bool Drawn = false;
+    public Vector2Int Position, Size;
+    public string Template = "";
+    public BuildingZoneBuilding(Vector2Int p,Vector2Int s,string template)
+    {
+        Position = p;
+        Size = s;
+        Template = template;
+    }
+
+    public Bounds GetBounds()
+    {
+        return new Bounds(new Vector3(Position.x+(Size.x/2),Position.y+(Size.y/2)), new Vector3(Size.x,Size.y));
     }
 }
 

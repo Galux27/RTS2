@@ -261,7 +261,6 @@ public class GeneratedRoomProp
     {
         this.pos = pos;
         this.ID = id;
-        Debug.Log("Room Prop: " + id + " at " + pos);
     }
 }
 

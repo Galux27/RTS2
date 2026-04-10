@@ -244,18 +244,18 @@ public class WallManager
             }
         }
         WallSegment wall = null;
-        for (int x1 = 0; x1 < width; x1++)
-        {
-            for (int y1 = 0; y1 < height; y1++)
-            {
-                wall = WallHelpers.GetWallAtCoords(x1, y1);
-                if (wall.HasWall)
-                {
-                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-                    WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall, WorldTileContents.Door);
-                }
-            }
-        }
+        //for (int x1 = 0; x1 < width; x1++)
+        //{
+        //    for (int y1 = 0; y1 < height; y1++)
+        //    {
+        //        wall = WallHelpers.GetWallAtCoords(x1, y1);
+        //        if (wall.HasWall)
+        //        {
+        //            WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+        //            WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall, WorldTileContents.Door);
+        //        }
+        //    }
+        //}
 
         OnWallAdded?.Invoke(asCoords);
         for (int x1 = x - 1; x1 <= x + 1; x1++)
