@@ -1,14 +1,12 @@
-using NUnit.Framework;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class Settlement : OverworldFeatureToWorldConverter
 {
 
     const int MaxRoads = 25;
+    const int MinBuildingArea = 20* 20;
 
     //make it so top & right edges have the size edited on the split and not the road generation
     //have building sections check for intersections with roads and divide them based on that
@@ -156,8 +154,7 @@ public class Settlement : OverworldFeatureToWorldConverter
                 splitPositions.Add(allSplits);
             }
             splits = new List<Vector2>();
-
-            if (valid)
+            if (valid && AreBoundsValid(areas[x].buildingZone.GetBounds()))
             {
                 DrawBounds(areas[x].buildingZone.GetBounds(), Color.red, 99f);
             }
@@ -211,63 +208,36 @@ public class Settlement : OverworldFeatureToWorldConverter
         return new Vector2(val.x, val.y);
     }
 
+    bool AreBoundsValid(Bounds b)
+    {
+        if (b.size.x * b.size.y >= MinBuildingArea && b.size.x > 6 && b.size.y > 6)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    bool IsBuildingZoneValid(BuildingZone zone)
+    {
+        Debug.Log("BZ: Checking building zone size " + zone.Position + "," + zone.Size);
+        if (zone.Size.x * zone.Size.y >= MinBuildingArea && zone.Size.x > 6 && zone.Size.y > 6)
+        {
+            return true;
+        }
+        return false;
+    }
+
     bool IsSplitValid(SettlementArea area)
     {
-        if (area.size.x > 20 && area.size.y > 20)
+        Debug.Log("Set: Checking building zone size " + (area.position+area.parentChunkBatch)+ "," + area.size);
+        return AreBoundsValid(area.buildingZone.GetBounds());
+        if (area.size.x * area.size.y >= MinBuildingArea &&area.size.x>6&&area.size.y>6)
         {
             return true;
         }
         return false;
     }
 
-    int GetMaxLengthRoadCouldBe(Vector2 startPos, Vector2Int coords,Vector2 dir)
-    {
-        Vector2Int max = coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize);
-        Vector2 intersection = Vector2.zero;
-        if (LineIntersection(startPos, startPos + dir * WorldChunkManager.ChunkBatchSize, coords, coords + Vector2.up*WorldChunkManager.ChunkBatchSize,ref intersection))
-        {
-            return Mathf.FloorToInt( (intersection - startPos).magnitude);
-        }
-        if (LineIntersection(startPos, startPos + dir * WorldChunkManager.ChunkBatchSize, coords, coords + Vector2.right*WorldChunkManager.ChunkBatchSize, ref intersection))
-        {
-            return Mathf.FloorToInt((intersection - startPos).magnitude);
-        }
-        if (LineIntersection(startPos, startPos + dir * WorldChunkManager.ChunkBatchSize, coords + Vector2.up * WorldChunkManager.ChunkBatchSize, coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize), ref intersection))
-        {
-            return Mathf.FloorToInt((intersection - startPos).magnitude);
-        }
-        if (LineIntersection(startPos, startPos + dir * WorldChunkManager.ChunkBatchSize, coords + Vector2.right * WorldChunkManager.ChunkBatchSize, coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize), ref intersection))
-        {
-            return Mathf.FloorToInt((intersection - startPos).magnitude);
-        }
-        return 0;
-    }
-
-    bool DoesRoadStartTouchMyEdge(RoadData data,Vector2Int coords)
-    {
-        Vector2Int max = coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize);
-
-        if (Mathf.Abs(data.StartPos.x-coords.x)<=2|| Mathf.Abs(data.StartPos.x - max.x) <= 2
-            || Mathf.Abs(data.StartPos.y - coords.y) <= 2 || Mathf.Abs(data.StartPos.y - max.y) <= 2)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    bool DoesRoadEndTouchMyEdge(RoadData data, Vector2Int coords)
-    {
-        Vector2Int max = coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize);
-
-        if (Mathf.Abs(data.EndPos.x - coords.x) <= 2 || Mathf.Abs(data.EndPos.x - max.x) <= 2
-            || Mathf.Abs(data.EndPos.y - coords.y) <= 2 || Mathf.Abs(data.EndPos.y - max.y) <= 2)
-        {
-            return true;
-        }
-
-        return false;
-    }
 
     public override OverworldFeature GetFeatureIGenerate()
     {
@@ -387,7 +357,7 @@ public class SettlementArea
 
         buildingZone = new BuildingZone(
            new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y)),
-           new Vector2Int(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y)), 0);
+           new Vector2Int(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y)), 7);
     }
 
     public void CreateRoadsFromSplit(ref List<RoadData> toAddTo)
