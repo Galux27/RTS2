@@ -29,7 +29,7 @@ MonoBehaviour:
     MaxQuantity: 2
     NeedsEdge: 0
     MustBeOnRoomEdge: 1
-  CanHaveWindows: 0
+  CanHaveWindows: 1
   CanHaveExternalDoor: 0
   MinWidth: 5
   MaxWidth: 7

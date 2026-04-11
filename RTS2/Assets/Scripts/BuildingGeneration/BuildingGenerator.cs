@@ -88,15 +88,17 @@ public class BuildingGenerator : MonoBehaviour
                     obj = null;
                 }
                 
-                if (cur.HasDoor)
-                {
+                //if (cur.HasDoor)
+                //{
 
-                    //WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
-                    //     WallTypeManager.Instance.GetWallTile("Concrete"), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
-                    WallHelpers.CreateDoorBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile
-                        , new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
-                }
-                else if (cur.HasWall)
+                //    //WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
+                //    //     WallTypeManager.Instance.GetWallTile("Concrete"), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
+                //    WallHelpers.CreateDoorBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile
+                //        , new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
+                //}
+                //else
+                
+                if (cur.HasWall)
                 {
 
                     WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
@@ -114,6 +116,32 @@ public class BuildingGenerator : MonoBehaviour
 
             }
         }
+
+        for (int x = 0; x < b.Width; x++)
+        {
+            for (int y = 0; y < b.Height; y++)
+            {
+                pos = b.Position;
+                pos.x += x;
+                pos.y += y;
+                cur = b.Tiles[x, y];
+                if (cur == null)
+                {
+                    continue;
+                }
+                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batchCoords, out chunkCoords, out localCoords);
+                
+
+                if (cur.HasDoor)
+                {
+                    WallHelpers.CreateDoorBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile
+                        , new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
+                }
+
+
+            }
+        }
+
         elevation /= count;
         List<Vector2Int> batches = new List<Vector2Int>();
         for (int x = 0; x < b.Width; x++)

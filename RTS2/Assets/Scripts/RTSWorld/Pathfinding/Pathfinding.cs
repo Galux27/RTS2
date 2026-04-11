@@ -232,6 +232,7 @@ public static class Pathfinding
 
     static bool CanGetPath(PathfindingNode start,PathfindingNode end)
     {
+        return true;
         if (NodeIDPathing.PathNodeIDs.ContainsKey(start.PathNodeGroupID) == false || NodeIDPathing.PathNodeIDs.ContainsKey(end.PathNodeGroupID) == false)
         {
             Debug.Log("Unit Path: fail due to being stuck on node with no group "+start.PathNodeGroupID+","+end.PathNodeGroupID);

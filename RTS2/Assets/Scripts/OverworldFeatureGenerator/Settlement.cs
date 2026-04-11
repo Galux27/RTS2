@@ -610,13 +610,47 @@ public class BuildingZone
         float heightremainder = Height % Size.y;
         Debug.Log("Building Zones: total divisions made " + WidthDivisions + "," + HeightDivisions+","+widthremainder+","+heightremainder);
         Vector2Int pos = Vector2Int.zero ;
-        Vector2Int StartOffset = new Vector2Int(Mathf.RoundToInt( widthremainder / 2),Mathf.RoundToInt( heightremainder / 2));
-        for(int x = 0; x < WidthDivisions; x++)
+        Vector2Int StartOffset = Vector2Int.zero;// new Vector2Int(Mathf.RoundToInt( widthremainder / 2),Mathf.RoundToInt( heightremainder / 2));
+
+        Vector2Int size = new Vector2Int(Width, Height);
+        Bounds toCheck = new Bounds();
+        toCheck.size = new Vector3(size.x, size.y);
+        bool GotStartOffset = false;
+        for (int x = 0; x < size.x; x++)
+        {
+            for(int y=0;y< size.y; y++)
+            {
+                StartOffset = new Vector2Int(x, y);
+                pos = StartOffset + Position;
+                toCheck.center = new Vector3(pos.x + (size.x / 2), pos.y + (size.y / 2), 0);
+              
+                if (BoundsContainsBoundsEntirely(GetBounds(), toCheck))
+                {
+                    GotStartOffset = true;
+                    break;
+                }
+            }
+            if (GotStartOffset)
+            {
+                break;
+            }
+        }
+        if (!GotStartOffset)
+        {
+            StartOffset = Vector2Int.zero;
+        }
+        int xSpacing = Mathf.RoundToInt(widthremainder / WidthDivisions) ;
+        int ySpacing = Mathf.RoundToInt(heightremainder / HeightDivisions);
+
+        BuildingZoneBuilding bz = new BuildingZoneBuilding(pos, size, template.BuildingName);
+
+        for (int x = 0; x < WidthDivisions; x++)
         {
             for(int y = 0; y < HeightDivisions; y++)
             {
-                pos= StartOffset+Position + new Vector2Int((x*Width)+x, (y*Height)+y);
-                BuildingZoneBuilding bz = new BuildingZoneBuilding(pos, new Vector2Int(Width, Height), template.BuildingName);
+                pos= StartOffset+Position + new Vector2Int((x*Width)+xSpacing*x, (y*Height)+ySpacing*y);
+                bz = new BuildingZoneBuilding(pos, size, template.BuildingName);
+
                 if (BoundsContainsBoundsEntirely(GetBounds(),bz.GetBounds()))
                 {
                     Buildings.Add(bz);

@@ -12,11 +12,83 @@ public class RoomGenerator
         GenerateLocationsForDoors(room);
         PopulateFloorTiles(room, template);
         PopulateRoomEnvObjects(room, template);
+        if (template.CanHaveWindows)
+        {
+            GenerateWindows(room, template, building);
+        }
         return room;
     }
     const int RoomPropIterations = 1000;
 
    
+    public void GenerateWindows(GeneratedRoom room, RoomTemplate template, GeneratedBuilding building)
+    {
+        int width = room.RoomTiles.GetLength(0);
+        int height = room.RoomTiles.GetLength(1);
+
+        bool xTopEdge = false, yTopEdge = false, xBottomEdge = false, yBottomEdge = false ;
+        if (room.Position.x + width >= building.Width)
+        {
+            xTopEdge = true;
+        }
+       
+        if (room.Position.y + height >= building.Height)
+        {
+            yTopEdge = true;
+        }
+        if (room.Position.x ==0)
+        {
+            xBottomEdge = true;
+        }   
+        if(room.Position.y == 0)
+        {
+            yBottomEdge = true;
+        }
+        if (xTopEdge)
+        {
+            for (int y = 1; y < height - 1; y++)
+            {
+                if (y%3==0)
+                {
+                    room.RoomTiles[width-1, y].SetWall("Window");
+                }
+            }
+        }
+        
+        if(yTopEdge)
+        {
+            for (int x = 1; x < width - 1; x++)
+            {
+                if(x%3==0)
+                {
+                    room.RoomTiles[x, height-1].SetWall("Window");
+                }
+            }
+        }
+
+        if (xBottomEdge)
+        {
+            for (int y = 1; y < height-1; y++)
+            {
+                if (y % 3 == 0)
+                {
+                    room.RoomTiles[0, y].SetWall("Window");
+                }
+            }
+        }
+
+        if (yBottomEdge)
+        {
+            for (int x = 1; x < width-1; x++)
+            {
+                if (x % 3 == 0)
+                {
+                    room.RoomTiles[x, 0].SetWall("Window");
+                }
+            }
+        }
+    }
+
     public void GenerateLocationsForDoors(GeneratedRoom room)
     {
         Vector2Int coords = new Vector2Int();
