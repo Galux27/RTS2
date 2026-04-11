@@ -20,6 +20,19 @@ public static class Pathfinding
             return;
         }
        node.UpdatePassable(traversable);
+       
+        if (traversable && node.PathNodeGroupID == -1)
+        {
+            for(int q = 0; q< node.neighbours.Count; q++)
+            {
+                if (node.neighbours[q].PathNodeGroupID != -1)
+                {
+                    node.PathNodeGroupID = q;
+                    return;
+                }
+            }
+            node.PathNodeGroupID = -2;
+        }
     }
     public static void AddPathNodeModifier(int x,int y,PathNodeModifier toAdd)
     {
@@ -221,7 +234,7 @@ public static class Pathfinding
     {
         if (NodeIDPathing.PathNodeIDs.ContainsKey(start.PathNodeGroupID) == false || NodeIDPathing.PathNodeIDs.ContainsKey(end.PathNodeGroupID) == false)
         {
-            Debug.Log("Unit Path: fail due to being stuck on node with no group");
+            Debug.Log("Unit Path: fail due to being stuck on node with no group "+start.PathNodeGroupID+","+end.PathNodeGroupID);
             return false;
         }
 
@@ -414,6 +427,7 @@ public static class Pathfinding
         Debug.Log("Unit Path: Getting Path from " + startPos + " to " + targetNode.worldPos + " start node "
             + seekerNode.worldPos.ToString()
             + " dest node " + targetNode.worldPos.ToString());
+
         if (!CanGetPath(seekerNode, targetNode))
         {
             return null;

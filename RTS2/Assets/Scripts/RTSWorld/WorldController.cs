@@ -248,6 +248,10 @@ public class WorldTile:ISerialize
 
     public void SetElevation(float value,bool updatePathfinding=true)
     {
+        if (!ElevationController.UseElevation)
+        {
+            return;
+        }
         Elevation.SetElevation(value);// = value;
         if (Elevation.GetElevation() < OverworldGenerator.Instance.SeaLevel)
         {

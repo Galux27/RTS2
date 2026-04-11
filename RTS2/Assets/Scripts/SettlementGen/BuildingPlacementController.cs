@@ -20,6 +20,7 @@ public class BuildingPlacementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        return;
         Vector2 camPos = CameraController.Instance.transform.position;
         for(int x = 0; x < BatchesWithBuildings.Count; x++)
         {

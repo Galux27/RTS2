@@ -27,7 +27,6 @@ public static class UnitCapacityManager
 
     public static int GetMaxCapacityForUnitType(UserUnitTypeCount toUpdate)
     {
-        Debug.Log("invalid: getting capacity for " + toUpdate.Type.ToString());
         switch (toUpdate.Type)
         {
             case UnitType.Civilian: 
@@ -110,7 +109,6 @@ public static class UnitCapacityManager
             }
         }
         EngineerCapacity = count;
-        Debug.Log("Convert: engineer " + EngineerCapacity);
     }
     public static void RefreshSoldierCapacity()
     {
@@ -131,8 +129,6 @@ public static class UnitCapacityManager
             }
         }
         SoldierCapacity = count;
-        Debug.Log("Convert: soldier " + SoldierCapacity);
-
     }
 
 

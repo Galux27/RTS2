@@ -565,6 +565,7 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void RefreshElevationTiles()
     {
+        return;
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)

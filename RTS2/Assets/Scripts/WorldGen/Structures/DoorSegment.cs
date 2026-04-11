@@ -5,16 +5,19 @@ using UnityEngine.Tilemaps;
 
 public class DoorSegment : WallSegment
 {
-    public DoorSegment(int x, int y, Tilemap toPlaceOn, WallTile wallType,int localX,int localY) : base(x, y,wallType,localX,localY)
+    public DoorSegment(int x, int y, Tilemap toPlaceOn, WallTile wallType,int localX,int localY,bool render=true) : base(x, y,wallType,localX,localY)
     {
         WallType = WallType.Door;
 
         myAnim = WallHelpers.GetDoorVisual(this, WorldController.Instance.WallManager);
         DoorAnimator=new TilemapAnimator(myAnim,toPlaceOn,new Vector3Int(x,y,0));
         DoorAnimator.OnEnd += OnAnimEnd;
-        SetTile(myAnim.AnimationFrames[0]);
-    }
-    TilemapAnimation myAnim;
+        if (render)
+        {
+            SetTile(myAnim.AnimationFrames[0]);
+        }
+        }
+        TilemapAnimation myAnim;
     public TilemapAnimator DoorAnimator;
     public int UnitsInTile = 0;
     public DoorState currentState=DoorState.Closed;

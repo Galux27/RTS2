@@ -54,7 +54,6 @@ public class UnitCapacityUIElement : BaseUIElement
 
     public void UpdateDisplay(UserUnitTypeCount toUpdate)
     {
-        Debug.Log("Updating Capacity display " + toUpdate.Type+"/"+toUpdate.Count);
         totalDisplay.UpdateValues(UnitMoniter.Instance.GetTotalUnitCount(), UnitCapacityManager.TotalCapacity);
         displayUI[toUpdate.Type].UpdateValues(toUpdate.Count, UnitCapacityManager.GetMaxCapacityForUnitType(toUpdate));
     }

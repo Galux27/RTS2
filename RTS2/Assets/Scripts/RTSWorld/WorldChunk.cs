@@ -293,13 +293,15 @@ public class WorldChunk:ISerialize
         return retVal ;
     }
 
-
+    static List<PathfindingNode> toCheck = new List<PathfindingNode>();
+    static List<PathfindingNode> checkedNodes = new List<PathfindingNode>();
+    static List<PathfindingNode> allChunk = new List<PathfindingNode>();
 
     public void GeneratePathfindingGroups()
     {
-        List<PathfindingNode> toCheck = new List<PathfindingNode>();
-        HashSet<PathfindingNode> checkedNodes = new HashSet<PathfindingNode>();
-        HashSet<PathfindingNode> allChunk = new HashSet<PathfindingNode>();
+        toCheck.Clear();
+        checkedNodes.Clear();
+        allChunk.Clear();
         for(int x = 0; x < WorldChunkManager.ChunkSize; x++)
         {
             for (int y = 0; y< WorldChunkManager.ChunkSize; y++)

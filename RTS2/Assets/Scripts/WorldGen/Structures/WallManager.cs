@@ -268,7 +268,7 @@ public class WallManager
                 }
                 wall = WallHelpers.GetWallAtCoords(x1, y1);
 
-                if (wall.HasWall)
+                if (wall.HasWall&&toGetFrom.IsRendered)
                 {
 
                     toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
@@ -298,36 +298,42 @@ public class WallManager
                 objAtWall.AdjustHealth(-9999999f);
             }
         }
-        WallSegment wall = null;
 
-        wall = WallHelpers.GetWallAtCoords(x, y);
-        if (wall.WallType == WallType.Wall)
         {
-            WorldController.Instance.SetTraversible(x, y,false,WorldTileContents.Door);
-        }
-        WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-        OnWallAdded?.Invoke(asCoords);
+            WallSegment wall = null;
 
-        for (int x1 = x - 1; x1 <= x + 1; x1++)
-        {
-            for (int y1 = y - 1; y1 <= y + 1; y1++)
+            wall = WallHelpers.GetWallAtCoords(x, y);
+            if (wall.WallType == WallType.Wall)
             {
-                if (!CoordsValid(x1, y1))
-                {
-                    continue;
-                }
-                wall = WallHelpers.GetWallAtCoords(x1, y1);
+                WorldController.Instance.SetTraversible(x, y, false, WorldTileContents.Door);
+            }
+            WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+            OnWallAdded?.Invoke(asCoords);
 
-                if (wall.HasWall)
+            for (int x1 = x - 1; x1 <= x + 1; x1++)
+            {
+                for (int y1 = y - 1; y1 <= y + 1; y1++)
                 {
-                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-                    wall.RenderWall();
+                    if (!CoordsValid(x1, y1))
+                    {
+                        continue;
+                    }
+                    wall = WallHelpers.GetWallAtCoords(x1, y1);
 
+                    if (wall.HasWall)
+                    {
+                        WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+                        if (toGetFrom.IsRendered)
+                        {
+
+                            wall.RenderWall();
+                        }
+                    }
                 }
             }
         }
+        }
+
+
+
     }
-
-   
-
-}

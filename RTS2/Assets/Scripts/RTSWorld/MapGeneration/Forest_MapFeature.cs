@@ -33,13 +33,17 @@ public class Forest_MapFeature :MapFeatureBase
         }
     }
     Vector2Int batch, chunk, tile;
+    List<WorldTile> tiles = new List<WorldTile>();
+    EnvironmentObject obj = null;
+    bool valid = true;
+
     public void GenerateTree(Vector2Int coords,string objectToCreate)
     {
+        tiles.Clear();
+        obj = EnvironmentObjectManager.Instance.AllObjects[objectToCreate];
+        valid = true;
 
-        EnvironmentObject obj = EnvironmentObjectManager.Instance.AllObjects[objectToCreate];
-        bool valid = true;
-        List<WorldTile> tiles = new List<WorldTile>();
-        for(int x=coords.x;x<coords.x+obj.Width;x++)
+        for (int x=coords.x;x<coords.x+obj.Width;x++)
         {
             for(int y = coords.y; y < coords.y + obj.Height; y++)
             {

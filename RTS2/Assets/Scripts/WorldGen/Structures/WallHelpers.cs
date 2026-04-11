@@ -488,7 +488,7 @@ public static class WallHelpers
         {
             coordsCache = coordsCache - toGetFrom.WorldCoords;
             coordsCache = ClampCoords(coordsCache);
-            toGetFrom.WallSegments[coordsCache.x, coordsCache.y] = new DoorSegment(x, y, toPlaceOn, wallType, coordsCache.x, coordsCache.y);
+            toGetFrom.WallSegments[coordsCache.x, coordsCache.y] = new DoorSegment(x, y, toPlaceOn, wallType, coordsCache.x, coordsCache.y,toGetFrom.IsRendered);
             return toGetFrom.WallSegments[coordsCache.x, coordsCache.y];
         }
         catch(System.Exception e)

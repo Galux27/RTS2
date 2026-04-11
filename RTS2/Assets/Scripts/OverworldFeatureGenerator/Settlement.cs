@@ -64,7 +64,6 @@ public class Settlement : OverworldFeatureToWorldConverter
 
 
         //create splits that make existing roads into their own chunks that can't be split
-        Debug.Log("Roads at start " + toGenerateIn.Roads.Count+" at " + toGenerateIn.coords);
         List<SettlementArea> areas = new List<SettlementArea>();
         areas.Add(new SettlementArea(toGenerateIn.coords, new Vector2(WorldChunkManager.ChunkBatchSize-4, WorldChunkManager.ChunkBatchSize - 4),toGenerateIn.coords));
         for(int x = 0; x < forcedSplits.Count; x++)
@@ -179,7 +178,6 @@ public class Settlement : OverworldFeatureToWorldConverter
             BuildingPlacementController.Instance.BatchesWithBuildings.Add(toGenerateIn);
         }
 
-        Debug.Log("Generated settlement, final road count " + toGenerateIn.Roads.Count+" in " + toGenerateIn.coords);
     }
 
 
@@ -230,7 +228,6 @@ public class Settlement : OverworldFeatureToWorldConverter
 
     bool IsBuildingZoneValid(BuildingZone zone)
     {
-        Debug.Log("BZ: Checking building zone size " + zone.Position + "," + zone.Size);
         if (zone.Size.x * zone.Size.y >= MinBuildingArea && zone.Size.x > 6 && zone.Size.y > 6)
         {
             return true;
@@ -240,13 +237,7 @@ public class Settlement : OverworldFeatureToWorldConverter
 
     bool IsSplitValid(SettlementArea area)
     {
-        Debug.Log("Set: Checking building zone size " + (area.position+area.parentChunkBatch)+ "," + area.size);
         return AreBoundsValid(area.buildingZone.GetBounds());
-        if (area.size.x * area.size.y >= MinBuildingArea &&area.size.x>6&&area.size.y>6)
-        {
-            return true;
-        }
-        return false;
     }
 
 

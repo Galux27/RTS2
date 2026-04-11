@@ -141,11 +141,11 @@ public class BuildingGenerator : MonoBehaviour
                 }
                 }
             }
-        for(int x = 0; x < batches.Count; x++)
-        {
-            WorldChunkManager.Instance.ChunkBatches[batches[x]].UpdateElevations();
-            WorldChunkManager.Instance.ChunkBatches[batches[x]].RefreshElevationTiles();
-        }
+        //for(int x = 0; x < batches.Count; x++)
+        //{
+        //    WorldChunkManager.Instance.ChunkBatches[batches[x]].UpdateElevations();
+        //    WorldChunkManager.Instance.ChunkBatches[batches[x]].RefreshElevationTiles();
+        //}
 
         Vector2Int envObjPos = new Vector2Int();
         for (int x = 0; x < b.MyRooms.Count; x++)
@@ -567,6 +567,9 @@ public class GeneratedBuilding
     {
         Edges = new List<Vector2Int>();
         Vector2Int neighbour = Vector2Int.zero;
+        List<Vector2Int> tileEdges = new List<Vector2Int>();
+        int nullNeighbours = 0, nonNullNeighbours = 0, total = 0;
+        bool hasCorridorNeighbour = false;
         for (int x=0; x<Width; x++)
         {
             for (int y = 0; y < Height; y++)
@@ -577,10 +580,12 @@ public class GeneratedBuilding
                 }
                 else
                 {
-                    int nullNeighbours = 0, nonNullNeighbours = 0,total=0;
-                    List<Vector2Int> tileEdges = new List<Vector2Int>();
-                    bool hasCorridorNeighbour = false;
-                    for(int x1 = x - 1; x1 <= x + 1; x1++)
+                    tileEdges.Clear();
+                    nullNeighbours = 0;
+                    nonNullNeighbours = 0;
+                    total = 0;
+                    hasCorridorNeighbour = false;
+                    for (int x1 = x - 1; x1 <= x + 1; x1++)
                     {
                         for (int y1 = y - 1; y1 <= y + 1; y1++)
                         {
@@ -642,6 +647,9 @@ public class GeneratedBuilding
     public void UpdateCorridorEdgeTiles(BuildingTemplate template)
     {
         Vector2Int neighbour = Vector2Int.zero;
+        int nullNeighbours = 0, nonNullNeighbours = 0, total = 0;
+        List<Vector2Int> tileEdges = new List<Vector2Int>();
+        bool hasCorridorNeighbour = false;
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
@@ -652,9 +660,11 @@ public class GeneratedBuilding
                 //}
               // else
                 {
-                    int nullNeighbours = 0, nonNullNeighbours = 0, total = 0;
-                    List<Vector2Int> tileEdges = new List<Vector2Int>();
-                    bool hasCorridorNeighbour = false;
+                    nullNeighbours = 0;
+                    nonNullNeighbours = 0;
+                    total = 0;
+                    tileEdges.Clear();
+                    hasCorridorNeighbour = false;
                     for (int x1 = x - 1; x1 <= x + 1; x1++)
                     {
                         for (int y1 = y - 1; y1 <= y + 1; y1++)

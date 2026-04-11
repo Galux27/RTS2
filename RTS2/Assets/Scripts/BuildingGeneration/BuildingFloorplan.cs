@@ -74,11 +74,6 @@ public class SquareBuildingFloorplan : BuildingFloorplan
             count++;
         }
 
-        for(int x = 0; x < CurrentSplits.Count; x++)
-        {
-            Debug.Log("Final Split: " + CurrentSplits[x].ToString());
-        }
-
 
         RoomTemplate roomTemplate = null;
         for (int x = 0; x < CurrentSplits.Count; x++)
@@ -90,7 +85,6 @@ public class SquareBuildingFloorplan : BuildingFloorplan
                 building.AddRoom(curRoom);
             }
         }
-        //FixBuildingInteriorWalls(building);
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();
