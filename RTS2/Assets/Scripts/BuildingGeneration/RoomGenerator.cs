@@ -100,8 +100,26 @@ public class RoomGenerator
         room.RoomTiles[0, coords.y].IsValidForDoor = true;
         coords.y = Random.Range(1, room.size.y - 1);
         room.RoomTiles[room.size.x-1, coords.y].IsValidForDoor = true;
+        //BlockOffTilesNearDoor(coords.x, 0,room);
+        //BlockOffTilesNearDoor(coords.x, room.size.y - 1, room);
+        //BlockOffTilesNearDoor(0, coords.y, room);
+        //BlockOffTilesNearDoor(room.size.x - 1, coords.y, room);
+
     }
 
+    void BlockOffTilesNearDoor(int xp,int yp, GeneratedRoom room)
+    {
+        for(int x = xp - 1; x <= xp + 1; x++)
+        {
+            for (int y = yp - 1; y <= yp + 1; y++)
+            {
+                if (room.IsValid(x, y)&&(x==xp&&y==yp)==false)
+                {
+                    room.RoomTiles[x, y].HasProp = true;
+                }
+            }
+        }
+    }
 
     public void PopulateRoomEnvObjects(GeneratedRoom room, RoomTemplate template)
     {
@@ -321,7 +339,9 @@ public class GeneratedRoom
 
     public bool TileHasNothing(int x,int y)
     {
-        return RoomTiles[x, y].HasWall == false && RoomTiles[x, y].HasDoor == false && RoomTiles[x, y].HasProp == false&&RoomTiles[x,y].IsValidForDoor==false;
+        return RoomTiles[x, y].HasWall == false 
+            && RoomTiles[x, y].HasDoor == false 
+            && RoomTiles[x, y].HasProp == false&&RoomTiles[x,y].IsValidForDoor==false;
     }
 
 }

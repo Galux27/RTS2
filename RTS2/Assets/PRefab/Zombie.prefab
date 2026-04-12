@@ -175,6 +175,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 4554519955264691689, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
     - {fileID: 7652595014143650964, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+    - {fileID: 75192819254074558, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -213,6 +214,19 @@ MonoBehaviour:
   MySenses: {fileID: 0}
   MyRender: {fileID: 0}
   MyVisualStore: {fileID: 0}
+  LastNode:
+    gCost: 0
+    hCost: 0
+    obstacle: 0
+    X: 0
+    Y: 0
+    localX: 0
+    localY: 0
+    IsPassable: 0
+    neighbours: []
+    worldPos: {x: 0, y: 0, z: 0}
+    PathNodeGroupID: 0
+  hasLastNode: 0
   lastCoords: {x: 0, y: 0}
   HasBeenSwapped: 0
   HasMovedThisFrame: 0

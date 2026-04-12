@@ -84,7 +84,7 @@ public class HumanBehaviour_ChangeUnitType : BehaviourBase
     public override void PerformBehaviour()
     {
         float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);
-        if (dist > 1f)
+        if (dist > PathFollower.MinDistToPoint)
         {
             follower.OnUpdate(unitToMove.transform.position);
             unitToMove.MoveUnit(DirectionToTarget());

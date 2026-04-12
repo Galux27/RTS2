@@ -70,12 +70,9 @@ public class PathfindingDebugView : MonoBehaviour
 
     Color GetColourForNode(PathfindingNode node)
     {
-        if (node.PathNodeGroupID==-1)
+        if (node.IsPassable == false)
         {
             return Color.red;
-        }else if (node.IsPassable == false)
-        {
-            return Color.yellow;
         }
         else
         {

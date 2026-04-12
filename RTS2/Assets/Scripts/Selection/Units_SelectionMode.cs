@@ -153,16 +153,16 @@ public class Units_SelectionMode : SelectionMode
                     EnvironmentObjectInstance toHarvest = OnHoverHarvestable;
                     List<Selectable> currentlySelected = SelectableManager.Instance.CurrentlySelected;
                     List<PathfindingNode> targetPositions = UnitHelpers.GetWalkableNodesNearTarget(currentlySelected,toHarvest.GetPosition());
-
                     Action Harvest = () =>
                     {
+                        NodesUsed.Clear();
 
                         for (int x = 0; x < currentlySelected.Count; x++)
                         {
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             GatherResources_Behaviour gather = new GatherResources_Behaviour();
-                            gather.InitBehaviour(toPerfrom, toHarvest, targetPositions[x]);
+                            gather.InitBehaviour(toPerfrom, toHarvest, GetNearestNodeToUnit(toPerfrom, targetPositions));
                             br.SetBehaviour(gather);
 
                         }
@@ -232,13 +232,14 @@ public class Units_SelectionMode : SelectionMode
 
                     Action Convert = () =>
                     {
+                        NodesUsed.Clear();
 
                         for (int x = 0; x < currentlySelected.Count; x++)
                         {
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, targetPositions[x]);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, GetNearestNodeToUnit(toPerfrom,targetPositions));
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);
@@ -259,13 +260,14 @@ public class Units_SelectionMode : SelectionMode
 
                     Action Convert = () =>
                     {
+                        NodesUsed.Clear();
 
                         for (int x = 0; x < currentlySelected.Count; x++)
                         {
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment, targetPositions[x]);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment, GetNearestNodeToUnit(toPerfrom, targetPositions));
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);
@@ -290,13 +292,14 @@ public class Units_SelectionMode : SelectionMode
 
                         Action move = () =>
                         {
+                            NodesUsed.Clear();
 
                             for (int x = 0; x < selected.Count; x++)
                             {
                                 Unit toPerfrom = (Unit)selected[x];
                                 BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                                 MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
-                                moveTo_Behaviour.InitBehaviour(toPerfrom, targetPositions[x], true);
+                                moveTo_Behaviour.InitBehaviour(toPerfrom, GetNearestNodeToUnit(toPerfrom, targetPositions), true);
                                 moveTo_Behaviour.IsUserInstruction = true;
                                 br.SetBehaviour(moveTo_Behaviour);
 
@@ -308,6 +311,36 @@ public class Units_SelectionMode : SelectionMode
                 }
             }
         }
+    }
+    List<PathfindingNode> NodesUsed = new List<PathfindingNode>();
+    PathfindingNode GetNearestNodeToUnit(Unit performing,List<PathfindingNode> PotentialNodes)
+    {
+        Vector3 pos = performing.Position();
+        float dist = 999999f, dist2 = 0f ;
+        PathfindingNode retVal = null;
+        if (NodesUsed.Count >= PotentialNodes.Count)
+        {
+            NodesUsed.Clear();
+        }
+        for(int x = 0; x < PotentialNodes.Count; x++)
+        {
+            if (NodesUsed.Contains(PotentialNodes[x]))
+            {
+                continue;
+            }
+            Debug.DrawLine(PotentialNodes[x].worldPos, PotentialNodes[x].worldPos + Vector3.up,Color.cyan,99f);
+            dist2 = Vector3.Distance(pos, PotentialNodes[x].worldPos);
+            if (dist2 < dist)
+            {
+                retVal = PotentialNodes[x];
+                dist = dist2;
+            }
+        }
+        if (retVal != null)
+        {
+            NodesUsed.Add(retVal);
+        }
+        return retVal;
     }
 
     Unit OnHoverEnemyUnit;
@@ -582,13 +615,14 @@ public class Units_SelectionMode : SelectionMode
 
                     Action Convert = () =>
                     {
+                        NodesUsed.Clear();
 
                         for (int x = 0; x < currentlySelected.Count; x++)
                         {
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, targetPositions[x]);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, GetNearestNodeToUnit(toPerfrom, targetPositions));
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);
@@ -609,13 +643,14 @@ public class Units_SelectionMode : SelectionMode
 
                     Action Convert = () =>
                     {
+                                            NodesUsed.Clear();
 
                         for (int x = 0; x < currentlySelected.Count; x++)
                         {
                             Unit toPerfrom = (Unit)currentlySelected[x];
                             BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                             HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment, targetPositions[x]);
+                            deconstruct.InitBehaviour(toPerfrom, OnHoverWallSegment, GetNearestNodeToUnit(toPerfrom, targetPositions));
                             //CollectResources_Behaviour collect = new CollectResources_Behaviour();
                             // collect.InitBehaviour(toPerfrom, toHarvest);
                             br.SetBehaviour(deconstruct);
@@ -640,13 +675,14 @@ public class Units_SelectionMode : SelectionMode
 
                         Action move = () =>
                         {
+                            NodesUsed.Clear();
 
                             for (int x = 0; x < selected.Count; x++)
                             {
                                 Unit toPerfrom = (Unit)selected[x];
                                 BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
                                 MoveTo_Behaviour moveTo_Behaviour = new MoveTo_Behaviour();
-                                moveTo_Behaviour.InitBehaviour(toPerfrom, targetPositions[x],true);
+                                moveTo_Behaviour.InitBehaviour(toPerfrom, GetNearestNodeToUnit(toPerfrom, targetPositions), true);
                                 moveTo_Behaviour.IsUserInstruction = true;
                                 br.SetBehaviour(moveTo_Behaviour);
 

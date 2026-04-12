@@ -64,12 +64,12 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
         if (follower.HasPath())
         {
             float dist = Vector3.Distance(unitToMove.transform.position, follower.GetLastNode());
-            return dist < 2f;
+            return dist < PathFollower.MinDistToPoint;
         }
         else
         {
             float dist = Vector3.Distance(unitToMove.transform.position, TargetPosition);
-            return dist < 2f;
+            return dist < PathFollower.NonPathMinDistToPoint;
         }
 
     }

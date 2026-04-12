@@ -14,7 +14,7 @@ public class TileRaycast
     Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), coords = new Vector2Int();
     Vector2 CoordsAsVector;
     Vector2Int roundedCoords = new Vector2Int();
-    List<WorldTile> TilesHit = new List<WorldTile>();
+    public List<WorldTile> TilesHit = new List<WorldTile>();
     int maxIterations = 0;
     Vector3 startPosCache, endPosCache;
     public TileRaycast(Vector3 startPos,Vector3 endPos)
@@ -91,7 +91,7 @@ public class TileRaycast
     public bool IsLastTileValid(WorldTile tile)
     {
         //check for world tile
-        if (tile.ContainsContents(WorldTileContents.EnvObject))
+        if (tile.ContainsContents(WorldTileContents.EnvObject)|| tile.ContainsContents(WorldTileContents.Wall)|| tile.ContainsContents(WorldTileContents.Door))
         {
             return false;
         }

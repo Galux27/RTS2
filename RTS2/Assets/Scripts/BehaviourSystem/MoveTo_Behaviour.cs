@@ -34,12 +34,12 @@ public class MoveTo_Behaviour : BehaviourBase
 
     public override bool CanPerformBehaviour()
     {
-        return Vector3.Distance(unitToMove.transform.position, TargetPosition) >1f && unitToMove!=null;
+        return Vector3.Distance(unitToMove.transform.position, TargetPosition) >PathFollower.MinDistToPoint && unitToMove!=null;
     }
 
     public override bool IsBehaviourComplete()
     {
-        return Vector3.Distance(unitToMove.transform.position, TargetPosition) < 1f;
+        return Vector3.Distance(unitToMove.transform.position, TargetPosition) < PathFollower.MinDistToPoint;
     }
 
     Vector3 DirectionToTarget()

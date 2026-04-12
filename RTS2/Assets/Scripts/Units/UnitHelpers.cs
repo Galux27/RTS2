@@ -12,19 +12,21 @@ public static class UnitHelpers
         HashSet<PathfindingNode> checkedNodes = new HashSet<PathfindingNode>();
         List<PathfindingNode> toCheck = new List<PathfindingNode>();
         toCheck.Add(Pathfinding.GetNodeFromPosition(target));
+        List<PathfindingNode> retVal = new List<PathfindingNode>();
         while (closeResults.Count < toMove.Count && toCheck.Count>0)
         {
             List<PathfindingNode> newToCheck = new List<PathfindingNode>();
             for (int x = 0; x < toCheck.Count; x++)
             {
+                closeResults.Add(toCheck[x]);
+                checkedNodes.Add(toCheck[x]);
                 if (toCheck[x].IsPassable)
                 {
-                    closeResults.Add(toCheck[x]);
-                    checkedNodes.Add(toCheck[x]);
+                    retVal.Add(toCheck[x]);
                 }
                 for (int q = 0; q < toCheck[x].neighbours.Count; q++)
                 {
-                    if (checkedNodes.Contains(toCheck[x].neighbours[q]) == false && toCheck[x].neighbours[q].IsPassable)
+                    if (checkedNodes.Contains(toCheck[x].neighbours[q]) == false /*&& toCheck[x].neighbours[q].IsPassable*/)
                     {
                         newToCheck.Add(toCheck[x].neighbours[q]);
                     }
@@ -33,7 +35,7 @@ public static class UnitHelpers
             toCheck = newToCheck;
         }
 
-        return closeResults;
+        return retVal;
     }
 
 
