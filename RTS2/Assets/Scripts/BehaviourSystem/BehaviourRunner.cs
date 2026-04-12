@@ -57,7 +57,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
     }
     public bool IsBehaviourNull = true;
     public string behaviourName;
-
+    public List<string> BehaviourDebug;
     void OnBehaviourComplete()
     {
 
@@ -103,7 +103,14 @@ public class BehaviourRunner : MonoBehaviour, Updater
 
                 OnBehaviourComplete();
             }
-
+            if (CurrentBehaviour != null)
+            {
+                BehaviourDebug = CurrentBehaviour.GetDebugData();
+            }
+            else
+            {
+                BehaviourDebug = new List<string> {"Null" };
+            }
         }
     }
 

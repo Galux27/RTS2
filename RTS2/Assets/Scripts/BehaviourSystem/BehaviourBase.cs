@@ -102,4 +102,9 @@ public class BehaviourBase:ISerialize
     {
 
     }
+
+    public virtual List<string> GetDebugData()
+    {
+        return null;
+    }
 }

@@ -60,9 +60,20 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
 
     Vector3 DirectionToTarget()
     {
+         return (TargetPosition - unitToMove.transform.position).normalized;
+    }
 
-            return (TargetPosition - unitToMove.transform.position).normalized;
-
+    Vector3 HorizontalDirectionToTarget()
+    {
+        Vector3 dir = DirectionToTarget();
+        dir.y = 0;
+        return dir;
+    }
+    Vector3 VerticalDirectionToTarget()
+    {
+        Vector3 dir = DirectionToTarget();
+        dir.y = 0;
+        return dir;
     }
 
     public override bool DoWeNullBehaviourOnComplete()
@@ -72,12 +83,30 @@ public class ZombieAttackObject_Behaviour : BehaviourBase
    
     public override void PerformBehaviour()
     {
-            if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectionToTarget(),unitToMove))
-            {
-                unitToMove.MoveUnit(DirectionToTarget());
-            }
+        if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectionToTarget(),unitToMove))
+        {
+            unitToMove.MoveUnit(DirectionToTarget());
+        }else if(BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position,VerticalDirectionToTarget(), unitToMove))
+        {
+            unitToMove.MoveUnit(VerticalDirectionToTarget());
+        }
+        else if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, HorizontalDirectionToTarget(), unitToMove))
+        {
+            unitToMove.MoveUnit(HorizontalDirectionToTarget());
+        }
         unitToMove.MyAttackController.AttemptAttack(targetObject, TargetPosition);
 
+    }
+
+    public override List<string> GetDebugData()
+    {
+        List<string> retVal = new List<string>();
+
+        retVal.Add("Target: " + targetObject.Position()+"("+TargetPosition+")");
+        retVal.Add("Dist: " + Vector3.Distance(unitToMove.transform.position, TargetPosition));
+        retVal.Add("Done: " + IsBehaviourComplete());
+        retVal.Add("Can Move: " + BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectionToTarget(), unitToMove));
+        return retVal;
     }
 }
 
