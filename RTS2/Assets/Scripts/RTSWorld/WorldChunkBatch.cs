@@ -16,6 +16,7 @@ public class WorldChunkBatch : MonoBehaviour
     public Vector2Int OverworldCoords = new Vector2Int();
     public List<WorldTileBlend> BlendList = new List<WorldTileBlend>();
     public List<RoadData> Roads = new List<RoadData>();
+    public List<RiverData> Rivers = new List<RiverData>();
     public WorldChunkBatchUnits UnitsInBatch;
 
 
@@ -103,6 +104,11 @@ public class WorldChunkBatch : MonoBehaviour
     {
         Roads.Add(road);
         //road.GenerateRoad();
+    }
+
+    public void AddRiver(RiverData river)
+    {
+        Rivers.Add(river);
     }
 
     public void GenerateRoadBlends(RoadType toGen)

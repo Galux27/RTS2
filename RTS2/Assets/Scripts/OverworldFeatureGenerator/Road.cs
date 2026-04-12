@@ -69,8 +69,10 @@ public class Road : OverworldFeatureToWorldConverter
 
                 }
                 offCenter = new Vector2Int((int)Mathf.Lerp(center.x, target.x, .25f), (int)Mathf.Lerp(center.y, target.y, .25f));
-
-                AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), center, target, width);
+                Vector2 dir = target - center;
+                dir = dir.normalized;
+                Vector2Int centerOffset = new Vector2Int(Mathf.RoundToInt(dir.x * (width / 2)), Mathf.RoundToInt(dir.y * (width / 2)));
+                AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), center- centerOffset, target, width);
                 Debug.Log("Generating road from " + center + " to " + target + " in batch " + toGenerateIn.coords);
             }
         }

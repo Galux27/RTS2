@@ -16,9 +16,50 @@ public class Settlement : OverworldFeatureToWorldConverter
     {
         List<RoadData> roadsAtStart = new List<RoadData>();
         roadsAtStart.AddRange(toGenerateIn.Roads);
-        List<Bounds> ExistingBounds = new List<Bounds>();
+        List<Bounds> ExistingBounds = new List<Bounds>(),RiverBounds=new List<Bounds>();
         List<ForcedSplit> forcedSplits = new List<ForcedSplit>();
-        for(int x = 0; x < roadsAtStart.Count; x++)
+
+        for (int x = 0; x < toGenerateIn.Rivers.Count; x++)
+        {
+            Bounds b = toGenerateIn.Rivers[x].MyBounds;
+
+            DrawBounds(b, Color.blue, 99f);
+
+            if (toGenerateIn.Rivers[x].StartPos.x == toGenerateIn.Rivers[x].EndPos.x)
+            {
+                ForcedSplit leftSplit = new ForcedSplit();
+
+                leftSplit.axisToSplit = Axis.Horizontal;
+                leftSplit.Position = toGenerateIn.Rivers[x].LeftStart;
+
+                ForcedSplit rightSplit = new ForcedSplit();
+
+                rightSplit.axisToSplit = Axis.Horizontal;
+                rightSplit.Position = toGenerateIn.Rivers[x].RightStart;
+
+                forcedSplits.Add(leftSplit); forcedSplits.Add(rightSplit);
+            }
+            else
+            {
+                ForcedSplit leftSplit = new ForcedSplit();
+
+                leftSplit.axisToSplit = Axis.Vertical;
+                leftSplit.Position = toGenerateIn.Rivers[x].LeftStart;
+
+                ForcedSplit rightSplit = new ForcedSplit();
+
+                rightSplit.axisToSplit = Axis.Vertical;
+                rightSplit.Position = toGenerateIn.Rivers[x].RightStart;
+
+                forcedSplits.Add(leftSplit); forcedSplits.Add(rightSplit);
+            }
+
+            RiverBounds.Add(b);
+        }
+
+
+
+        for (int x = 0; x < roadsAtStart.Count; x++)
         {
             Bounds b = new Bounds(Vector2.Lerp(roadsAtStart[x].StartPos, roadsAtStart[x].EndPos, .5f),Vector3.one);
             b.Encapsulate(new Vector3(roadsAtStart[x].LeftStart.x, roadsAtStart[x].LeftEnd.y,0));
@@ -60,7 +101,7 @@ public class Settlement : OverworldFeatureToWorldConverter
             ExistingBounds.Add(b);
         }
 
-
+       
 
 
         //create splits that make existing roads into their own chunks that can't be split
@@ -94,7 +135,7 @@ public class Settlement : OverworldFeatureToWorldConverter
             bool valid = true;
             for(int x=0;x< split.Length; x++)
             {
-                if (!IsSplitValid(split[x])) {
+                if (!IsSplitValid(split[x], toGenerateIn)) {
                     valid = false;
                     break;
                 }
@@ -118,7 +159,8 @@ public class Settlement : OverworldFeatureToWorldConverter
             bool valid = true;
             for(int q = 0; q < ExistingBounds.Count; q++)
             {
-                if (ExistingBounds[q].Contains( Vec2IntToVec(data[x].StartPos)) && ExistingBounds[q].Contains(Vec2IntToVec(data[x].EndPos)))
+                if (ExistingBounds[q].Contains( Vec2IntToVec(data[x].StartPos)) 
+                    && ExistingBounds[q].Contains(Vec2IntToVec(data[x].EndPos)))
                 {
                     valid = false; 
                     break;
@@ -147,13 +189,14 @@ public class Settlement : OverworldFeatureToWorldConverter
                     break;
                 }
             }
+
             if (valid==false)
             {
                 zonesToSplitOnRoad.Add(areas[x]);
                 splitPositions.Add(allSplits);
             }
             splits = new List<Vector2>();
-            if (valid && AreBoundsValid(areas[x].buildingZone.GetBounds()))
+            if (valid && AreBoundsValid(areas[x].buildingZone.GetBounds(),toGenerateIn))
             {
                 areas[x].buildingZone.GenerateBuildingZones(BuildingDataManager.Instance.BuildingTemplates["House"]);
                 if (areas[x].buildingZone.Populated)
@@ -217,12 +260,23 @@ public class Settlement : OverworldFeatureToWorldConverter
         return new Vector2(val.x, val.y);
     }
 
-    bool AreBoundsValid(Bounds b)
+    bool AreBoundsValid(Bounds b,WorldChunkBatch toGenerateIn)
     {
+        for(int x = 0; x < toGenerateIn.Rivers.Count; x++)
+        {
+            if (toGenerateIn.Rivers[x].MyBounds.Contains(b.center))
+            {
+                return false;
+            }
+        }
+
         if (b.size.x * b.size.y >= MinBuildingArea && b.size.x > 6 && b.size.y > 6)
         {
             return true;
         }
+
+        
+
         return false;
     }
 
@@ -235,9 +289,9 @@ public class Settlement : OverworldFeatureToWorldConverter
         return false;
     }
 
-    bool IsSplitValid(SettlementArea area)
+    bool IsSplitValid(SettlementArea area,WorldChunkBatch generatingIn)
     {
-        return AreBoundsValid(area.buildingZone.GetBounds());
+        return AreBoundsValid(area.buildingZone.GetBounds(), generatingIn);
     }
 
 

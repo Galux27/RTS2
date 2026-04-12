@@ -39,12 +39,26 @@ public class MultiThreadedManager : MonoBehaviour
 
     private void Update()
     {
-        int index = 0;
-        while(index < actions.Count)
+
+        UpdateMultiThreadedManager();
+    }
+
+    int index = 0;
+    const int MAX_UPDATES = 500;
+    void UpdateMultiThreadedManager()
+    {
+        int count = 0;
+
+        while (index < actions.Count&&count<MAX_UPDATES)
         {
             actions[index].CheckForCompletion();
+            index++;
+            count++;
         }
-       
+        if (index >= actions.Count - 1)
+        {
+            index = 0;
+        }
     }
 
     public void OnActionComplete(MultiThreadedAction complete)

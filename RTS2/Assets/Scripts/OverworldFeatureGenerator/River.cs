@@ -67,8 +67,11 @@ public class FeatureRiver : OverworldFeatureToWorldConverter
                 target = center - new Vector2Int(0, 16 + WorldChunkManager.ChunkBatchSize / 2);
 
             }
-            Vector3 pos = new Vector3();
 
+          
+            Vector3 pos = new Vector3();
+            RiverData data = new RiverData(center, target, width);
+            toGenerateIn.AddRiver(data);
             if (center.x < target.x)
             {
                 for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
@@ -144,4 +147,37 @@ public class FeatureRiver : OverworldFeatureToWorldConverter
     {
         return myFeature;
     }
+}
+
+public class RiverData
+{
+    public Vector2Int StartPos, EndPos;
+    public Vector2Int LeftStart,RightStart,LeftEnd,RightEnd;
+    public int Width;
+    public Bounds MyBounds;
+    public RiverData(Vector2Int start,Vector2Int end,int width)
+    {
+        StartPos = start;
+        EndPos = end;
+        Width = width;
+        float halfWidth = width / 2f;
+        Vector2 perp = end - start;
+        perp = Vector2.Perpendicular(perp).normalized*halfWidth;
+        Vector2 LeftStart = StartPos - (perp);
+        Vector2 RightStart = StartPos + (perp);
+        Vector2 LeftEnd = EndPos - (perp);
+        Vector2 RightEnd = EndPos + (perp);
+        this.LeftStart = new Vector2Int(Mathf.RoundToInt(LeftStart.x), Mathf.RoundToInt(LeftStart.y));
+        this.RightStart = new Vector2Int(Mathf.RoundToInt(RightStart.x), Mathf.RoundToInt(RightStart.y));
+        this.LeftEnd = new Vector2Int(Mathf.RoundToInt(LeftEnd.x), Mathf.RoundToInt(LeftEnd.y));
+        this.RightEnd = new Vector2Int(Mathf.RoundToInt(RightEnd.x), Mathf.RoundToInt(RightEnd.y));
+
+        MyBounds = new Bounds(Vector2.Lerp(start, end, .5f), Vector3.one) ;
+        MyBounds.Encapsulate(LeftStart);
+        MyBounds.Encapsulate(RightStart);
+        MyBounds.Encapsulate(LeftEnd);
+        MyBounds.Encapsulate(RightEnd);
+
+    }
+
 }
