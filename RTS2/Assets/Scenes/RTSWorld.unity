@@ -13636,7 +13636,7 @@ MonoBehaviour:
   InstantConstructVal: 1
   CareAboutResources: 0
   DrawDebugPathfinding: 0
-  SpawnEnemies: 0
+  SpawnEnemies: 1
 --- !u!4 &1959966592
 Transform:
   m_ObjectHideFlags: 0
