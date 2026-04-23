@@ -147,16 +147,16 @@ ScriptedImporter:
   spriteSheetImportData:
   - name: DoorTemplate_1
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.54, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 200
-      y: 485
-      width: 128
-      height: 128
+      x: 230
+      y: 489
+      width: 64
+      height: 121
     spriteID: ab9c21e6575180d4597b2ba75691c336
     spriteBone: []
     spriteOutline: []
@@ -168,16 +168,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_2
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.57, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 328
-      y: 485
-      width: 128
-      height: 128
+      x: 348
+      y: 487
+      width: 64
+      height: 123
     spriteID: a2748309c5fd3584bafeb4bd64d5353a
     spriteBone: []
     spriteOutline: []
@@ -189,16 +189,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_5
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.31, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 72
-      y: 357
-      width: 128
-      height: 128
+      x: 106
+      y: 361
+      width: 64
+      height: 122
     spriteID: 7a64a6da2450478498db76de9daa6769
     spriteBone: []
     spriteOutline: []
@@ -210,16 +210,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_6
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.47, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 200
-      y: 357
-      width: 128
-      height: 128
+      x: 223
+      y: 362
+      width: 64
+      height: 120
     spriteID: 188fbd8fe1238534eb8474e6633fb688
     spriteBone: []
     spriteOutline: []
@@ -231,16 +231,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_7
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.3, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 328
-      y: 357
-      width: 128
-      height: 128
+      x: 357
+      y: 362
+      width: 64
+      height: 119
     spriteID: f3ddc324d073cf24db1e8455f8a9bb85
     spriteBone: []
     spriteOutline: []
@@ -252,16 +252,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_8
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.18, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 456
-      y: 357
-      width: 128
-      height: 128
+      x: 496
+      y: 363
+      width: 64
+      height: 118
     spriteID: 32a1c903a20697044b9e09dd02f72589
     spriteBone: []
     spriteOutline: []
@@ -273,16 +273,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_9
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.15, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 584
-      y: 357
-      width: 128
-      height: 128
+      x: 621
+      y: 364
+      width: 64
+      height: 117
     spriteID: 5ed6089dfd36de3458f42bea791cf7ec
     spriteBone: []
     spriteOutline: []
@@ -294,16 +294,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_10
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 72
-      y: 229
-      width: 128
-      height: 128
+      x: 113
+      y: 235
+      width: 64
+      height: 117
     spriteID: 22957c6e2884b5c44a463d38ce22874b
     spriteBone: []
     spriteOutline: []
@@ -315,16 +315,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_11
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 200
-      y: 229
-      width: 128
-      height: 128
+      x: 241
+      y: 235
+      width: 64
+      height: 118
     spriteID: 68ae9018a7eae08499c34ca6330bd74f
     spriteBone: []
     spriteOutline: []
@@ -336,16 +336,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_12
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 328
-      y: 229
-      width: 128
-      height: 128
+      x: 369
+      y: 236
+      width: 64
+      height: 115
     spriteID: de05aa4ee24e2f247980fb5963038a99
     spriteBone: []
     spriteOutline: []
@@ -357,16 +357,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_13
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 456
-      y: 229
-      width: 128
-      height: 128
+      x: 500
+      y: 238
+      width: 64
+      height: 112
     spriteID: 51cd2fb9aa92ab34f8451ac785a8d9be
     spriteBone: []
     spriteOutline: []
@@ -378,16 +378,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_14
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 584
-      y: 229
-      width: 128
-      height: 128
+      x: 623
+      y: 238
+      width: 64
+      height: 111
     spriteID: 47ba1a338550bbc47b32ae8545e90b0f
     spriteBone: []
     spriteOutline: []
@@ -399,16 +399,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_15
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 72
-      y: 101
-      width: 128
-      height: 128
+      x: 110
+      y: 110
+      width: 64
+      height: 111
     spriteID: 6c96b84b90178354cab716679ba16669
     spriteBone: []
     spriteOutline: []
@@ -420,16 +420,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_16
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 200
-      y: 101
-      width: 128
-      height: 128
+      x: 242
+      y: 112
+      width: 64
+      height: 109
     spriteID: 0b08119a1590ad54185f968b4a984394
     spriteBone: []
     spriteOutline: []
@@ -441,16 +441,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_17
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 328
-      y: 101
-      width: 128
-      height: 128
+      x: 365
+      y: 112
+      width: 64
+      height: 107
     spriteID: cab60244788065a4b8e28027e833ef67
     spriteBone: []
     spriteOutline: []
@@ -462,16 +462,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_18
     originalName: 
-    pivot: {x: 0.25, y: 0}
-    alignment: 9
+    pivot: {x: 0, y: 0}
+    alignment: 6
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 456
-      y: 101
-      width: 128
-      height: 128
+      x: 497
+      y: 113
+      width: 64
+      height: 108
     spriteID: 10b6266c2cec10c4095866a286be0c6a
     spriteBone: []
     spriteOutline: []
@@ -483,16 +483,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_0
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.54, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 72
-      y: 485
-      width: 128
-      height: 128
+      x: 104
+      y: 489
+      width: 64
+      height: 122
     spriteID: b1b576a97214c23489b3704511cc1d72
     spriteBone: []
     spriteOutline: []
@@ -504,16 +504,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_3
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.58, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 456
-      y: 485
-      width: 128
-      height: 128
+      x: 480
+      y: 488
+      width: 64
+      height: 123
     spriteID: 2481c9c372ac85648bcc96dc6f7dc8c5
     spriteBone: []
     spriteOutline: []
@@ -525,16 +525,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: DoorTemplate_4
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.36, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 584
-      y: 485
-      width: 128
-      height: 128
+      x: 615
+      y: 489
+      width: 64
+      height: 121
     spriteID: ab503aaf01e209649bd652b5c310ed21
     spriteBone: []
     spriteOutline: []
@@ -552,7 +552,7 @@ ScriptedImporter:
     layerType: 0
     blendMode: 0
     cells:
-    - name: DoorTemplate
+    - name: Door_Horizontal
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
@@ -570,7 +570,7 @@ ScriptedImporter:
     layerType: 0
     blendMode: 0
     cells:
-    - name: DoorTemplate
+    - name: Door_Horizontal
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:

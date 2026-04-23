@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: DoorRight
   m_EditorClassIdentifier: 
   AnimationFrames:
-  - {fileID: 11400000, guid: efc20805482b76d45b77804de8602d09, type: 2}
-  - {fileID: 11400000, guid: 5222db5c96d3a3848be52a1724675e8b, type: 2}
-  - {fileID: 11400000, guid: 00d5a76d2d43f51418a4eb74c0130a02, type: 2}
-  - {fileID: 11400000, guid: f32a26c0cd37ebb4d8968447fb6ba09c, type: 2}
-  - {fileID: 11400000, guid: 61f499e096a9f844e966b227c65740d2, type: 2}
-  - {fileID: 11400000, guid: 963147258acfa5b48a1732ec26e5c87b, type: 2}
-  - {fileID: 11400000, guid: 6a2e43636a7894f4f9ca0dc994f31548, type: 2}
-  - {fileID: 11400000, guid: ce0f7567389d2874da905742140aa4d6, type: 2}
-  - {fileID: 11400000, guid: 77411f41e4263d3429f2a4aa605a74e7, type: 2}
-  - {fileID: 11400000, guid: 86dbb1d3d09eabf45a4fdd6f3aff2099, type: 2}
-  - {fileID: 11400000, guid: ca1e578bced941f469e538cd0fe5a6df, type: 2}
-  - {fileID: 11400000, guid: af7c16da4172d5149ba3cd2e559f501c, type: 2}
-  - {fileID: 11400000, guid: 897981ed5fd27db4f97f685149f291a4, type: 2}
-  - {fileID: 11400000, guid: 3d5146fde93e3f84f8cbd8e668c8549e, type: 2}
-  - {fileID: 11400000, guid: bd1d2e9abae98c44c9c41dbb85aca720, type: 2}
-  - {fileID: 11400000, guid: 2fdf65e7ff80d374b8fb5144cca9c065, type: 2}
-  - {fileID: 11400000, guid: 007036f780811284aae5fdabe5399fd9, type: 2}
-  - {fileID: 11400000, guid: 8413f42c3d6321b459109aecb8a477e4, type: 2}
-  - {fileID: 11400000, guid: 38e9536c62397024497bbe8618c5b572, type: 2}
+  - {fileID: 11400000, guid: f7d208363ef1a0849974ca6a8a9d75fa, type: 2}
+  - {fileID: 11400000, guid: a4297feaa65955c40a8ba2fa107952a9, type: 2}
+  - {fileID: 11400000, guid: 6833da63323cba8428e2f2d211cb2999, type: 2}
+  - {fileID: 11400000, guid: 7cb76b5eaa1fb8243a517287d930c375, type: 2}
+  - {fileID: 11400000, guid: 5a4370f5385e4c34bbed51b93ca74036, type: 2}
+  - {fileID: 11400000, guid: 564b2597ce3d8574da86b042983b2e3c, type: 2}
+  - {fileID: 11400000, guid: cc221e3706bf1b448a84ad6ecc38b025, type: 2}
+  - {fileID: 11400000, guid: fd46fa513b083544783ec2c681f7edd1, type: 2}
+  - {fileID: 11400000, guid: 43873f5732756f74bb6c4a3cb1632ecc, type: 2}
+  - {fileID: 11400000, guid: b71cf226fa0b3a941a4de84fdec20ec8, type: 2}
+  - {fileID: 11400000, guid: fbc6478979523394cb76effd3ba4125d, type: 2}
+  - {fileID: 11400000, guid: 5eac3e81ce7a2f843b1a592d66baeab8, type: 2}
+  - {fileID: 11400000, guid: 01e32fb6ccf5f6c4abf3b21db679829d, type: 2}
+  - {fileID: 11400000, guid: d5285d9bbc012a045a15427b7df45e53, type: 2}
+  - {fileID: 11400000, guid: 66012ce2f1bae184e92401b1b4383339, type: 2}
+  - {fileID: 11400000, guid: 08b32f2ac8d7fac46b0835e9fcd42035, type: 2}
+  - {fileID: 11400000, guid: d054d10bcceb981429add242629ff14f, type: 2}
+  - {fileID: 11400000, guid: 42a505e70aa048b45b30fb83f19ef9fb, type: 2}
+  - {fileID: 11400000, guid: 9b75bb311a22dbe498f12a94edd62809, type: 2}
   TimePerFrame: 0.01
   AnimationID: DoorLeft
