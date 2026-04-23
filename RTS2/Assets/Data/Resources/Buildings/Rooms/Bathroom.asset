@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bathroom
   m_EditorClassIdentifier: 
   RoomID: Bathroom
-  Wall: Wood
+  Wall: Concrete
   Door: Wood
   Floor: WhiteTiled
   Props:

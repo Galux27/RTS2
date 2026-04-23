@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: StorageRoom
   m_EditorClassIdentifier: 
   RoomID: StorageRoom
-  Wall: Wood
+  Wall: Concrete
   Door: Wood
   Floor: Wood
   Props:

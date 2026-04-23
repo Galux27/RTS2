@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 18771e9c4250bf74a8e7a6d99d1768b2, type: 3}
-  m_Name: DoorBackward
+  m_Name: DoorForwards
   m_EditorClassIdentifier: 
   AnimationFrames:
   - {fileID: 11400000, guid: 38e9536c62397024497bbe8618c5b572, type: 2}
@@ -33,4 +33,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5222db5c96d3a3848be52a1724675e8b, type: 2}
   - {fileID: 11400000, guid: efc20805482b76d45b77804de8602d09, type: 2}
   TimePerFrame: 0.01
-  AnimationID: DoorFwd
+  AnimationID: DoorBwd

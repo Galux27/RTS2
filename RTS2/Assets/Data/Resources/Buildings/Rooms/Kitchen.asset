@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Kitchen
   m_EditorClassIdentifier: 
   RoomID: Kitchen
-  Wall: Wood
+  Wall: Concrete
   Door: Wood
   Floor: BlackWhiteTiled
   Props:
