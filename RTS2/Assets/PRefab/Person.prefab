@@ -63,6 +63,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsBehaviourNull: 1
   behaviourName: 
+  BehaviourDebug: []
 --- !u!114 &5409879721580648943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +145,19 @@ MonoBehaviour:
   MySenses: {fileID: 0}
   MyRender: {fileID: 0}
   MyVisualStore: {fileID: 0}
+  LastNode:
+    gCost: 0
+    hCost: 0
+    obstacle: 0
+    X: 0
+    Y: 0
+    localX: 0
+    localY: 0
+    IsPassable: 0
+    neighbours: []
+    worldPos: {x: 0, y: 0, z: 0}
+    PathNodeGroupID: 0
+  hasLastNode: 0
   lastCoords: {x: 0, y: 0}
   HasBeenSwapped: 0
   HasMovedThisFrame: 0
@@ -392,8 +406,8 @@ Transform:
   m_GameObject: {fileID: 6811121207978078810}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.63, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1723682970823558292}
@@ -441,7 +455,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 11
+  m_SortingOrder: 16
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -452,4 +466,4 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 1
+  m_SpriteSortPoint: 0

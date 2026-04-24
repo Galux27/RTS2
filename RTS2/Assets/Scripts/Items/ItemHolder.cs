@@ -18,6 +18,7 @@ public class ItemHolder : MonoBehaviour
         CurrentlyHolding.transform.localPosition =new Vector3(0, 0);
         CurrentlyHolding.transform.localRotation = Quaternion.identity;
         CurrentlyHolding.transform.localScale = Vector3.one;
+        CurrentlyHolding.GetComponent<SpriteRenderer>().sortingOrder = 18;
         OnSetHolding?.Invoke(toHold);
     }
 
