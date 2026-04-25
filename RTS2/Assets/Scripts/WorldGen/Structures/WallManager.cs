@@ -244,18 +244,7 @@ public class WallManager
             }
         }
         WallSegment wall = null;
-        //for (int x1 = 0; x1 < width; x1++)
-        //{
-        //    for (int y1 = 0; y1 < height; y1++)
-        //    {
-        //        wall = WallHelpers.GetWallAtCoords(x1, y1);
-        //        if (wall.HasWall)
-        //        {
-        //            WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-        //            WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall, WorldTileContents.Door);
-        //        }
-        //    }
-        //}
+ 
 
         OnWallAdded?.Invoke(asCoords);
         for (int x1 = x - 1; x1 <= x + 1; x1++)
@@ -268,12 +257,17 @@ public class WallManager
                 }
                 wall = WallHelpers.GetWallAtCoords(x1, y1);
 
-                if (wall.HasWall&&toGetFrom.IsRendered)
+                if (wall.HasWall)
                 {
+                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
 
-                    toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
+                    if (toGetFrom.IsRendered)
+                    {
+
+                        toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
+                    }
+                    }
                 }
-            }
         }
         WorldController.Instance.SetTraversible(x, y, true,WorldTileContents.Door);
         WorldController.Instance.AddPathfindingModifier(x, y, new PathNodeModifier_Door());

@@ -109,7 +109,10 @@ public class BuildingGenerator : MonoBehaviour
 
                 if (cur.HasFloor)
                 {
-                    WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].UpdateTile(localCoords.x, localCoords.y, cur.FloorTile, ID);
+                    if (x < b.Width - 1 && y < b.Height - 1)
+                    {
+                        WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].UpdateTile(localCoords.x, localCoords.y, cur.FloorTile, ID);
+                    }
                 }
                 elevation += WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].ChunkTiles[localCoords.x, localCoords.y].Elevation.GetElevation();
                 count++;
@@ -799,6 +802,17 @@ public class GeneratedBuilding
 
     public RoomTemplate GetRoomToGenerate(BuildingTemplate template)
     {
+        int index = 0;
+        int count = 0;
+        while (count < 50)
+        {
+            index = Random.Range(0, template.PotentialRooms.Count);
+            if (NeedsMoreOfRoomType(template.PotentialRooms[index].roomTemplate, template))
+            {
+                return template.PotentialRooms[index].roomTemplate;
+            }
+            count++;
+        }
         for(int x = 0; x < template.PotentialRooms.Count; x++)
         {
             if (NeedsMoreOfRoomType(template.PotentialRooms[x].roomTemplate, template))
