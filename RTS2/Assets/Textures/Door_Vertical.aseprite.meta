@@ -147,7 +147,7 @@ ScriptedImporter:
   spriteSheetImportData:
   - name: Door_Vertical_0
     originalName: 
-    pivot: {x: 0.25, y: 0}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -168,13 +168,13 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_1
     originalName: 
-    pivot: {x: 0.22, y: 0}
+    pivot: {x: 0.47, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 201
+      x: 202
       y: 485
       width: 128
       height: 128
@@ -189,7 +189,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_2
     originalName: 
-    pivot: {x: 0.16, y: 0}
+    pivot: {x: 0.41, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -210,7 +210,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_3
     originalName: 
-    pivot: {x: 0.19, y: 0}
+    pivot: {x: 0.44, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -231,7 +231,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_4
     originalName: 
-    pivot: {x: 0.16, y: 0}
+    pivot: {x: 0.41, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -252,7 +252,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_5
     originalName: 
-    pivot: {x: 0.14, y: 0}
+    pivot: {x: 0.39, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -273,7 +273,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_6
     originalName: 
-    pivot: {x: 0.14, y: 0}
+    pivot: {x: 0.39, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -294,7 +294,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_7
     originalName: 
-    pivot: {x: 0.1, y: 0}
+    pivot: {x: 0.35, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -315,7 +315,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_8
     originalName: 
-    pivot: {x: 0.14, y: 0}
+    pivot: {x: 0.39, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -336,7 +336,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_9
     originalName: 
-    pivot: {x: 0.1, y: 0}
+    pivot: {x: 0.35, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -357,7 +357,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_10
     originalName: 
-    pivot: {x: 0.06, y: 0}
+    pivot: {x: 0.31, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -378,7 +378,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_11
     originalName: 
-    pivot: {x: 0.06, y: 0}
+    pivot: {x: 0.31, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -399,14 +399,14 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_12
     originalName: 
-    pivot: {x: 0.06, y: 0}
+    pivot: {x: 0.31, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
       x: 329
-      y: 229
+      y: 230
       width: 128
       height: 128
     spriteID: 8649f79bfddab7d419856fcc86ffcdab
@@ -420,7 +420,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_13
     originalName: 
-    pivot: {x: 0.08, y: 0}
+    pivot: {x: 0.33, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -441,7 +441,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_14
     originalName: 
-    pivot: {x: 0.05, y: 0}
+    pivot: {x: 0.3, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -462,7 +462,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_15
     originalName: 
-    pivot: {x: 0.04, y: 0}
+    pivot: {x: 0.29, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -483,7 +483,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_16
     originalName: 
-    pivot: {x: 0.07, y: 0}
+    pivot: {x: 0.32, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -504,7 +504,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_17
     originalName: 
-    pivot: {x: 0.03, y: 0}
+    pivot: {x: 0.28, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -525,7 +525,7 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: Door_Vertical_18
     originalName: 
-    pivot: {x: 0.07, y: 0}
+    pivot: {x: 0.32, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
