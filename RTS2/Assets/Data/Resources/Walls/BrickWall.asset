@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76ae18e6de6743a4a8a6a3da359e62e6, type: 3}
+  m_Name: BrickWall
+  m_EditorClassIdentifier: 
+  NoNeighbours: {fileID: 11400000, guid: 5af64bff4e1218443a19b89653d72ace, type: 2}
+  Left: {fileID: 11400000, guid: 901575f70bcc8d14592ec4b8de14eb11, type: 2}
+  Right: {fileID: 11400000, guid: 97c9a92b14e0f684e80f7824e6754728, type: 2}
+  Above: {fileID: 11400000, guid: 984dbe13025641e4fba8435a6ae37530, type: 2}
+  Below: {fileID: 11400000, guid: fed87eb81c060a948bb6fe6be561dbf6, type: 2}
+  LeftBelow: {fileID: 11400000, guid: 91d8977a8f750124eb99023950a91015, type: 2}
+  LeftAbove: {fileID: 11400000, guid: b0099aa381b51e14180ef6afbb9d5fb0, type: 2}
+  RightBelow: {fileID: 11400000, guid: 08812bdfc9236f54dbf95494ba5053ac, type: 2}
+  RightAbove: {fileID: 11400000, guid: 70d66ec2e1b2b0c4890e7c0eece51a97, type: 2}
+  LeftRight: {fileID: 11400000, guid: 0ca4667b9f27eb947b2c89af21b78d60, type: 2}
+  UpDown: {fileID: 11400000, guid: e51f7b42e88724248998b785b844c339, type: 2}
+  LeftRightBelow: {fileID: 11400000, guid: 65e71d8995510fa4690e51310e681c72, type: 2}
+  LeftRightAbove: {fileID: 11400000, guid: e1ed94d19bb39424c8ff0554cd638f2c, type: 2}
+  TopBottomLeft: {fileID: 11400000, guid: e07a4ff1cf259bf458e545951ae046b9, type: 2}
+  TopBottomRight: {fileID: 11400000, guid: 34a62481b7084db4faa00b1bf94233f6, type: 2}
+  Cross: {fileID: 11400000, guid: b36c2ad0a6a9cc142b81c6e70e9711ab, type: 2}
+  WallName: Brick
+  Health: 100
+  RequirementsToBuild:
+  - ResourceName: Construction Supplies
+    QuantityRequired: 3
