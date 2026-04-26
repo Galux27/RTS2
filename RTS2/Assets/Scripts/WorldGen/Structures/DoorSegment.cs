@@ -25,7 +25,6 @@ public class DoorSegment : WallSegment
     public void UnitEnterDoor(Unit onTile)
     {
         UnitsInTile++;
-        Debug.Log("Door: Unit " + onTile.gameObject.name + " entering door " + onTile.MySenses.Intelligence + " " + currentState.ToString() + " " + UnitsInTile);
         if (UnitCanUseDoor(onTile))
         {
             OpenDoor();
@@ -38,8 +37,6 @@ public class DoorSegment : WallSegment
         {
             UnitsInTile--;
         }
-        Debug.Log("Door: Unit " + onTile.gameObject.name + " xiting door " + onTile.MySenses.Intelligence + " " + currentState.ToString() + " " + UnitsInTile);
-
         if (UnitCanUseDoor(onTile)&& UnitsInTile==0)
         {
             CloseDoor();
@@ -48,6 +45,7 @@ public class DoorSegment : WallSegment
 
     public bool UnitCanUseDoor(Unit toUse)
     {
+        return true;
         return toUse.MySenses.Intelligence >= 50;
     }
 
@@ -63,8 +61,6 @@ public class DoorSegment : WallSegment
 
     public void OpenDoor()
     {
-        Debug.Log("Door: open door " + NeedToOpenDoor());
-
         if (NeedToOpenDoor()==false)
         {
             return;
@@ -76,7 +72,6 @@ public class DoorSegment : WallSegment
 
     public void CloseDoor()
     {
-        Debug.Log("Door: closing door " + NeedToCloseDoor());
         if (NeedToCloseDoor()==false)
         {
             return;

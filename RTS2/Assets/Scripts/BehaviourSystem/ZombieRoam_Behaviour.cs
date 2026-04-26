@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.LightTransport;
 
 public class ZombieRoam_Behaviour :BehaviourBase
 {
@@ -41,13 +42,12 @@ public class ZombieRoam_Behaviour :BehaviourBase
 
         return direction;
     }
+   
 
     public override void PerformBehaviour()
     {
-       
-            Vector2Int coords = this.unitToMove.MyCurrentChunk;
-            PathfindingNode node = Pathfinding.GetNodeFromPosition(unitToMove.transform.position+direction);
-            if (node!=null && node.IsPassable)
+
+        if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position,direction,unitToMove))
             {
                 unitToMove.MoveUnit(DirectionToTarget());
             }
@@ -58,13 +58,17 @@ public class ZombieRoam_Behaviour :BehaviourBase
             directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta,0.01f);
 
         if (directionChangeTimer > directionChangeTimerLength)
+        {
+            GenerateDirectionToRoam();
+            if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, direction, unitToMove))
             {
-                GenerateDirectionToRoam();
                 directionChangeTimer = 0f;
                 count++;
             }
-        
-    }
+
+            }
+
+        }
 
     public override DataToSerialize GetBehaviourSpecificData()
     {
