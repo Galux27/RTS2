@@ -165,7 +165,19 @@ public static class BehaviourUtilities
 
     public static Vector3 GetPositionAwayFromTarget(Vector3 posToAvoid)
     {
-        PathfindingNode runFrom = Pathfinding.GetNodeFromPosition(posToAvoid + new Vector3(Random.Range(-5, 5), Random.Range(-5, 5)) );
+
+        Vector3 TargetPos = posToAvoid + new Vector3(Random.Range(-5, 5), Random.Range(-5, 5));
+
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(TargetPos.x, TargetPos.y, out batchCoords, out chunkCoords, out tileCoords);
+
+        while (WorldChunkManager.Instance.DoesBatchExist(batchCoords) == false)
+        {
+            TargetPos = posToAvoid + new Vector3(Random.Range(-5, 5), Random.Range(-5, 5));
+
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(TargetPos.x, TargetPos.y, out batchCoords, out chunkCoords, out tileCoords);
+
+        }
+        PathfindingNode runFrom = Pathfinding.GetNodeFromPosition(TargetPos);
 
         return runFrom.worldPos;
 
