@@ -26,9 +26,9 @@ public static class UnitHelpers
                 }
                 for (int q = 0; q < toCheck[x].neighbours.Count; q++)
                 {
-                    if (checkedNodes.Contains(toCheck[x].neighbours[q]) == false /*&& toCheck[x].neighbours[q].IsPassable*/)
+                    if (checkedNodes.Contains(toCheck[x].neighbours[q].Node) == false /*&& toCheck[x].neighbours[q].IsPassable*/)
                     {
-                        newToCheck.Add(toCheck[x].neighbours[q]);
+                        newToCheck.Add(toCheck[x].neighbours[q].Node);
                     }
                 }
             }
@@ -59,8 +59,8 @@ public static class UnitHelpers
                 }
                 for(int q = 0; q < toCheck[x].neighbours.Count; q++)
                 {
-                    if (checkedNodes.Contains(toCheck[x].neighbours[q])==false && toCheck[x].neighbours[q].IsPassable) {
-                        newToCheck.Add(toCheck[x].neighbours[q]);
+                    if (checkedNodes.Contains(toCheck[x].neighbours[q].Node) ==false && toCheck[x].neighbours[q].Node.IsPassable && toCheck[x].neighbours[q].IsAccessable) {
+                        newToCheck.Add(toCheck[x].neighbours[q].Node);
                     }
                 }
             }

@@ -1176,7 +1176,7 @@ public class WorldChunkBatch : MonoBehaviour
                             pos = Chunks[x, y].PathfindingNodes[x1, y1].worldPos;
                             for (int i = 0; i < Chunks[x, y].PathfindingNodes[x1, y1].neighbours.Count; i++)
                             {
-                                Debug.DrawLine(pos, Chunks[x, y].PathfindingNodes[x1, y1].neighbours[i].worldPos);
+                                Debug.DrawLine(pos, Chunks[x, y].PathfindingNodes[x1, y1].neighbours[i].Node.worldPos);
                             }
                         }
                         Debug.DrawLine(Chunks[x, y].PathfindingNodes[0, 0].worldPos, Chunks[x, y].PathfindingNodes[1, 1].worldPos, Color.magenta);

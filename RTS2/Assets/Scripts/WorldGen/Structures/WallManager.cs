@@ -73,7 +73,10 @@ public class WallManager
     public void SetWall(int x, int y, WallTile wallTile, bool value = true)
     {
         WallSegment wall= WallHelpers.GetWallAtCoords(x, y);
-
+        if ( !value)
+        {
+            WorldController.Instance.SetTraversible(x, y,true, WorldTileContents.Wall);
+        }
         wall.SetHasWall(value) ;
         wall.SetWallType(wallTile);
         GenerateWallCollider(wall);
@@ -108,13 +111,20 @@ public class WallManager
             {
                 wall = WallHelpers.GetWallAtCoords(x, y);
 
-                if (wall!=null && wall.HasWall)
+                if (wall!=null )
                 {
+                    if (wall.HasWall)
+                    {
+                        WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+                        WorldController.Instance.SetTraversible(x, y, false, WorldTileContents.Wall);
+                    }else if (wall.HasDoor)
+                    {
 
-                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
-                    WorldController.Instance.SetTraversible(x, y, false,WorldTileContents.Wall);
+                        WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+                        WorldController.Instance.SetTraversible(x, y, false, WorldTileContents.Door);
+                    }
+                    }
                 }
-            }
         }
 
 
@@ -136,6 +146,7 @@ public class WallManager
         
         SetWall(x, y,toUse,false);
         WallSegment toRemove = WallHelpers.GetWallAtCoords(x, y);
+
         if (alterHealth)
         {
             toRemove.AdjustHealth(-9999);
@@ -299,7 +310,7 @@ public class WallManager
             wall = WallHelpers.GetWallAtCoords(x, y);
             if (wall.WallType == WallType.Wall)
             {
-                WorldController.Instance.SetTraversible(x, y, false, WorldTileContents.Door);
+                WorldController.Instance.SetTraversible(x, y, false, WorldTileContents.Wall);
             }
             WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
             OnWallAdded?.Invoke(asCoords);

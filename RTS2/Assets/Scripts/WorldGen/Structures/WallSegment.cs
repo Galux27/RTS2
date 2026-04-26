@@ -15,6 +15,9 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     public WallType WallType=WallType.None;
     public GameObject Collider;
    public WallTile baseWallType;
+    //Neighbouring wall directions
+    public bool up = false, down = false, left = false, right = false;
+
     public WallSegment(int x, int y,WallTile wallType,int localX,int localY)
     {
         Init(x,y,wallType,localX,localY);
@@ -54,6 +57,9 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
 
         }
     }
+
+    
+
 
     public void SetWallType(WallTile wallType)
     {

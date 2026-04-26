@@ -335,12 +335,12 @@ public class WorldChunk:ISerialize
                     checking.PathNodeGroupID = currentID;
                     for (int x = 0; x < checking.neighbours.Count; x++)
                     {
-                        if (!checkedNodes.Contains(checking.neighbours[x])
-                            && checking.neighbours[x].PathNodeGroupID == -1
-                            && checking.neighbours[x].IsPassable
+                        if (!checkedNodes.Contains(checking.neighbours[x].Node)
+                            && checking.neighbours[x].Node.PathNodeGroupID == -1
+                            && checking.neighbours[x].Node.IsPassable
                           )
                         {
-                            toCheck.Add(checking.neighbours[x]);
+                            toCheck.Add(checking.neighbours[x].Node);
                         }
                     }
                 }
@@ -379,12 +379,12 @@ public class WorldChunk:ISerialize
                             checking.PathNodeGroupID = currentID;
                             for (int x = 0; x < checking.neighbours.Count; x++)
                             {
-                                if (!checkedNodes.Contains(checking.neighbours[x])
-                                    && checking.neighbours[x].PathNodeGroupID == -1
-                                    && checking.neighbours[x].IsPassable
+                                if (!checkedNodes.Contains(checking.neighbours[x].Node)
+                                    && checking.neighbours[x].Node.PathNodeGroupID == -1
+                                    && checking.neighbours[x].Node.IsPassable
                                     )
                                 {
-                                    toCheck.Add(checking.neighbours[x]);
+                                    toCheck.Add(checking.neighbours[x].Node);
                                 }
                             }
                         }
@@ -441,22 +441,22 @@ public class WorldChunk:ISerialize
     {
         for (int x = 0; x < nodes.neighbours.Count; x++)
         {
-            if (nodes.neighbours[x].IsPassable 
-                && nodes.neighbours[x].PathNodeGroupID!=nodes.PathNodeGroupID 
-                && nodes.neighbours[x].PathNodeGroupID !=-1
-                && NodesInChunk.Contains(nodes.neighbours[x]))
+            if (nodes.neighbours[x].Node.IsPassable 
+                && nodes.neighbours[x].Node.PathNodeGroupID!=nodes.PathNodeGroupID 
+                && nodes.neighbours[x].Node.PathNodeGroupID !=-1
+                && NodesInChunk.Contains(nodes.neighbours[x].Node))
             {
-                if (nodes.neighbours[x].PathNodeGroupID < nodes.PathNodeGroupID)
+                if (nodes.neighbours[x].Node.PathNodeGroupID < nodes.PathNodeGroupID)
                 {
                     if (!swapsToMake.ContainsKey(nodes.PathNodeGroupID))
                     {
-                        swapsToMake.Add(nodes.PathNodeGroupID, nodes.neighbours[x].PathNodeGroupID);
+                        swapsToMake.Add(nodes.PathNodeGroupID, nodes.neighbours[x].Node.PathNodeGroupID);
                     }
                     else
                     {
-                        if (swapsToMake[nodes.PathNodeGroupID] < nodes.neighbours[x].PathNodeGroupID)
+                        if (swapsToMake[nodes.PathNodeGroupID] < nodes.neighbours[x].Node.PathNodeGroupID)
                         {
-                            swapsToMake[nodes.PathNodeGroupID] = nodes.neighbours[x].PathNodeGroupID;
+                            swapsToMake[nodes.PathNodeGroupID] = nodes.neighbours[x].Node.PathNodeGroupID;
                         }
                     }
                 }

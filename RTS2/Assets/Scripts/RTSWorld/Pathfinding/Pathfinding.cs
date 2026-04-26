@@ -11,6 +11,89 @@ public static class Pathfinding
   
 
     static int worldWidth, worldHeight;
+
+    static Vector2Int wallBatch, wallChunk, wallTile;
+    public static void UpdateNodeNeighboursBasedOnWall(int x,int y,bool traversible)
+    {
+       
+            PathfindingNode node = GetNodeFromCoords(x, y);
+        if (node == null)
+        {
+            return;
+        }
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y, out wallBatch, out wallChunk, out wallTile);
+        WallSegment tile = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y].WallSegments[wallTile.x, wallTile.y];
+        int index = -1,neighbourToMeIndex=-1;
+        PathfindingNode checking = null;
+        WallSegment compWall = null;
+   
+        if (tile.HasDoor||traversible)
+        {
+            index = node.GetNeighbourInDireciton(0, -1);
+            checking = node.neighbours[index].Node;
+            node.neighbours[index].IsAccessable = true;
+            neighbourToMeIndex = checking.GetNeighbourInDireciton(0, 1);
+            checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+
+
+            index = node.GetNeighbourInDireciton(0, 1);
+            checking = node.neighbours[index].Node;
+            node.neighbours[index].IsAccessable = true;
+            neighbourToMeIndex = checking.GetNeighbourInDireciton(0, -1);
+            checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+
+            index = node.GetNeighbourInDireciton(-1, 0);
+            checking = node.neighbours[index].Node;
+            node.neighbours[index].IsAccessable = true;
+            neighbourToMeIndex = checking.GetNeighbourInDireciton(1, 0);
+            checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+
+
+            index = node.GetNeighbourInDireciton(1, 0);
+            checking = node.neighbours[index].Node;
+            node.neighbours[index].IsAccessable = true;
+            neighbourToMeIndex = checking.GetNeighbourInDireciton(-1, 0);
+            checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+            return;
+        }
+        
+        if (tile.HasWall&&!traversible)
+        {
+
+           
+            index = node.GetNeighbourInDireciton(0, -1);
+            checking = node.neighbours[index].Node;
+            neighbourToMeIndex = checking.GetNeighbourInDireciton(0, 1);
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y - 1, out wallBatch, out wallChunk, out wallTile);
+            compWall = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y ].WallSegments[wallTile.x, wallTile.y];
+            if (compWall.HasDoor == false)
+            {
+                node.neighbours[index].IsAccessable = false;
+
+                checking.neighbours[neighbourToMeIndex].IsAccessable = false;
+            }
+
+            
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x - 1, y, out wallBatch, out wallChunk, out wallTile);
+            compWall = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y ].WallSegments[wallTile.x, wallTile.y];
+            if (compWall.HasDoor == false) { 
+                index = node.GetNeighbourInDireciton(-1, 0);
+            checking = node.neighbours[index].Node;
+            node.neighbours[index].IsAccessable = false;
+            neighbourToMeIndex = checking.GetNeighbourInDireciton(1, 0);
+            checking.neighbours[neighbourToMeIndex].IsAccessable = false;
+        }
+            
+
+             
+        }
+     
+       
+
+
+    }
+
+
     public static void UpdateNodeData(int x,int y,bool traversable)
     {
         PathfindingNode node = GetNodeFromCoords(x, y);
@@ -25,7 +108,7 @@ public static class Pathfinding
         {
             for(int q = 0; q< node.neighbours.Count; q++)
             {
-                if (node.neighbours[q].PathNodeGroupID != -1)
+                if (node.neighbours[q].Node.PathNodeGroupID != -1)
                 {
                     node.PathNodeGroupID = q;
                     return;
@@ -45,62 +128,7 @@ public static class Pathfinding
 
     }
 
-    public static List<PathfindingNode> GetNeighbours(PathfindingNode node)
-    {
-        List<PathfindingNode> retVal = new List<PathfindingNode>();
-        PathfindingNode toAdd = null;
-        //if (node.x == 0)
-        {
-            toAdd = GetNodeFromCoords(node.X - 1, node.Y);
-            if (toAdd != null)
-            {
-                retVal.Add(toAdd);
-                if (!toAdd.neighbours.Contains(node))
-                {
-                    toAdd.neighbours.Add(node);
-                }
-            }
-        }
-
-        //if (node.x == WorldChunkManager.ChunkSize - 1)
-        {
-            toAdd = GetNodeFromCoords(node.X + 1, node.Y);
-            if (toAdd != null)
-            {
-                retVal.Add(toAdd);
-                if (!toAdd.neighbours.Contains(node))
-                {
-                    toAdd.neighbours.Add(node);
-                }
-            }
-        }
-       // if (node.y == 0)
-        {
-            toAdd = GetNodeFromCoords(node.X, node.Y - 1);
-            if (toAdd != null)
-            {
-                retVal.Add(toAdd);
-                if (!toAdd.neighbours.Contains(node))
-                {
-                    toAdd.neighbours.Add(node);
-                }
-            }
-        }
-
-       // if (node.y == WorldChunkManager.ChunkSize - 1)
-        {
-            toAdd = GetNodeFromCoords(node.X, node.Y + 1);
-            if (toAdd != null)
-            {
-                retVal.Add(toAdd);
-                if (!toAdd.neighbours.Contains(node))
-                {
-                    toAdd.neighbours.Add(node);
-                }
-            }
-        }
-        return retVal;
-    }
+   
 
 
    public static Vector2Int GetCoordsFromPosition (Vector3 Position)
@@ -178,13 +206,13 @@ public static class Pathfinding
             bool found = false;
             for (int x = 0; x < retVal.neighbours.Count; x++)
             {
-                if (retVal.neighbours[x].PathNodeGroupID != -1 && IsNodeIDValid(retVal.neighbours[x].PathNodeGroupID))
+                if (retVal.neighbours[x].Node.PathNodeGroupID != -1 && IsNodeIDValid(retVal.neighbours[x].Node.PathNodeGroupID))
                 {
-                    dist2 = Vector3.Distance(retVal.neighbours[x].worldPos, Position);
+                    dist2 = Vector3.Distance(retVal.neighbours[x].Node.worldPos, Position);
                     if (dist2 < dist )
                     {
                         dist = dist2;
-                        retVal = retVal.neighbours[x];
+                        retVal = retVal.neighbours[x].Node;
                     }
                 }
             }
@@ -193,15 +221,15 @@ public static class Pathfinding
             {
                 for (int x = 0; x < retVal.neighbours.Count; x++)
                 {
-                    for (int y = 0; y < retVal.neighbours[x].neighbours.Count; y++)
+                    for (int y = 0; y < retVal.neighbours[x].Node.neighbours.Count; y++)
                     {
-                        if (retVal.neighbours[x].neighbours[y].PathNodeGroupID != -1 && IsNodeIDValid(retVal.neighbours[x].neighbours[y].PathNodeGroupID))
+                        if (retVal.neighbours[x].Node.neighbours[y].Node.PathNodeGroupID != -1 && IsNodeIDValid(retVal.neighbours[x].Node.neighbours[y].Node.PathNodeGroupID))
                         {
-                            dist2 = Vector3.Distance(retVal.neighbours[x].neighbours[y].worldPos, Position);
+                            dist2 = Vector3.Distance(retVal.neighbours[x].Node.neighbours[y].Node.worldPos, Position);
                             if (dist2 < dist)
                             {
                                 dist = dist2;
-                                retVal = retVal.neighbours[x].neighbours[y];
+                                retVal = retVal.neighbours[x].Node.neighbours[y].Node;
                             }
                         }
                     }
@@ -299,22 +327,22 @@ public static class Pathfinding
             }
 
             //adds neighbor nodes to openSet
-            foreach (PathfindingNode neighbour in node.neighbours)
+            foreach (PathfindingNeighbour neighbour in node.neighbours)
             {
-                if (neighbour.GetPassable(null) == false || closedSet.Contains(neighbour))
+                if (neighbour.Node.GetPassable(null) == false || closedSet.Contains(neighbour.Node)||neighbour.IsAccessable==false)
                 {
                     continue;
                 }
 
-                int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
-                if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                int newCostToNeighbour = node.gCost + GetDistance(node, neighbour.Node);
+                if (newCostToNeighbour < neighbour.Node.gCost || !openSet.Contains(neighbour.Node))
                 {
-                    neighbour.gCost = newCostToNeighbour;
-                    neighbour.hCost = GetDistance(neighbour, targetNode);
-                    neighbour.parent = node;
+                    neighbour.Node.gCost = newCostToNeighbour;
+                    neighbour.Node.hCost = GetDistance(neighbour.Node, targetNode);
+                    neighbour.Node.parent = node;
 
-                    if (!openSet.Contains(neighbour))
-                        openSet.Add(neighbour);
+                    if (!openSet.Contains(neighbour.Node))
+                        openSet.Add(neighbour.Node);
                 }
             }
         }
@@ -350,12 +378,9 @@ public static class Pathfinding
             +" dest node " + targetNode.worldPos.ToString());
         if (/*seekerNode.IsPassable == false ||*/ targetNode.IsPassable == false)
         {
-            Debug.Log("Path Failed: Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos + 
-                "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count+"|"+seekerNode.IsPassable+"|"+targetNode.IsPassable);
-
+            
             return null;
         }
-        Debug.Log("Getting path " + seekerNode.worldPos+"|"+targetNode.worldPos+"|"+seekerNode.neighbours.Contains(targetNode)+"|"+seekerNode.neighbours.Count+"|"+targetNode.neighbours.Count);
         openSet.Clear();
         closedSet.Clear();
         openSet.Add(seekerNode);
@@ -388,22 +413,22 @@ public static class Pathfinding
             }
 
             //adds neighbor nodes to openSet
-            foreach (PathfindingNode neighbour in node.neighbours)
+            foreach (PathfindingNeighbour neighbour in node.neighbours)
             {
-                if (neighbour.GetPassable(performing)==false || closedSet.Contains(neighbour))
+                if (neighbour.Node.GetPassable(performing)==false || closedSet.Contains(neighbour.Node)||neighbour.IsAccessable==false)
                 {
                     continue;
                 }
 
-                int newCostToNeighbour = node.GetGCost(performing) + GetDistance(node, neighbour);
-                if (newCostToNeighbour < neighbour.GetGCost(performing) || !openSet.Contains(neighbour))
+                int newCostToNeighbour = node.GetGCost(performing) + GetDistance(node, neighbour.Node);
+                if (newCostToNeighbour < neighbour.Node.GetGCost(performing) || !openSet.Contains(neighbour.Node))
                 {
-                    neighbour.gCost = newCostToNeighbour;
-                    neighbour.hCost = GetDistance(neighbour, targetNode);
-                    neighbour.parent = node;
+                    neighbour.Node.gCost = newCostToNeighbour;
+                    neighbour.Node.hCost = GetDistance(neighbour.Node, targetNode);
+                    neighbour.Node.parent = node;
 
-                    if (!openSet.Contains(neighbour))
-                        openSet.Add(neighbour);
+                    if (!openSet.Contains(neighbour.Node))
+                        openSet.Add(neighbour.Node);
                 }
             }
         }
@@ -435,13 +460,10 @@ public static class Pathfinding
         }
         if ( targetNode.IsPassable == false)
         {
-            Debug.Log("Getting path failed " + seekerNode.worldPos + "|" + targetNode.worldPos +
-                "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count + "|" + seekerNode.IsPassable + "|" + targetNode.IsPassable);
-
+         
             return null;
         }
         int count = 0;
-        Debug.Log("Getting path " + seekerNode.worldPos + "|" + targetNode.worldPos + "|" + seekerNode.neighbours.Contains(targetNode) + "|" + seekerNode.neighbours.Count + "|" + targetNode.neighbours.Count);
         openSet.Clear();
         closedSet.Clear();
         openSet.Add(seekerNode);
@@ -474,22 +496,22 @@ public static class Pathfinding
             }
 
             //adds neighbor nodes to openSet
-            foreach (PathfindingNode neighbour in node.neighbours)
+            foreach (PathfindingNeighbour neighbour in node.neighbours)
             {
-                if (neighbour.GetPassable(performing) == false || closedSet.Contains(neighbour))
+                if (neighbour.Node.GetPassable(performing) == false || closedSet.Contains(neighbour.Node)||neighbour.IsAccessable==false)
                 {
                     continue;
                 }
 
-                int newCostToNeighbour = node.GetGCost(performing) + GetDistance(node, neighbour);
-                if (newCostToNeighbour < neighbour.GetGCost(performing) || !openSet.Contains(neighbour))
+                int newCostToNeighbour = node.GetGCost(performing) + GetDistance(node, neighbour.Node);
+                if (newCostToNeighbour < neighbour.Node.GetGCost(performing) || !openSet.Contains(neighbour.Node))
                 {
-                    neighbour.gCost = newCostToNeighbour;
-                    neighbour.hCost = GetDistance(neighbour, targetNode);
-                    neighbour.parent = node;
+                    neighbour.Node.gCost = newCostToNeighbour;
+                    neighbour.Node.hCost = GetDistance(neighbour.Node, targetNode);
+                    neighbour.Node.parent = node;
 
-                    if (!openSet.Contains(neighbour))
-                        openSet.Add(neighbour);
+                    if (!openSet.Contains(neighbour.Node))
+                        openSet.Add(neighbour.Node);
                 }
             }
         }

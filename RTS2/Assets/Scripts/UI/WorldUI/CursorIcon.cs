@@ -20,14 +20,33 @@ public class CursorIcon : MonoBehaviour
     public Vector2Int CurrentChunkBatch, CurrentChunk, mouseCoords;
     private void Update()
     {
+
+        Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
+        Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
+
       
-        PathfindingNode node = Pathfinding.GetNodeFromPosition(this.transform.position,null,true);
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(cursorPos.x,cursorPos.y, out CurrentChunkBatch, out CurrentChunk, out mouseCoords);
+        WallSegment tile = WorldChunkManager.Instance.GetChunkBatch(CurrentChunkBatch).Chunks[CurrentChunk.x, CurrentChunk.y].WallSegments[mouseCoords.x, mouseCoords.y];
+        Color c = Color.magenta;
+        if (tile.HasDoor)
+        {
+            c = Color.blue;
+        }else if (tile.HasWall)
+        {
+            c = Color.green;
+        }
+        else
+        {
+            c = Color.red;
+        }
+
+        PathfindingNode node = WorldChunkManager.Instance.GetChunkBatch(CurrentChunkBatch).Chunks[CurrentChunk.x, CurrentChunk.y].PathfindingNodes[mouseCoords.x, mouseCoords.y];
         if (node != null)
         {
-            Debug.DrawLine(this.transform.position, node.worldPos, Color.blue);
+            Debug.DrawLine(cursorPos, node.worldPos, c);
             for(int x=0;x<node.neighbours.Count;x++)
             {
-                Debug.DrawLine(node.worldPos, node.neighbours[x].worldPos, Color.magenta);
+                Debug.DrawLine(node.worldPos, node.neighbours[x].Node.worldPos, c);
             }
         }
     }

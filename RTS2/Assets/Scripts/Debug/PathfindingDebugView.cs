@@ -62,9 +62,17 @@ public class PathfindingDebugView : MonoBehaviour
                 }
                 for(int i = 0; i < neighbours; i++)
                 {
-                    DrawLine(nodeToDraw.worldPos, nodeToDraw.neighbours[i].worldPos, GetColourForNode(nodeToDraw.neighbours[i]));
+                    if (nodeToDraw.neighbours[i].IsAccessable==false)
+                    {
+                        DrawLine(nodeToDraw.worldPos, nodeToDraw.neighbours[i].Node.worldPos, Color.red);
+                    }
+                    else
+                    {
+                        DrawLine(nodeToDraw.worldPos, nodeToDraw.neighbours[i].Node.worldPos, GetColourForNode(nodeToDraw.neighbours[i].Node));
+
+                    }
                 }
-            }
+                }
         }
     }
 
@@ -72,7 +80,7 @@ public class PathfindingDebugView : MonoBehaviour
     {
         if (node.IsPassable == false)
         {
-            return Color.red;
+            return Color.magenta;
         }
         else
         {

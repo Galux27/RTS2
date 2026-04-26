@@ -14,7 +14,7 @@ public class PathfindingNode
     public PathfindingNode parent;
     public bool IsPassable = true;
 
-    public List<PathfindingNode> neighbours;
+    public List<PathfindingNeighbour> neighbours;
     public Vector3 worldPos;
     //id to identify different sub groups in an id
     public int PathNodeGroupID = -1;
@@ -36,6 +36,21 @@ public class PathfindingNode
 
     }
 
+    public int GetNeighbourInDireciton(int xMod,int yMod)
+    {
+        Vector3 worldPos = this.worldPos+new Vector3(xMod,yMod);
+        for(int x = 0; x < neighbours.Count; x++)
+        {
+            if (neighbours[x].Node.worldPos == worldPos)
+            {
+                return x;
+            }
+        }
+
+
+        return -1;
+    }
+
     public void Init(int x, int y, bool passable)
     {
         X = x;
@@ -43,7 +58,7 @@ public class PathfindingNode
         IsPassable = passable;
         if (neighbours == null)
         {
-            neighbours = new List<PathfindingNode>(4);
+            neighbours = new List<PathfindingNeighbour>(4);
         }
     }
 
@@ -75,13 +90,28 @@ public class PathfindingNode
 
     }
 
+    public bool DoWeHaveLinkToNode(PathfindingNode node, out int index)
+    {
+        index = -1;
+        for(int x = 0; x < neighbours.Count; x++)
+        {
+            if (neighbours[x].Node== node)
+            {
+                index = x;
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     void AddNeighbour(PathfindingNode node)
     {
-        if (neighbours.Contains(node))
+        if (DoWeHaveLinkToNode(node,out int ind))
         {
             return;
         }
-        neighbours.Add(node);
+        neighbours.Add(new PathfindingNeighbour( node));
     }
 
     public void UpdatePassable(bool val)
@@ -90,9 +120,9 @@ public class PathfindingNode
         {
             for(int x=0;x<neighbours.Count;x++)
             {
-                if (neighbours[x].PathNodeGroupID != -1 && neighbours[x].IsPassable)
+                if (neighbours[x].Node.PathNodeGroupID != -1 && neighbours[x].Node.IsPassable && neighbours[x].IsAccessable)
                 {
-                    PathNodeGroupID = neighbours[x].PathNodeGroupID;
+                    PathNodeGroupID = neighbours[x].Node.PathNodeGroupID;
                     break;
                 }
             }
@@ -215,11 +245,12 @@ public class PathfindingNode
     }
     public void ManuallyRemoveNeighbour(PathfindingNode toRemove)
     {
-        if (neighbours == null || !neighbours.Contains(toRemove))
+        int index = -1;
+        if (neighbours == null || !DoWeHaveLinkToNode(toRemove, out index))
         {
             return;
         }
-        neighbours.Remove(toRemove);
+        neighbours.RemoveAt(index);
     }
 
 
@@ -227,10 +258,25 @@ public class PathfindingNode
     {
         if (neighbours == null)
         {
-            neighbours = new List<PathfindingNode>(4);
+            neighbours = new List<PathfindingNeighbour>(4);
         }
        
         AddNeighbour(toAdd);
        
+    }
+}
+
+public class PathfindingNeighbour
+{
+    public PathfindingNode Node;
+    public bool IsAccessable = true;
+    public PathfindingNeighbour(PathfindingNode node)
+    {
+        Node = node;
+    }
+
+    public void SetLinkAccessable(bool val)
+    {
+        IsAccessable = val;
     }
 }

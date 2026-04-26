@@ -120,7 +120,15 @@ public class WorldController : MonoBehaviour
     {
         if (WorldTileHelpers.UpdateTileTraversible(x, y, traversable, conents))
         {
-            Pathfinding.UpdateNodeData(x, y, traversable);
+            if (conents == WorldTileContents.Wall|| conents == WorldTileContents.Door)
+            {
+                Pathfinding.UpdateNodeNeighboursBasedOnWall(x, y,traversable);
+            }
+            else
+            {
+                Pathfinding.UpdateNodeData(x, y, traversable);
+
+            }
         }
    }
 

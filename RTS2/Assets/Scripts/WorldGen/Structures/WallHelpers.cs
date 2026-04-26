@@ -11,13 +11,17 @@ public static class WallHelpers
     const string DoorHorizontal = "DoorFwd", DoorVertical = "DoorLeft";
     public static TilemapAnimation GetDoorVisual(WallSegment segment, WallManager wallManager)
     {
-        bool up = false, down = false, left = false, right = false;
 
         if (segment.x > 0)
         {
             if (WallHelpers.GetWallAtCoords( segment.x - 1, segment.y).HasWall)
             {
-                left = true;
+                segment.left = true;
+            }
+            else
+            {
+                segment.left = false;
+
             }
         }
 
@@ -25,7 +29,12 @@ public static class WallHelpers
         {
             if (WallHelpers.GetWallAtCoords(segment.x + 1, segment.y).HasWall)
             {
-                right = true;
+                segment.right = true;
+            }
+            else
+            {
+                segment.right = false;
+
             }
         }
 
@@ -33,7 +42,12 @@ public static class WallHelpers
         {
             if (WallHelpers.GetWallAtCoords(segment.x, segment.y - 1).HasWall)
             {
-                down = true;
+                segment.down = true;
+            }
+            else
+            {
+                segment.down = false;
+
             }
         }
 
@@ -41,17 +55,22 @@ public static class WallHelpers
         {
             if (WallHelpers.GetWallAtCoords(segment.x, segment.y + 1).HasWall)
             {
-                up = true;
+                segment.up = true;
+            }
+            else
+            {
+                segment.up = false;
+
             }
         }
 
 
-        if (up || down)
+        if (segment.up || segment.down)
         {
             return TilemapAnimationController.Instance.Animations[DoorVertical];
 
         }
-        else if (left || right)
+        else if (segment.left || segment.right)
         {
             return TilemapAnimationController.Instance.Animations[DoorHorizontal];
 
@@ -181,14 +200,17 @@ public static class WallHelpers
 
     public static void CalculateTileType(ref WallSegment segment, WallManager wallManager,WallTile toGetTileFrom)
     {
-        bool up=false,down=false,left=false,right=false;
 
         WallSegment checking = WallHelpers.GetWallAtCoords(segment.x - 1, segment.y);
 
 
         if (checking!=null&&checking.HasWall)
         {
-            left = true;
+            segment.left = true;
+        }
+        else
+        {
+            segment.left = false;
         }
 
         checking = WallHelpers.GetWallAtCoords(segment.x + 1, segment.y);
@@ -196,7 +218,11 @@ public static class WallHelpers
 
         if (checking != null && checking.HasWall)
         {
-            right = true;
+            segment.right = true;
+        }
+        else
+        {
+            segment.right = false;
         }
         checking = WallHelpers.GetWallAtCoords(segment.x, segment.y - 1);
 
@@ -204,82 +230,89 @@ public static class WallHelpers
 
         if (checking != null && checking.HasWall)
         {
-            down = true;
+            segment.down = true;
+        }
+        else
+        {
+            segment.down = false;
         }
         checking = WallHelpers.GetWallAtCoords(segment.x, segment.y + 1);
 
 
         if (checking != null && checking.HasWall)
         {
-            up = true;
+            segment.up = true;
         }
-        
-        
+        else
+        {
+            segment.up = false;
+        }
 
 
-        if (up && down && left && right)
+
+        if (segment.up && segment.down && segment.left && segment.right)
         {
             segment.SetTile(toGetTileFrom.Cross);
         }
         else
         {
-            if (up && down && left)
+            if (segment.up && segment.down && segment.left)
             {
                 segment.SetTile(toGetTileFrom.TopBottomLeft);
             }
-            else if (up && down && right)
+            else if (segment.up && segment.down && segment.right)
             {
                 segment.SetTile(toGetTileFrom.TopBottomRight);
             }
-            else if (left && right && down)
+            else if (segment.left && segment.right && segment.down)
             {
                 segment.SetTile(toGetTileFrom.LeftRightBelow);
             }
-            else if (left && right && up)
+            else if (segment.left && segment.right && segment.up)
             {
                 segment.SetTile(toGetTileFrom.LeftRightAbove);
             }
             else
             {
-                if (left && down)
+                if (segment.left && segment.down)
                 {
                     segment.SetTile(toGetTileFrom.LeftBelow);
                 }
-                else if (left && up)
+                else if (segment.left && segment.up)
                 {
                     segment.SetTile(toGetTileFrom.LeftAbove);
                 }
-                else if(right && down)
+                else if(segment.right && segment.down)
                 {
                     segment.SetTile(toGetTileFrom.RightBelow);
                 }
-                else if(right && up)
+                else if(segment.right && segment.up)
                 {
                     segment.SetTile(toGetTileFrom.RightAbove);
                 }
-                else if(left && right)
+                else if(segment.left && segment.right)
                 {
                     segment.SetTile(toGetTileFrom.LeftRight);
                 }
-                else if(up && down)
+                else if(segment.up && segment.down)
                 {
                     segment.SetTile(toGetTileFrom.UpDown);
                 }
                 else
                 {
-                    if (left)
+                    if (segment.left)
                     {
                         segment.SetTile(toGetTileFrom.Left) ;
                     }
-                    else if (right)
+                    else if (segment.right)
                     {
                         segment.SetTile(toGetTileFrom.Right);
                     }
-                    else if (up)
+                    else if (segment.up)
                     {
                         segment.SetTile(toGetTileFrom.Above);
                     }
-                    else if (down)
+                    else if (segment.down)
                     {
                         segment.SetTile(toGetTileFrom.Below);
                     }

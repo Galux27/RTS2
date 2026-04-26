@@ -92,13 +92,13 @@ public class RoomGenerator
     public void GenerateLocationsForDoors(GeneratedRoom room)
     {
         Vector2Int coords = new Vector2Int();
-        coords.x=Random.Range(2,room.size.x-1);
+        coords.x=Random.Range(2,room.size.x-2);
         room.RoomTiles[coords.x, 0].IsValidForDoor = true ;
-        coords.x = Random.Range(2, room.size.x - 1);
+        coords.x = Random.Range(2, room.size.x - 2);
         room.RoomTiles[coords.x, room.size.y-1].IsValidForDoor = true;
-        coords.y = Random.Range(2, room.size.y - 1);
+        coords.y = Random.Range(2, room.size.y - 2);
         room.RoomTiles[0, coords.y].IsValidForDoor = true;
-        coords.y = Random.Range(2, room.size.y - 1);
+        coords.y = Random.Range(2, room.size.y - 2);
         room.RoomTiles[room.size.x-1, coords.y].IsValidForDoor = true;
         //BlockOffTilesNearDoor(coords.x, 0,room);
         //BlockOffTilesNearDoor(coords.x, room.size.y - 1, room);
