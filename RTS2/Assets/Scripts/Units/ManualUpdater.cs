@@ -18,8 +18,8 @@ public class ManualUpdater : MonoBehaviour
     }
 
     public Dictionary<UpdaterType,List<Updater>> updating=new Dictionary<UpdaterType, List<Updater>>();
-    const int MaxUserUpdatePerFrame = 200, MaxAIUpdatePerFrame = 50;
-    public int UserIndex = 0, AIIndex = 0;
+    const int MaxUserUpdatePerFrame = 200, MaxAIUpdatePerFrame = 40,MaxOtherUpdatesPerFrame=10;
+    public int UserIndex = 0, AIIndex = 0,OtherIndex=0;
     public void AddUpdater(Updater toAdd)
     {
         if (!updating.ContainsKey(toAdd.GetUpdaterType()))
@@ -51,24 +51,46 @@ public class ManualUpdater : MonoBehaviour
         {
             LimitedUpdateForType(UpdaterType.AI, MaxAIUpdatePerFrame, ref AIIndex);
         }
+
+        if (updating.ContainsKey(UpdaterType.Other))
+        {
+            LimitedUpdateForType(UpdaterType.Other, MaxOtherUpdatesPerFrame, ref OtherIndex);
+        }
     }
 
     void LimitedUpdateForType(UpdaterType type,int max,ref int index)
     {
         int updatesPerformed = 0;
         int updateLimit = Mathf.Min(updating[type].Count, max);
-        while (updatesPerformed < updateLimit)
+        int startingIndex = index;
+
+        bool isDone = false;
+
+        while (!isDone)
         {
+           
+
             if (index >= updating[type].Count)
             {
                 index = 0;
             }
-            updating[type][index].LimitedUpdate();
-            index++;
-            
-            updatesPerformed++;
+            isDone = updatesPerformed >= updateLimit || updatesPerformed > 1 && index == startingIndex;
+            if (!isDone)
+            {
+                try
+                {
+                    updating[type][index].LimitedUpdate();
+                }
+                catch(System.Exception e)
+                {
+                    Debug.LogError("Error updating " + type.ToString() + " error " + e.ToString());
+                }
+                    index++;
+
+                updatesPerformed++;
+            }
+            }
         }
-    }
 
     void PerformEveryFrameUpdate()
     {
@@ -76,7 +98,14 @@ public class ManualUpdater : MonoBehaviour
         {
             for(int x=0;x<item.Value.Count;x++)
             {
-                item.Value[x].OnEveryFrame();
+                try
+                {
+                    item.Value[x].OnEveryFrame();
+                }catch(System.Exception e)
+                {
+                   // Debug.LogError("Error updating every frame " + item.Key.ToString() + " error " + e.ToString());
+
+                }
             }
         }
     }

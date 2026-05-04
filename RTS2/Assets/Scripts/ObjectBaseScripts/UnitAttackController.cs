@@ -138,12 +138,7 @@ public class UnitAttackController : MonoBehaviour
             {
                 GameObject g = GameObjectPoolManager.Instance.GetObjectFromPool("ProjectileVisual");
                 g.GetComponent<ProjectileVisual>().DisplayProjectileVisual(this.transform.position, attacking.Position(), .25f);
-                //g.transform.position = this.transform.position;
-                //g.transform.rotation = Quaternion.identity;
-                //Projectile p = g.GetComponent<Projectile>();
-                //g.SetActive(true);
-                //p.SetMomentum(DirectionToTarget(positionOverride), 20f, this.GetComponent<Unit>(), 5f);
-                //p.SetCreator(this.GetComponent<Unit>());
+                ListeningEventController.Instance.AddListeningEvent(new ListeningEvent(this.transform.position, MaxRange, 3f));
 
                 attacking.AdjustHealth(-AttackDamage);
                 rangedTimer = RangedFireRate;
@@ -160,6 +155,8 @@ public class UnitAttackController : MonoBehaviour
         if (attackTimer <= 0)
         {
             attacking.AdjustHealth(-AttackDamage);
+            ListeningEventController.Instance.AddListeningEvent(new ListeningEvent(this.transform.position, 20f, 3f));
+
             attackTimer = AttackRate;
         }
     }
@@ -173,6 +170,8 @@ public class UnitAttackController : MonoBehaviour
             {
                 GameObject g = GameObjectPoolManager.Instance.GetObjectFromPool("ProjectileVisual");
                 g.GetComponent<ProjectileVisual>().DisplayProjectileVisual(this.transform.position, attacking.Position(), .25f);
+                ListeningEventController.Instance.AddListeningEvent(new ListeningEvent(this.transform.position, MaxRange, 3f));
+
                 attacking.GetComponent<Unit>().AttackUnit(AttackDamage, this.GetComponent<Unit>());
                 rangedTimer = RangedFireRate;
             }
@@ -188,6 +187,8 @@ public class UnitAttackController : MonoBehaviour
         if (attackTimer <= 0)
         {
             attacking.AttackUnit(AttackDamage,this.GetComponent<Unit>());
+            ListeningEventController.Instance.AddListeningEvent(new ListeningEvent(this.transform.position, 20f, 3f));
+
             attackTimer = AttackRate;
         }
     }

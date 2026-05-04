@@ -20,6 +20,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public UnitRenderer MyRender;
     public UnitVisualStore MyVisualStore;
     public PathfindingNode LastNode;
+    public TileRaycast myRaycast;
 
     public bool hasLastNode = false;
     public void SetLastNode(PathfindingNode node)

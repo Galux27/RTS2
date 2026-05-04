@@ -24,9 +24,10 @@ public class PathFollower
     List<PathfindingNode> pathfindingNodes;
     int currentIndex = 0;
     bool isPathDone = false;
+    Unit toFollow;
     public bool HasPath()
     {
-        return pathfindingNodes != null &&pathfindingNodes.Count > 0;
+        return pathfindingNodes != null &&pathfindingNodes.Count > 0&& currentIndex <= pathfindingNodes.Count-1;
     }
 
 
@@ -41,7 +42,11 @@ public class PathFollower
         {
             count = pathfindingNodes.Count;
         }
-        Debug.Log("Trying to get path between " + myPos + " to " + targetPos + " length " + count+" took "+ EasyStopwatch.GetStopwatchElapsedTime());
+       // Debug.Log("Trying to get path between " + myPos + " to " + targetPos + " length " + count+" took "+ EasyStopwatch.GetStopwatchElapsedTime());
+        toFollow = null;
+        currentIndex = GetIndexToStartAt(myPos);
+        isPathDone = false;
+
 
     }
 
@@ -56,9 +61,35 @@ public class PathFollower
         {
             count = pathfindingNodes.Count;
         }
-        Debug.Log("Trying to get path between " + myPos + " to " + targetPos + " length " + count);
+      //  Debug.Log("Trying to get path between " + myPos + " to " + targetPos + " length " + count);
+        toFollow = null;
+        currentIndex = GetIndexToStartAt(myPos);
+        isPathDone = false;
 
     }
+
+    public void SetTargetToFollow(Unit toFollow)
+    {
+        this.toFollow = toFollow;
+    }
+
+    public void GetPath(Vector3 myPos, Unit toPathTo)
+    {
+        EasyStopwatch.StartStopwatch();
+        pathfindingNodes = Pathfinding.FindPath(myPos, toPathTo.transform.position, followingPath);
+        EasyStopwatch.StopStopwatch();
+        int count = 0;
+
+        if (pathfindingNodes != null)
+        {
+            count = pathfindingNodes.Count;
+        }
+       // Debug.Log("Trying to get path between " + myPos + " to " + toPathTo.transform.position + " length " + count);
+        toFollow = toPathTo;
+        currentIndex = GetIndexToStartAt(myPos) ;
+        isPathDone = false;
+    }
+
 
     Vector3 GetCurrentNode()
     {
@@ -94,11 +125,47 @@ public class PathFollower
         }
     }
 
+    int GetIndexToStartAt(Vector3 curPos)
+    {
+         if (pathfindingNodes == null || pathfindingNodes.Count == 0)
+        {
+            return 0;
+        }
+        int retVal = 1;
+        float closest = 999999f, dist2 = 0f ;
+       
+        for(int x = 0; x < pathfindingNodes.Count; x++)
+        {
+            dist2 = Vector3.Distance(pathfindingNodes[x].worldPos, curPos);
+            if (dist2 < closest)
+            {
+                retVal = x;
+                closest = dist2;
+            }
+        }
 
+        return retVal;
+    }
+
+    void CheckToUpdatePathWithTargetMovement(Vector3 curPos)
+    {
+
+        if (pathfindingNodes==null|| pathfindingNodes.Count==0
+            || Vector3.Distance(toFollow.transform.position, pathfindingNodes[pathfindingNodes.Count - 1].worldPos) > 5f)
+        {
+            GetPath(curPos, toFollow);
+        }
+    }
+    //add summit to find out whats the nearest index in a new path and start at that
     public void OnUpdate(Vector3 curPos)
     {
-        if(!isPathDone && HasPath())
+        if (toFollow != null)
         {
+            CheckToUpdatePathWithTargetMovement(curPos);
+        }
+        if (!isPathDone && HasPath())
+        {
+           
             DoorCheck();
             if (Vector3.Distance(curPos, GetCurrentNode()) < MinDistToPoint)
             {

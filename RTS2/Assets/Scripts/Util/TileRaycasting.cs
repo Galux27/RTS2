@@ -30,7 +30,7 @@ public class TileRaycast
         batch = currentTile.Batch;
         chunk = currentTile.Chunk;
         coords = currentTile.Local;
-        Debug.Log("Starting tile raycast at " + batch + "," + chunk + "," + coords);
+       // Debug.Log("Starting tile raycast at " + batch + "," + chunk + "," + coords);
         TilesHit.Add(currentTile);
         increment = endPos - startPos;
         increment = increment.normalized;
@@ -64,7 +64,7 @@ public class TileRaycast
 
     public void PerformRaycast()
     {
-        EasyStopwatch.StartStopwatch();
+      //  EasyStopwatch.StartStopwatch();
         while (maxIterations > 0)
         {
             ProgressRaycast();
@@ -74,8 +74,8 @@ public class TileRaycast
                 break;
             }
         }
-        EasyStopwatch.StopStopwatch();
-        Debug.Log("Tile Raycast Took " + EasyStopwatch.GetStopwatchElapsedTime());
+      //  EasyStopwatch.StopStopwatch();
+    //    Debug.Log("Tile Raycast Took " + EasyStopwatch.GetStopwatchElapsedTime());
     }
 
     public bool IsValid()

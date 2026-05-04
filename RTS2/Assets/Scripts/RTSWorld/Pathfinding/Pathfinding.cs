@@ -1,6 +1,6 @@
 
 using System.Collections.Generic;
-
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
@@ -260,6 +260,10 @@ public static class Pathfinding
 
     static bool CanGetPath(PathfindingNode start,PathfindingNode end)
     {
+        if(start == null || end == null)
+        {
+            return false;
+        }
         return true;
         if (NodeIDPathing.PathNodeIDs.ContainsKey(start.PathNodeGroupID) == false || NodeIDPathing.PathNodeIDs.ContainsKey(end.PathNodeGroupID) == false)
         {
@@ -357,13 +361,18 @@ public static class Pathfinding
         PathfindingNode seekerNode = null;
         if (performing.LastNode != null)
         {
-            Debug.Log("Unit Path: start node is last node at " + performing.LastNode.worldPos);
+           // Debug.Log("Unit Path: start node is last node at " + performing.LastNode.worldPos);
             seekerNode = performing.LastNode;
+            if (seekerNode.worldPos == Vector3.zero)
+            {
+                seekerNode = GetNodeFromPosition(startPos, performing);
+
+            }
         }
         else
         {
             seekerNode = GetNodeFromCoords(performing.lastCoords.x, performing.lastCoords.y);
-            Debug.Log("Unit Path: start node is found node at " + seekerNode.worldPos);
+            //Debug.Log("Unit Path: start node is found node at " + seekerNode.worldPos);
 
         }
         //        GetNodeFromPosition(startPos,performing);
@@ -373,14 +382,16 @@ public static class Pathfinding
             Debug.Log("Path Fail: Could not get path between"+seekerNode.PathNodeGroupID+" and " + targetNode.PathNodeGroupID);
             return null;
         }
-        Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "
-            +seekerNode.worldPos.ToString()
-            +" dest node " + targetNode.worldPos.ToString());
+        //Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "
+        //    +seekerNode.worldPos.ToString()
+        //    +" dest node " + targetNode.worldPos.ToString());
         if (/*seekerNode.IsPassable == false ||*/ targetNode.IsPassable == false)
         {
             
             return null;
         }
+
+
         openSet.Clear();
         closedSet.Clear();
         openSet.Add(seekerNode);
@@ -406,16 +417,19 @@ public static class Pathfinding
             //If target found, retrace path
             if (node == targetNode)
             {
-                Debug.Log("Path Count " + count);
+               // Debug.Log("Path Count " + count);
 
                 return RetracePath(seekerNode, targetNode);
                 
             }
-
+            
             //adds neighbor nodes to openSet
             foreach (PathfindingNeighbour neighbour in node.neighbours)
             {
-                if (neighbour.Node.GetPassable(performing)==false || closedSet.Contains(neighbour.Node)||neighbour.IsAccessable==false)
+                if (neighbour.Node.GetPassable(performing)==false 
+                    || closedSet.Contains(neighbour.Node)
+                    ||neighbour.IsAccessable==false
+                    ||neighbour.Node==null)
                 {
                     continue;
                 }
@@ -427,7 +441,7 @@ public static class Pathfinding
                     neighbour.Node.hCost = GetDistance(neighbour.Node, targetNode);
                     neighbour.Node.parent = node;
 
-                    if (!openSet.Contains(neighbour.Node))
+                    if (!openSet.Contains(neighbour.Node) && neighbour.Node!=null && neighbour.Node.neighbours!=null)
                         openSet.Add(neighbour.Node);
                 }
             }
@@ -441,18 +455,18 @@ public static class Pathfinding
         PathfindingNode seekerNode = null;
         if (performing.hasLastNode)
         {
-            Debug.Log("Unit Path: start node is last node at " + performing.LastNode.worldPos+","+performing.LastNode.IsPassable);
+            //Debug.Log("Unit Path: start node is last node at " + performing.LastNode.worldPos+","+performing.LastNode.IsPassable);
             seekerNode = performing.LastNode;
         }
         else
         {
             seekerNode = GetNodeFromPosition(startPos) ;
-            Debug.Log("Unit Path: start node is found node at " + seekerNode.worldPos);
+            //Debug.Log("Unit Path: start node is found node at " + seekerNode.worldPos);
 
         }
-        Debug.Log("Unit Path: Getting Path from " + startPos + " to " + targetNode.worldPos + " start node "
-            + seekerNode.worldPos.ToString()
-            + " dest node " + targetNode.worldPos.ToString());
+        //Debug.Log("Unit Path: Getting Path from " + startPos + " to " + targetNode.worldPos + " start node "
+        //    + seekerNode.worldPos.ToString()
+        //    + " dest node " + targetNode.worldPos.ToString());
 
         if (!CanGetPath(seekerNode, targetNode))
         {

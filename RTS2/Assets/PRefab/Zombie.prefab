@@ -126,11 +126,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: Sight
-      value: 50
+      value: 28.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: Memory
+      value: 26.6
       objectReference: {fileID: 0}
     - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: Hearing
-      value: 50
+      value: 28.1
       objectReference: {fileID: 0}
     - target: {fileID: 5187675372641942538, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: Dexterity
@@ -182,9 +186,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3589492439018105632, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1415881333134911718}
-    - targetCorrespondingSourceObject: {fileID: 3589492439018105632, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: -7279718248699524055}
   m_SourcePrefab: {fileID: 100100000, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
 --- !u!1 &1965254852317116142 stripped
 GameObject:
@@ -223,26 +224,9 @@ MonoBehaviour:
     localX: 0
     localY: 0
     IsPassable: 0
-    neighbours: []
     worldPos: {x: 0, y: 0, z: 0}
     PathNodeGroupID: 0
   hasLastNode: 0
   lastCoords: {x: 0, y: 0}
   HasBeenSwapped: 0
   HasMovedThisFrame: 0
---- !u!114 &-7279718248699524055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1965254852317116142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5be668d16b7a3274f81db7d5a21646a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Sight: 10
-  Hearing: 50
-  Intelligence: 0
-  Dexterity: 0

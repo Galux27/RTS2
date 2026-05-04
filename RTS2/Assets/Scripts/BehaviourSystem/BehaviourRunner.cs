@@ -55,9 +55,9 @@ public class BehaviourRunner : MonoBehaviour, Updater
             myDecisionMaker.OverrideBehaviour(value);
         }
     }
-    public bool IsBehaviourNull = true;
+    public bool IsBehaviourNull = true,breakpointBeforeRun=false;
     public string behaviourName;
-    public List<string> BehaviourDebug;
+    public List<string> BehaviourDebug,BehaviourDecisionDebug;
     void OnBehaviourComplete()
     {
 
@@ -89,7 +89,10 @@ public class BehaviourRunner : MonoBehaviour, Updater
     public void OnEveryFrame()
     {
         IsBehaviourNull = CurrentBehaviour == null;
-      
+        if (breakpointBeforeRun)
+        {
+            Debug.Log("Breakpoint trigger");
+        }
         if (CurrentBehaviour != null)
         {
             if (CurrentBehaviour != null && CurrentBehaviour.CanPerformBehaviour())
@@ -103,14 +106,23 @@ public class BehaviourRunner : MonoBehaviour, Updater
 
                 OnBehaviourComplete();
             }
-            if (CurrentBehaviour != null)
-            {
-                BehaviourDebug = CurrentBehaviour.GetDebugData();
-            }
-            else
-            {
-                BehaviourDebug = new List<string> {"Null" };
-            }
+            //if (CurrentBehaviour != null)
+            //{
+            //    BehaviourDebug = CurrentBehaviour.GetDebugData();
+            //}
+            //else
+            //{
+            //    BehaviourDebug = new List<string> {"Null" };
+            //}
+
+            //if(myDecisionMaker != null)
+            //{
+            //    BehaviourDecisionDebug = myDecisionMaker.DecisionMakerDebug(this.transform.position);
+            //}
+            //else
+            //{
+            //    BehaviourDecisionDebug = new List<string> { "Null" };
+            //}
         }
     }
 
@@ -123,7 +135,10 @@ public class BehaviourRunner : MonoBehaviour, Updater
             behaviourName = CurrentBehaviour.GetType().ToString();
         }
         if (myDecisionMaker == null) { return; }
-        if (CurrentBehaviour == null)
+        if (breakpointBeforeRun)
+        {
+            Debug.Log("Breakpoint trigger");
+        }
         {
             myDecisionMaker.PerformBehaivourUpdate(UnitPerforming);
         }
