@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 public static class TileRaycasting 
 {
-    
+    public static List<WorldTileContents> AllFilter = new List<WorldTileContents>() { WorldTileContents.EnvObject, WorldTileContents.Wall, WorldTileContents.Door };
+    public static List<WorldTileContents> WallDoorFilter = new List<WorldTileContents>() {  WorldTileContents.Wall, WorldTileContents.Door };
+
 }
 
 public class TileRaycast
@@ -17,20 +20,28 @@ public class TileRaycast
     public List<WorldTile> TilesHit = new List<WorldTile>();
     int maxIterations = 0;
     Vector3 startPosCache, endPosCache;
-    public TileRaycast(Vector3 startPos,Vector3 endPos)
+    public TileRaycast(Vector3 startPos, Vector3 endPos)
     {
-       InitRaycast(startPos, endPos);
+        SetFilter(TileRaycasting.AllFilter);
+        InitRaycast(startPos, endPos);
+
+    }
+    int filterLength = 0;
+    public void SetFilter(List<WorldTileContents> Filter)
+    {
+        this.Filter = Filter;
+        filterLength = Filter.Count;
     }
 
-    public void InitRaycast(Vector3 startPos,Vector3 endPos)
+    public void InitRaycast(Vector3 startPos, Vector3 endPos)
     {
-        startPosCache = startPos; endPosCache=endPos;
+        startPosCache = startPos; endPosCache = endPos;
         currentTile = Pathfinding.GetTileFromPosition(startPos);
         // WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out batch, out chunk, out coords);
         batch = currentTile.Batch;
         chunk = currentTile.Chunk;
         coords = currentTile.Local;
-       // Debug.Log("Starting tile raycast at " + batch + "," + chunk + "," + coords);
+        // Debug.Log("Starting tile raycast at " + batch + "," + chunk + "," + coords);
         TilesHit.Add(currentTile);
         increment = endPos - startPos;
         increment = increment.normalized;
@@ -48,9 +59,9 @@ public class TileRaycast
     }
 
 
-    public void RaycastCheck(Vector3 startPos,Vector3 endPos)
+    public void RaycastCheck(Vector3 startPos, Vector3 endPos)
     {
-        if(DoesRaycastNeedReinitializing(startPos, endPos))
+        if (DoesRaycastNeedReinitializing(startPos, endPos))
         {
             InitRaycast(startPos, endPos);
             PerformRaycast();
@@ -64,7 +75,6 @@ public class TileRaycast
 
     public void PerformRaycast()
     {
-      //  EasyStopwatch.StartStopwatch();
         while (maxIterations > 0)
         {
             ProgressRaycast();
@@ -74,8 +84,6 @@ public class TileRaycast
                 break;
             }
         }
-      //  EasyStopwatch.StopStopwatch();
-    //    Debug.Log("Tile Raycast Took " + EasyStopwatch.GetStopwatchElapsedTime());
     }
 
     public bool IsValid()
@@ -88,13 +96,26 @@ public class TileRaycast
         return TilesHit[TilesHit.Count - 1];
     }
 
+
+    List<WorldTileContents> Filter;
+
     public bool IsLastTileValid(WorldTile tile)
     {
-        //check for world tile
-        if (tile.ContainsContents(WorldTileContents.EnvObject)|| tile.ContainsContents(WorldTileContents.Wall)|| tile.ContainsContents(WorldTileContents.Door))
+        if (Filter != null)
         {
-            return false;
+            for(int x = 0; x < filterLength; x++)
+            {
+                if (tile.ContainsContents(Filter[x]))
+                {
+                    return false;
+                }
+            }
         }
+        //check for world tile
+        //if (tile.ContainsContents(WorldTileContents.EnvObject)|| tile.ContainsContents(WorldTileContents.Wall)|| tile.ContainsContents(WorldTileContents.Door))
+        //{
+        //    return false;
+        //}
         return true;
     }
 

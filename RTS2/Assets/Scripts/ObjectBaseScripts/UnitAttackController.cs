@@ -78,6 +78,7 @@ public class UnitAttackController : MonoBehaviour
             if (AttackRaycast == null)
             {
                 AttackRaycast = new TileRaycast(this.transform.position, pos);
+                AttackRaycast.SetFilter(TileRaycasting.WallDoorFilter);
             }
             AttackRaycast.RaycastCheck(this.transform.position, pos);
             if (AttackRaycast.DidRaycastHitEnd(pos))
