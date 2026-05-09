@@ -280,7 +280,7 @@ public static class Pathfinding
         return NodeIDPathing.GetPath(start, end).Count > 0;
     }
 
-
+    public static int debugcount = 0;
     /// <summary>
     /// Finds a path without considering the unit performing the path
     /// Used in calculating whether a building is enclosed or not
@@ -290,6 +290,7 @@ public static class Pathfinding
     /// <returns></returns>
     public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos)
     {
+        debugcount = 0;
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos);
         PathfindingNode targetNode = GetNodeFromPosition(targetPos);
@@ -329,7 +330,7 @@ public static class Pathfinding
                 return RetracePath(seekerNode, targetNode);
 
             }
-
+            debugcount++;
             //adds neighbor nodes to openSet
             foreach (PathfindingNeighbour neighbour in node.neighbours)
             {

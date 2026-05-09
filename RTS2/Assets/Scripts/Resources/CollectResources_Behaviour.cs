@@ -13,7 +13,8 @@ public class CollectResources_Behaviour : BehaviourBase
     {
         base.InitBehaviour(toPerform);
         toCollect = obj;
-        follower = new PathFollower(toPerform);
+        follower = toPerform.GetFollower();
+        follower.ResetFollower();
 
 
         TargetPosition = toCollect.transform.position;

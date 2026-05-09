@@ -46,6 +46,16 @@ public class PathfindingDebugView : MonoBehaviour
             }
         }
     }
+
+    Color GetColourFromFeatures(WorldChunk chunk,Vector2Int coords)
+    {
+        if (chunk.ChunkTiles[coords.x, coords.y].TileContents.Contains(WorldTileContents.Wall))
+        {
+            return Color.blue;
+        }
+        return Color.red;
+    }
+
     void DrawPathfindingForChunk(WorldChunk toDraw)
     {
         int length = toDraw.PathfindingNodes.GetLength(0);
@@ -64,11 +74,11 @@ public class PathfindingDebugView : MonoBehaviour
                 {
                     if (nodeToDraw.neighbours[i].IsAccessable==false)
                     {
-                        DrawLine(nodeToDraw.worldPos, nodeToDraw.neighbours[i].Node.worldPos, Color.red);
+                        DrawLine(nodeToDraw.worldPos, nodeToDraw.neighbours[i].Node.worldPos,GetColourFromFeatures(toDraw,new Vector2Int(nodeToDraw.localX,nodeToDraw.localY)));
                     }
                     else
                     {
-                        DrawLine(nodeToDraw.worldPos, nodeToDraw.neighbours[i].Node.worldPos, GetColourForNode(nodeToDraw.neighbours[i].Node));
+                        DrawLine(nodeToDraw.worldPos, nodeToDraw.neighbours[i].Node.worldPos, GetColourFromFeatures(toDraw, new Vector2Int(nodeToDraw.localX, nodeToDraw.localY)));
 
                     }
                 }

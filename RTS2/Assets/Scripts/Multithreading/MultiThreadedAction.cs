@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System;
 using System.Threading;
 using UnityEngine;
+using System.Runtime.CompilerServices;
+
 public class MultiThreadedAction
 {
     public Action ToPerform,OnComplete;
@@ -14,6 +16,12 @@ public class MultiThreadedAction
         AutoComplete=autoComplete;
     }
     Thread MyThread;
+
+    public bool Started()
+    {
+        return MyThread != null;
+    }
+
     public void StartAction()
     {
         MyThread = new Thread(PerformAction);
@@ -38,8 +46,9 @@ public class MultiThreadedAction
         }
     }
 
-    public void CheckForCompletion()
+    public virtual void CheckForCompletion()
     {
+        
         if (IsComplete)
         {
             MultiThreadedManager.Instance.OnActionComplete(this);
@@ -53,4 +62,24 @@ public class MultiThreadedAction
        
     }
 
+}
+
+public class PathfindingMultiThreadedAction : MultiThreadedAction
+{
+    public PathfindingMultiThreadedAction(Action action, Action onComplete, bool autoComplete = false):base(action, onComplete, autoComplete)
+    {
+      
+    }
+
+    public override void CheckForCompletion()
+    {
+        if (!Started())
+        {
+            StartAction();
+        }
+        if (IsComplete)
+        {
+            MultiThreadedManager.Instance.OnActionComplete(this);
+        }
+    }
 }

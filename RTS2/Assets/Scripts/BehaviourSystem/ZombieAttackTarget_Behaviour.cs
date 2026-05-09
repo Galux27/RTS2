@@ -13,7 +13,8 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
     {
         InitBehaviour(toPerform);
         this.objectToFollow = objectToFollow;
-        follower = new PathFollower(toPerform);
+        follower = toPerform.GetFollower();
+        follower.ResetFollower();
         follower.SetTargetToFollow(objectToFollow);
         healthOfUnitAttacking =objectToFollow.MyHealth;
         toPerform.myRaycast = new TileRaycast(toPerform.transform.position, objectToFollow.transform.position);
@@ -126,7 +127,7 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
                 else
                 {
                     
-                        if (GameTime.Instance.InGameTime - lastBackupPathTime > 5f)
+                        if (GameTime.Instance.InGameTime - lastBackupPathTime > 5f&&!follower.IsWaitingOnPath())
                         {
                             follower.GetPath(unitToMove.transform.position, objectToFollow);
                             lastBackupPathTime = GameTime.Instance.InGameTime;

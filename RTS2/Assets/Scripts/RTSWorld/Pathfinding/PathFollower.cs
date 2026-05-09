@@ -30,21 +30,52 @@ public class PathFollower
         return pathfindingNodes != null &&pathfindingNodes.Count > 0&& currentIndex <= pathfindingNodes.Count-1;
     }
 
+    public bool IsWaitingOnPath()
+    {
+        return gettingPath != null;
+    }
+
+    public void ResetFollower()
+    {
+        if (pathfindingNodes != null)
+        {
+            pathfindingNodes.Clear();
+        }
+            currentIndex = 0;
+    }
+    PathfindingMultiThreadedAction gettingPath = null;
+    void ClearLastPathRequest()
+    {
+        if (gettingPath != null)
+        {
+            MultiThreadedManager.Instance.RemovePathRequest(gettingPath);
+        }
+    }
+
+
+    void GetPathToPosition()
+    {
+        this.pathfindingNodes = Pathfinding.FindPath(startPos, endPos, followingPath); 
+        gettingPath=null;
+    }
+
+    Vector3 startPos;
+    PathfindingNode targetNode;
+    Vector3 endPos;
+    public void GetPathToNode()
+    {
+        this.pathfindingNodes = Pathfinding.FindPath(startPos, targetNode, followingPath);
+        gettingPath = null;
+
+    }
 
     public void GetPath(Vector3 myPos, PathfindingNode targetPos)
     {
-        EasyStopwatch.StartStopwatch();
-        pathfindingNodes = Pathfinding.FindPath(myPos, targetPos, followingPath);
-        EasyStopwatch.StopStopwatch();
-        int count = 0;
-
-        if (pathfindingNodes != null)
-        {
-            count = pathfindingNodes.Count;
-        }
-       // Debug.Log("Trying to get path between " + myPos + " to " + targetPos + " length " + count+" took "+ EasyStopwatch.GetStopwatchElapsedTime());
-        toFollow = null;
-        currentIndex = GetIndexToStartAt(myPos);
+        ClearLastPathRequest();
+        this.startPos = myPos;
+        this.targetNode = targetPos;
+        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToNode());
+        currentIndex = 0;
         isPathDone = false;
 
 
@@ -52,18 +83,12 @@ public class PathFollower
 
     public void GetPath(Vector3 myPos,Vector3 targetPos)
     {
-        EasyStopwatch.StartStopwatch();
-        pathfindingNodes = Pathfinding.FindPath(myPos, targetPos,followingPath);
-        EasyStopwatch.StopStopwatch();
-        int count = 0;
+        ClearLastPathRequest();
 
-        if (pathfindingNodes != null)
-        {
-            count = pathfindingNodes.Count;
-        }
-      //  Debug.Log("Trying to get path between " + myPos + " to " + targetPos + " length " + count);
-        toFollow = null;
-        currentIndex = GetIndexToStartAt(myPos);
+        this.startPos = myPos;
+        this.endPos = targetPos;
+        gettingPath=MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition());
+        currentIndex = 0;
         isPathDone = false;
 
     }
@@ -75,19 +100,15 @@ public class PathFollower
 
     public void GetPath(Vector3 myPos, Unit toPathTo)
     {
-        EasyStopwatch.StartStopwatch();
-        pathfindingNodes = Pathfinding.FindPath(myPos, toPathTo.transform.position, followingPath);
-        EasyStopwatch.StopStopwatch();
-        int count = 0;
+        ClearLastPathRequest();
 
-        if (pathfindingNodes != null)
-        {
-            count = pathfindingNodes.Count;
-        }
-       // Debug.Log("Trying to get path between " + myPos + " to " + toPathTo.transform.position + " length " + count);
+        this.startPos = myPos;
+        this.endPos = toPathTo.Position();
         toFollow = toPathTo;
-        currentIndex = GetIndexToStartAt(myPos) ;
+        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition());
+        currentIndex = 0;
         isPathDone = false;
+        
     }
 
 
@@ -153,7 +174,10 @@ public class PathFollower
         if (pathfindingNodes==null|| pathfindingNodes.Count==0
             || Vector3.Distance(toFollow.transform.position, pathfindingNodes[pathfindingNodes.Count - 1].worldPos) > 5f)
         {
-            GetPath(curPos, toFollow);
+            if (!IsWaitingOnPath())
+            {
+                GetPath(curPos, toFollow);
+            }
         }
     }
     //add summit to find out whats the nearest index in a new path and start at that

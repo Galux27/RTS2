@@ -14,7 +14,8 @@ public class TransferResourcesToContainer_Behaviour : BehaviourBase
         base.InitBehaviour(toPerform);
         toPutIn= targetInventory;
         transferingFrom=toPerform.GetComponent<Inventory>();
-        follower = new PathFollower(toPerform);
+        follower = toPerform.GetFollower();
+        follower.ResetFollower();
         TargetPosition =toPutIn.transform.position;
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }

@@ -476,7 +476,7 @@ public static class WallHelpers
         }
         }
 
-        public static WallSegment GetWallAtCoords(Vector2Int coords)
+     public static WallSegment GetWallAtCoords(Vector2Int coords)
     {
         Vector2Int batch = Vector2Int.zero;
         Vector2Int chunk = Vector2Int.zero;

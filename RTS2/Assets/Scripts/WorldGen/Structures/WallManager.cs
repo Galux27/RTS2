@@ -68,15 +68,40 @@ public class WallManager
             ds.UnitExitDoor(unit);
         }
     }
-
+    static Vector2Int batch = Vector2Int.zero;
+    static  Vector2Int chunk = Vector2Int.zero;
+    static  Vector2Int local = Vector2Int.zero;
 
     public void SetWall(int x, int y, WallTile wallTile, bool value = true)
     {
-        WallSegment wall= WallHelpers.GetWallAtCoords(x, y);
+       
+
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y, out batch, out chunk, out local);
+        WallSegment wall= WorldChunkManager.Instance.GetChunkBatch(batch).Chunks[chunk.x, chunk.y].WallSegments[local.x,local.y];
+        WorldTile tile = WorldChunkManager.Instance.GetChunkBatch(batch).Chunks[chunk.x, chunk.y].ChunkTiles[local.x, local.y];
         if ( !value)
         {
             WorldController.Instance.SetTraversible(x, y,true, WorldTileContents.Wall);
         }
+
+        //if (toAdd != WorldTileContents.None)
+        {
+            if (!value)
+            {
+                tile.AddContents(WorldTileContents.Wall);
+            }
+            else
+            {
+
+                tile.RemoveContents(WorldTileContents.Wall);
+                if (tile.ContainsContents(WorldTileContents.Door))
+                {
+                    tile.RemoveContents(WorldTileContents.Door);
+                }
+            }
+
+        }
+
         wall.SetHasWall(value) ;
         wall.SetWallType(wallTile);
         GenerateWallCollider(wall);
@@ -255,7 +280,18 @@ public class WallManager
             }
         }
         WallSegment wall = null;
- 
+        wall = WorldChunkManager.Instance.GetChunkBatch(batch).Chunks[chunk.x, chunk.y].WallSegments[local.x, local.y];
+        WorldTile tile = WorldChunkManager.Instance.GetChunkBatch(batch).Chunks[chunk.x, chunk.y].ChunkTiles[local.x, local.y];
+       
+
+        //if (toAdd != WorldTileContents.None)
+        {
+           
+                tile.AddContents(WorldTileContents.Door);
+            
+           
+
+        }
 
         OnWallAdded?.Invoke(asCoords);
         for (int x1 = x - 1; x1 <= x + 1; x1++)

@@ -12,7 +12,8 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
     {
         base.InitBehaviour(toPerform);
         toDeconstruct = obj;
-        follower = new PathFollower(toPerform);
+        follower = toPerform.GetFollower();
+        follower.ResetFollower();
         TargetPosition = toDeconstruct.Position();
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
@@ -20,7 +21,8 @@ public class HumanBehaviour_DeconstructObject : BehaviourBase
     {
         base.InitBehaviour(toPerform);
         toDeconstruct = obj;
-        follower = new PathFollower(toPerform);
+        follower = toPerform.GetFollower();
+        follower.ResetFollower();
         TargetPosition = toDeconstruct.Position();
         follower.GetPath(toPerform.transform.position, targetNode);
     }

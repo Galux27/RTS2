@@ -72,6 +72,7 @@ public static class WorldTileHelpers
         {
             if(WorldChunkManager.Instance.ChunkBatches[worldTile.Batch].Chunks[worldTile.Chunk.x, worldTile.Chunk.y].WallSegments[worldTile.Local.x, worldTile.Local.y].HasWall)
             {
+               
                 if (val == true)
                 {
                     return false;

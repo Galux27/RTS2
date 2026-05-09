@@ -17,7 +17,8 @@ public class HumanAttackUnit_Behaviour : BehaviourBase
         InitBehaviour(me);
         this.objectToFollow = objectToFollow;
         healthOfUnitAttacking = objectToFollow.MyHealth;
-        follower = new PathFollower(me);
+        follower = me.GetFollower();
+        follower.ResetFollower();
         targetPosition = objectToFollow.transform.position;
         follower.GetPath(me.transform.position, targetPosition);
     }

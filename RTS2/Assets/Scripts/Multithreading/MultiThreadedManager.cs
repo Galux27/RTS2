@@ -18,12 +18,19 @@ public class MultiThreadedManager : MonoBehaviour
     }
 
     List<MultiThreadedAction> actions = new List<MultiThreadedAction>();
-
+    List<PathfindingMultiThreadedAction> pathRequests = new List<PathfindingMultiThreadedAction>();
+    public int PathCount = 0;
     public void AddAction(Action toPerform,Action OnComplete,bool autoComplete=true)
     {
         MultiThreadedAction action = new MultiThreadedAction(toPerform,OnComplete,autoComplete);
         actions.Add(action);
         action.StartAction();
+    }
+  
+    public PathfindingMultiThreadedAction AddPathfindingAction(Action toPerform)
+    {
+        pathRequests.Add(new PathfindingMultiThreadedAction(toPerform,null,true));
+        return pathRequests[pathRequests.Count-1];
     }
 
 
@@ -59,6 +66,11 @@ public class MultiThreadedManager : MonoBehaviour
         {
             index = 0;
         }
+        if (pathRequests.Count > 0)
+        {
+            pathRequests[0].CheckForCompletion();
+            PathCount = pathRequests.Count;
+        }
     }
 
     public void OnActionComplete(MultiThreadedAction complete)
@@ -68,6 +80,17 @@ public class MultiThreadedManager : MonoBehaviour
         actions.Remove(complete);
     }
 
+    public void RemovePathRequest(PathfindingMultiThreadedAction toRemove)
+    {
+        actions.Remove(toRemove);
+    }
+
+    public void OnActionComplete(PathfindingMultiThreadedAction complete)
+    {
+        complete.OnComplete?.Invoke();
+        complete.StopThread();
+        pathRequests.RemoveAt(0);
+    }
 
     public void StopAllActions()
     {
@@ -83,5 +106,21 @@ public class MultiThreadedManager : MonoBehaviour
             }
         }
         actions.Clear();
+
+        for (int x = 0; x < pathRequests.Count; x++)
+        {
+            try
+            {
+                if (pathRequests[x].Started())
+                {
+                    pathRequests[x].StopThread();
+                }
+                }
+            catch
+            {
+
+            }
+        }
+        pathRequests.Clear();
     }
 }

@@ -15,7 +15,8 @@ public class MoveTo_Behaviour : BehaviourBase
         Debug.Log("Move to behaviour " + targetPos);
         if (usePath)
         {
-            follower = new PathFollower(toPerform);
+            follower = toPerform.GetFollower();
+            follower.ResetFollower();
             follower.GetPath(toPerform.transform.position, targetPos);
         }
     }
@@ -27,7 +28,8 @@ public class MoveTo_Behaviour : BehaviourBase
         usePath = UsePath;
         if (usePath)
         {
-            follower = new PathFollower(toPerform);
+            follower = toPerform.GetFollower();
+            follower.ResetFollower();
             follower.GetPath(toPerform.transform.position, target);
         }
     }

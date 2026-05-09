@@ -12,7 +12,8 @@ public class GatherResources_Behaviour : BehaviourBase
     {
         base.InitBehaviour(toPerform);
         toHarvest = obj;
-        follower = new PathFollower(toPerform);
+        follower = toPerform.GetFollower();
+        follower.ResetFollower();
         TargetPosition = toHarvest.GetPosition();
         follower.GetPath(toPerform.transform.position, TargetPosition);
     }
@@ -21,7 +22,8 @@ public class GatherResources_Behaviour : BehaviourBase
     {
         base.InitBehaviour(toPerform);
         toHarvest = obj;
-        follower = new PathFollower(toPerform);
+        follower = toPerform.GetFollower();
+        follower.ResetFollower();
         TargetPosition = toHarvest.GetPosition();
         follower.GetPath(toPerform.transform.position, targetNode);
     }

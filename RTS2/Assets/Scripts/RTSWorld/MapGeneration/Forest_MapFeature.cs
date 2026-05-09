@@ -42,16 +42,22 @@ public class Forest_MapFeature :MapFeatureBase
         tiles.Clear();
         obj = EnvironmentObjectManager.Instance.AllObjects[objectToCreate];
         valid = true;
-
-        for (int x=coords.x;x<coords.x+obj.Width;x++)
+        int minX = coords.x;
+        int maxX = coords.x + obj.Width;
+        int miny = coords.y; 
+        int maxY = coords.y+obj.Height;
+        for (int x=coords.x-1;x<coords.x+obj.Width+1;x++)
         {
-            for(int y = coords.y; y < coords.y + obj.Height; y++)
+            for(int y = coords.y-1; y < coords.y + obj.Height+1; y++)
             {
                 WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y, out batch, out chunk, out tile);
                 if (WorldChunkManager.Instance.DoesBatchExist(batch))
                 {
-                    tiles.Add(WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y]);
+                    if (x >= minX && x <= maxX && y >= miny && y <= maxY)
+                    {
 
+                        tiles.Add(WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y]);
+                    }
                     if (!WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y].CanGeneratePropOnTile())
                     {
                         valid = false;

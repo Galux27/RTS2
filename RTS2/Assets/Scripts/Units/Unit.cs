@@ -21,8 +21,19 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public UnitVisualStore MyVisualStore;
     public PathfindingNode LastNode;
     public TileRaycast myRaycast;
-
+    PathFollower myPathFollower;
     public bool hasLastNode = false;
+
+    public PathFollower GetFollower()
+    {
+        if(myPathFollower == null)
+        {
+            myPathFollower = new PathFollower(this);
+        }
+        return myPathFollower;
+    }
+
+
     public void SetLastNode(PathfindingNode node)
     {
         if (node.IsPassable == false)
