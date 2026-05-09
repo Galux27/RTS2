@@ -355,6 +355,7 @@ public static class Pathfinding
     }
 
 
+
     static HashSet<PathfindingNode> closedSet=new HashSet<PathfindingNode>();
     static List<PathfindingNode> openSet=new List<PathfindingNode>();
     public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,Unit performing)

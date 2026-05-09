@@ -26,6 +26,16 @@ public class MultiThreadedManager : MonoBehaviour
         actions.Add(action);
         action.StartAction();
     }
+
+    public bool IsUnitHighPriority(Unit toMove)
+    {
+        if (toMove.MyFaction.MyFactionID == FactionController.USER_FACTION || Vector3.Distance(toMove.Position(), CameraController.Instance.transform.position) < 55)
+        {
+            return true;
+        }
+        return false;
+    }
+
   
     public PathfindingMultiThreadedAction AddPathfindingAction(Action toPerform,bool highPriority=false)
     {

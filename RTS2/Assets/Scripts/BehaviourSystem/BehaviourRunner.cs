@@ -112,7 +112,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
             //}
             //else
             //{
-            //    BehaviourDebug = new List<string> {"Null" };
+            //    BehaviourDebug = new List<string> { "Null" };
             //}
 
             //if(myDecisionMaker != null)

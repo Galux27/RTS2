@@ -7,14 +7,16 @@ public class ZombieRoam_Behaviour :BehaviourBase
 {
     float MinDistFrom = 1f;
 
-    Vector3 direction = Vector3.zero;
+    Vector2 direction = Vector2.zero;
     float directionChangeTimer = 0f;
     int count = 0;
-    const float directionChangeTimerLength = 2f;
+    const float directionChangeTimerLength = 10f;
+   static List<Vector2Int> PotentialDirections = new List<Vector2Int>() { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };
+    float timeInit = 0;
     public void InitRoamBehaviour( Zombie me)
     {
         InitBehaviour(me);
-
+        timeInit = GameTime.Instance.InGameTime;
 
         GenerateDirectionToRoam();
     }
@@ -33,7 +35,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
 
     public override bool IsBehaviourComplete()
     {
-        return count > 0;
+        return false;
     }
 
 
@@ -53,22 +55,33 @@ public class ZombieRoam_Behaviour :BehaviourBase
             }
             else
             {
-                directionChangeTimer = directionChangeTimerLength;
-            }
-            directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta,0.01f);
+            GenerateDirectionToRoam();
+
+            //  directionChangeTimer = directionChangeTimerLength;
+        }
+        directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta, 0.01f);
 
         if (directionChangeTimer > directionChangeTimerLength)
         {
             GenerateDirectionToRoam();
-            if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, direction, unitToMove))
-            {
-                directionChangeTimer = 0f;
-                count++;
-            }
+            directionChangeTimer = 0f;
+            count++;
 
-            }
-
+           
         }
+
+     }
+
+    public override List<string> GetDebugData()
+    {
+        List<string> retVal = new List<string>();
+        retVal.Add(direction.ToString());
+        retVal.Add(directionChangeTimer.ToString());
+        retVal.Add(BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, direction, unitToMove).ToString());
+        retVal.Add(timeInit.ToString());
+        retVal.Add((GetType() != typeof(ZombieRoam_Behaviour)).ToString());
+        return retVal;
+    }
 
     public override DataToSerialize GetBehaviourSpecificData()
     {
@@ -76,27 +89,26 @@ public class ZombieRoam_Behaviour :BehaviourBase
         data.AddDataToSerialize(DataKeys.Pos, direction);
         return data;
     }
-
+    List<Vector2Int> validDirections = new List<Vector2Int>();
     void GenerateDirectionToRoam()
     {
-        direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-        if(unitToMove.transform.position.x<1f && direction.x < 0f)
+        validDirections.Clear();
+        for(int x=0;x< PotentialDirections.Count; x++)
         {
-            direction.x = 1;
-        }else if(unitToMove.transform.position.x > WorldController.Instance.WorldWidth - 2 && direction.x>0f)
-        {
-            direction.x = -1f;
+            if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, PotentialDirections[x], unitToMove))
+            {
+                validDirections.Add(PotentialDirections[x]);
+            }
         }
+        if (validDirections.Count > 0)
+        {
+            direction= validDirections[Random.Range(0,validDirections.Count)];
+        }
+        else
+        {
+            direction = Vector2.zero;
 
-        if (unitToMove.transform.position.y < 1f && direction.y < 0f)
-        {
-            direction.y = 1;
         }
-        else if (unitToMove.transform.position.y > WorldController.Instance.WorldHeight - 2 && direction.y > 0f)
-        {
-            direction.y = -1f;
-        }
-        direction = direction.normalized;
     }
 
     public override bool DoWeNullBehaviourOnComplete()

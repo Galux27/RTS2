@@ -42,12 +42,15 @@ public class BehaviourDecisionMaker
 
     public virtual void SetState(BehaviourState state)
     {
-        CurrentState = state;
-        currentBehaviour = null;
-        TimeStateSet = GameTime.Instance.InGameTime;
-    }
+        if (state != CurrentState)
+        {
+            CurrentState = state;
+            currentBehaviour = null;
+            TimeStateSet = GameTime.Instance.InGameTime;
+        }
+        }
 
-    public void OverrideBehaviour(BehaviourBase toOverrideWith){
+        public void OverrideBehaviour(BehaviourBase toOverrideWith){
         currentBehaviour = toOverrideWith;
         behaviourOverridden = true;
     }

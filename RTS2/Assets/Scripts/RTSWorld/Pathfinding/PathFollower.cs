@@ -74,7 +74,7 @@ public class PathFollower
         ClearLastPathRequest();
         this.startPos = myPos;
         this.targetNode = targetPos;
-        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToNode(),followingPath.MyFaction.MyFactionID==FactionController.USER_FACTION);
+        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToNode(),MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
         currentIndex = 0;
         isPathDone = false;
 
@@ -87,7 +87,7 @@ public class PathFollower
 
         this.startPos = myPos;
         this.endPos = targetPos;
-        gettingPath=MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition(), followingPath.MyFaction.MyFactionID == FactionController.USER_FACTION);
+        gettingPath=MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition(), MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
         currentIndex = 0;
         isPathDone = false;
 
@@ -105,7 +105,7 @@ public class PathFollower
         this.startPos = myPos;
         this.endPos = toPathTo.Position();
         toFollow = toPathTo;
-        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition(), followingPath.MyFaction.MyFactionID == FactionController.USER_FACTION);
+        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition(), MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
         currentIndex = 0;
         isPathDone = false;
         

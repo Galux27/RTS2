@@ -184,7 +184,30 @@ public static class BehaviourUtilities
 
     }
     static Vector2Int batchCoords, chunkCoords, tileCoords;
+    public static bool CanIMoveInDirection(Vector3 pos, Vector2 dir, Unit performing)
+    {
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(performing.transform.position.x + dir.x, performing.transform.position.y + dir.y, out batchCoords, out chunkCoords, out tileCoords);
 
+        WallSegment wall = WorldChunkManager.Instance.GetChunkBatch(batchCoords).Chunks[chunkCoords.x, chunkCoords.y].WallSegments[tileCoords.x, tileCoords.y];
+        if (wall.HasWall)
+        {
+            return false;
+        }
+
+        if (wall.HasDoor)
+        {
+            DoorSegment door = wall as DoorSegment;
+            if (door.UnitCanUseDoor(performing))
+            {
+                return true;
+            }
+        }
+        if (!WorldChunkManager.Instance.GetChunkBatch(batchCoords).Chunks[chunkCoords.x, chunkCoords.y].PathfindingNodes[tileCoords.x, tileCoords.y].IsPassable)
+        {
+            return false;
+        }
+        return true;
+    }
     public static bool CanIMoveInDirection(Vector3 pos,Vector3 dir,Unit performing)
     {
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(performing.transform.position.x + dir.x, performing.transform.position.y + dir.y, out batchCoords, out chunkCoords, out tileCoords);
