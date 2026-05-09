@@ -27,10 +27,19 @@ public class MultiThreadedManager : MonoBehaviour
         action.StartAction();
     }
   
-    public PathfindingMultiThreadedAction AddPathfindingAction(Action toPerform)
+    public PathfindingMultiThreadedAction AddPathfindingAction(Action toPerform,bool highPriority=false)
     {
-        pathRequests.Add(new PathfindingMultiThreadedAction(toPerform,null,true));
-        return pathRequests[pathRequests.Count-1];
+        if (highPriority)
+        {
+            pathRequests.Insert(0,new PathfindingMultiThreadedAction(toPerform, null, true));
+            return pathRequests[0];
+        }
+        else
+        {
+            pathRequests.Add(new PathfindingMultiThreadedAction(toPerform, null, true));
+            return pathRequests[pathRequests.Count - 1];
+        }
+      
     }
 
 

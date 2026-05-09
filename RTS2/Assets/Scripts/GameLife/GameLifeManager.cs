@@ -59,11 +59,12 @@ public class GameLifeManager : MonoBehaviour
         Vector2Int startChunk = OverworldGenerator.Instance.GetOverworldStartingCoords();
         CachedUnitData data=  UnitTypesController.Instance.UnitData["Engineer"];
         ALifeEntity ae = null;
+        Vector2Int chunkToSpawnIn = new Vector2Int(WorldChunkManager.ChunkBatchSize / 2, WorldChunkManager.ChunkBatchSize / 2);
         for (int x = 0; x < 5; x++)
         {
             ae = new ALifeEntity(startChunk,
            FactionController.USER_FACTION, "Engineer",
-           new Vector2Int(Random.Range(0, WorldChunkManager.ChunkSize), Random.Range(0, WorldChunkManager.ChunkSize)), 1, 1, 1);
+           new Vector2Int(Random.Range(0, WorldChunkManager.ChunkSize), Random.Range(0, WorldChunkManager.ChunkSize))+chunkToSpawnIn, 1, 1, 1);
             ae.SetUnitDetails(data);
             OverworldGenerator.Instance.OverworldTiles[startChunk.x, startChunk.y].AddALifeEntity(ae,false);
         }

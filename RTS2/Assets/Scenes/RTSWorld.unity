@@ -4218,7 +4218,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 31.1, y: 21, z: -10}
+  m_LocalPosition: {x: 128, y: 128, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6383,6 +6383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d01a46734799ad4eb9bfa4f12eb9d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PathCount: 0
 --- !u!4 &935836952
 Transform:
   m_ObjectHideFlags: 0
@@ -10071,6 +10072,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ButtonPrefab: {fileID: 4794754492524904521, guid: 0cd33546d507d494ebc072353ac4b7b4, type: 3}
   ButtonParent: {fileID: 1016734091}
+--- !u!1 &1401716568 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3128974918715230864, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
+  m_PrefabInstance: {fileID: 1978870847}
+  m_PrefabAsset: {fileID: 0}
+--- !u!225 &1401716572
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401716568}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1402940035
 GameObject:
   m_ObjectHideFlags: 0
@@ -11469,6 +11487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UserIndex: 0
   AIIndex: 0
+  OtherIndex: 0
 --- !u!1 &1622283737
 GameObject:
   m_ObjectHideFlags: 0
@@ -14100,7 +14119,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3128974918715230864, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1401716572}
   m_SourcePrefab: {fileID: 100100000, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
 --- !u!1 &1990141578
 GameObject:
@@ -14674,6 +14696,7 @@ MonoBehaviour:
   StartMarker: {fileID: 981975059}
   EndMarker: {fileID: 2082982954}
   Refresh: 0
+  PathCast: 0
 --- !u!4 &2055997753
 Transform:
   m_ObjectHideFlags: 0
