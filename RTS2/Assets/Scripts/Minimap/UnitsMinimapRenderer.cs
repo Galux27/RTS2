@@ -37,9 +37,9 @@ public class UnitsMinimapRenderer : MinimapRenderer
 
         if (BatchImIn != null)
         {
-            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
             {
-                for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+                for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
                 {
                     for (int q = 0; q < BatchImIn.Chunks[x, y].UnitsInChunk.Count; q++)
                     {

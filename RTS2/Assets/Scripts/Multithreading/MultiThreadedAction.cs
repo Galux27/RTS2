@@ -83,3 +83,19 @@ public class PathfindingMultiThreadedAction : MultiThreadedAction
         }
     }
 }
+
+public class DataWritingAction : MultiThreadedAction
+{
+    public DataWritingAction(Action action, Action onComplete, bool autoComplete = false):base(action,onComplete,autoComplete)
+    {
+        
+    }
+
+    public override void CheckForCompletion()
+    {
+        if (IsComplete)
+        {
+            MultiThreadedManager.Instance.OnDataWriteComplete(this);
+        }
+    }
+}

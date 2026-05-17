@@ -30,6 +30,16 @@ public static class SerializationHelpers
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, saveName);
     }
 
+    public static void CleanWorkingDir()
+    {
+        string path = Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, WorkingDir);
+        string[] files = Directory.GetFiles(path);
+        for(int x=0;x<files.Length; x++)
+        {
+            File.Delete(files[x]);
+        }
+    }
+
     public static string GetWorldChunkBatchFilePathFromWorkingCopy(Vector2Int coords)
     {
         return Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, WorkingDir, "_" + coords.x + "_" + coords.y + WorldSectionExtension);
@@ -495,7 +505,7 @@ public static class SerializeDataHelpers
     public const char INVENTORY_SPLIT_TWO = ']';
     public static string SerializeData(string key,object value)
     {
-        if (key == DataKeys.Coords||key==DataKeys.LocalCoords||key==DataKeys.OverRiverCoords||key==DataKeys.GenStart)
+        if (key == DataKeys.Coords || key == DataKeys.LocalCoords || key == DataKeys.OverRiverCoords || key == DataKeys.GenStart)
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector2Int(value), DATA_ELEMENT_SPLIT.ToString());
         }
@@ -503,32 +513,41 @@ public static class SerializeDataHelpers
         {
             return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), SerializeVector3(value), DATA_ELEMENT_SPLIT.ToString());
         }
-        else if(key == DataKeys.ItemsInContainer)
+        else if (key == DataKeys.ItemsInContainer)
         {
-            return CombineStrings(INVENTORY_MARKER_TWO.ToString(),key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
-        }else if (key == DataKeys.OverFeature)
+            return CombineStrings(INVENTORY_MARKER_TWO.ToString(), key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
+        } else if (key == DataKeys.OverFeature)
         {
             string combined = "";
             List<OverworldFeature> features = (List<OverworldFeature>)value;
-            for(int x = 0; x < features.Count; x++)
+            for (int x = 0; x < features.Count; x++)
             {
                 combined += features[x].ToString();
                 combined += INVENTORY_SPLIT_TWO;
             }
 
-            return CombineStrings( key, KEY_OBJECT_SPLIT.ToString(), combined, DATA_ELEMENT_SPLIT.ToString());
+            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), combined, DATA_ELEMENT_SPLIT.ToString());
 
         }
-        else if (key == DataKeys.TileType || key == DataKeys.WaterLevel || key == DataKeys.WallType||key==DataKeys.Elevation
+        else if (key == DataKeys.TileType || key == DataKeys.WaterLevel || key == DataKeys.WallType || key == DataKeys.Elevation
             || key == DataKeys.WallVisual || key == DataKeys.Health || key == DataKeys.MaxHealth || key == DataKeys.UID ||
             key == DataKeys.ObjectKey || key == DataKeys.Quantitiy || key == DataKeys.ItemUID || key == DataKeys.CurrentProgress
             || key == DataKeys.MaxProgress || key == DataKeys.ConstructableType || key == DataKeys.UnitType || key == DataKeys.UnitFaction
-             ||key == DataKeys.RoomName || key == DataKeys.RoomType||key==DataKeys.BehaviourType
-            ||key==DataKeys.TargetUID|| key == DataKeys.InventoryUID || key==DataKeys.MiscString||key==DataKeys.CameraZoom||key==DataKeys.OverElevation||
-            key==DataKeys.OverPop||key==DataKeys.Orders)
+             || key == DataKeys.RoomName || key == DataKeys.RoomType || key == DataKeys.BehaviourType
+            || key == DataKeys.TargetUID || key == DataKeys.InventoryUID || key == DataKeys.MiscString || key == DataKeys.CameraZoom || key == DataKeys.OverElevation ||
+            key == DataKeys.OverPop || key == DataKeys.Orders)
         {
-            return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
-        }  
+            try
+            {
+                return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
+            }
+            catch
+            {
+                Debug.LogError("Error serializing " + key + "," + value.ToString());
+                return CombineStrings(key, KEY_OBJECT_SPLIT.ToString(), value.ToString(), DATA_ELEMENT_SPLIT.ToString());
+
+            }
+        }
         else if (key == DataKeys.RoomTiles)
         {
             List<string> stored = new List<string>();

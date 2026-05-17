@@ -2084,6 +2084,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ChunksLoaded: []
   IsInit: 0
+  CanPerformCreateNewChunksCheck: 1
 --- !u!114 &247636646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13788,7 +13789,7 @@ MonoBehaviour:
   InstantConstructVal: 1
   CareAboutResources: 0
   DrawDebugPathfinding: 0
-  SpawnEnemies: 1
+  SpawnEnemies: 0
 --- !u!4 &1959966592
 Transform:
   m_ObjectHideFlags: 0

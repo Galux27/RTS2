@@ -632,7 +632,7 @@ public class WorldChunk:ISerialize
         else if (myBatchCoords.x > neighbourBatchCoords.x)
         {
             //link right of mine to left of theres
-            editing = neighbour.Chunks[WorldChunkManager.ChunkSize-1, localY];
+            editing = neighbour.Chunks[WorldChunkManager.ChunksPerBatch-1, localY];
             int myX = 0;
             int theirX = WorldChunkManager.ChunkSize - 1;
             for (int y = 0; y < WorldChunkManager.ChunkSize; y++)

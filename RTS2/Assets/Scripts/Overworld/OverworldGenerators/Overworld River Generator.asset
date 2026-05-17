@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 235baa78129726843a61512975ffff03, type: 3}
   m_Name: Overworld River Generator
   m_EditorClassIdentifier: 
-  NumberOfRiversToGenerate: 15
+  NumberOfRiversToGenerate: 25

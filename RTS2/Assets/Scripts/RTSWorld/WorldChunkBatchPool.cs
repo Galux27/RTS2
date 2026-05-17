@@ -6,7 +6,7 @@ public static class WorldChunkBatchPool
 {
     public static List<WorldChunkBatch> AvailableBatches=new List<WorldChunkBatch>();
     static bool Init = false;
-    const int NumberOfBatchesToInit = 40;
+    const int NumberOfBatchesToInit = 200;
 
     public static void ClearPool()
     {
@@ -51,10 +51,24 @@ public static class WorldChunkBatchPool
         AvailableBatches.RemoveAt(0);
         return retVal;
     }
-
+    static List<WorldChunkBatch> BatchesToReturn = new List<WorldChunkBatch>();
     public static void ReturnChunkBatch(WorldChunkBatch toReturn)
     {
-        AvailableBatches.Add(toReturn);
-        WorldChunkManager.Instance.ChunkBatches.Remove(toReturn.coords);
+        BatchesToReturn.Add(toReturn);
+        
+    }
+
+    public static void FinishUnloadingBatches()
+    {
+        if (BatchesToReturn.Count > 0)
+        {
+            for(int x=0;x<BatchesToReturn.Count;x++)
+            {
+                AvailableBatches.Add(BatchesToReturn[x]);
+                BatchesToReturn[x].CheckForCleanup(true);
+                WorldChunkManager.Instance.ChunkBatches.Remove(BatchesToReturn[x].coords);
+            }
+            BatchesToReturn.Clear();
+        }
     }
 }

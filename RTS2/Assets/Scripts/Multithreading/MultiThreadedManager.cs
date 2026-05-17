@@ -17,7 +17,7 @@ public class MultiThreadedManager : MonoBehaviour
         }
     }
 
-    List<MultiThreadedAction> actions = new List<MultiThreadedAction>();
+    List<MultiThreadedAction> actions = new List<MultiThreadedAction>(),DataWritingActions=new List<MultiThreadedAction>();
     List<PathfindingMultiThreadedAction> pathRequests = new List<PathfindingMultiThreadedAction>();
     public int PathCount = 0;
     public void AddAction(Action toPerform,Action OnComplete,bool autoComplete=true)
@@ -25,6 +25,12 @@ public class MultiThreadedManager : MonoBehaviour
         MultiThreadedAction action = new MultiThreadedAction(toPerform,OnComplete,autoComplete);
         actions.Add(action);
         action.StartAction();
+    }
+
+    public void AddDataWritingAction(Action toPerform, Action OnComplete, bool autoComplete = true)
+    {
+        MultiThreadedAction action = new MultiThreadedAction(toPerform, OnComplete, autoComplete);
+        DataWritingActions.Add(action);
     }
 
     public bool IsUnitHighPriority(Unit toMove)
@@ -90,6 +96,27 @@ public class MultiThreadedManager : MonoBehaviour
             pathRequests[0].CheckForCompletion();
             PathCount = pathRequests.Count;
         }
+        if(DataWritingActions.Count > 0)
+        {
+            if (!DataWritingActions[0].Started())
+            {
+                DataWritingActions[0].StartAction();
+
+            }
+            else
+            {
+                DataWritingActions[0].CheckForCompletion();
+            }
+        }
+
+    }
+
+    public void OnDataWriteComplete(MultiThreadedAction action)
+    {
+        action.OnComplete?.Invoke();
+        action.StopThread();
+
+        DataWritingActions.Remove(action);
     }
 
     public void OnActionComplete(MultiThreadedAction complete)
@@ -141,5 +168,21 @@ public class MultiThreadedManager : MonoBehaviour
             }
         }
         pathRequests.Clear();
+
+        for (int x = 0; x < DataWritingActions.Count; x++)
+        {
+            try
+            {
+                if (DataWritingActions[x].Started())
+                {
+                    DataWritingActions[x].StopThread();
+                }
+            }
+            catch
+            {
+
+            }
+        }
+        DataWritingActions.Clear();
     }
 }

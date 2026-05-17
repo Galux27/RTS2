@@ -614,13 +614,13 @@ public class WorldChunkBatch : MonoBehaviour
      }
 
 
-    public void CheckForCleanup()
+    public void CheckForCleanup(bool forceCleaup=false)
     {
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)
             {
-                if (  Chunks[x,y].CanWeCleanupChunk())
+                if (  Chunks[x,y].CanWeCleanupChunk()||forceCleaup)
                 {
                     WorldRenderer.Instance.UnrenderChunk(Chunks[x, y].ChunkTiles);
                     Chunks[x, y].CleanupEnvironmentObjects();
@@ -632,15 +632,26 @@ public class WorldChunkBatch : MonoBehaviour
     }
     const float DistToUnloadChunkBatch = 750f;
     public float distToCam = 0f;
+    bool InProcessOfUnloading = false;
    
     public bool IsFarEnoughAwayToUnload(Vector2Int CamPos)
     {
+        if (InProcessOfUnloading)
+        {
+            return false;
+        }
         distToCam = Vector2Int.Distance(CamPos, coords);
         return distToCam > DistToUnloadChunkBatch;
     }
 
     public void UnloadChunkData()
     {
+        if (InProcessOfUnloading)
+        {
+            return;
+        }
+        InProcessOfUnloading = true;
+        IsRendered = false;
         bool DoWeNeedToUpdateData = false;
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
@@ -653,12 +664,14 @@ public class WorldChunkBatch : MonoBehaviour
                 }
             }
         }
+      //  WorldChunkManager.Instance.CanPerformCreateNewChunksCheck++;
 
         GameLifeManager.Instance.OnChunkBatchUnloaded(this);
         //Write chunk data to some live save place as its changed from the savegame
         if (DoWeNeedToUpdateData)
         {
-            MultiThreadedManager.Instance.AddAction(() => { SerializationHelpers.SaveChunkBatchToWorkingCopy(this); UnloadChunk(); }, () => WorldChunkManager.Instance.ChunkBatches.Remove(this.coords));
+
+            MultiThreadedManager.Instance.AddDataWritingAction(() => { SerializationHelpers.SaveChunkBatchToWorkingCopy(this); UnloadChunk(); }, () => WorldChunkManager.Instance.ChunkBatches.Remove(this.coords));
         }
         else
         {
@@ -676,7 +689,9 @@ public class WorldChunkBatch : MonoBehaviour
         UnlinkBatchFromOtherBatches();
         //reset all environment objects and remove UIDs
         WorldChunkBatchPool.ReturnChunkBatch(this);
-        Debug.Log("Chunk Loading: Unloading chunk at " + this.coords);
+        InProcessOfUnloading = false;
+       // WorldChunkManager.Instance.CanPerformCreateNewChunksCheck--;
+
     }
 
     void UnloadChunks()
@@ -699,14 +714,22 @@ public class WorldChunkBatch : MonoBehaviour
         List<string> dataFromFile = SerializationHelpers.ReadFile(path);
         for (int q = 0; q < dataFromFile.Count; q++)
         {
-            WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
-            int x = wc.LocalXCoord; 
-            int y = wc.LocalYCoord;
-            wc.SetAllChunkBatches(this.coords);
+            try
+            {
+                WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
+                int x = wc.LocalXCoord;
+                int y = wc.LocalYCoord;
+                wc.SetAllChunkBatches(this.coords);
 
-            Chunks[x, y] = wc;
+                Chunks[x, y] = wc;
+            }
+            catch(System.Exception e)
+            {
+                Debug.LogError("error parsing chunk " + dataFromFile[q]);
+                Debug.LogError(e.ToString());
+            }
 
-        }
+            }
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)

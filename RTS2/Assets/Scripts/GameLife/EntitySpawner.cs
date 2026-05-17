@@ -19,7 +19,7 @@ public static class EntitySpawner
                 return null;
             }
 
-            Vector2Int chunk = new Vector2Int(Random.Range(1, WorldChunkManager.ChunkSize - 1), Random.Range(1, WorldChunkManager.ChunkSize - 1));
+            Vector2Int chunk = new Vector2Int(Random.Range(1, WorldChunkManager.ChunksPerBatch - 1), Random.Range(1, WorldChunkManager.ChunksPerBatch - 1));
             if (forceChunkX != -1)
             {
                 chunk.x = forceChunkX;

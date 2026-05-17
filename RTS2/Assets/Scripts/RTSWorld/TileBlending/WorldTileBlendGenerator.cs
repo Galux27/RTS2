@@ -168,18 +168,18 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                             }
                             else
                             {
-                                xMax = 8;
+                                xMax = WorldChunkManager.ChunkSize/2;
                             }
                         }
                         else
                         {
-                            xMax = 8;
+                            xMax = WorldChunkManager.ChunkSize / 2;
 
                         }
                     }
                     else
                     {
-                        xMax = 8;
+                        xMax = WorldChunkManager.ChunkSize / 2;
                     }
 
                     coords = batch.coords + new Vector2Int(-WorldChunkManager.ChunkBatchSize, 0);
@@ -202,17 +202,17 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                             }
                             else
                             {
-                                yMax = 8;
+                                yMax = WorldChunkManager.ChunkSize / 2;
                             }
                         }
                         else
                         {
-                            yMax = 8;
+                            yMax = WorldChunkManager.ChunkSize / 2;
                         }
                     }
                     else
                     {
-                        yMax =8;
+                        yMax = WorldChunkManager.ChunkSize / 2;
                     }
                     cornerCoords = new Vector2Int(0, 0);
                     Generate = true;
@@ -242,17 +242,17 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                             }
                             else
                             {
-                                xMax = 8;
+                                xMax = WorldChunkManager.ChunkSize / 2;
                             }
                         }
                         else
                         {
-                            xMax = 8;
+                            xMax = WorldChunkManager.ChunkSize / 2;
                         }
                     }
                     else
                     {
-                        xMax = 8;
+                        xMax = WorldChunkManager.ChunkSize / 2;
                     }
 
                     coords = batch.coords + new Vector2Int(-WorldChunkManager.ChunkBatchSize, 0);
@@ -273,12 +273,12 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                         }
                         else
                         {
-                            yMin = 8;
+                            yMin = WorldChunkManager.ChunkSize / 2;
                         }
                     }
                     else
                     {
-                        yMin = 8;
+                        yMin = WorldChunkManager.ChunkSize / 2;
                     }
                     cornerCoords = new Vector2Int(0, WorldChunkManager.ChunkSize - 1);
                     Generate = true;
@@ -309,12 +309,12 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                         }
                         else
                         {
-                            xMin = 8;
+                            xMin = WorldChunkManager.ChunkSize / 2;
                         }
                     }
                     else
                     {
-                        xMin = 8;
+                        xMin = WorldChunkManager.ChunkSize / 2;
                     }
 
                     coords = batch.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
@@ -335,12 +335,12 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                         }
                         else
                         {
-                            yMax = 8;
+                            yMax = WorldChunkManager.ChunkSize / 2;
                         }
                     }
                     else
                     {
-                        yMax = 8;
+                        yMax = WorldChunkManager.ChunkSize / 2;
                     }
                     cornerCoords = new Vector2Int(WorldChunkManager.ChunkSize - 1, 0);
                     Generate = true;
@@ -368,12 +368,12 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                         }
                         else
                         {
-                            xMin = 8;
+                            xMin = WorldChunkManager.ChunkSize / 2;
                         }
                     }
                     else
                     {
-                        xMin = 8;
+                        xMin = WorldChunkManager.ChunkSize / 2;
                     }
 
                     coords = batch.coords + new Vector2Int(WorldChunkManager.ChunkBatchSize, 0);
@@ -397,12 +397,12 @@ public class LandToWaterBlendGenerator : WorldTileBlendGenerator
                         }
                         else
                         {
-                            yMin = 8;
+                            yMin = WorldChunkManager.ChunkSize / 2;
                         }
                     }
                     else
                     {
-                        yMin = 8;
+                        yMin = WorldChunkManager.ChunkSize / 2;
                     }
                     cornerCoords = new Vector2Int(WorldChunkManager.ChunkSize-1, WorldChunkManager.ChunkSize - 1);
                     Dir = new Vector2Int(-1, 1);

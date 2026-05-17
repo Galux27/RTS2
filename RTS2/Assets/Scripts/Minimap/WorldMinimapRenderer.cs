@@ -138,9 +138,9 @@ public class WorldMinimapRenderer : MinimapRenderer
             {
                 Debug.Log("Minimap: generating batch texture for "+ BatchImIn.coords);
 
-                for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+                for (int x = 0; x < WorldChunkManager.ChunksPerBatch; x++)
                 {
-                    for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+                    for (int y = 0; y < WorldChunkManager.ChunksPerBatch; y++)
                     {
                         for (int x1 = 0; x1 < WorldChunkManager.ChunkSize; x1++)
                         {

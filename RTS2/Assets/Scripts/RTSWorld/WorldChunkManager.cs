@@ -9,8 +9,8 @@ using UnityEngine.Timeline;
 
 public class WorldChunkManager : MonoBehaviour
 {
-    public const int ChunkSize = 16;
-    public const int ChunksPerBatch = 16;
+    public const int ChunkSize = 8;
+    public const int ChunksPerBatch =8;
     public const int ChunkBatchSize = ChunkSize * ChunksPerBatch;
     static WorldChunkManager instance;
     public Dictionary<Vector2Int, WorldChunkBatch> ChunkBatches;
@@ -94,6 +94,7 @@ public class WorldChunkManager : MonoBehaviour
     public void InitWorldChunks()
     {
         WorldChunkBatchPool.ClearPool();
+        SerializationHelpers.CleanWorkingDir();
         ChunkBatches = new Dictionary<Vector2Int, WorldChunkBatch>();
         CreateChunkBatch(new Vector2Int());       
     }
@@ -138,9 +139,11 @@ public class WorldChunkManager : MonoBehaviour
         }
         ChunksLoaded.Add(v);
     }
-    
+    public int CanPerformCreateNewChunksCheck = 0;
     public void PerformCreateNewChunksCheck()
     {
+
+       
         Vector3 cameraPos = CameraController.Instance.transform.position;
         ConvertPositionToChunkAndLocalCoords(cameraPos.x, cameraPos.y, out batch, out chunk, out local);
         //Vector2Int cameraCoords = ConvertPositionToChunkBatchCoords(cameraPos);
@@ -154,7 +157,6 @@ public class WorldChunkManager : MonoBehaviour
             if (!ChunkBatches.ContainsKey(coords[x]))
             {
                 CreateChunkBatch(coords[x]);
-                Debug.Log("Chunk Loading: loading new chunk as we didn't have coords " + coords[x]);
                 needToRender = true;
                 count++;
             }
@@ -168,6 +170,7 @@ public class WorldChunkManager : MonoBehaviour
         {
             UpdateWorldChunks();
         }
+
     }
 
     void PerformUnloadChunksCheck()
@@ -183,6 +186,7 @@ public class WorldChunkManager : MonoBehaviour
             }
            
         }
+        WorldChunkBatchPool.FinishUnloadingBatches();
     }
 
     bool DoWeHaveUndrawnChunks()
@@ -205,6 +209,11 @@ public class WorldChunkManager : MonoBehaviour
         retVal.Add(coords + new Vector2Int(-ChunkBatchSize, 0));
         retVal.Add(coords + new Vector2Int(0, ChunkBatchSize));
         retVal.Add(coords + new Vector2Int(0,-ChunkBatchSize));
+
+        retVal.Add(coords + new Vector2Int(ChunkBatchSize, ChunkBatchSize));
+        retVal.Add(coords + new Vector2Int(-ChunkBatchSize, ChunkBatchSize));
+        retVal.Add(coords + new Vector2Int(ChunkBatchSize, -ChunkBatchSize));
+        retVal.Add(coords + new Vector2Int(-ChunkBatchSize, -ChunkBatchSize));
 
         return retVal;
     }
@@ -296,7 +305,7 @@ public class WorldChunkManager : MonoBehaviour
        
         foreach(KeyValuePair<Vector2Int,WorldChunkBatch> kvp in ChunkBatches)
         {
-            
+           
             if (kvp.Value.RenderChunk())
             {
                 if (!kvp.Value.IsActive&&kvp.Value.RenderCount>0)
