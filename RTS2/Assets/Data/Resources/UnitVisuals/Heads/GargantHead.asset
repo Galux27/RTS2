@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7916a30f7a5d2648b0360977f0ac594, type: 3}
+  m_Name: GargantHead
+  m_EditorClassIdentifier: 
+  type: 1
+  ID: GargantHead
+  Front: {fileID: 2154426500597318494, guid: 56b63f6cd83fd6d47b89805bb42cc8f9, type: 3}
+  Back: {fileID: 9086487822698837917, guid: 56b63f6cd83fd6d47b89805bb42cc8f9, type: 3}
+  Side: {fileID: 4892727862701825133, guid: 56b63f6cd83fd6d47b89805bb42cc8f9, type: 3}
+  ColourPalletes:
+    ColourPalletes: []

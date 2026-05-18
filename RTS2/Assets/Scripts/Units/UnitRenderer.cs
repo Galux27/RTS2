@@ -5,8 +5,27 @@ using UnityEngine;
 public class UnitRenderer : MonoBehaviour
 {
     public SpriteRenderer Head, Torso, Legs,Hair,Face;
+    public bool DrawHead=true, DrawTorso=true,DrawLegs=true,DrawHair=true,DrawFace=true;    
     UnitVisualStore UnitImRendering;
-   
+    public float Scale = 1f;
+
+    public void AlterScale(float newScale)
+    {
+        if (newScale == Scale)
+        {
+            return;
+        }
+        float transformation = newScale / Scale;
+        Head.transform.localPosition = Head.transform.localPosition * transformation;
+        Torso.transform.localPosition = Torso.transform.localPosition * transformation;
+        Legs.transform.localPosition = Legs.transform.localPosition * transformation;
+        Hair.transform.localPosition = Hair.transform.localPosition * transformation;
+        Face.transform.localPosition = Face.transform.localPosition * transformation;
+        Scale = newScale;
+    }
+
+
+
     public void OnChangeChunkIn(WorldChunk chunkIn)
     {
         if (chunkIn.IsRendered)
@@ -22,6 +41,12 @@ public class UnitRenderer : MonoBehaviour
     public void SetUnitVisuals(UnitVisualStore visual)
     {
         UnitImRendering = visual;
+        DrawFace = visual.DrawFace;
+        DrawHead = visual.DrawHead;
+        DrawTorso = visual.DrawTorso;
+        DrawLegs = visual.DrawLegs;
+        DrawHair = visual.DrawHair;
+        AlterScale(visual.Scale);
         Head.sprite = visual.Head.GetDirectionalSprite(visual.Direction);
         Face.sprite = visual.Face.GetDirectionalSprite(visual.Direction);
         Hair.sprite = visual.Hair.GetDirectionalSprite(visual.Direction);
@@ -120,11 +145,11 @@ public class UnitRenderer : MonoBehaviour
     public void DrawUnit()
     {
         this.gameObject.SetActive(true);
-        Head.gameObject.SetActive(true);
-        Torso.gameObject.SetActive(true);
-        Legs.gameObject.SetActive(true);
-        Hair.gameObject.SetActive(true);
-        Face.gameObject.SetActive(true);
+        Head.gameObject.SetActive(DrawHead);
+        Torso.gameObject.SetActive(DrawTorso);
+        Legs.gameObject.SetActive(DrawLegs);
+        Hair.gameObject.SetActive(DrawHair);
+        Face.gameObject.SetActive(DrawFace);
     }
 
     public void HideUnit()

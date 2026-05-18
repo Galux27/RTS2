@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7916a30f7a5d2648b0360977f0ac594, type: 3}
+  m_Name: GargantTorso
+  m_EditorClassIdentifier: 
+  type: 4
+  ID: GargantTorso
+  Front: {fileID: -8038854940288087542, guid: 462019fcbfdce2949861949211716130, type: 3}
+  Back: {fileID: 8903630990433723705, guid: 462019fcbfdce2949861949211716130, type: 3}
+  Side: {fileID: -7605758482648574525, guid: 462019fcbfdce2949861949211716130, type: 3}
+  ColourPalletes:
+    ColourPalletes:
+    - Elements:
+      - ColourType: 1
+        Colour: {r: 0.21176471, g: 0.3882353, b: 0.26666668, a: 0}
+      - ColourType: 2
+        Colour: {r: 0.14901961, g: 0.2627451, b: 0.18431373, a: 0}

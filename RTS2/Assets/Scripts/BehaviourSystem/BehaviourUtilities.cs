@@ -43,14 +43,50 @@ public static class BehaviourUtilities
     static List<WallSegment> WallSectionCache = new List<WallSegment>();
     const int WallCheckRadius = 3;
     static WallSegment wallChecking;
+
+    public static List< WallSegment> GetNearbyWallSegmentToAttack(Unit searching, out bool foundSomething,float maxDist)
+    {
+        List<WallSegment> walls = new List<WallSegment>();
+        foundSomething = false;
+        ChunksToCheck.Clear();
+        WallSectionCache.Clear();
+
+        ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(WallCheckRadius, searching.transform.position);
+        for (int q = 0; q < ChunksToCheck.Count; q++)
+        {
+            for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+            {
+                for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+                {
+                    wallChecking = ChunksToCheck[q].WallSegments[x, y];
+                    if (wallChecking != null && wallChecking.WallType != WallType.None)
+                    {
+                        WallSectionCache.Add(wallChecking);
+                    }
+                }
+            }
+        }
+
+        WallSegment retVal = null;
+        float  dist2 = 0f;
+        for (int x = 0; x < WallSectionCache.Count; x++)
+        {
+            dist2 = Vector3.Distance(WallSectionCache[x].Position(), searching.Position());
+            if (dist2 < maxDist)
+            {
+                walls.Add(WallSectionCache[x]);
+                foundSomething = true;
+            }
+        }
+        return walls;
+    }
+
     public static WallSegment GetNearbyWallSegmentToAttack(Unit searching,out bool foundSomething)
     {
         foundSomething = false;
         ChunksToCheck.Clear();
-        //wallChecking = null;
         WallSectionCache.Clear();
-        //foundSomething = false;
-        //Vector2Int center = WorldController.Instance.ConvertWorldToTileCoords(searching.transform.position);
+       
         ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(WallCheckRadius, searching.transform.position);
         for(int q = 0; q < ChunksToCheck.Count; q++)
         {
@@ -66,20 +102,7 @@ public static class BehaviourUtilities
                 }
             }
         }
-        //for(int x = center.x - WallCheckRadius; x < center.x + WallCheckRadius; x++)
-        //{
-        //    for (int y = center.y - WallCheckRadius; y< center.y + WallCheckRadius; y++)
-        //    {
-        //        if (WorldController.Instance.WallManager.CoordsValid(x, y))
-        //        {
-        //            wallChecking=WallHelpers.GetWallAtCoords(x, y);
-        //            if (wallChecking!=null && wallChecking.WallType!=WallType.None)
-        //            {
-        //                WallSectionCache.Add(wallChecking);
-        //            }
-        //        }
-        //    }
-        //}
+      
         WallSegment retVal = null;
         float dist = 9999999f, dist2 = 0f;
         for (int x = 0; x < WallSectionCache.Count; x++)
@@ -100,13 +123,76 @@ public static class BehaviourUtilities
     static List<EnvironmentObjectInstance> EnvironmentObjectCache=new List<EnvironmentObjectInstance>();
     static List<EnvironmentObjectInstance> AllObjectsCache=new List<EnvironmentObjectInstance>();
     static List<WorldChunk> ChunksToCheck = new List<WorldChunk>();
-    public static ObjectInfo GetNearbyObjectToAttack(Unit searching,out bool foundSomething)
+
+    public static List<ObjectInfo> GetNearbyObjectsToAttack(Unit searching, out bool foundSomething, float distanceToCheck = -1,bool GetNaturalObjects=false)
     {
+        if (distanceToCheck < 0)
+        {
+            distanceToCheck = ObjectCheckDist;
+        }
         EnvironmentObjectCache.Clear();
         foundSomething = false;
         ChunksToCheck.Clear();
         AllObjectsCache.Clear();
-        ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(ObjectCheckDist, searching.transform.position);
+        ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(MaxDistForNearbyObject*2, searching.transform.position);
+        for (int x = 0; x < ChunksToCheck.Count; x++)
+        {
+            AllObjectsCache.AddRange(ChunksToCheck[x].EnvironmentObjectsInChunk);
+        }
+
+        Vector2Int chunkImNear = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(searching.transform.position);
+
+
+        List< ObjectInfo> retVal = new List<ObjectInfo>();
+        ConstructableObjectInstance constructedObject;
+        EnvironmentObjectInstance environmentObject;
+        float dist = 99999999f;
+        float dist2 = 0f;
+        for (int x = 0; x < AllObjectsCache.Count; x++)
+        {
+            constructedObject = AllObjectsCache[x] as ConstructableObjectInstance;
+            if (constructedObject != null)
+            {
+                dist2 = Vector3.Distance(constructedObject.Position(), searching.transform.position);
+                if (dist2 < distanceToCheck)
+                {
+                    retVal.Add( constructedObject);
+                    foundSomething = true;
+                }
+            }
+            else if(GetNaturalObjects)
+            {
+                environmentObject = AllObjectsCache[x];
+                if (environmentObject != null)
+                {
+                    dist2 = Vector3.Distance(environmentObject.Position(), searching.transform.position);
+                    if (dist2 < distanceToCheck)
+                    {
+                        retVal.Add(environmentObject);
+                        foundSomething = true;
+                    }
+                }
+            }
+
+        }
+
+     
+
+        return retVal;
+    }
+
+
+    public static ObjectInfo GetNearbyObjectToAttack(Unit searching,out bool foundSomething,float distanceToCheck=-1)
+    {
+        if (distanceToCheck < 0)
+        {
+            distanceToCheck = ObjectCheckDist;
+        }
+        EnvironmentObjectCache.Clear();
+        foundSomething = false;
+        ChunksToCheck.Clear();
+        AllObjectsCache.Clear();
+        ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(distanceToCheck, searching.transform.position);
         for(int x = 0; x < ChunksToCheck.Count; x++)
         {
             AllObjectsCache.AddRange(ChunksToCheck[x].EnvironmentObjectsInChunk);
@@ -133,13 +219,6 @@ public static class BehaviourUtilities
                 }
             }
         }
-
-        
-
-
-
-       
-
 
         return retVal;
     }

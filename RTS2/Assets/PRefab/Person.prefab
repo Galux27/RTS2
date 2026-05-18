@@ -62,8 +62,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBehaviourNull: 1
+  breakpointBeforeRun: 0
   behaviourName: 
   BehaviourDebug: []
+  BehaviourDecisionDebug: []
 --- !u!114 &5409879721580648943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,7 +156,6 @@ MonoBehaviour:
     localX: 0
     localY: 0
     IsPassable: 0
-    neighbours: []
     worldPos: {x: 0, y: 0, z: 0}
     PathNodeGroupID: 0
   hasLastNode: 0
@@ -270,6 +271,7 @@ MonoBehaviour:
   Hearing: 100
   Intelligence: 100
   Dexterity: 100
+  Memory: 0
 --- !u!114 &8074962993494145537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,6 +370,12 @@ MonoBehaviour:
   IsZombie: 0
   IsDrawn: 0
   Direction: 0
+  Scale: 1
+  DrawHead: 1
+  DrawHair: 1
+  DrawTorso: 1
+  DrawLegs: 1
+  DrawFace: 1
 --- !u!210 &908270298891864953
 SortingGroup:
   m_ObjectHideFlags: 0

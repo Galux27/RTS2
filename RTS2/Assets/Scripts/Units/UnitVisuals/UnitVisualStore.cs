@@ -11,7 +11,8 @@ public class UnitVisualStore : MonoBehaviour
     public int HeadPallete,HairPallete,TorsoPallete,LegsPallete;
     public bool IsZombie = false,IsDrawn=false;
     public UnitVisualDirection Direction;
-
+    public float Scale = 1f;
+    public bool DrawHead=true, DrawHair = true, DrawTorso = true, DrawLegs = true, DrawFace = true;
     public bool OnStandStill()
     {
         if (Direction != UnitVisualDirection.Backward)

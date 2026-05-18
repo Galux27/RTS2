@@ -476,6 +476,7 @@ public enum UnitType {
     Human=2,
     Rifleman=3,
     Civilian=4,
-    Engineer=5
+    Engineer=5,
+    Gargant=6
 }
 

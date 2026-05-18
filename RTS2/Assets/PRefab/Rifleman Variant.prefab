@@ -60,6 +60,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1818212556175051728, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: DrawFace
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1818212556175051728, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: DrawHair
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1818212556175051728, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: DrawHead
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1818212556175051728, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: DrawLegs
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1818212556175051728, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
+      propertyPath: DrawTorso
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3589492439018105632, guid: 8f766d7cc4ed3cc4baadfa47e4fb2808, type: 3}
       propertyPath: m_Name
       value: Rifleman Variant

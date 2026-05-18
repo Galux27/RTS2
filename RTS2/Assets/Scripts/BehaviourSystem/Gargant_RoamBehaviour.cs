@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ZombieRoam_Behaviour :BehaviourBase
+public class Gargant_RoamBehaviour : BehaviourBase
 {
     float MinDistFrom = 1f;
 
@@ -10,9 +10,9 @@ public class ZombieRoam_Behaviour :BehaviourBase
     float directionChangeTimer = 0f;
     int count = 0;
     const float directionChangeTimerLength = 10f;
-   static List<Vector2Int> PotentialDirections = new List<Vector2Int>() { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };
+    static List<Vector2Int> PotentialDirections = new List<Vector2Int>() { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };
     float timeInit = 0;
-    public void InitRoamBehaviour( Zombie me)
+    public void InitRoamBehaviour(Gargant me)
     {
         InitBehaviour(me);
         timeInit = GameTime.Instance.InGameTime;
@@ -22,7 +22,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
 
     public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
     {
-        InitRoamBehaviour((Zombie)performing);
+        InitRoamBehaviour((Gargant)performing);
         direction = (Vector3)data[DataKeys.Pos];
     }
 
@@ -43,20 +43,22 @@ public class ZombieRoam_Behaviour :BehaviourBase
 
         return direction;
     }
+
    
+
+
 
     public override void PerformBehaviour()
     {
 
-        if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position,direction,unitToMove))
-            {
-                unitToMove.MoveUnit(DirectionToTarget());
-            }
-            else
-            {
-            GenerateDirectionToRoam();
 
-            //  directionChangeTimer = directionChangeTimerLength;
+        if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, direction, unitToMove))
+        {
+            unitToMove.MoveUnit(DirectionToTarget());
+        }
+        else
+        {
+            GenerateDirectionToRoam();
         }
         directionChangeTimer += Mathf.Max(DeltaTimeWrapper.GameplayDelta, 0.01f);
 
@@ -66,10 +68,10 @@ public class ZombieRoam_Behaviour :BehaviourBase
             directionChangeTimer = 0f;
             count++;
 
-           
+
         }
 
-     }
+    }
 
     public override List<string> GetDebugData()
     {
@@ -92,7 +94,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
     void GenerateDirectionToRoam()
     {
         validDirections.Clear();
-        for(int x=0;x< PotentialDirections.Count; x++)
+        for (int x = 0; x < PotentialDirections.Count; x++)
         {
             if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, PotentialDirections[x], unitToMove))
             {
@@ -101,7 +103,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
         }
         if (validDirections.Count > 0)
         {
-            direction= validDirections[Random.Range(0,validDirections.Count)];
+            direction = validDirections[Random.Range(0, validDirections.Count)];
         }
         else
         {
