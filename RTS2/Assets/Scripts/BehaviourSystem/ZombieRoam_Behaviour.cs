@@ -12,7 +12,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
     const float directionChangeTimerLength = 10f;
    static List<Vector2Int> PotentialDirections = new List<Vector2Int>() { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };
     float timeInit = 0;
-    public void InitRoamBehaviour( Zombie me)
+    public void InitRoamBehaviour( Unit me)
     {
         InitBehaviour(me);
         timeInit = GameTime.Instance.InGameTime;

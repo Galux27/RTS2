@@ -7,7 +7,7 @@ using UnityEngine;
 public class BehaviourRunner : MonoBehaviour, Updater
 {
     Unit UnitPerforming;
-    BehaviourDecisionMaker myDecisionMaker;
+    public BehaviourDecisionMaker myDecisionMaker;
     public Action<BehaviourBase> OnBehaviourChange;
     public void SetDecisionMaker(BehaviourDecisionMaker decisionMaker) 
     {  
@@ -23,6 +23,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
         }
         CurrentBehaviour = toPerform;
         OnBehaviourChange?.Invoke(toPerform);
+        LastBehaviourSet = GameTime.Instance.InGameTime;
     }
 
     public string GetBehaviourDisplayText()
@@ -34,7 +35,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
         return "Idle";
     }
 
-
+    
     public void SetUnitPerforming(Unit toPerform)
     {
         UnitPerforming = toPerform;
@@ -58,6 +59,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
     public bool IsBehaviourNull = true,breakpointBeforeRun=false;
     public string behaviourName;
     public List<string> BehaviourDebug,BehaviourDecisionDebug;
+    public float LastUpdate, LastBehaviourSet,CurTime;
     void OnBehaviourComplete()
     {
 
@@ -93,12 +95,14 @@ public class BehaviourRunner : MonoBehaviour, Updater
         {
             Debug.Log("Breakpoint trigger");
         }
+        CurTime= GameTime.Instance.InGameTime;
         if (CurrentBehaviour != null)
         {
             if (CurrentBehaviour != null && CurrentBehaviour.CanPerformBehaviour())
             {
 
                 CurrentBehaviour.PerformBehaviour();
+                LastUpdate = GameTime.Instance.InGameTime;
             }
 
             if (CurrentBehaviour != null && CurrentBehaviour.IsBehaviourComplete())
@@ -109,6 +113,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
             //if (CurrentBehaviour != null)
             //{
             //    BehaviourDebug = CurrentBehaviour.GetDebugData();
+            //    BehaviourDebug.Add("Can Perform: " + CurrentBehaviour.CanPerformBehaviour());
             //}
             //else
             //{

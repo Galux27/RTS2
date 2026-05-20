@@ -35,7 +35,8 @@ public class MultiThreadedManager : MonoBehaviour
 
     public bool IsUnitHighPriority(Unit toMove)
     {
-        if (toMove.MyFaction.MyFactionID == FactionController.USER_FACTION || Vector3.Distance(toMove.Position(), CameraController.Instance.transform.position) < 55)
+        if (toMove.MyFaction.MyFactionID == FactionController.USER_FACTION 
+            || Vector3.Distance(toMove.transform.position, CameraController.Instance.transform.position) < 55)
         {
             return true;
         }

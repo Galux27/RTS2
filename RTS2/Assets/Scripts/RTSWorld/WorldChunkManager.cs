@@ -440,7 +440,7 @@ public class WorldChunkManager : MonoBehaviour
         else
         {
             float chunkCoord = RoundToMultiple(val, WorldChunkManager.ChunkBatchSize);
-            if (chunkCoord > val)
+            if (chunkCoord > val && chunkCoord%WorldChunkManager.ChunkBatchSize!=0)
             {
                 chunkCoord -= ChunkBatchSize;
             }

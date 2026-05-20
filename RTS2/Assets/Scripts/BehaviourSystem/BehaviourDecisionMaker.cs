@@ -12,19 +12,12 @@ public class BehaviourDecisionMaker
     BehaviourBase b;
 
     public BehaviourBase currentBehaviour { get { return b; } set {
-            //if (value != null)
-            //{
-            //    Debug.Log("Setting behaviour: to " + value.BehaviourType()+","+(b == null));
-            //}
-            //else
-            //{
-            //    Debug.Log("Setting behaviour: to null" + (b==null));
-
-            //}
+          
             b = value; } }
     bool behaviourOverridden = false;
     public BehaviourState CurrentState;
     public float TimeStateSet = 0f;
+    public Unit LinkedUnit;
     public virtual void PerformBehaivourUpdate(Unit performingBehaviour)
     {
 
@@ -40,6 +33,8 @@ public class BehaviourDecisionMaker
 
     }
 
+   
+
     public virtual void SetState(BehaviourState state)
     {
         if (state != CurrentState)
@@ -47,25 +42,41 @@ public class BehaviourDecisionMaker
             CurrentState = state;
             currentBehaviour = null;
             TimeStateSet = GameTime.Instance.InGameTime;
+            if (state != BehaviourState.Idle)
+            {
+                StopFollowingUnit();
+            }
         }
-        }
+     }
 
         public void OverrideBehaviour(BehaviourBase toOverrideWith){
         currentBehaviour = toOverrideWith;
         behaviourOverridden = true;
     }
 
-    public bool init = false;
+    void StopFollowingUnit()
+    {
+        if (LinkedUnit != null)
+        {
+            LinkedUnit.BehaviourRunner.myDecisionMaker.OnUnlinkUnit(performing);
+        }
+    }
 
+    public bool init = false;
+    Unit performing = null;
     public virtual void InitBehaviourMaker(Unit performing)
     {
+        this.performing = performing;
         init = true;
     }
     public virtual List<string> DecisionMakerDebug(Vector3 pos)
     {
         return null;
     }
+    public virtual void OnUnlinkUnit(Unit unlinking)
+    {
 
+    }
 }
 
 public enum BehaviourState

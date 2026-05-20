@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 56b63f6cd83fd6d47b89805bb42cc8f9
+guid: 8e2a33dbeac6cb74cad562f090d32a19
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -78,7 +78,7 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 57
+    mosaicPadding: 14
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
@@ -91,14 +91,14 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 57
+    mosaicPadding: 14
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
   importFileNodeState: 1
-  platformSettingsDirtyTick: 639148151339541335
+  platformSettingsDirtyTick: 639148194583043789
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -125,17 +125,17 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: Frame_0
     originalName: 
-    pivot: {x: 0.5050761, y: -0.35897434}
+    pivot: {x: 0.50574714, y: -0.24590164}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
       x: 4
-      y: 152
-      width: 394
-      height: 117
-    spriteID: c277a5916a2d5144ab25f5c4b39ef21c
+      y: 77
+      width: 87
+      height: 61
+    spriteID: 5c11d1bf2cd2cf945a335c94a2c6c50e
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -143,10 +143,10 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 152}
+    uvTransform: {x: 4, y: 77}
   - name: Frame_1
     originalName: 
-    pivot: {x: 0.49450552, y: -0.17857143}
+    pivot: {x: 0.5, y: -0.04615385}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -154,9 +154,9 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 455
-      height: 140
-    spriteID: 1bb8fa2cbd2ea934f8f757cea72904ae
+      width: 94
+      height: 65
+    spriteID: e08d0f08bf2f7b24480e294261152fbb
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -166,19 +166,19 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 4, y: 4}
   spriteSheetImportData:
-  - name: GargantHead_0
+  - name: Sirenhead_4
     originalName: 
-    pivot: {x: 0.5, y: 0}
-    alignment: 7
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 26
-      y: 250
-      width: 146
-      height: 175
-    spriteID: 0556f8e3423748b41bd0e41dbce60719
+      x: 13
+      y: 14
+      width: 32
+      height: 66
+    spriteID: e71c6b11201ecce42b83e128bc89a0ee
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -187,19 +187,19 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: GargantHead_1
+  - name: Sirenhead_0
     originalName: 
-    pivot: {x: 0.5014799, y: 0.0005252838}
+    pivot: {x: 0.49729484, y: 0.0045927367}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 152
-      y: 250
-      width: 164
-      height: 174
-    spriteID: 25e91b53d2e431144b05384d318b5ac7
+      x: 13
+      y: 14
+      width: 32
+      height: 66
+    spriteID: 329cfa2f949b24a47aaa08408313d421
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -208,19 +208,19 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: GargantHead_2
+  - name: Sirenhead_1
     originalName: 
-    pivot: {x: 0.49924374, y: 0.0026519776}
+    pivot: {x: 0.49729484, y: 0.0045927367}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 319
-      y: 253
-      width: 160
-      height: 176
-    spriteID: f1a9a8742f390e4438c6a5957d7ecc32
+      x: 45
+      y: 14
+      width: 32
+      height: 66
+    spriteID: 1189c0910f5591f4ea6759046bd0e1ea
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -229,19 +229,19 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: GargantHead_3
+  - name: Sirenhead_2
     originalName: 
-    pivot: {x: 0.53151596, y: 0.028464759}
+    pivot: {x: 0.49729484, y: 0.0045927367}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 41
-      y: 51
-      width: 160
-      height: 149
-    spriteID: 7009d01f1f1c76e4ba738e3bd91105ce
+      x: 77
+      y: 14
+      width: 32
+      height: 66
+    spriteID: 5827434fa9ba5814588a900867d7e918
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -250,19 +250,19 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: GargantHead_4
+  - name: Sirenhead_3
     originalName: 
-    pivot: {x: 0.5013615, y: 0.011151647}
+    pivot: {x: 0.48723558, y: 0.0013011666}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 204
-      y: 52
-      width: 160
-      height: 149
-    spriteID: 01f9308061d467f46baf1b3b4e20178a
+      x: 13
+      y: 80
+      width: 29
+      height: 87
+    spriteID: f9bd25f327f55eb4baf4adfc48360068
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -271,19 +271,40 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  - name: GargantHead_5
+  - name: Sirenhead_5
     originalName: 
-    pivot: {x: 0.4981037, y: 0.01825304}
+    pivot: {x: 0.48723558, y: 0.0013011666}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
-      x: 366
-      y: 52
-      width: 160
-      height: 148
-    spriteID: a3cdef9f02aa46146a46822cd665a850
+      x: 46
+      y: 80
+      width: 29
+      height: 87
+    spriteID: b729052e1b2fe2d4ea81b642bcc3cd1f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+  - name: Sirenhead_6
+    originalName: 
+    pivot: {x: 0.48723558, y: 0.0013011666}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 74
+      y: 81
+      width: 29
+      height: 87
+    spriteID: 11c5bed48be82fb4dacb6927674c3bf0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -294,8 +315,8 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   asepriteLayers:
   - layerIndex: 0
-    guid: 1442526552
-    name: GargantHead
+    guid: -503080917
+    name: Sirenhead
     layerFlags: 0
     layerType: 0
     blendMode: 0
@@ -304,20 +325,20 @@ ScriptedImporter:
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 49
-        y: 82
-        width: 394
-        height: 117
-      spriteId: c277a5916a2d5144ab25f5c4b39ef21c
+        x: 4
+        y: 15
+        width: 87
+        height: 61
+      spriteId: 5c11d1bf2cd2cf945a335c94a2c6c50e
     - name: Frame_1
       frameIndex: 1
       additiveSortOrder: 0
       cellRect:
-        x: 15
-        y: 60
-        width: 455
-        height: 140
-      spriteId: 1bb8fa2cbd2ea934f8f757cea72904ae
+        x: 1
+        y: 3
+        width: 94
+        height: 65
+      spriteId: e08d0f08bf2f7b24480e294261152fbb
     linkedCells: []
     parentIndex: -1
   platformSettings:
@@ -336,7 +357,7 @@ ScriptedImporter:
   - name: DefaultTexturePlatform
     overridden: 0
     ignorePlatformSupport: 0
-    maxTextureSize: 8192
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -384,5 +405,5 @@ ScriptedImporter:
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 480, y: 200}
-  previousTextureSize: {x: 1024, y: 512}
+  canvasSize: {x: 96, y: 80}
+  previousTextureSize: {x: 128, y: 256}

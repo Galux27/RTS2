@@ -477,6 +477,7 @@ public enum UnitType {
     Rifleman=3,
     Civilian=4,
     Engineer=5,
-    Gargant=6
+    Gargant=6,
+    Siren=7
 }
 

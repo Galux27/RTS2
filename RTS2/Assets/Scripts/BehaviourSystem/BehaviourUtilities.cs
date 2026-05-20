@@ -40,6 +40,39 @@ public static class BehaviourUtilities
         }
         return GetHostileCache;
     }
+
+
+    public static List<Unit> GetNonHostileUnits(Unit searching, float range)
+    {
+        ChunksToCheck.Clear();
+
+        GetUnitCache.Clear();
+        ChunksToCheck = WorldChunkManager.Instance.GetChunksInRadius(range, searching.transform.position);
+        GetHostileCache.Clear();
+
+        for (int x = 0; x < ChunksToCheck.Count; x++)
+        {
+            GetUnitCache.AddRange(ChunksToCheck[x].UnitsInChunk);
+        }
+        float dist = 999999f;
+        for (int x = 0; x < GetUnitCache.Count; x++)
+        {
+            if (GetUnitCache[x] == null)
+            {
+                continue;
+            }
+            if (FactionController.Instance.IsHostile(searching, GetUnitCache[x])==false)
+            {
+                dist = Vector3.Distance(GetUnitCache[x].transform.position, searching.transform.position);
+                if (dist < range)
+                {
+                    GetHostileCache.Add(GetUnitCache[x]);
+                }
+            }
+        }
+        return GetHostileCache;
+    }
+
     static List<WallSegment> WallSectionCache = new List<WallSegment>();
     const int WallCheckRadius = 3;
     static WallSegment wallChecking;
@@ -266,7 +299,11 @@ public static class BehaviourUtilities
     public static bool CanIMoveInDirection(Vector3 pos, Vector2 dir, Unit performing)
     {
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(performing.transform.position.x + dir.x, performing.transform.position.y + dir.y, out batchCoords, out chunkCoords, out tileCoords);
-
+        if (WorldChunkManager.Instance.GetChunkBatch(batchCoords)==null)
+        {
+            //Debug.LogError("Error trying to move from " + pos + " in batch " + batchCoords+","+chunkCoords+","+tileCoords);
+            return false;
+        }
         WallSegment wall = WorldChunkManager.Instance.GetChunkBatch(batchCoords).Chunks[chunkCoords.x, chunkCoords.y].WallSegments[tileCoords.x, tileCoords.y];
         if (wall.HasWall)
         {

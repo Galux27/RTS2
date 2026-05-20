@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 
-public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
+public class Siren_BehaviourDecisionMaker : BehaviourDecisionMaker
 {
 
     Unit UnitThatAttacked;
@@ -15,17 +12,23 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
     ListeningEvent triggeredEvent = null;
     public override void OnUnitAttacked(Unit attackingUnit)
     {
-        if(UnitThatAttacked == null)
+        if (UnitThatAttacked == null)
         {
             UnitThatAttacked = attackingUnit;
         }
     }
     public void OnNewTile(Vector2Int coords)
     {
-        
+        //if (ObjectAttacking == null)
+        //{
+        //    PathfindingNode node = Pathfinding.GetNodeFromCoords(coords);
+        //    if (node != null)
+        //    {
+        //        currentBehaviour = null;
+        //    }
+        //}
     }
 
- 
     public override void CheckToSeeIfStateShouldChange(Unit toCheck)
     {
         if (!CanChangeState(toCheck))
@@ -40,23 +43,22 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
             return;
         }
         triggeredEvent = ListeningEventController.Instance.GetEventInRange(toCheck.MySenses.Hearing, toCheck.transform.position);
-        if(triggeredEvent != null)
+        if (triggeredEvent != null)
         {
             SetState(BehaviourState.Alerted);
-            
             return;
         }
-        
-        if (CurrentState==BehaviourState.Hostile)
+
+        if (CurrentState == BehaviourState.Hostile)
         {
-            if(UnitThatAttacked==null|| Vector3.Distance(toCheck.transform.position, UnitThatAttacked.transform.position) > toCheck.MySenses.Sight*2)
+            if (UnitThatAttacked == null || Vector3.Distance(toCheck.transform.position, UnitThatAttacked.transform.position) > toCheck.MySenses.Sight * 2)
             {
                 UnitThatAttacked = null;
                 SetState(BehaviourState.Idle);
                 return;
             }
         }
-        else if(CurrentState == BehaviourState.Alerted)
+        else if (CurrentState == BehaviourState.Alerted)
         {
             if (TimeStateSet + toCheck.MySenses.Memory > GameTime.Instance.InGameTime)
             {
@@ -71,7 +73,8 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
         }
     }
 
-    bool CanChangeState(Unit toCheck) {
+    bool CanChangeState(Unit toCheck)
+    {
         if (currentBehaviour == null)
         {
             return true;
@@ -117,7 +120,7 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
         {
             return true;
         }
-        if(TimeStateSet + toCheck.MySenses.Memory > GameTime.Instance.InGameTime)
+        if (TimeStateSet + toCheck.MySenses.Memory > GameTime.Instance.InGameTime)
         {
             if (distToTarget > toCheck.MySenses.Sight)
             {
@@ -129,37 +132,27 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
 
     bool ShouldChangeFromAlerted(Unit toCheck)
     {
-        if (TimeStateSet + toCheck.MySenses.Memory > GameTime.Instance.InGameTime||ObjectAttacking==null)
+        if (TimeStateSet + toCheck.MySenses.Memory > GameTime.Instance.InGameTime || ObjectAttacking == null)
         {
             return true;
-        }else if (triggeredEvent != null && Vector3.Distance(triggeredEvent.Position, toCheck.transform.position) < 2f)
+        }
+        else if (triggeredEvent != null && Vector3.Distance(triggeredEvent.Position, toCheck.transform.position) < 2f)
         {
             return true;
         }
         return false;
     }
 
-    void PerformIdleBehaviour(Unit toCheck) 
+    void PerformIdleBehaviour(Unit toCheck)
     {
-        if (toCheck.BehaviourRunner.myDecisionMaker.LinkedUnit == null)
-        {
+        
             if (currentBehaviour == null || currentBehaviour.GetType() != typeof(ZombieRoam_Behaviour))
             {
-                ZombieRoam_Behaviour zombieRoam_Behaviour = new ZombieRoam_Behaviour();
-                zombieRoam_Behaviour.InitRoamBehaviour((Zombie)toCheck);
-                currentBehaviour = zombieRoam_Behaviour;
+                ZombieRoam_Behaviour roamBehaviour = new ZombieRoam_Behaviour();
+                roamBehaviour.InitRoamBehaviour(toCheck);
+                currentBehaviour = roamBehaviour;
             }
-        }
-        else
-        {
-            if (currentBehaviour == null || currentBehaviour.GetType() != typeof(ZombieFollowUnit_Behaviour))
-            {
-                ZombieFollowUnit_Behaviour zombieFollow = new ZombieFollowUnit_Behaviour();
-                zombieFollow.InitRoamBehaviour(toCheck, toCheck.BehaviourRunner.myDecisionMaker.LinkedUnit);
-                currentBehaviour = zombieFollow;
-            }
-           
-        }
+      
     }
 
     void PerformAlertedBehaviour(Unit toCheck)
@@ -168,8 +161,8 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
         {
             if (Vector3.Distance(triggeredEvent.Position, toCheck.transform.position) > 3f)
             {
-                if (currentBehaviour==null||currentBehaviour.GetType() != typeof(MoveTo_Behaviour) 
-                    || currentBehaviour.GetType() == typeof(MoveTo_Behaviour)&&Vector3.Distance( (currentBehaviour as MoveTo_Behaviour).TargetPosition, triggeredEvent.Position)>5)
+                if (currentBehaviour == null || currentBehaviour.GetType() != typeof(MoveTo_Behaviour)
+                    || currentBehaviour.GetType() == typeof(MoveTo_Behaviour) && Vector3.Distance((currentBehaviour as MoveTo_Behaviour).TargetPosition, triggeredEvent.Position) > 5)
                 {
                     MoveTo_Behaviour moveTo = new MoveTo_Behaviour();
                     moveTo.InitBehaviour(toCheck, triggeredEvent.Position, true);
@@ -201,7 +194,10 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
                 currentBehaviour = zombieAttackObject_Behaviour;
 
             }
-           
+            else
+            {
+
+            }
         }
     }
 
@@ -213,14 +209,39 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
             zombieFollowTarget_Behaviour.InitBehaviour(UnitThatAttacked, toCheck);
             currentBehaviour = zombieFollowTarget_Behaviour;
 
-        }else if (currentBehaviour.IsBehaviourComplete())
+        }
+    }
+    const float SirenRange = 20f;
+    List<Unit> Followers = new List<Unit>();
+    void PerformSirenAttractBehaviour(Unit performing)
+    {
+        List<Unit> nearby = BehaviourUtilities.GetNonHostileUnits(performing,SirenRange);
+        for(int x=0;x<nearby.Count;x++)
         {
-            currentBehaviour = null;
-            UnitThatAttacked = null;
+            if (IsUnitValidToFollow(nearby[x]))
+            {
+                AddFollower(nearby[x],performing);
+            }
         }
     }
 
+    public override void OnUnlinkUnit(Unit unlinking)
+    {
+        Followers.Remove(unlinking);
+    }
 
+    bool IsUnitValidToFollow(Unit follower)
+    {
+        return follower.MyType == UnitType.Zombie 
+            && follower.BehaviourRunner.myDecisionMaker.LinkedUnit == null 
+            && Followers.Contains(follower)==false;
+    }
+
+    void AddFollower(Unit follower,Unit toFollow)
+    {
+        follower.BehaviourRunner.myDecisionMaker.LinkedUnit = toFollow;
+        Followers.Add(follower);
+    }
     public override void InitBehaviourMaker(Unit performing)
     {
         base.InitBehaviourMaker(performing);
@@ -233,6 +254,7 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
         {
             InitBehaviourMaker(toCheck);
         }
+        PerformSirenAttractBehaviour(toCheck);
         CheckToSeeIfStateShouldChange(toCheck);
         switch (CurrentState)
         {
@@ -240,15 +262,19 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
                 PerformIdleBehaviour(toCheck);
                 break;
             case BehaviourState.Alerted:
-                PerformAlertedBehaviour(toCheck);
+
+                 PerformAlertedBehaviour(toCheck);
                 break;
             case BehaviourState.Hostile:
-                PerformHostileBehaviour(toCheck);
+
+                 PerformHostileBehaviour(toCheck);
                 break;
             default:
                 break;
         }
     }
+
+  
 }
 
 

@@ -145,6 +145,8 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         data.Add("Target: " + objectToFollow.transform.position);
         data.Add("Can see target:" + CanRaycastToTarget(unitToMove));
         data.Add("target dist: " + Vector3.Distance(unitToMove.transform.position, objectToFollow.transform.position));
+        data.Add("Target null: " + (objectToFollow == null));
+        data.Add("Finished: " + IsBehaviourComplete().ToString());
         return data;
     }
     public override bool DoWeNullBehaviourOnComplete()

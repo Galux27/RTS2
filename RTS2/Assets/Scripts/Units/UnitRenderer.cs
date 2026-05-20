@@ -7,20 +7,25 @@ public class UnitRenderer : MonoBehaviour
     public SpriteRenderer Head, Torso, Legs,Hair,Face;
     public bool DrawHead=true, DrawTorso=true,DrawLegs=true,DrawHair=true,DrawFace=true;    
     UnitVisualStore UnitImRendering;
-    public float Scale = 1f;
+    Vector3 Scale = Vector3.one;
 
-    public void AlterScale(float newScale)
+    public void AlterScale(Vector3 newScale)
     {
         if (newScale == Scale)
         {
             return;
         }
-        float transformation = newScale / Scale;
-        Head.transform.localPosition = Head.transform.localPosition * transformation;
-        Torso.transform.localPosition = Torso.transform.localPosition * transformation;
-        Legs.transform.localPosition = Legs.transform.localPosition * transformation;
-        Hair.transform.localPosition = Hair.transform.localPosition * transformation;
-        Face.transform.localPosition = Face.transform.localPosition * transformation;
+        float transformationx = newScale.x / Scale.x;
+        float transformationy = newScale.y / Scale.y;
+        float transformationz = newScale.z / Scale.z;
+
+      
+
+        Head.transform.localPosition = new Vector3(Head.transform.localPosition.x * transformationx, Head.transform.localPosition.y * transformationy, Head.transform.localPosition.z * transformationz);
+        Torso.transform.localPosition = new Vector3(Torso.transform.localPosition.x * transformationx, Torso.transform.localPosition.y * transformationy, Torso.transform.localPosition.z * transformationz);
+        Legs.transform.localPosition = new Vector3(Legs.transform.localPosition.x * transformationx, Legs.transform.localPosition.y * transformationy, Legs.transform.localPosition.z * transformationz);
+        Hair.transform.localPosition = new Vector3(Hair.transform.localPosition.x * transformationx, Hair.transform.localPosition.y * transformationy, Hair.transform.localPosition.z * transformationz);
+        Face.transform.localPosition = new Vector3(Face.transform.localPosition.x * transformationx, Face.transform.localPosition.y * transformationy, Face.transform.localPosition.z * transformationz);
         Scale = newScale;
     }
 
