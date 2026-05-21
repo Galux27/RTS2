@@ -24,6 +24,23 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     PathFollower myPathFollower;
     public bool hasLastNode = false;
 
+
+    public TileRaycast GetRaycast(Vector3 startPos,Vector3 endPos)
+    {
+        if (myRaycast == null)
+        {
+            myRaycast = new TileRaycast(startPos, endPos);
+        }
+        else
+        {
+            if (myRaycast.DoesRaycastNeedReinitializing(startPos, endPos))
+            {
+                myRaycast.InitRaycast(startPos, endPos);
+            }
+            }
+            return myRaycast;
+    }
+
     public PathFollower GetFollower()
     {
         if(myPathFollower == null)
@@ -86,14 +103,14 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
       //  RemoveUnitFromChunkItsIn();
         GameObject.Destroy(this.gameObject);
     }
-
+    bool IsDrawn = false;
     public void UpdateUnitRenderer(bool show)
     {
         if (this==null|| this.transform == null)
         {
             return;
         }
-        if (show)
+        if (show&&IsDrawn==false)
         {
             if (MyRender == null)
             {
@@ -106,8 +123,9 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
             MyRender.SetUnitVisuals(MyVisualStore);
             MyRender.DrawUnit();
             MyHealth.OnObjectRender(this.gameObject);
+            IsDrawn = true;
         }
-        else
+        else if(!show&&IsDrawn)
         {
             if (MyRender != null)
             {
@@ -117,8 +135,9 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
                 MyRender = null;
                 MyHealth.OnObjectHidden(this.gameObject);
             }
-            }
+            IsDrawn = false;
         }
+    }
 
 
     BehaviourRunner behaviourRunner;

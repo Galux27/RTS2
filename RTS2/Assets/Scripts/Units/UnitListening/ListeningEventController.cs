@@ -79,7 +79,10 @@ public class ListeningEventController : MonoBehaviour,Updater
     {
         CleanupListeningEvents();
     }
-
+    Vector3 Updater.GetPosition()
+    {
+        return Vector3.zero;
+    }
  
 
 }

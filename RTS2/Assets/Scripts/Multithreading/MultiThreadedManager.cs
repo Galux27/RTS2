@@ -22,6 +22,7 @@ public class MultiThreadedManager : MonoBehaviour
     public int PathCount = 0;
     public void AddAction(Action toPerform,Action OnComplete,bool autoComplete=true)
     {
+        
         MultiThreadedAction action = new MultiThreadedAction(toPerform,OnComplete,autoComplete);
         actions.Add(action);
         action.StartAction();

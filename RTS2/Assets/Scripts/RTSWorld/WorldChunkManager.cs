@@ -710,7 +710,7 @@ public class WorldChunkManager : MonoBehaviour
         }
         catch(System.Exception e)
         {
-            Debug.LogError("Error creating unit from " + u.transform.position+"/"+batch+" ");
+            Debug.LogError("Error creating unit from " + u.transform.position+"/"+batch+" "+e.ToString());
         }
     }
 

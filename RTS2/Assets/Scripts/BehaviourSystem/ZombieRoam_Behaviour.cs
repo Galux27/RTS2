@@ -6,11 +6,11 @@ public class ZombieRoam_Behaviour :BehaviourBase
 {
     float MinDistFrom = 1f;
 
-    Vector2 direction = Vector2.zero;
+    Vector3 direction = Vector3.zero;
     float directionChangeTimer = 0f;
     int count = 0;
     const float directionChangeTimerLength = 10f;
-   static List<Vector2Int> PotentialDirections = new List<Vector2Int>() { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };
+   static List<Vector3> PotentialDirections = new List<Vector3>() { new Vector3(1, 0), new Vector3(-1, 0), new Vector3(0, 1), new Vector3(0, -1) };
     float timeInit = 0;
     public void InitRoamBehaviour( Unit me)
     {
@@ -88,7 +88,7 @@ public class ZombieRoam_Behaviour :BehaviourBase
         data.AddDataToSerialize(DataKeys.Pos, direction);
         return data;
     }
-    List<Vector2Int> validDirections = new List<Vector2Int>();
+    List<Vector3> validDirections = new List<Vector3>();
     void GenerateDirectionToRoam()
     {
         validDirections.Clear();

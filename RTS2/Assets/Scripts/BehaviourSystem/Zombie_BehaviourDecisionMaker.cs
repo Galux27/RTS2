@@ -24,22 +24,24 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
     {
         
     }
+    Unit UnitNearMe;
 
- 
+
     public override void CheckToSeeIfStateShouldChange(Unit toCheck)
     {
-        if (!CanChangeState(toCheck))
+        UnitNearMe = BehaviourUtilities.GetClosestTargetThatsHostile(toCheck, toCheck.MySenses.Sight);
+        triggeredEvent = ListeningEventController.Instance.GetEventInRange(toCheck.MySenses.Hearing, toCheck.transform.position);
+
+        if (!CanChangeState(toCheck) && UnitNearMe==null&&triggeredEvent==null)
         {
             return;
         }
-        Unit UnitNearMe = BehaviourUtilities.GetClosestTargetThatsHostile(toCheck, toCheck.MySenses.Sight);
         if (UnitNearMe != null)
         {
             UnitThatAttacked = UnitNearMe;
             SetState(BehaviourState.Hostile);
             return;
         }
-        triggeredEvent = ListeningEventController.Instance.GetEventInRange(toCheck.MySenses.Hearing, toCheck.transform.position);
         if(triggeredEvent != null)
         {
             SetState(BehaviourState.Alerted);
@@ -108,9 +110,18 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
 
     bool ShouldChangeFromHostile(Unit toCheck)
     {
+        
+
         if (UnitThatAttacked == null)
         {
-            return true;
+            if (UnitNearMe != null)
+            {
+                UnitThatAttacked = UnitNearMe;
+            }
+            else
+            {
+                return true;
+            }
         }
         float distToTarget = Vector3.Distance(toCheck.transform.position, UnitThatAttacked.transform.position);
         if (distToTarget > toCheck.MySenses.Sight * 2)
@@ -129,7 +140,7 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
 
     bool ShouldChangeFromAlerted(Unit toCheck)
     {
-        if (TimeStateSet + toCheck.MySenses.Memory > GameTime.Instance.InGameTime||ObjectAttacking==null)
+        if (TimeStateSet + toCheck.MySenses.Memory > GameTime.Instance.InGameTime||ObjectAttacking==null||UnitNearMe!=null)
         {
             return true;
         }else if (triggeredEvent != null && Vector3.Distance(triggeredEvent.Position, toCheck.transform.position) < 2f)

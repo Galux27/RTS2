@@ -14,6 +14,10 @@ public class BehaviourRunner : MonoBehaviour, Updater
         myDecisionMaker = decisionMaker; 
     
     }
+    public Vector3 GetPosition()
+    {
+        return UnitPerforming.Position();
+    }
 
     public void SetBehaviour(BehaviourBase toPerform)
     {
@@ -59,7 +63,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
     public bool IsBehaviourNull = true,breakpointBeforeRun=false;
     public string behaviourName;
     public List<string> BehaviourDebug,BehaviourDecisionDebug;
-    public float LastUpdate, LastBehaviourSet,CurTime;
+    public float LastUpdate, LastBehaviourSet,CurTime,LastLimitedUpdate;
     void OnBehaviourComplete()
     {
 
@@ -87,7 +91,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
         ManualUpdater.Instance.AddUpdater(this);
 
     }
-
+    public bool DebugOutBehaviourDetails = false;
     public void OnEveryFrame()
     {
         IsBehaviourNull = CurrentBehaviour == null;
@@ -110,16 +114,20 @@ public class BehaviourRunner : MonoBehaviour, Updater
 
                 OnBehaviourComplete();
             }
-            //if (CurrentBehaviour != null)
-            //{
-            //    BehaviourDebug = CurrentBehaviour.GetDebugData();
-            //    BehaviourDebug.Add("Can Perform: " + CurrentBehaviour.CanPerformBehaviour());
-            //}
-            //else
-            //{
-            //    BehaviourDebug = new List<string> { "Null" };
-            //}
-
+#if UNITY_EDITOR
+            if (DebugOutBehaviourDetails || DebugCheats.Instance.DoWeLogBehaviourDetails())
+            {
+                if (CurrentBehaviour != null)
+                {
+                    BehaviourDebug = CurrentBehaviour.GetDebugData();
+                    BehaviourDebug.Add("Can Perform: " + CurrentBehaviour.CanPerformBehaviour());
+                }
+                else
+                {
+                    BehaviourDebug = new List<string> { "Null" };
+                }
+            }
+#endif
             //if(myDecisionMaker != null)
             //{
             //    BehaviourDecisionDebug = myDecisionMaker.DecisionMakerDebug(this.transform.position);
@@ -129,7 +137,7 @@ public class BehaviourRunner : MonoBehaviour, Updater
             //    BehaviourDecisionDebug = new List<string> { "Null" };
             //}
         }
-    }
+        }
 
     public void LimitedUpdate()
     {
@@ -145,12 +153,16 @@ public class BehaviourRunner : MonoBehaviour, Updater
             Debug.Log("Breakpoint trigger");
         }
         {
+            LastLimitedUpdate= GameTime.Instance.InGameTime;
             myDecisionMaker.PerformBehaivourUpdate(UnitPerforming);
         }
     }
 
     private void OnDestroy()
     {
-        ManualUpdater.Instance.RemoveUpdater(this);
+        if (ManualUpdater.Instance != null)
+        {
+            ManualUpdater.Instance.RemoveUpdater(this);
+        }
     }
 }

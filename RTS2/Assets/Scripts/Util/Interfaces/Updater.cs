@@ -8,6 +8,8 @@ public interface Updater
     public abstract void Init();
     public abstract void OnEveryFrame();
     public abstract void LimitedUpdate();
+
+    public abstract Vector3 GetPosition();
 }
 public enum UpdaterType
 {

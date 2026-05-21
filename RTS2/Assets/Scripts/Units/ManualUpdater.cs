@@ -18,7 +18,7 @@ public class ManualUpdater : MonoBehaviour
     }
 
     public Dictionary<UpdaterType,List<Updater>> updating=new Dictionary<UpdaterType, List<Updater>>();
-    const int MaxUserUpdatePerFrame = 200, MaxAIUpdatePerFrame = 40,MaxOtherUpdatesPerFrame=10;
+    const int MaxUserUpdatePerFrame = 200, MaxAIUpdatePerFrame = 10,MaxOtherUpdatesPerFrame=10;
     public int UserIndex = 0, AIIndex = 0,OtherIndex=0;
     public void AddUpdater(Updater toAdd)
     {
@@ -49,6 +49,7 @@ public class ManualUpdater : MonoBehaviour
 
         if (updating.ContainsKey(UpdaterType.AI))
         {
+            UpdateForTypeNearCamera(UpdaterType.AI);
             LimitedUpdateForType(UpdaterType.AI, MaxAIUpdatePerFrame, ref AIIndex);
         }
 
@@ -57,6 +58,31 @@ public class ManualUpdater : MonoBehaviour
             LimitedUpdateForType(UpdaterType.Other, MaxOtherUpdatesPerFrame, ref OtherIndex);
         }
     }
+    List<Updater> ToUpdateNearCamera = new List<Updater>(); 
+    void UpdateForTypeNearCamera(UpdaterType type)
+    {
+        ToUpdateNearCamera.Clear();
+        Vector3 cameraPos = CameraController.Instance.transform.position;
+       // int updatesPerformed = 0;
+      //  int updateLimit = Mathf.Min(updating[type].Count, max);
+        //int startingIndex = 0;// index;
+
+       for(int x = 0; x < updating[type].Count; x++)
+        {
+            if (Vector3.Distance(updating[type][x].GetPosition(), cameraPos) < 20f)
+            {
+                ToUpdateNearCamera.Add(updating[type][x]);
+            }
+        }
+
+        for(int x = 0; x < ToUpdateNearCamera.Count; x++)
+        {
+            ToUpdateNearCamera[x].LimitedUpdate();
+        }
+        
+    }
+
+
 
     void LimitedUpdateForType(UpdaterType type,int max,ref int index)
     {
@@ -79,7 +105,10 @@ public class ManualUpdater : MonoBehaviour
             {
                 try
                 {
-                    updating[type][index].LimitedUpdate();
+                    if (ToUpdateNearCamera.Contains(updating[type][index]) == false)
+                    {
+                        updating[type][index].LimitedUpdate();
+                    }
                 }
                 catch(System.Exception e)
                 {

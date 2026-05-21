@@ -262,17 +262,22 @@ public static class BehaviourUtilities
         GetHostileUnits(searching,range);
         if(GetHostileCache.Count==0) return null;
         float dist = 9999999f;
+        float dist2 = 0f;
         UnitCache = null;
         for(int x=0; x < GetHostileCache.Count;x++)
-        {
-            float dist2 = Vector3.Distance(searching.transform.position, GetHostileCache[x].transform.position);
-            if (dist2 < dist)
+        {  
+            //if (searching.GetRaycast(searching.transform.position, GetHostileCache[x].transform.position).
+            //    DidRaycastHitEnd(GetHostileCache[x].transform.position))
             {
-                UnitCache = GetHostileCache[x];
-                dist = dist2;
+                dist2 = Vector3.Distance(searching.transform.position, GetHostileCache[x].transform.position);
+                if (dist2 < dist)
+                {
+                    UnitCache = GetHostileCache[x];
+                    dist = dist2;
+                }
             }
         }
-        return UnitCache;
+            return UnitCache;
     }
 
     public static Vector3 GetPositionAwayFromTarget(Vector3 posToAvoid)
@@ -327,7 +332,11 @@ public static class BehaviourUtilities
     public static bool CanIMoveInDirection(Vector3 pos,Vector3 dir,Unit performing)
     {
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(performing.transform.position.x + dir.x, performing.transform.position.y + dir.y, out batchCoords, out chunkCoords, out tileCoords);
-
+        if (WorldChunkManager.Instance.GetChunkBatch(batchCoords) == null)
+        {
+            //Debug.LogError("Error trying to move from " + pos + " in batch " + batchCoords+","+chunkCoords+","+tileCoords);
+            return false;
+        }
         WallSegment wall = WorldChunkManager.Instance.GetChunkBatch(batchCoords).Chunks[chunkCoords.x, chunkCoords.y].WallSegments[tileCoords.x, tileCoords.y];
         if (wall.HasWall)
         {

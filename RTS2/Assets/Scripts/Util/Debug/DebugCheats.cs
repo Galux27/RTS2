@@ -49,5 +49,14 @@ public class DebugCheats : MonoBehaviour
 #endif
         return false;
     }
+
+    public bool LogBehaviourDetails = true;
+    public bool DoWeLogBehaviourDetails()
+    {
+#if UNITY_EDITOR
+        return LogBehaviourDetails;
+#endif
+        return false;
+    }
 }
 

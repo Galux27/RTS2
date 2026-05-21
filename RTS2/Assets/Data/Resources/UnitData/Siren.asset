@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edc79b7cdd6544540924f92cdfc308fb, type: 3}
   m_Name: Siren
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1965254852317116142, guid: 52a947ee05c89644790fdce54ceb2c38, type: 3}
+  Prefab: {fileID: 2525625107269448506, guid: 722a41a76160c1f459b901b471ce46a4, type: 3}
   UnitType: Siren
   ObjectsToTrainFrom: []
   TrainingTime: 0

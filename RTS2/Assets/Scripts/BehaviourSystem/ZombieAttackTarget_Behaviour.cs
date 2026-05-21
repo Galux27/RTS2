@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class ZombieAttackTarget_Behaviour : BehaviourBase
@@ -17,7 +16,7 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         follower.ResetFollower();
         follower.SetTargetToFollow(objectToFollow);
         healthOfUnitAttacking =objectToFollow.MyHealth;
-        toPerform.myRaycast = new TileRaycast(toPerform.transform.position, objectToFollow.transform.position);
+        toPerform.myRaycast = toPerform.GetRaycast(toPerform.transform.position, objectToFollow.transform.position);
     }
 
     public override void InitializeFromData(Unit performing, Dictionary<string, object> data)
@@ -80,6 +79,10 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         }
     }
   
+    Vector3 DirectionToEndOfRaycast(Unit performing)
+    {
+        return (performing.GetRaycast(performing.transform.position, objectToFollow.transform.position).GetFurthestTilePos()-performing.transform.position).normalized;
+    }
 
     bool AreWeInRangeToAttack()
     {
@@ -88,8 +91,8 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
 
     bool CanRaycastToTarget(Unit performing)
     {
-        performing.myRaycast.RaycastCheck(performing.transform.position, objectToFollow.transform.position);
-        return performing.myRaycast.DidRaycastHitEnd(objectToFollow.transform.position);
+        return performing.GetRaycast(performing.transform.position, objectToFollow.transform.position).
+            DidRaycastHitEnd(objectToFollow.transform.position);
     }
 
 
@@ -97,8 +100,6 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
     {
         if (objectToFollow != null)
         {
-          
-            
             if(follower.HasPath()) 
             {
                 follower.OnUpdate(unitToMove.transform.position);
@@ -147,6 +148,8 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         data.Add("target dist: " + Vector3.Distance(unitToMove.transform.position, objectToFollow.transform.position));
         data.Add("Target null: " + (objectToFollow == null));
         data.Add("Finished: " + IsBehaviourComplete().ToString());
+        data.Add("Refresh Time: " + (GameTime.Instance.InGameTime - lastBackupPathTime));
+        data.Add("Waiting for path: " + follower.IsWaitingOnPath());
         return data;
     }
     public override bool DoWeNullBehaviourOnComplete()
