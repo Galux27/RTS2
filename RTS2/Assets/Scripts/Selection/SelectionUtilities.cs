@@ -493,7 +493,7 @@ public static class SelectionUtilities
             if (FactionController.Instance.IsHostile(toCheck[x], FactionController.USER_FACTION))
             {
                 curDist = Vector3.Distance(point, unitPosition);
-                if (curDist < maxDist && curDist < closest)
+                if (curDist < maxDist && curDist < closest || toCheck[x].IsPointInBounds(CursorSelect.Instance.RawMousePos))
                 {
                     retVal = toCheck[x];
                     closest = curDist;

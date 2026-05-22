@@ -51,7 +51,7 @@ public class CursorIcon : MonoBehaviour
         }
     }
 
-    public SpriteRenderer Icon;
+    public SpriteRenderer Icon,TileMarker;
 
     public Sprite Move, Attack, Build,WallPlace,Deconstruct,Harvest,Collect,Multiple,Enter,Select;
 
@@ -117,9 +117,10 @@ public class CursorIcon : MonoBehaviour
     }
 
 
-    public void SetPosition(Vector3 pos)
+    public void SetPosition(Vector3 pos,Vector3 tilePos)
     {
         this.transform.position= pos;
+        TileMarker.transform.position = tilePos;
     }
 
     public void SetVisible(bool visible)

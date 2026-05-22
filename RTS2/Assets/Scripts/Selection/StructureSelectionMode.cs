@@ -86,7 +86,7 @@ public class StructureSelectionMode: SelectionMode
         Sprite icon = WallHelpers.GetSpriteForWallType(
             WallHelpers.GetWallAtCoords(coords), WorldController.Instance.WallManager,
         WallTypeManager.Instance.SelectedWallTile);
-        CursorIcon.Instance.SetPosition(new Vector3(coords.x + .5f, coords.y + .5f, 0f));
+        CursorIcon.Instance.SetPosition(CursorSelect.Instance.RawMousePos,new Vector3(coords.x + .5f, coords.y + .5f, 0f));
         CursorIcon.Instance.SetCustomIcon(icon,new Vector3(-.5f,-.3f,0f));
 
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
@@ -162,7 +162,7 @@ public class StructureSelectionMode: SelectionMode
         Vector3 cursorPos = CursorSelect.Instance.GetMousePosition();
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         Sprite icon = WallTypeManager.Instance.DoorIcon;
-        CursorIcon.Instance.SetPosition(new Vector3(coords.x + .5f, coords.y + .5f, 0f));
+        CursorIcon.Instance.SetPosition(CursorSelect.Instance.RawMousePos,new Vector3(coords.x + .5f, coords.y + .5f, 0f));
         CursorIcon.Instance.SetCustomIcon(icon, new Vector3(-.5f, -.3f, 0f));
 
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
