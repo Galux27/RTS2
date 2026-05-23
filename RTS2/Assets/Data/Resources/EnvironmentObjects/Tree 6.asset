@@ -18,8 +18,8 @@ MonoBehaviour:
   BackwardsSprite: {fileID: 0}
   HarvestedSprite: {fileID: 0}
   BlocksTile: 1
-  Width: 3
-  Height: 2
+  Width: 5
+  Height: 3
   CanHarvest: 1
   IsDecoration: 0
   RequiresUpdate: 0

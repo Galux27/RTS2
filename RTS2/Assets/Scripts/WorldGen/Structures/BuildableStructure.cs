@@ -65,7 +65,7 @@ public class BuildableStructure : Constructable,ObjectInfo
 
     public Vector3 GetPosition()
     {
-       return pos+GetSize()/2;
+       return pos;
     }
 
    public float MaxDistToConstruct()
@@ -196,10 +196,7 @@ public class BuildableStructure : Constructable,ObjectInfo
         return size;
     }
 
-    bool Selectable.IsPointInBounds(Vector3 point)
-    {
-        return SelectionUtilities.IsInBounds(size, pos+offset, point);
-    }
+    
 
     public string Name()
     {
@@ -293,6 +290,16 @@ public class BuildableStructure : Constructable,ObjectInfo
     public UID MyUID()
     {
         return GetMyUID();
+    }
+
+    bool ObjectBounds.IsPointInBounds(Vector3 point)
+    {
+        return SelectionUtilities.IsInBounds(GetSize(), GetPosition()+GetCenterOffset(), point);
+    }
+
+    public Vector3 GetCenterOffset()
+    {
+        return offset;
     }
 }
 

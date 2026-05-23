@@ -19,7 +19,7 @@ MonoBehaviour:
   HarvestedSprite: {fileID: 0}
   BlocksTile: 1
   Width: 2
-  Height: 1
+  Height: 2
   CanHarvest: 1
   IsDecoration: 0
   RequiresUpdate: 0

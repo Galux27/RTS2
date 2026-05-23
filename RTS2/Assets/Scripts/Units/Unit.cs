@@ -23,7 +23,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public TileRaycast myRaycast;
     PathFollower myPathFollower;
     public bool hasLastNode = false;
-
+    
 
     public TileRaycast GetRaycast(Vector3 startPos,Vector3 endPos)
     {
@@ -177,6 +177,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         MyFaction = this.GetComponent<UnitFaction>();
         MySenses = this.GetComponent<UnitSenses>();
         MyVisualStore = this.GetComponent<UnitVisualStore>();
+        offset = new Vector3(0, MyVisualStore.Scale.y / 2f, 0);
     }
 
     public bool GetOrderVal(string key)
@@ -357,7 +358,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
             OnUnitStandstill();
         }
 #if UNITY_EDITOR
-        SelectionUtilities.DrawBounds(this.transform.position, GetSize(),Color.cyan);
+        //SelectionUtilities.DrawBounds(this.transform.position, GetSize(),Color.cyan);
 #endif
     }
 
@@ -380,14 +381,14 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 
     public Vector3 GetSize()
     {
-        return Vector3.one;
+        return this.MyVisualStore.Scale;
     }
 
    public bool IsPointInBounds(Vector3 point)
     {
         return SelectionUtilities.IsInBounds(GetSize(), this.transform.position, point);
     }
-
+    
     public string Name()
     {
         return MyType.ToString();
@@ -486,6 +487,11 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public UID MyUID()
     {
         return GetMyUID();
+    }
+    Vector3 offset;
+    public Vector3 GetCenterOffset()
+    {
+        return offset ;
     }
 }
 

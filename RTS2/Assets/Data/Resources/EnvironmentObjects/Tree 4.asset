@@ -18,8 +18,8 @@ MonoBehaviour:
   BackwardsSprite: {fileID: 0}
   HarvestedSprite: {fileID: 0}
   BlocksTile: 1
-  Width: 3
-  Height: 2
+  Width: 2
+  Height: 5
   CanHarvest: 1
   IsDecoration: 0
   RequiresUpdate: 0
@@ -27,7 +27,7 @@ MonoBehaviour:
   Resources:
     resources:
     - ResourceToSpawn: Construction Supplies
-      QuantityToSpawn: 700
+      QuantityToSpawn: 500
       RangeToSpawn: {x: 1, y: 1, z: 0}
     HarvestLength: 11
   CapacityData:

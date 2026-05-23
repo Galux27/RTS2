@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 /// Class to represent a tile of wall within the world
 /// used to know the location to then identify what tiles are going to be used
 /// </summary>
-public class WallSegment:Selectable ,ObjectInfo,ISerialize
+public class WallSegment:Selectable ,ObjectInfo,ISerialize,ObjectBounds
 {
     public int x, y;
     public Vector2Int localCoords;
@@ -170,10 +170,9 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     {
         return Vector3.one;
     }
-
     public bool IsPointInBounds(Vector3 point)
     {
-        return SelectionUtilities.IsInBounds(GetSize(),new Vector3(x,y,0), point);
+        return SelectionUtilities.IsInBounds(GetSize(), Position(), CursorSelect.Instance.RawMousePos);
     }
 
     public string Name()
@@ -331,6 +330,11 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize
     public UID MyUID()
     {
         return GetMyUID();
+    }
+
+    public Vector3 GetCenterOffset()
+    {
+        return Vector3.zero;
     }
 }
 

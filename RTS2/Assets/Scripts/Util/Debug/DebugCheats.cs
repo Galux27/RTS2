@@ -58,5 +58,15 @@ public class DebugCheats : MonoBehaviour
 #endif
         return false;
     }
+
+
+    public bool DrawSelectableBounds = true;
+    public bool DoWeDrawSelectableBounds()
+    {
+#if UNITY_EDITOR
+        return DrawSelectableBounds;
+#endif
+        return false;
+    }
 }
 

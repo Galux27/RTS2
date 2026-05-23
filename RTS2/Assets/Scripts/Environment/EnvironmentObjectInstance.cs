@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// Stores information about an instance of an EnvironmentObject in the world (Does not mean that the object is being drawn)
 /// </summary>
-public class EnvironmentObjectInstance:ObjectInfo,ISerialize
+public class EnvironmentObjectInstance:ObjectInfo,ISerialize,ObjectBounds
 {
     public string ObjectKey;
     public int PosX
@@ -28,7 +28,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
     public bool Drawn = false;
     public GameObject Object;
     WorldChunk myChunk;
-    Vector3 position;
+    Vector3 position,size,offset;
     public Vector2Int coords;
     bool needsUpdate = false;
     public void SetChunk(WorldChunk chunk)
@@ -47,6 +47,8 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
             MyHealth = new EntityHealth();
             MyHealth.MaxHealth = obj.MaxHealth;
             MyHealth.CurrentHealth = obj.MaxHealth;
+            size = obj.Size();
+            offset = new Vector3(0, size.y / 2f, 0f);
             needsUpdate = obj.RequiresUpdate;
         }
         catch
@@ -287,5 +289,19 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize
     public UID MyUID()
     {
         return GetMyUID();
+    }
+
+    public Vector3 GetSize()
+    {
+        return size;
+    }
+    public bool IsPointInBounds(Vector3 point)
+    {
+        return SelectionUtilities.IsInBounds(GetSize(), Position()+GetCenterOffset(), CursorSelect.Instance.RawMousePos);
+    }
+
+    public Vector3 GetCenterOffset()
+    {
+       return offset;
     }
 }

@@ -103,8 +103,6 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         base.CleanupInstance();
     }
 
-    
-
     public void OnObjectDeselected()
     {
         Object.GetComponentInChildren<SelectedOutline>()?.OnDeselect();

@@ -35,7 +35,7 @@ public static class SelectionUtilities
             objPosition.y = constructedObjectCache[x].PosY;
             curDist = Vector3.Distance(point, objPosition);
 
-            if (curDist < maxDist && curDist < closest)
+            if (curDist < maxDist && curDist < closest|| constructedObjectCache[x].IsPointInBounds(CursorSelect.Instance.RawMousePos))
             {
                 retVal = constructedObjectCache[x];
                 closest = curDist;
@@ -179,7 +179,7 @@ public static class SelectionUtilities
             objPosition = constructableObjectCache[x].GetPosition();
             curDist = Vector3.Distance(point, objPosition);
 
-            if (curDist < maxDist && curDist < closest)
+            if (curDist < maxDist && curDist < closest|| constructableObjectCache[x].IsPointInBounds(CursorSelect.Instance.RawMousePos))
             {
                 retVal = constructableObjectCache[x];
                 closest = curDist;
@@ -248,7 +248,7 @@ public static class SelectionUtilities
             objPosition = constructableObjectCache[x].GetPosition();
             curDist = Vector3.Distance(point, objPosition);
 
-            if (curDist < maxDist && curDist < closest)
+            if (curDist < maxDist && curDist < closest|| constructableObjectCache[x].IsPointInBounds(CursorSelect.Instance.RawMousePos))
             {
                 retVal = constructableObjectInstances[x];
                 closest = curDist;
@@ -289,7 +289,7 @@ public static class SelectionUtilities
             objPosition = WallTileCache[x].Position();
             curDist = Vector3.Distance(point, objPosition);
 
-            if (curDist < maxDist && curDist < closest)
+            if (WallTileCache[x].IsPointInBounds(CursorSelect.Instance.RawMousePos)||curDist < maxDist && curDist < closest )
             {
                 retVal = WallTileCache[x];
                 closest = curDist;
@@ -328,23 +328,11 @@ public static class SelectionUtilities
         {
             objPosition = environmentObjectInstance[x].GetPosition();
             Vector3 size = (environmentObjectInstance[x] as ConstructableObjectInstance).GetSize();
-            if (IsInBounds((environmentObjectInstance[x] as ConstructableObjectInstance).GetSize(), objPosition, point))
+            if (environmentObjectInstance[x].IsPointInBounds(CursorSelect.Instance.RawMousePos))
             {
-                DrawBounds(objPosition, size, Color.magenta);
-
-                //curDist = Vector3.Distance(point, objPosition);
-
-                // if (curDist < maxDist && curDist < closest)
-                {
                     return environmentObjectInstance[x];
-                    closest = curDist;
-                }
             }
-            else
-            {
-                DrawBounds(objPosition, size, Color.cyan);
-
-            }
+          
 
         }
             return retVal;
@@ -378,7 +366,7 @@ public static class SelectionUtilities
             objPosition = environmentObjectInstance[x].GetPosition();
             curDist = Vector3.Distance(point, objPosition);
 
-            if (curDist < maxDist && curDist < closest)
+            if (environmentObjectInstance[x].IsPointInBounds(CursorSelect.Instance.RawMousePos)||curDist < maxDist && curDist < closest)
             {
                 retVal = environmentObjectInstance[x];
                 closest = curDist;
@@ -591,15 +579,19 @@ public static class SelectionUtilities
 
     public static bool IsInBounds(Vector3 size, Vector3 center, Vector3 pointToCheck)
     {
-        size.z = 999999f;
+
+        size.z = 2f;
         BoundsForCheck = new Bounds(center, size);
-        return BoundsForCheck.Contains(pointToCheck);
+        if (DebugCheats.Instance.DoWeDrawSelectableBounds())
+        {
+            DrawBounds(BoundsForCheck.center, BoundsForCheck.size, Color.magenta);
+        }
+            return BoundsForCheck.Contains(pointToCheck);
     }
     static Bounds b;
     public static void DrawBounds(Vector3 pos,Vector3 size, Color col, float delay = 0 )
     {
         b = new Bounds(pos, size);
-
 
         // bottom
         var p1 = new Vector3(b.min.x, b.min.y, b.min.z);

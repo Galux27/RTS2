@@ -1,6 +1,6 @@
 
 using UnityEngine;
-public interface Selectable 
+public interface Selectable :ObjectBounds
 {
     void OnObjectSelected();
     void OnObjectDeselected();
@@ -13,8 +13,7 @@ public interface Selectable
 
     public void SetIsSelected(bool val);
 
-    public Vector3 GetSize();
-    public bool IsPointInBounds(Vector3 point);
+ 
 }
 
 public enum SelectableType
