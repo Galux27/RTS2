@@ -128,7 +128,7 @@ public class Settlement : OverworldFeatureToWorldConverter
         int count = 0;
         int index = 0;
         SettlementArea[] split = null;
-        while (count < 20)
+        while (count < 5)
         {
             index = Random.Range(0, areas.Count);
             split = areas[index].Split();
