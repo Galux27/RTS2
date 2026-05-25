@@ -228,6 +228,7 @@ public class Zombie_BehaviourDecisionMaker : BehaviourDecisionMaker
         {
             currentBehaviour = null;
             UnitThatAttacked = null;
+            SetState(BehaviourState.Alerted);
         }
     }
 

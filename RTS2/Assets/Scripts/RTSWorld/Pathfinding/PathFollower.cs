@@ -30,9 +30,29 @@ public class PathFollower
         return pathfindingNodes != null &&pathfindingNodes.Count > 0&& currentIndex <= pathfindingNodes.Count-1&&!FailedPath;
     }
 
+    public PathfindingNode GetLastNode()
+    {
+        if (pathfindingNodes != null && pathfindingNodes.Count > 0)
+        {
+            return pathfindingNodes[pathfindingNodes.Count - 1];
+        }
+        return null;
+    }
+
     public bool IsWaitingOnPath()
     {
-        return gettingPath != null;
+        if (gettingPath == null)
+        {
+            return false;
+        }
+        else
+        {
+            if (gettingPath.IsComplete)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void ResetFollower()
@@ -42,6 +62,9 @@ public class PathFollower
             pathfindingNodes.Clear();
         }
             currentIndex = 0;
+        ClearLastPathRequest();
+        FailedPath = false;
+        
     }
     PathfindingMultiThreadedAction gettingPath = null;
     void ClearLastPathRequest()
@@ -61,16 +84,27 @@ public class PathFollower
             FailedPath = true;
             return;
         }
-        this.pathfindingNodes = Pathfinding.FindPath(startPos, endPos, followingPath);
+        int channel = Pathfinding.GetParentChannel();
+        try
+        {
+            this.pathfindingNodes = Pathfinding.FindPath(startPos, endPos, followingPath, channel);
+        }
+        catch(System.Exception e)
+        {
+            Debug.LogError(e.ToString());
+        }
+        Pathfinding.ReturnParentChannel(channel);
+        gettingPath = null;
+
         if (this.pathfindingNodes == null)
         {
             FailedPath = true;
         }
         else
         {
+           
             FailedPath = false;
         }
-        gettingPath =null;
     }
 
     Vector3 startPos;
@@ -85,13 +119,23 @@ public class PathFollower
             FailedPath = true;
             return;
         }
-        this.pathfindingNodes = Pathfinding.FindPath(startPos, targetNode, followingPath);
+        int channel = Pathfinding.GetParentChannel();
+        try
+        {
+
+            this.pathfindingNodes = Pathfinding.FindPath(startPos, targetNode, followingPath, channel);
+        }catch(System.Exception e)
+        {
+            Debug.LogError(e.ToString());
+        }
+        Pathfinding.ReturnParentChannel(channel);
         if (this.pathfindingNodes == null)
         {
             FailedPath = true;
         }
         else
         {
+          
             FailedPath = false;
         }
         gettingPath = null;
@@ -104,7 +148,7 @@ public class PathFollower
         this.startPos = myPos;
         this.targetNode = targetPos;
         FailedPath = false;
-        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToNode(),MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
+        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToNode(), this, MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
         currentIndex = 0;
         isPathDone = false;
 
@@ -118,7 +162,7 @@ public class PathFollower
         this.startPos = myPos;
         this.endPos = targetPos;
         FailedPath = false;
-        gettingPath=MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition(), MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
+        gettingPath=MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition(),this, MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
         currentIndex = 0;
         isPathDone = false;
 
@@ -136,7 +180,7 @@ public class PathFollower
         this.startPos = myPos;
         this.endPos = toPathTo.Position();
         toFollow = toPathTo;
-        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition(), MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
+        gettingPath = MultiThreadedManager.Instance.AddPathfindingAction(() => GetPathToPosition(), this, MultiThreadedManager.Instance.IsUnitHighPriority(followingPath));
         currentIndex = 0;
         isPathDone = false;
         
@@ -149,7 +193,7 @@ public class PathFollower
        
     }
 
-    public Vector3 GetLastNode()
+    public Vector3 GetLastNodePosition()
     {
         return pathfindingNodes[pathfindingNodes.Count-1].worldPos;
     }
@@ -197,6 +241,11 @@ public class PathFollower
         }
 
         return retVal;
+    }
+
+    public bool HasFollowerFinishedPath()
+    {
+        return isPathDone;
     }
 
     void CheckToUpdatePathWithTargetMovement(Vector3 curPos)

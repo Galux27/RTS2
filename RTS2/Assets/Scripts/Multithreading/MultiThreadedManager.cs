@@ -45,16 +45,16 @@ public class MultiThreadedManager : MonoBehaviour
     }
 
   
-    public PathfindingMultiThreadedAction AddPathfindingAction(Action toPerform,bool highPriority=false)
+    public PathfindingMultiThreadedAction AddPathfindingAction(Action toPerform,PathFollower wantingPath,bool highPriority=false)
     {
         if (highPriority)
         {
-            pathRequests.Insert(0,new PathfindingMultiThreadedAction(toPerform, null, true));
+            pathRequests.Insert(0,new PathfindingMultiThreadedAction(toPerform, null, wantingPath, true));
             return pathRequests[0];
         }
         else
         {
-            pathRequests.Add(new PathfindingMultiThreadedAction(toPerform, null, true));
+            pathRequests.Add(new PathfindingMultiThreadedAction(toPerform, null, wantingPath, true));
             return pathRequests[pathRequests.Count - 1];
         }
       
@@ -130,13 +130,18 @@ public class MultiThreadedManager : MonoBehaviour
 
     public void RemovePathRequest(PathfindingMultiThreadedAction toRemove)
     {
-        actions.Remove(toRemove);
+        toRemove.KillAction();// = true;
+        toRemove.OnComplete?.Invoke();
+       // actions.Remove(toRemove);
     }
 
     public void OnActionComplete(PathfindingMultiThreadedAction complete)
     {
-        complete.OnComplete?.Invoke();
-        complete.StopThread();
+        if (!complete.Killed)
+        {
+            complete.OnComplete?.Invoke();
+        }
+            complete.StopThread();
         pathRequests.RemoveAt(0);
     }
 

@@ -33,7 +33,7 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
     public override bool IsBehaviourComplete()
     {
         return objectToFollow==null
-            || healthOfUnitAttacking.CurrentHealth <= 0 ;
+            || healthOfUnitAttacking.CurrentHealth <= 0 ||LostTarget;
     }
 
     public override DataToSerialize GetBehaviourSpecificData()
@@ -89,54 +89,121 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         return Vector3.Distance(unitToMove.transform.position, objectToFollow.transform.position) < 1f ;
     }
 
+
+
     bool CanRaycastToTarget(Unit performing)
     {
         return performing.GetRaycast(performing.transform.position, objectToFollow.transform.position).
             DidRaycastHitEnd(objectToFollow.transform.position);
     }
-
-
+    bool isGoingToAltTarget = false;
+    PathfindingNode lastNodeSawTarget;
+    public bool LostTarget = false;
     public override void PerformBehaviour()
     {
         if (objectToFollow != null)
         {
-            if(follower.HasPath()) 
+
+            if (isGoingToAltTarget == false)
             {
-                follower.OnUpdate(unitToMove.transform.position);
+
+                if (follower.HasFollowerFinishedPath())
                 {
-                    if (!AreWeInRangeToAttack())
+                    if (!CanRaycastToTarget(unitToMove))
                     {
-                        unitToMove.MoveUnit(PathDirToTarget());
+                        isGoingToAltTarget = true;
                     }
-                    unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+
+                }
+                else if (follower.FailedPath)
+                {
+                    isGoingToAltTarget = true;
+                }else if(follower.IsWaitingOnPath()&& GameTime.Instance.InGameTime - lastBackupPathTime > 6f && !follower.HasPath())
+                {
+                    isGoingToAltTarget = true;
                 }
 
+                if (follower.HasPath())
+                {
+                    follower.OnUpdate(unitToMove.transform.position);
+                    {
+
+                        PathfindingNode lastnode = null;
+                        lastnode = follower.GetLastNode();
+                        if(lastnode != null)
+                        {
+                            lastNodeSawTarget = lastnode;
+                        }
+                        if (!AreWeInRangeToAttack())
+                        {
+                            unitToMove.MoveUnit(PathDirToTarget());
+                        }
+                        unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+                    }
+                    if (CanRaycastToTarget(unitToMove))
+                    {
+                        unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+                    }
+
+                  
+                }
+                else
+                {
+                    if (CanRaycastToTarget(unitToMove))
+                    {
+                        if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectDirectionToTarget(), unitToMove))
+                        {
+                            if (!AreWeInRangeToAttack())
+                            {
+                                unitToMove.MoveUnit(DirectDirectionToTarget());
+                            }
+                            unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+                        }
+                    }
+                    else
+                    {
+
+                        if (GameTime.Instance.InGameTime - lastBackupPathTime > 5f && !follower.IsWaitingOnPath())
+                        {
+                            follower.GetPath(unitToMove.transform.position, objectToFollow);
+                            lastBackupPathTime = GameTime.Instance.InGameTime;
+
+                        }
+
+
+                    }
+                }
+                
             }
             else
             {
-                if (CanRaycastToTarget(unitToMove))
+                if (lastNodeSawTarget != null)
                 {
-                    if (BehaviourUtilities.CanIMoveInDirection(unitToMove.transform.position, DirectDirectionToTarget(), unitToMove))
+                    if (follower.HasPath() == false && follower.IsWaitingOnPath() == false)
                     {
-                        if (!AreWeInRangeToAttack())
-                        {
-                            unitToMove.MoveUnit(DirectDirectionToTarget());
-                        }
-                        unitToMove.MyAttackController.AttemptAttack(objectToFollow);
+                        follower.GetPath(unitToMove.transform.position, lastNodeSawTarget);
+                    }
+                    if (follower.HasPath())
+                    {
+                        follower.OnUpdate(unitToMove.transform.position);
+                        unitToMove.MoveUnit(PathDirToTarget());
+                    }
+                    if (Vector3.Distance(unitToMove.transform.position, lastNodeSawTarget.worldPos) < 2)
+                    {
+                        LostTarget = true;
+                    }
+                    if (CanRaycastToTarget(unitToMove))
+                    {
+                        isGoingToAltTarget = false;
+                        follower.ResetFollower();
                     }
                 }
                 else
                 {
-                    
-                        if (GameTime.Instance.InGameTime - lastBackupPathTime > 5f&&!follower.IsWaitingOnPath())
-                        {
-                            follower.GetPath(unitToMove.transform.position, objectToFollow);
-                            lastBackupPathTime = GameTime.Instance.InGameTime;
-                        }
+                    LostTarget = true;
+                }
                 }
             }
-            
-        }
     }
     public override List<string> GetDebugData()
     {
@@ -150,6 +217,17 @@ public class ZombieAttackTarget_Behaviour : BehaviourBase
         data.Add("Finished: " + IsBehaviourComplete().ToString());
         data.Add("Refresh Time: " + (GameTime.Instance.InGameTime - lastBackupPathTime));
         data.Add("Waiting for path: " + follower.IsWaitingOnPath());
+        data.Add("Going to last know: " + isGoingToAltTarget);
+        data.Add("Failed Path: " + follower.FailedPath);
+        data.Add("Finished path: " + follower.HasFollowerFinishedPath());
+        if (lastNodeSawTarget == null)
+        {
+            data.Add("Last Node: Null");
+        }
+        else
+        {
+            data.Add("last Node:" + lastNodeSawTarget.worldPos);
+        }
         return data;
     }
     public override bool DoWeNullBehaviourOnComplete()

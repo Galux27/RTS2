@@ -177,13 +177,13 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
 
             List<OverworldTile> neighbours;
             Vector2Int coords=new Vector2Int();    
-            for(int x=50;x< OverworldWidth-50; x++)
+            for(int x=10;x< OverworldWidth-10; x++)
             {
-                for (int y = 50; y < OverworldHeight - 50; y++)
+                for (int y = 10; y < OverworldHeight - 10; y++)
                 {
                     coords = new Vector2Int(x, y);
 
-                    if (OverworldTiles[x, y].Elevation< SeaLevel+25 && OverworldTiles[x, y].Elevation>SeaLevel)
+                   // if (OverworldTiles[x, y].Elevation< SeaLevel+25 && OverworldTiles[x, y].Elevation>SeaLevel)
                     {
                         int count = 0;
                         neighbours = GetNeighbours(coords);

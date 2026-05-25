@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 public static class TileRaycasting 
 {
     public static List<WorldTileContents> AllFilter = new List<WorldTileContents>() { WorldTileContents.EnvObject, WorldTileContents.Wall, WorldTileContents.Door };
     public static List<WorldTileContents> WallDoorFilter = new List<WorldTileContents>() {  WorldTileContents.Wall, WorldTileContents.Door };
+    public static List<WorldTileContents> NothingFilter = new List<WorldTileContents>() {  };
 
 }
 
@@ -33,16 +33,25 @@ public class TileRaycast
         filterLength = Filter.Count;
     }
 
+    public void LineOfTilesToTarget(Vector3 startPos,Vector3 endPos)
+    {
+        List<WorldTileContents> Filter = this.Filter;
+        SetFilter(TileRaycasting.NothingFilter);
+
+        InitRaycast(startPos, endPos);
+        PerformRaycast();
+        SetFilter(Filter);
+
+    }
+
     public void InitRaycast(Vector3 startPos, Vector3 endPos)
     {
         startPosCache = startPos; 
         endPosCache = endPos;
         currentTile = Pathfinding.GetTileFromPosition(startPos);
-        // WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out batch, out chunk, out coords);
         batch = currentTile.Batch;
         chunk = currentTile.Chunk;
         coords = currentTile.Local;
-        // Debug.Log("Starting tile raycast at " + batch + "," + chunk + "," + coords);
         TilesHit.Add(currentTile);
         increment = endPos - startPos;
         increment = increment.normalized;
@@ -87,17 +96,7 @@ public class TileRaycast
         }
     }
 
-    Vector2 PathcastIncrement()
-    {
-        if (TilesHit.Count == 0)
-        {
-            return increment;
-        }
-        else
-        {
-            return (endPosCache - GetFurthestTile().WorldPos()).normalized;
-        }
-    }
+  
 
     Vector2 PathcastHorizontal()
     {
@@ -130,11 +129,7 @@ public class TileRaycast
             return Vector2.down;
         }
     }
-    bool DidFinish()
-    {
-        return Vector3.Distance(GetFurthestTilePos(), endPosCache) < 2;
-
-    }
+ 
     bool DidGetCloser()
     {
         return Vector3.Distance(CoordsAsVector, endPosCache) < Vector3.Distance(GetSecondFurthestTilePos(), endPosCache);

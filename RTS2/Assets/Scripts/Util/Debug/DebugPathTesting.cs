@@ -44,45 +44,57 @@ public class DebugPathTesting : MonoBehaviour
                     
                     for (int i = 0; i < pathNode.neighbours.Count; i++)
                     {
-                        if (node.TileTraversable())
+                        if (pathNode.neighbours.Count < 4)
                         {
-                            if (pathNode.IsPassable == false)
-                            {
-                                Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.green);
-                               // Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1*(pathNode.neighbours.Count + 1)), Color.magenta);
-                            }
-                            else
-                            {
-                                if (pathNode.neighbours[i].IsAccessable)
-                                {
-                                    Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.blue);
-
-                                }
-                                else
-                                {
-                                    Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.red);
-
-
-                                }
-                               // Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
-
-                            }
+                            Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.blue);
+                        }
+                        else if (pathNode.neighbours.Count == 4)
+                        {
+                            Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.green);
                         }
                         else
                         {
-                            if (node.Elevation.IsPassible())
-                            {
-                                Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.red);
-                                //Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
-
-                            }
-                            else
-                            {
-                                Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.magenta);
-                               // Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
-
-                            }
+                            Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.red);
                         }
+                        //if (node.TileTraversable())
+                        //{
+                        //    if (pathNode.IsPassable == false)
+                        //    {
+                        //        Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.green);
+                        //       // Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1*(pathNode.neighbours.Count + 1)), Color.magenta);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (pathNode.neighbours[i].IsAccessable)
+                        //        {
+                        //            Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.blue);
+
+                        //        }
+                        //        else
+                        //        {
+                        //            Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.red);
+
+
+                        //        }
+                        //       // Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
+
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    if (node.Elevation.IsPassible())
+                        //    {
+                        //        Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.red);
+                        //        //Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
+
+                        //    }
+                        //    else
+                        //    {
+                        //        Debug.DrawLine(pathNode.worldPos, pathNode.neighbours[i].Node.worldPos, Color.magenta);
+                        //       // Debug.DrawLine(pathNode.worldPos, pathNode.worldPos + new Vector3(0, 0, -1 * (pathNode.neighbours.Count + 1)), Color.magenta);
+
+                        //    }
+                        //}
                     }
                 }
             }
@@ -102,7 +114,9 @@ public class DebugPathTesting : MonoBehaviour
         if (FindPath)
         {
             EasyStopwatch.StartStopwatch();
-           path=  Pathfinding.FindPath(Marker1.transform.position, Marker2.transform.position);
+            int channel = Pathfinding.GetParentChannel();
+           path=  Pathfinding.FindPath(Marker1.transform.position, Marker2.transform.position,channel);
+            Pathfinding.ReturnParentChannel(channel);
             EasyStopwatch.StopStopwatch();
             TimeTakenForPath=EasyStopwatch.GetStopwatchElapsedTime();
             FindPath = false;

@@ -264,16 +264,22 @@ public static class BehaviourUtilities
         float dist = 9999999f;
         float dist2 = 0f;
         UnitCache = null;
+        TileRaycast ray = searching.GetRaycast(searching.transform.position, Vector3.zero);
+        ray.SetFilter(TileRaycasting.WallDoorFilter);
         for(int x=0; x < GetHostileCache.Count;x++)
-        {  
-            //if (searching.GetRaycast(searching.transform.position, GetHostileCache[x].transform.position).
-            //    DidRaycastHitEnd(GetHostileCache[x].transform.position))
+        {
+           
             {
                 dist2 = Vector3.Distance(searching.transform.position, GetHostileCache[x].transform.position);
                 if (dist2 < dist)
                 {
-                    UnitCache = GetHostileCache[x];
+                    ray.InitRaycast(searching.transform.position, GetHostileCache[x].transform.position);
+                    ray.PerformRaycast();
+                    if (
+                        ray.DidRaycastHitEnd(GetHostileCache[x].transform.position)) { 
+                        UnitCache = GetHostileCache[x];
                     dist = dist2;
+                    }
                 }
             }
         }

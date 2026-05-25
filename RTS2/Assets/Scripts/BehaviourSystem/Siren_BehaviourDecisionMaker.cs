@@ -224,6 +224,11 @@ public class Siren_BehaviourDecisionMaker : BehaviourDecisionMaker
             currentBehaviour = zombieFollowTarget_Behaviour;
 
         }
+        else if (currentBehaviour.IsBehaviourComplete())
+        {
+            currentBehaviour = null;
+            UnitThatAttacked = null;
+        }
     }
     const float SirenRange = 20f;
     List<Unit> Followers = new List<Unit>();

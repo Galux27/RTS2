@@ -13,6 +13,32 @@ public static class Pathfinding
     static int worldWidth, worldHeight;
 
     static Vector2Int wallBatch, wallChunk, wallTile;
+
+    static List<int> AvailableParentChannels= new List<int>() { };
+    static List<int> InUseParentChannels = new List<int>();
+    static int AllChannels = 0;
+    public static int GetParentChannel()
+    {
+        if (AvailableParentChannels.Count == 0)
+        {
+            AvailableParentChannels.Add(AllChannels);
+            AllChannels++;
+            Debug.Log("Increased parent channel count to " + AllChannels);
+        }
+
+        int retVal = AvailableParentChannels[0];
+        AvailableParentChannels.RemoveAt(0);    
+        InUseParentChannels.Add(retVal);
+        return retVal;
+
+    }
+
+
+    public static void ReturnParentChannel(int val)
+    {
+        InUseParentChannels.Remove(val);
+        AvailableParentChannels.Add(val);
+    }
     public static void UpdateNodeNeighboursBasedOnWall(int x,int y,bool traversible)
     {
        
@@ -251,9 +277,9 @@ public static class Pathfinding
         return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[local.x, local.y];
     }
 
-    public static List<PathfindingNode> FindPath(Vector2Int start,Vector2Int end)
+    public static List<PathfindingNode> FindPath(Vector2Int start,Vector2Int end,int parentChannel)
     {
-        return FindPath(new Vector3(start.x, start.y, 0), new Vector3(end.x, end.y, 0));
+        return FindPath(new Vector3(start.x, start.y, 0), new Vector3(end.x, end.y, 0),parentChannel);
     }
 
     const int MaxNodesCanCheck = 3000;
@@ -288,8 +314,10 @@ public static class Pathfinding
     /// <param name="startPos"></param>
     /// <param name="targetPos"></param>
     /// <returns></returns>
-    public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos)
+    public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,int parentChannel)
     {
+        HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
+        List<PathfindingNode> openSet = new List<PathfindingNode>();
         debugcount = 0;
         //get player and target position in grid coords
         PathfindingNode seekerNode = GetNodeFromPosition(startPos);
@@ -327,7 +355,7 @@ public static class Pathfinding
             if (node == targetNode)
             {
                 Debug.Log("Path Count " + count);
-                return RetracePath(seekerNode, targetNode);
+                return RetracePath(seekerNode, targetNode, parentChannel);
 
             }
             debugcount++;
@@ -344,7 +372,7 @@ public static class Pathfinding
                 {
                     neighbour.Node.gCost = newCostToNeighbour;
                     neighbour.Node.hCost = GetDistance(neighbour.Node, targetNode);
-                    neighbour.Node.parent = node;
+                    neighbour.Node.SetParent(parentChannel, node);// = node;
 
                     if (!openSet.Contains(neighbour.Node))
                         openSet.Add(neighbour.Node);
@@ -356,11 +384,14 @@ public static class Pathfinding
 
 
 
-    static HashSet<PathfindingNode> closedSet=new HashSet<PathfindingNode>();
-    static List<PathfindingNode> openSet=new List<PathfindingNode>();
-    public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,Unit performing)
+    public static List<PathfindingNode> FindPath(Vector3 startPos, Vector3 targetPos,Unit performing,int parentChannel)
     {
+
+        HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
+        List<PathfindingNode> openSet = new List<PathfindingNode>();
         PathfindingNode seekerNode = null;
+        List<PathfindingNode> usedNodes = new List<PathfindingNode>();
+
         if (performing.LastNode != null)
         {
            // Debug.Log("Unit Path: start node is last node at " + performing.LastNode.worldPos);
@@ -404,24 +435,30 @@ public static class Pathfinding
             count++;
             //iterates through openSet and finds lowest FCost
             PathfindingNode node = openSet[0];
-            for (int i = 1; i < openSet.Count; i++)
-            {
-                if (openSet[i].GetFCost(performing) <= node.GetFCost(performing))
+            
+                for (int i = 1; i < openSet.Count; i++)
                 {
-                    if (openSet[i].GetHCost(performing) < node.GetHCost(performing))
-                        node = openSet[i];
+                    if (openSet[i].GetFCost(performing) <= node.GetFCost(performing))
+                    {
+                        if (openSet[i].GetHCost(performing) < node.GetHCost(performing))
+                            node = openSet[i];
+                    }
                 }
-            }
+            
 
-            openSet.Remove(node);
+                openSet.Remove(node);
             closedSet.Add(node);
-
+            usedNodes.Add(node);
             //If target found, retrace path
             if (node == targetNode)
             {
                // Debug.Log("Path Count " + count);
-
-                return RetracePath(seekerNode, targetNode);
+               List<PathfindingNode> retVal = RetracePath(seekerNode, targetNode, parentChannel);
+                for(int x = 0; x < usedNodes.Count; x++)
+                {
+                    usedNodes[x].SetParent(parentChannel, null);
+                }
+                return retVal;
                 
             }
             
@@ -441,7 +478,8 @@ public static class Pathfinding
                 {
                     neighbour.Node.gCost = newCostToNeighbour;
                     neighbour.Node.hCost = GetDistance(neighbour.Node, targetNode);
-                    neighbour.Node.parent = node;
+                    neighbour.Node.SetParent(parentChannel, node);
+                    usedNodes.Add(neighbour.Node);
 
                     if (!openSet.Contains(neighbour.Node) && neighbour.Node!=null && neighbour.Node.neighbours!=null)
                         openSet.Add(neighbour.Node);
@@ -451,10 +489,14 @@ public static class Pathfinding
         return null;
     }
 
-    public static List<PathfindingNode> FindPath(Vector3 startPos, PathfindingNode targetNode, Unit performing)
+    public static List<PathfindingNode> FindPath(Vector3 startPos, PathfindingNode targetNode, Unit performing,int parentChannel)
     {
-        //get player and target position in grid coords
-        PathfindingNode seekerNode = null;
+        HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
+        List<PathfindingNode> openSet = new List<PathfindingNode>();
+        List<PathfindingNode> usedNodes = new List<PathfindingNode>();
+       
+//get player and target position in grid coords
+PathfindingNode seekerNode = null;
         if (performing.hasLastNode)
         {
             //Debug.Log("Unit Path: start node is last node at " + performing.LastNode.worldPos+","+performing.LastNode.IsPassable);
@@ -492,6 +534,10 @@ public static class Pathfinding
             PathfindingNode node = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
             {
+                if (closedSet.Contains(openSet[i]))
+                {
+                    continue;
+                }
                 if (openSet[i].GetFCost(performing) <= node.GetFCost(performing))
                 {
                     if (openSet[i].GetHCost(performing) < node.GetHCost(performing))
@@ -501,20 +547,26 @@ public static class Pathfinding
 
             openSet.Remove(node);
             closedSet.Add(node);
-
+            usedNodes.Add(node);
             //If target found, retrace path
             if (node == targetNode)
             {
                 Debug.Log("Path Count " + count);
-
-                return RetracePath(seekerNode, targetNode);
+                List<PathfindingNode> RetVal = RetracePath(seekerNode, targetNode, parentChannel);
+                for(int x = 0; x < usedNodes.Count; x++)
+                {
+                    usedNodes[x].SetParent(parentChannel, null);
+                }
+                return RetVal;
 
             }
 
             //adds neighbor nodes to openSet
             foreach (PathfindingNeighbour neighbour in node.neighbours)
             {
-                if (neighbour.Node.GetPassable(performing) == false || closedSet.Contains(neighbour.Node)||neighbour.IsAccessable==false)
+                if (neighbour.Node.GetPassable(performing) == false 
+                    || closedSet.Contains(neighbour.Node)
+                    ||neighbour.IsAccessable==false)
                 {
                     continue;
                 }
@@ -524,7 +576,8 @@ public static class Pathfinding
                 {
                     neighbour.Node.gCost = newCostToNeighbour;
                     neighbour.Node.hCost = GetDistance(neighbour.Node, targetNode);
-                    neighbour.Node.parent = node;
+                    neighbour.Node.SetParent(parentChannel, node);
+                    usedNodes.Add(neighbour.Node);
 
                     if (!openSet.Contains(neighbour.Node))
                         openSet.Add(neighbour.Node);
@@ -535,17 +588,29 @@ public static class Pathfinding
     }
 
 
-    static List<PathfindingNode> RetracePath(PathfindingNode startNode, PathfindingNode endNode)
+    static List<PathfindingNode> RetracePath(PathfindingNode startNode, PathfindingNode endNode,int parentChannel)
     {
         List<PathfindingNode> path = new List<PathfindingNode>();
         PathfindingNode currentNode = endNode;
-        
-        while (currentNode != startNode)
+        try
         {
-            path.Add(currentNode);
-            currentNode = currentNode.parent;
+            while (currentNode != startNode)
+            {
+                if (path.Contains(currentNode))
+                {
+                    Debug.LogError("Path Length Found:Node added to path more than once, fuck " + currentNode.worldPos+" start " + startNode.worldPos+" end pos " + endNode.worldPos+" parent "+parentChannel);
+                    break;
+                }
+                path.Add(currentNode);
+                currentNode = currentNode.GetParent(parentChannel);
+            }
+        }catch(System.Exception e)
+        {
+            Debug.LogErrorFormat("Path Length Found:  Error retracing path, path len" + path.Count);
         }
-        path.Add(startNode);
+            path.Add(startNode);
+        Debug.Log("Path Length Found: " + path.Count);
+        
         path.Reverse();
 
         return path;

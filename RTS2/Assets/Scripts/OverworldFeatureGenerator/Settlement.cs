@@ -6,7 +6,7 @@ public class Settlement : OverworldFeatureToWorldConverter
 {
 
     const int MaxRoads = 25;
-    const int MinBuildingArea = 25* 25;
+    const int MinBuildingArea = 12* 12;
 
     //make it so top & right edges have the size edited on the split and not the road generation
     //have building sections check for intersections with roads and divide them based on that

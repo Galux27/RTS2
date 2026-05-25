@@ -96,7 +96,7 @@ public class UnitsMinimapRenderer : MinimapRenderer
         Texture.filterMode = FilterMode.Point;
         Texture.Apply();
     }
-    const int UnitSize = 2;
+    const int UnitSize = 1;
     void DrawUnit(Unit u)
     {
         Color c = Color.white;

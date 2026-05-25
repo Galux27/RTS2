@@ -218,10 +218,15 @@ public class Gargant_BehaviourDecisionMaker : BehaviourDecisionMaker
     {
         if (currentBehaviour == null || currentBehaviour.GetType() != typeof(ZombieAttackTarget_Behaviour))
         {
-            ZombieAttackTarget_Behaviour zombieFollowTarget_Behaviour = new ZombieAttackTarget_Behaviour();
-            zombieFollowTarget_Behaviour.InitBehaviour(UnitThatAttacked, toCheck);
-            currentBehaviour = zombieFollowTarget_Behaviour;
+            ZombieAttackTarget_Behaviour zombieAttackTarget = new ZombieAttackTarget_Behaviour();
+            zombieAttackTarget.InitBehaviour(UnitThatAttacked, toCheck);
+            currentBehaviour = zombieAttackTarget;
 
+        }
+        else if (currentBehaviour.IsBehaviourComplete())
+        {
+            currentBehaviour = null;
+            UnitThatAttacked = null;
         }
     }
 

@@ -11,7 +11,28 @@ public class PathfindingNode
     public bool obstacle;
 
     public int X, Y,localX,localY;
-    public PathfindingNode parent;
+    public Dictionary<int, PathfindingNode> parent=new Dictionary<int, PathfindingNode>();
+
+    public PathfindingNode GetParent(int index)
+    {
+        if (parent.ContainsKey(index) == false)
+        {
+            parent.Add(index, null);
+        }
+        return parent[index];
+    }
+
+    public void SetParent(int index, PathfindingNode node)
+    {
+        if (parent.ContainsKey(index) == false)
+        {
+            parent.Add(index, null);
+        }
+      
+        parent[index] = node ;
+    }
+
+
     public bool IsPassable = true;
 
     public List<PathfindingNeighbour> neighbours;
