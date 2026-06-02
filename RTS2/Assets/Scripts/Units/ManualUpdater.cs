@@ -38,8 +38,13 @@ public class ManualUpdater : MonoBehaviour
     {
         PerformEveryFrameUpdate();
         PerformLimitedUpdate();
+        PerformSpecifiedUpdates();
     }
-
+    public void PerformSpecifiedUpdates()
+    {
+        RoomManager.Instance.UpdateRooms();
+    
+    }
     void PerformLimitedUpdate()
     {
         if (updating.ContainsKey(UpdaterType.User))

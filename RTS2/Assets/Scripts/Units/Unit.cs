@@ -314,6 +314,15 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         return pos;
     }
 
+    public Vector2Int GetLastCoords()
+    {
+        if (!GotLastCoords)
+        {
+            lastCoords= Pathfinding.GetCoordsFromPosition(this.transform.position);
+        }
+        return lastCoords;
+    }
+
     public Vector2Int lastCoords = new Vector2Int();
     bool GotLastCoords = false;
     public Action<Vector2Int> OnEnterNewTile;
@@ -416,10 +425,11 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
 
     public Vector3 Position()
     {
+        
         return this.transform.position;
     }
 
-    void Health.AdjustHealth(float value)
+    public void AdjustHealth(float value)
     {
         if (value > 0)
         {
@@ -427,7 +437,7 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         }
         else
         {
-            MyHealth.DecreaseHealth(value);
+            MyHealth.DecreaseHealth(value*-1);
         }
     }
 

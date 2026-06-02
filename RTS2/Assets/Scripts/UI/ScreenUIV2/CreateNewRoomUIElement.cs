@@ -32,6 +32,11 @@ public class CreateNewRoomUIElement : BaseUIElement
         TypeDropDown.CreateNewItem(RoomUseType.Warehouse.ToString(), null);
         TypeDropDown.CreateNewItem(RoomUseType.Dwelling.ToString(), null);
         TypeDropDown.CreateNewItem(RoomUseType.Workshop.ToString(), null);
+        TypeDropDown.CreateNewItem(RoomUseType.Hospital.ToString(), null);
+        TypeDropDown.CreateNewItem(RoomUseType.Farm.ToString(), null);
+        TypeDropDown.CreateNewItem(RoomUseType.Lab.ToString(), null);
+        TypeDropDown.CreateNewItem(RoomUseType.RepairShop.ToString(), null);
+        TypeDropDown.CreateNewItem(RoomUseType.Workshop.ToString(), null);
 
         CreateRoom.onClick.AddListener(OnCreateRoomClick);
         init = true;

@@ -123,6 +123,34 @@ public class Room:ISerialize
     }
 
   
+    public List<Unit> GetAllUnitsInRoom()
+    {
+        List<WorldChunk> chunksChecked = new List<WorldChunk>();
+        Debug.Log("Hospital Update: tiles in room " + tilesInRoom.Count);
+
+        for (int x = 0; x < tilesInRoom.Count; x++)
+        {
+            WorldChunk chunk = WorldChunkManager.Instance.GetWorldChunkFromTileCoords(tilesInRoom[x]);
+            if (!chunksChecked.Contains(chunk))
+            {
+                chunksChecked.Add(chunk);
+            }
+        }
+        List<Unit> retVal = new List<Unit>();
+        for (int x = 0; x < chunksChecked.Count; x++)
+        {
+            for(int q= 0; q < chunksChecked[x].UnitsInChunk.Count; q++)
+            {
+                if (chunksChecked[x].UnitsInChunk[q].MyFaction.MyFactionID==FactionController.USER_FACTION 
+                    && DoesRoomContainPoint(chunksChecked[x].UnitsInChunk[q].GetLastCoords()))
+                {
+                    retVal.Add(chunksChecked[x].UnitsInChunk[q]);
+                }
+            }
+        }
+        return retVal;
+    }
+
     public void DrawRoomBounds()
     {
         DrawBounds(roomBounds, 0f);
@@ -210,8 +238,6 @@ public class Room:ISerialize
        //ObjectsInRoom.AddRange(newObjects);
     }
 
-
-    
 
     void CheckForConstructablesNoLongerInRoom(List<Vector2Int> tilesInRoom)
     {
@@ -414,6 +440,11 @@ public enum RoomUseType
     Barracks,
     Warehouse,
     Dwelling,
-    Workshop
+    Workshop,
+    Hospital,
+    RepairShop,
+    Farm,
+    Lab
+
 }
 

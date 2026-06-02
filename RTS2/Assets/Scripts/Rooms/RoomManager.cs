@@ -46,16 +46,15 @@ public class RoomManager : MonoBehaviour
             }
         }
     }
-    private void Update()
+
+    public void UpdateRooms()
     {
-        if (roomList != null)
+        for(int x = 0; x < roomList.Count; x++)
         {
-            for(int x = 0; x < roomList.Count; x++)
-            {
-                roomList[x].DrawRoomBounds();
-            }
+            RoomUpdater.UpdateRoom(roomList[x]);
         }
     }
+
     void InitEvents()
     {
         EventManager.Instance.OnConstructableObjectCreated+= OnConstructableCreated;

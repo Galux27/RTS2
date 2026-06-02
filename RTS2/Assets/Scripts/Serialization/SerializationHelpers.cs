@@ -33,6 +33,10 @@ public static class SerializationHelpers
     public static void CleanWorkingDir()
     {
         string path = Path.Combine(GetSaveFolderParentLocation(), SaveDirectory, WorkingDir);
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
         string[] files = Directory.GetFiles(path);
         for(int x=0;x<files.Length; x++)
         {

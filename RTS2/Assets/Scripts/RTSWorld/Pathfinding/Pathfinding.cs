@@ -56,31 +56,42 @@ public static class Pathfinding
         if (tile.HasDoor||traversible)
         {
             index = node.GetNeighbourInDireciton(0, -1);
-            checking = node.neighbours[index].Node;
-            node.neighbours[index].IsAccessable = true;
-            neighbourToMeIndex = checking.GetNeighbourInDireciton(0, 1);
-            checking.neighbours[neighbourToMeIndex].IsAccessable = true;
-
+            if (index > -1)
+            {
+                checking = node.neighbours[index].Node;
+                node.neighbours[index].IsAccessable = true;
+                neighbourToMeIndex = checking.GetNeighbourInDireciton(0, 1);
+                checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+            }
 
             index = node.GetNeighbourInDireciton(0, 1);
-            checking = node.neighbours[index].Node;
-            node.neighbours[index].IsAccessable = true;
-            neighbourToMeIndex = checking.GetNeighbourInDireciton(0, -1);
-            checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+            if (index > -1)
+            {
+                checking = node.neighbours[index].Node;
+                node.neighbours[index].IsAccessable = true;
+                neighbourToMeIndex = checking.GetNeighbourInDireciton(0, -1);
+                checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+            }
+
 
             index = node.GetNeighbourInDireciton(-1, 0);
-            checking = node.neighbours[index].Node;
-            node.neighbours[index].IsAccessable = true;
-            neighbourToMeIndex = checking.GetNeighbourInDireciton(1, 0);
-            checking.neighbours[neighbourToMeIndex].IsAccessable = true;
-
+            if (index > -1)
+            {
+                checking = node.neighbours[index].Node;
+                node.neighbours[index].IsAccessable = true;
+                neighbourToMeIndex = checking.GetNeighbourInDireciton(1, 0);
+                checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+            }
 
             index = node.GetNeighbourInDireciton(1, 0);
-            checking = node.neighbours[index].Node;
-            node.neighbours[index].IsAccessable = true;
-            neighbourToMeIndex = checking.GetNeighbourInDireciton(-1, 0);
-            checking.neighbours[neighbourToMeIndex].IsAccessable = true;
-            return;
+            if (index > -1)
+            {
+                checking = node.neighbours[index].Node;
+                node.neighbours[index].IsAccessable = true;
+                neighbourToMeIndex = checking.GetNeighbourInDireciton(-1, 0);
+                checking.neighbours[neighbourToMeIndex].IsAccessable = true;
+            }
+                return;
         }
         
         if (tile.HasWall&&!traversible)
