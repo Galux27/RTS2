@@ -13,6 +13,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         {
             myBehaviour = ScriptableObject.Instantiate(ConstructableObjectManager.Instance.AllObjects[ObjectKey].MyBehaviour);
             myBehaviour.PassInVector( new Vector3(x,y,0),"POS");
+            myBehaviour.PassInEnvironmentObjectInstance(this);
         }
         if (ConstructableObjectManager.Instance.AllObjects[ObjectKey].RequiresUpdate)
         {
@@ -21,7 +22,6 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
         UnitCapacityManager.RefreshCapacities();
     }
 
-    EnvironmentObjectBehaviourBase myBehaviour;
 
     public override void RenderInstance()
     {

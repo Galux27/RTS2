@@ -35,6 +35,20 @@ public class Human_BehaviourDecisionMaker : BehaviourDecisionMaker
 
     public override void PerformBehaivourUpdate(Unit performingBehaviour)
     {
+        if (behaviourOverridden)
+        {
+            if (currentBehaviour == null) 
+            {
+                behaviourOverridden = false;
+            }
+            else if (currentBehaviour.IsBehaviourComplete())
+            {
+                currentBehaviour.OnComplete();
+                currentBehaviour = null;
+                behaviourOverridden = false;
+            }
+            return;
+        }
         if(UnitThatAttacked != null)
         {
             bool canRetaliate = false;

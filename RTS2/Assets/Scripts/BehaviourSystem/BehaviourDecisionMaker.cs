@@ -14,7 +14,7 @@ public class BehaviourDecisionMaker
     public BehaviourBase currentBehaviour { get { return b; } set {
           
             b = value; } }
-    bool behaviourOverridden = false;
+    public bool behaviourOverridden = false;
     public BehaviourState CurrentState;
     public float TimeStateSet = 0f;
     public Unit LinkedUnit;

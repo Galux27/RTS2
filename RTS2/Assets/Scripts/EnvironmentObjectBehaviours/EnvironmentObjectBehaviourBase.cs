@@ -25,4 +25,19 @@ public class EnvironmentObjectBehaviourBase:ScriptableObject
             myPosition = data;
         }
     }
+
+    public virtual void PassInEnvironmentObjectInstance(EnvironmentObjectInstance instance)
+    {
+
+    }
+
+    public virtual void PerformCheckForActionsFromObject(out List<PotentialBehaviourAssignment> retVal)
+    {
+        retVal = null;
+    }
+
+    public virtual PotentialBehaviourAssignment GetPotentialBehaviour(int index)
+    {
+        return null;
+    }
 }

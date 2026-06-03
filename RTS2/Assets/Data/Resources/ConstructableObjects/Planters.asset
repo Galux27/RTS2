@@ -35,4 +35,4 @@ MonoBehaviour:
   RequirementsToBuild:
   - ResourceName: Construction Supplies
     QuantityRequired: 100
-  MyBehaviour: {fileID: 0}
+  MyBehaviour: {fileID: 11400000, guid: e366098a90059d2478fd5980447d8e86, type: 2}

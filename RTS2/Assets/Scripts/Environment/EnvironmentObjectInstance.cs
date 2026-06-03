@@ -31,6 +31,8 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize,ObjectBounds
     Vector3 position,size,offset;
     public Vector2Int coords;
     bool needsUpdate = false;
+    public EnvironmentObjectBehaviourBase myBehaviour;
+
     public void SetChunk(WorldChunk chunk)
     {
         myChunk= chunk;

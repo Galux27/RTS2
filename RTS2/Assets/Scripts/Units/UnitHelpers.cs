@@ -4,6 +4,41 @@ using UnityEngine;
 
 public static class UnitHelpers 
 {
+    public static List<PathfindingNode> GetWalkableNodesNearTarget( Vector3 target,int count)
+    {
+
+        List<PathfindingNode> closeResults = new List<PathfindingNode>();
+
+        HashSet<PathfindingNode> checkedNodes = new HashSet<PathfindingNode>();
+        List<PathfindingNode> toCheck = new List<PathfindingNode>();
+        toCheck.Add(Pathfinding.GetNodeFromPosition(target));
+        List<PathfindingNode> retVal = new List<PathfindingNode>();
+        while (closeResults.Count < count && toCheck.Count > 0)
+        {
+            List<PathfindingNode> newToCheck = new List<PathfindingNode>();
+            for (int x = 0; x < toCheck.Count; x++)
+            {
+                closeResults.Add(toCheck[x]);
+                checkedNodes.Add(toCheck[x]);
+                if (toCheck[x].IsPassable)
+                {
+                    retVal.Add(toCheck[x]);
+                }
+                for (int q = 0; q < toCheck[x].neighbours.Count; q++)
+                {
+                    if (checkedNodes.Contains(toCheck[x].neighbours[q].Node) == false)
+                    {
+                        newToCheck.Add(toCheck[x].neighbours[q].Node);
+                    }
+                }
+            }
+            toCheck = newToCheck;
+        }
+
+        return retVal;
+    }
+
+
     public static List<PathfindingNode> GetWalkableNodesNearTarget(List<Selectable> toMove, Vector3 target)
     {
 

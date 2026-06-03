@@ -36,7 +36,7 @@ public class Units_SelectionMode : SelectionMode
         GameActionController.Instance.OnManualInput();
 
     }
-
+    List<PotentialBehaviourAssignment> actions;
     void CheckForActionsToPerform()
     {
         if (SelectableManager.Instance.CurrentlySelected.Count > 0)
@@ -118,6 +118,8 @@ public class Units_SelectionMode : SelectionMode
                         GameAction ga = new GameAction("Convert to " + convertToType, Convert, KeyCode.None);
                         GameActionController.Instance.AddAction(ga);
                     }
+
+                    
                 }
 
 
@@ -250,6 +252,39 @@ public class Units_SelectionMode : SelectionMode
                     };
                     GameAction ga = new GameAction("Deconstruct: " + OnHoverEnvironmentObject.Name(), Convert, InputController.Instance.GetShortcutFromType(typeof(HumanBehaviour_DeconstructObject)));
                     GameActionController.Instance.AddAction(ga);
+
+                    if (OnHoverEnvironmentObject.myBehaviour != null) {
+                        actions = null;
+                        OnHoverEnvironmentObject.myBehaviour.PerformCheckForActionsFromObject(out actions);
+                        if (actions != null && actions.Count > 0)
+                        {
+                            for(int x=0;x < actions.Count; x++)
+                            {
+                                Action PerformPotentialAction = () =>
+                                {
+                                    PotentialBehaviourAssignment toDo = OnHoverEnvironmentObject.myBehaviour.GetPotentialBehaviour(x);
+                                    for (int x = 0; x < currentlySelected.Count; x++)
+                                    {
+                                        Unit toPerfrom = (Unit)currentlySelected[x];
+                                        toDo.SetUnit(toPerfrom);
+                                        toDo.AssignBehaviour();
+                                        //BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                        //HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
+                                        //deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, GetNearestNodeToUnit(toPerfrom, targetPositions));
+                                        ////CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                                        //// collect.InitBehaviour(toPerfrom, toHarvest);
+                                        //br.SetBehaviour(deconstruct);
+
+                                    }
+
+
+                                };
+                                ga = new GameAction(actions[x].PotentialBehaviourName(), PerformPotentialAction, KeyCode.None);
+                                GameActionController.Instance.AddAction(ga);
+                            }
+                        }
+                    }
+                
                 }
 
 
