@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
@@ -32,7 +33,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize,ObjectBounds
     public Vector2Int coords;
     bool needsUpdate = false;
     public EnvironmentObjectBehaviourBase myBehaviour;
-
+    public Action OnRender, OnHidden;
     public void SetChunk(WorldChunk chunk)
     {
         myChunk= chunk;
@@ -74,7 +75,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize,ObjectBounds
         Object.SetActive(true);
         Drawn = true;
         GameController.Instance.OnUpdate += OnUpdate;
-
+        OnRender?.Invoke();
     }
 
     public virtual void CleanupInstance()
@@ -84,7 +85,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize,ObjectBounds
         GameObjectPoolManager.Instance.ReturnObjectToPool(Object,"EnvironmentObject");
         Drawn = false;
         GameController.Instance.OnUpdate -= OnUpdate;
-
+        OnHidden?.Invoke();
     }
 
     public virtual bool CanHarvest()

@@ -16,3 +16,7 @@ MonoBehaviour:
   GrowDuration: 90
   HasBeenSeeded: 0
   Grown: 0
+  PlantGrowthSprites:
+  - {fileID: 5409865062941086460, guid: 2f4e7cebbee0a2c45a710bc2564fce7e, type: 3}
+  - {fileID: 1246701832933216643, guid: 2f4e7cebbee0a2c45a710bc2564fce7e, type: 3}
+  - {fileID: -6706343464117937765, guid: 2f4e7cebbee0a2c45a710bc2564fce7e, type: 3}

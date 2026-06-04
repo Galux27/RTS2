@@ -61,6 +61,8 @@ public class PlantSeeds_Behaviour : BehaviourBase
             return Vector3.zero;// return (TargetPosition-unitToMove.transform.position).normalized;
         }
     }
+    ProgressBarUI progressBarUI;
+
     float PlantingTimer = 5f;
     public override void PerformBehaviour()
     {
@@ -76,6 +78,18 @@ public class PlantSeeds_Behaviour : BehaviourBase
         }
         else
         {
+
+            if (progressBarUI == null)
+            {
+                progressBarUI = ProgressBarUI.CreateProgressBar();
+                progressBarUI.InitProgressBar(5f,5f- PlantingTimer, target.Position());
+            }
+
+            progressBarUI.UpdateCurrent(5f - PlantingTimer);
+            // Debug.Log("Destroy: progress " + progressBarUI.CurrentValue + "/" + progressBarUI.MaxValue+" is done "+ progressBarUI.IsDone());
+
+          
+
             if (PlantingTimer > 0)
             {
                 PlantingTimer -= DeltaTimeWrapper.GameplayDelta;
@@ -89,7 +103,14 @@ public class PlantSeeds_Behaviour : BehaviourBase
                     }
                 }
             }
+
+            if (done)
+            {
+                progressBarUI.ReturnProgressBar();
+                progressBarUI = null;
+               
             }
+        }
         }
 
     public override DataToSerialize GetBehaviourSpecificData()

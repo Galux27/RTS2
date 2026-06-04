@@ -22,7 +22,7 @@ MonoBehaviour:
   Height: 2
   CanHarvest: 0
   IsDecoration: 0
-  RequiresUpdate: 0
+  RequiresUpdate: 1
   DestroyOnHarvest: 1
   Resources:
     resources: []

@@ -9,6 +9,9 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
     bool DoneFirstUpdate = false;
     public bool HasBeenSeeded = false,Grown=false;
     float GrowStartTime = -1f;
+    public List<Sprite> PlantGrowthSprites = new List<Sprite>();
+
+    
     public override bool HasUpdate()
     {
         return true;
@@ -22,6 +25,10 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
     {
         Debug.Log("Planter: seeded planter");
         HasBeenSeeded = true;
+        if (myObject.Drawn)
+        {
+            OnObjectRender();
+        }
     }
 
     public void Harvest()
@@ -34,6 +41,9 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
     public override void PassInEnvironmentObjectInstance(EnvironmentObjectInstance instance)
     {
         myObject= instance;
+        myObject.OnRender += OnObjectRender;
+        myObject.OnHidden += OnObjectHidden;
+       
     }
 
     public override void PerformCheckForActionsFromObject(out List<PotentialBehaviourAssignment> retVal)
@@ -47,16 +57,76 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
 
         }
     }
-
+    GameObject GrowingPlant = null;
     public override PotentialBehaviourAssignment GetPotentialBehaviour(int index)
     {
  
             return new PlantSeeds_PotentialBehaviour(myObject);
    
     }
+    bool init = false;
+    public void OnObjectRender()
+    {
+        if (GrowingPlant == null)
+        {
+            GrowingPlant= GameObjectPoolManager.Instance.GetObjectFromPool("EnvironmentObject");
+            GrowingPlant.gameObject.SetActive(true);
+            GrowingPlant.transform.position = myObject.Object.transform.position;
+        }
+        SpriteRenderer sr = GrowingPlant.GetComponent<SpriteRenderer>();
+        sr.sprite = GetGrowingStageSprite();
+        sr.sortingOrder = myObject.Object.GetComponent<SpriteRenderer>().sortingOrder + 1;
+        
+    }
+
+   
+
+    Sprite GetGrowingStageSprite()
+    {
+        if (!Grown)
+        {
+            if (HasBeenSeeded == false)
+            {
+                return null;
+            }
+            else
+            {
+                
+                return PlantGrowthSprites[growSpriteIndex];
+
+            }
+        }
+        else
+        {
+            return PlantGrowthSprites[PlantGrowthSprites.Count - 1];
+        }
+       
+    }
+    int growSpriteIndex = 0;
+   bool CheckToChangeSprite(float growTime)
+    {
+        float progress = Mathf.InverseLerp( 0.0f, GrowDuration, growTime);
+
+        int newIndex = Mathf.RoundToInt(progress * PlantGrowthSprites.Count-2);
+
+        if (newIndex != growSpriteIndex)
+        {
+            growSpriteIndex= newIndex;
+            growSpriteIndex = Mathf.Clamp(growSpriteIndex,0, PlantGrowthSprites.Count - 2);
+            return true;
+        }
+        return false;
+    }
+
+    public void OnObjectHidden()
+    {
+        GameObjectPoolManager.Instance.ReturnObjectToPool(GrowingPlant, "EnvironmentObject");
+        GrowingPlant = null;
+    }
 
     public override void OnUpdate()
     {
+      
         if (HasBeenSeeded)
         {
             if (!DoneFirstUpdate)
@@ -65,7 +135,14 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
                 DoneFirstUpdate = true;
             }
             Debug.Log("Planter: Seed Growth Progress " + (GameTime.Instance.InGameTime - GrowStartTime));
-            if(GameTime.Instance.InGameTime-GrowStartTime> GrowDuration)
+            if(CheckToChangeSprite(GameTime.Instance.InGameTime - GrowStartTime))
+            {
+                if (GrowingPlant != null)
+                {
+                    GrowingPlant.GetComponent<SpriteRenderer>().sprite = GetGrowingStageSprite();
+                }
+                }
+                if (GameTime.Instance.InGameTime-GrowStartTime> GrowDuration)
             {
                 Debug.Log("Planter: grown");
 
