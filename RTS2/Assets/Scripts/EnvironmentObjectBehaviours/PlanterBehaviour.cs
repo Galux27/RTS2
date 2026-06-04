@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 [CreateAssetMenu(fileName = "Planter Behavior", menuName = "ScriptableObjects/ConstructableObjectBehaviours/Planter", order = 1)]
 public class PlanterBehaviour :EnvironmentObjectBehaviourBase
@@ -10,7 +11,7 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
     public bool HasBeenSeeded = false,Grown=false;
     float GrowStartTime = -1f;
     public List<Sprite> PlantGrowthSprites = new List<Sprite>();
-
+    public List<HarvestableResourceData> HarvestData;
     
     public override bool HasUpdate()
     {
@@ -36,6 +37,16 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
         Grown = false;
         DoneFirstUpdate = false;
         GrowStartTime = -1;
+        HasBeenSeeded = false;
+
+        for (int x = 0; x < HarvestData.Count; x++)
+        {
+            HarvestData[x].GenerateResoruces(myObject.GetPosition());
+        }
+        if (GrowingPlant != null)
+        {
+            GrowingPlant.GetComponent<SpriteRenderer>().sprite = GetGrowingStageSprite();
+        }
     }
 
     public override void PassInEnvironmentObjectInstance(EnvironmentObjectInstance instance)
@@ -54,15 +65,21 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
             retVal.Add(new PlantSeeds_PotentialBehaviour(myObject));
         }else if (Grown)
         {
-
+            retVal.Add(new HarvestPlanter_PotentialBehaviour(myObject));
         }
     }
     GameObject GrowingPlant = null;
-    public override PotentialBehaviourAssignment GetPotentialBehaviour(int index)
+    public override PotentialBehaviourAssignment GetPotentialBehaviour(Type toDo)
     {
- 
-            return new PlantSeeds_PotentialBehaviour(myObject);
-   
+        if (HasBeenSeeded==false)
+        {
+            return (new PlantSeeds_PotentialBehaviour(myObject));
+        }
+        else if (Grown)
+        {
+            return (new HarvestPlanter_PotentialBehaviour(myObject));
+        }
+        return null;
     }
     bool init = false;
     public void OnObjectRender()
@@ -147,7 +164,6 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
                 Debug.Log("Planter: grown");
 
                 Grown = true;
-                HasBeenSeeded = false;
             }
             
         }

@@ -262,21 +262,24 @@ public class Units_SelectionMode : SelectionMode
                             {
                                 Action PerformPotentialAction = () =>
                                 {
-                                    PotentialBehaviourAssignment toDo = OnHoverEnvironmentObject.myBehaviour.GetPotentialBehaviour(x);
-                                    for (int x = 0; x < currentlySelected.Count; x++)
+                                   
+                                    PotentialBehaviourAssignment toDo = OnHoverEnvironmentObject.myBehaviour.GetPotentialBehaviour(null);
+                                    if (toDo != null)
                                     {
-                                        Unit toPerfrom = (Unit)currentlySelected[x];
-                                        toDo.SetUnit(toPerfrom);
-                                        toDo.AssignBehaviour();
-                                        //BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
-                                        //HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
-                                        //deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, GetNearestNodeToUnit(toPerfrom, targetPositions));
-                                        ////CollectResources_Behaviour collect = new CollectResources_Behaviour();
-                                        //// collect.InitBehaviour(toPerfrom, toHarvest);
-                                        //br.SetBehaviour(deconstruct);
+                                        for (int x = 0; x < currentlySelected.Count; x++)
+                                        {
+                                            Unit toPerfrom = (Unit)currentlySelected[x];
+                                            toDo.SetUnit(toPerfrom);
+                                            toDo.AssignBehaviour();
+                                            //BehaviourRunner br = toPerfrom.GetComponent<BehaviourRunner>();
+                                            //HumanBehaviour_DeconstructObject deconstruct = new HumanBehaviour_DeconstructObject();
+                                            //deconstruct.InitBehaviour(toPerfrom, OnHoverEnvironmentObject, GetNearestNodeToUnit(toPerfrom, targetPositions));
+                                            ////CollectResources_Behaviour collect = new CollectResources_Behaviour();
+                                            //// collect.InitBehaviour(toPerfrom, toHarvest);
+                                            //br.SetBehaviour(deconstruct);
 
+                                        }
                                     }
-
 
                                 };
                                 ga = new GameAction(actions[x].PotentialBehaviourName(), PerformPotentialAction, KeyCode.None);

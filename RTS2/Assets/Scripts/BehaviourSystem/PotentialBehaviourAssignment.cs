@@ -6,7 +6,7 @@ public class PotentialBehaviourAssignment
     public PotentialBehaviourAssignment()
     {
     }
-
+  
     public virtual void SetUnit(Unit unit)
     {
         toPerform= unit; 
@@ -38,5 +38,23 @@ public class PlantSeeds_PotentialBehaviour : PotentialBehaviourAssignment
     public override string PotentialBehaviourName()
     {
         return "Plant Seeds";
+    }
+}
+
+public class HarvestPlanter_PotentialBehaviour : PotentialBehaviourAssignment
+{
+    EnvironmentObjectInstance toHarvest;
+    public HarvestPlanter_PotentialBehaviour(EnvironmentObjectInstance obj) : base() { toHarvest = obj; }
+
+    public override void AssignBehaviour()
+    {
+        HarvestPlanter_Behaviour action = new HarvestPlanter_Behaviour();
+        action.InitBehaviour(toPerform, toHarvest);
+        toPerform.BehaviourRunner.SetBehaviour(action);
+    }
+
+    public override string PotentialBehaviourName()
+    {
+        return "Harvest Planter";
     }
 }

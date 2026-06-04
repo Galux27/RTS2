@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,7 +37,7 @@ public class EnvironmentObjectBehaviourBase:ScriptableObject
         retVal = null;
     }
 
-    public virtual PotentialBehaviourAssignment GetPotentialBehaviour(int index)
+    public virtual PotentialBehaviourAssignment GetPotentialBehaviour(Type toGet)
     {
         return null;
     }
