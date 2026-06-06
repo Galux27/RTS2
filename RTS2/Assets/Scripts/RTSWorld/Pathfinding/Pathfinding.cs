@@ -7,11 +7,6 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public static class Pathfinding
 {
-
-  
-
-    static int worldWidth, worldHeight;
-
     static Vector2Int wallBatch, wallChunk, wallTile;
 
     static List<int> AvailableParentChannels= new List<int>() { };
@@ -23,7 +18,6 @@ public static class Pathfinding
         {
             AvailableParentChannels.Add(AllChannels);
             AllChannels++;
-            Debug.Log("Increased parent channel count to " + AllChannels);
         }
 
         int retVal = AvailableParentChannels[0];
@@ -185,25 +179,22 @@ public static class Pathfinding
         coordsCache = new Vector2Int(x, y);
         return GetNodeFromCoords(coordsCache);
     }
-   static Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
 
 
-    public static string GetLastCoordsFound()
-    {
-        return batch.ToString() + " " + chunk.ToString() + " " + local.ToString();
-    }
-
+    
     public static PathfindingNode GetNodeFromCoords(Vector2Int coords)
     {
+        Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
+
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(coords.x,coords.y,out batch,out chunk, out local);
-        if (!ValidateCoords())
+        if (!ValidateCoords(batch))
         {
             return null;
         }
         return WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x,chunk.y].PathfindingNodes[local.x,local.y];   
     }
 
-    static bool ValidateCoords()
+    static bool ValidateCoords(Vector2Int batch)
     {
         if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch) == false)
         {
@@ -229,9 +220,12 @@ public static class Pathfinding
 
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null,bool debug=false)
     {
-        Position -= Vector3.one;    
+        Position -= Vector3.one;
+        Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
+
+
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(Mathf.Ceil(Position.x),Mathf.Ceil( Position.y), out batch, out chunk, out local);
-        if (!ValidateCoords())
+        if (!ValidateCoords(batch))
         {
             return null;
         }
@@ -270,8 +264,8 @@ public static class Pathfinding
                             }
                         }
                     }
-                    }
                 }
+            }
         }
         return retVal;
     }
@@ -279,9 +273,10 @@ public static class Pathfinding
 
     public static WorldTile GetTileFromPosition(Vector3 Position, Unit performing = null, bool debug = false)
     {
+        Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
 
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords( Position.x, Position.y, out batch, out chunk, out local);
-        if (!ValidateCoords())
+        if (!ValidateCoords(batch))
         {
             return null;
         }
@@ -337,7 +332,7 @@ public static class Pathfinding
         {
             return null;
         }
-        Debug.Log("Starting path from " + startPos + " to " + targetPos + " start null " + (seekerNode == null) + "," + (targetNode == null));
+      //  Debug.Log("Starting path from " + startPos + " to " + targetPos + " start null " + (seekerNode == null) + "," + (targetNode == null));
         int count = 0;
         openSet.Clear();
         closedSet.Clear();
@@ -365,7 +360,7 @@ public static class Pathfinding
             //If target found, retrace path
             if (node == targetNode)
             {
-                Debug.Log("Path Count " + count);
+               // Debug.Log("Path Count " + count);
                 return RetracePath(seekerNode, targetNode, parentChannel);
 
             }
@@ -423,7 +418,7 @@ public static class Pathfinding
         PathfindingNode targetNode = GetNodeFromPosition(targetPos,performing);
         if (!CanGetPath(seekerNode, targetNode))
         {
-            Debug.Log("Path Fail: Could not get path between"+seekerNode.PathNodeGroupID+" and " + targetNode.PathNodeGroupID);
+           // Debug.Log("Path Fail: Could not get path between"+seekerNode.PathNodeGroupID+" and " + targetNode.PathNodeGroupID);
             return null;
         }
         //Debug.Log("Getting Path from "+ startPos+" to "+  targetPos+" start node "
@@ -562,7 +557,7 @@ PathfindingNode seekerNode = null;
             //If target found, retrace path
             if (node == targetNode)
             {
-                Debug.Log("Path Count " + count);
+                //Debug.Log("Path Count " + count);
                 List<PathfindingNode> RetVal = RetracePath(seekerNode, targetNode, parentChannel);
                 for(int x = 0; x < usedNodes.Count; x++)
                 {
@@ -617,10 +612,10 @@ PathfindingNode seekerNode = null;
             }
         }catch(System.Exception e)
         {
-            Debug.LogErrorFormat("Path Length Found:  Error retracing path, path len" + path.Count);
+            Debug.LogError("Path Length Found:  Error retracing path, path len" + path.Count+","+e.ToSafeString());
         }
             path.Add(startNode);
-        Debug.Log("Path Length Found: " + path.Count);
+       // Debug.Log("Path Length Found: " + path.Count);
         
         path.Reverse();
 

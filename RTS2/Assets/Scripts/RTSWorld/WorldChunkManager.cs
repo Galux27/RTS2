@@ -99,7 +99,7 @@ public class WorldChunkManager : MonoBehaviour
         CreateChunkBatch(new Vector2Int());       
     }
     
-    Vector2Int ConvertWorldCoordsToOverworldCoords(Vector2Int coords)
+    public Vector2Int ConvertWorldCoordsToOverworldCoords(Vector2Int coords)
     {
         Vector2Int retVal = OverworldGenerator.Instance.GetOverworldStartingCoords()+ new Vector2Int(coords.x/ChunkBatchSize,coords.y/ChunkBatchSize);
 

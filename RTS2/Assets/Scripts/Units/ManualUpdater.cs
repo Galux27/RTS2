@@ -20,6 +20,7 @@ public class ManualUpdater : MonoBehaviour
     public Dictionary<UpdaterType,List<Updater>> updating=new Dictionary<UpdaterType, List<Updater>>();
     const int MaxUserUpdatePerFrame = 200, MaxAIUpdatePerFrame = 10,MaxOtherUpdatesPerFrame=10;
     public int UserIndex = 0, AIIndex = 0,OtherIndex=0;
+    float updateStartTimer = 0f;
     public void AddUpdater(Updater toAdd)
     {
         if (!updating.ContainsKey(toAdd.GetUpdaterType()))
@@ -36,6 +37,11 @@ public class ManualUpdater : MonoBehaviour
 
     private void Update()
     {
+        if (updateStartTimer < 1f)
+        {
+            updateStartTimer += DeltaTimeWrapper.GameplayDelta;
+            return;
+        }
         PerformEveryFrameUpdate();
         PerformLimitedUpdate();
         PerformSpecifiedUpdates();

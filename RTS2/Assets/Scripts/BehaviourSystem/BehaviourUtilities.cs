@@ -292,15 +292,15 @@ public static class BehaviourUtilities
         Vector3 TargetPos = posToAvoid + new Vector3(Random.Range(-5, 5), Random.Range(-5, 5));
 
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(TargetPos.x, TargetPos.y, out batchCoords, out chunkCoords, out tileCoords);
+        PathfindingNode runFrom = null;
 
-        while (WorldChunkManager.Instance.DoesBatchExist(batchCoords) == false)
+        while (runFrom==null)
         {
             TargetPos = posToAvoid + new Vector3(Random.Range(-5, 5), Random.Range(-5, 5));
-
-            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(TargetPos.x, TargetPos.y, out batchCoords, out chunkCoords, out tileCoords);
+            runFrom = Pathfinding.GetNodeFromPosition(TargetPos);
+            //WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(TargetPos.x-1, TargetPos.y-1, out batchCoords, out chunkCoords, out tileCoords);
 
         }
-        PathfindingNode runFrom = Pathfinding.GetNodeFromPosition(TargetPos);
 
         return runFrom.worldPos;
 

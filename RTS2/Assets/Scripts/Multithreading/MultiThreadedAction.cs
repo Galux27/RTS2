@@ -97,12 +97,18 @@ public class PathfindingMultiThreadedAction : MultiThreadedAction
         {
             try
             {
-                ToPerform.Invoke();
-            }
-            catch (System.Exception e)
+                try
+                {
+                    ToPerform.Invoke();
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError(e.ToString());
+                    Updating.FailedPath = true;
+                }
+            }catch(ThreadAbortException e)
             {
-                Debug.LogError(e.ToString());
-                Updating.FailedPath = true;
+                Debug.LogError(e.ToSafeString());
             }
             IsComplete = true;
         }

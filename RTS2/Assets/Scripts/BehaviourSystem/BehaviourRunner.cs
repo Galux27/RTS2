@@ -94,6 +94,10 @@ public class BehaviourRunner : MonoBehaviour, Updater
     public bool DebugOutBehaviourDetails = false;
     public void OnEveryFrame()
     {
+        if (UnitPerforming.ValidateUnitIsInLoadedWorld() == false)
+        {
+            return;
+        }
         IsBehaviourNull = CurrentBehaviour == null;
         if (breakpointBeforeRun)
         {
@@ -141,6 +145,10 @@ public class BehaviourRunner : MonoBehaviour, Updater
 
     public void LimitedUpdate()
     {
+        if (UnitPerforming.ValidateUnitIsInLoadedWorld() == false)
+        {
+            return;
+        }
         IsBehaviourNull = CurrentBehaviour == null;
 
         if (!IsBehaviourNull)

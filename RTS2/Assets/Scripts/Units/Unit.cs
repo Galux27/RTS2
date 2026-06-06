@@ -61,6 +61,21 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
         hasLastNode = true;
     }
 
+
+    public bool ValidateUnitIsInLoadedWorld()
+    {
+        Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), local = new Vector2Int();
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(
+            Mathf.Ceil(Position().x), Mathf.Ceil(Position().y), out batch, out chunk, out local);
+        
+        if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batch)==false)
+        {
+            GameLifeManager.Instance.ConvertUnitToALifeEntity(this);
+            return false;
+        }
+        return true;
+    }
+
     public void UpdateChunk(WorldChunk newChunk)
     {
         bool isSame = MyCurrentChunk!=null && newChunk.LocalXCoord == MyCurrentChunk.x && newChunk.LocalYCoord == MyCurrentChunk.y;

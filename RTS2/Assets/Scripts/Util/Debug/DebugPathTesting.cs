@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using UnityEngine.UIElements;
 
 public class DebugPathTesting : MonoBehaviour
 {
@@ -25,13 +27,21 @@ public class DebugPathTesting : MonoBehaviour
         
     }
     public Vector2 batchCoords,TestCoords;
+
+    public Vector2Int batch, chunk, local;
+    public bool IsNodeNull;
     void DrawNodesAroundPosition(Vector3 center)
     {
         Vector3 p = center;
        WorldTile node = null;
         PathfindingNode pathNode = null;
         batchCoords = new Vector2(WorldChunkManager.NewCalculateBatchCoords(TestCoords.x), WorldChunkManager.NewCalculateBatchCoords( TestCoords.y));
-        for(int x= -size; x <= size; x++)
+
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(Mathf.Ceil(this.transform.position.x-1), Mathf.Ceil(this.transform.position.y-1), out batch, out chunk, out local);
+        pathNode = Pathfinding.GetNodeFromPosition(this.transform.position);
+        IsNodeNull = (pathNode == null);
+
+        for (int x= -size; x <= size; x++)
         {
             for(int y= -size; y <= size; y++)
             {
@@ -39,7 +49,8 @@ public class DebugPathTesting : MonoBehaviour
               
                 node = Pathfinding.GetTileFromPosition(p);
                 pathNode = Pathfinding.GetNodeFromPosition(p);
-                if(node != null)
+
+                if (pathNode!=null)
                 {
                     
                     for (int i = 0; i < pathNode.neighbours.Count; i++)
