@@ -229,7 +229,7 @@ public static class Pathfinding
 
     public static PathfindingNode GetNodeFromPosition(Vector3 Position,Unit performing=null,bool debug=false)
     {
-
+        Position -= Vector3.one;    
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(Mathf.Ceil(Position.x),Mathf.Ceil( Position.y), out batch, out chunk, out local);
         if (!ValidateCoords())
         {
