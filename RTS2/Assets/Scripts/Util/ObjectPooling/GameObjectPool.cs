@@ -23,6 +23,14 @@ public class GameObjectPool
         Inactive.Add(inst);
     }
 
+    public void ReturnAllObjectsToPool()
+    {
+        while(Active.Count > 0) 
+        {
+            ReturnObjectToPool(Active[0]);
+        }
+    }
+
     public void ReturnObjectToPool(GameObject g)
     {
         Active.Remove(g);
@@ -39,6 +47,7 @@ public class GameObjectPool
         }
         GameObject inst = Inactive[0];
         Inactive.RemoveAt(0);
+        Active.Add(inst);
         return inst;
     }
 }

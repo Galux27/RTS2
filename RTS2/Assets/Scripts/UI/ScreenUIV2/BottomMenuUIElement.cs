@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Michsky.UI.ModernUIPack;
 using UnityEngine.UI;
-
+using System;
 public class BottomMenuUIElement : BaseUIElement
 {
     public Button Construction, Selection, Rooms, World;
@@ -24,7 +24,8 @@ public class BottomMenuUIElement : BaseUIElement
         Selection.onClick.AddListener(() => OpenUI(BottomMenuMode.Selection));
         Rooms.onClick.AddListener(() => OpenUI(BottomMenuMode.Rooms));
         World.onClick.AddListener(() => OpenUI(BottomMenuMode.World));
-
+        OnSwitchMode += TileValidityUI.Instance.Cleanup;
+        OnSwitchMode +=()=> ConstructableObjectManager.Instance.GetCursor().SetActive(false);
     }
 
     void SelectButton(Button b)
@@ -35,7 +36,7 @@ public class BottomMenuUIElement : BaseUIElement
     {
         b.transform.GetChild(3).GetComponent<CanvasGroup>().alpha = 0f;
     }
-
+    public Action OnSwitchMode;
     void OpenUI(BottomMenuMode modeToBe)
     {
         DeselectButton(Construction);
@@ -81,11 +82,11 @@ public class BottomMenuUIElement : BaseUIElement
                 case BottomMenuMode.World:
                     WorldElement?.DrawUI();
                     SelectButton(World);
-
                     currentlyDrawn = WorldElement;
                     break;
             }
         }
+        OnSwitchMode?.Invoke();
     }
 }
 

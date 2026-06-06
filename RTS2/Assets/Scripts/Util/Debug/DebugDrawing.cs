@@ -30,7 +30,7 @@ public class DebugDrawing : MonoBehaviour
     {
         EnvironmentObject data = EnvironmentObjectHelpers.GetEnvironmentObject(toDraw.ObjectKey);
 
-
+        return;
       
 
         Vector3 cursorPos = toDraw.Position();

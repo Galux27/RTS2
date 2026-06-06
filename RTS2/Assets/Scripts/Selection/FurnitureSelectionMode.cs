@@ -56,10 +56,13 @@ public class FurnitureSelectionMode : SelectionMode
             float height = ConstructableObjectManager.Instance.selectedToConstruct.GetHeight;
             float width = ConstructableObjectManager.Instance.selectedToConstruct.GetWidth;
             Vector3 pos = new Vector3(coords.x, coords.y, 0f);
+            TileValidityUI.Instance.DrawTileValidity(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth,
+                ConstructableObjectManager.Instance.selectedToConstruct.GetHeight);
 
             if (AreAllTilesWalkable(coords, ConstructableObjectManager.Instance.selectedToConstruct.GetWidth,
                 ConstructableObjectManager.Instance.selectedToConstruct.GetHeight) 
-                && DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false && hasEnoughResources)
+                && 
+                DoBoundsIntersectExisting(pos, ConstructableObjectManager.Instance.selectedToConstruct.Size()) ==false && hasEnoughResources)
             {
                 ConstructableObjectManager.Instance.SetCursorColour(new Color(0, 1, 0, .5f));
             }
@@ -74,7 +77,7 @@ public class FurnitureSelectionMode : SelectionMode
         else
         {
             ConstructableObjectManager.Instance.GetCursor().SetActive(false);
-
+            TileValidityUI.Instance.Cleanup();
         }
 
         Vector2Int v = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(cursorPos + new Vector3(.5f, .5f));
@@ -175,16 +178,16 @@ public class FurnitureSelectionMode : SelectionMode
                     }
                 }
 
-                if(hit )
-                {
-                    Debug.DrawLine(pos, pos + Vector3.up, Color.magenta);
-                    return true;
-                }
-                else
-                {
-                    Debug.DrawLine(pos, pos + Vector3.up, Color.yellow);
+                //if(hit )
+                //{
+                //    Debug.DrawLine(pos, pos + Vector3.up, Color.magenta);
+                //    return true;
+                //}
+                //else
+                //{
+                //    Debug.DrawLine(pos, pos + Vector3.up, Color.yellow);
 
-                }
+                //}
             }
 
         }

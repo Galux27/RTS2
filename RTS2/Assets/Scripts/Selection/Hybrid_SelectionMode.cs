@@ -39,7 +39,7 @@ public class Hybrid_SelectionMode : SelectionMode
 
     public override void OnHover()
     {
-        CursorIcon.Instance.SetSelectIcon();
+        CursorIcon.Instance.SetCustomIcon(null, Vector3.zero) ;
 
         if (currentSubSelectionMode != null)
         {

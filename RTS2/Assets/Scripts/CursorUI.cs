@@ -18,24 +18,23 @@ public class CursorUI : MonoBehaviour
     }
 
     public SpriteRenderer RectSpriteRenderer;
-    bool shouldRender = false;
+    public Color CursorColour;
    
     public void SetShouldRender(bool shouldRender)
     {
-        this.shouldRender = shouldRender;
-    }
-
-    private void Update()
-    {
         if (shouldRender)
         {
-            RectSpriteRenderer.color= new Color(1,1,1,.2f); 
+            RectSpriteRenderer.color=CursorColour;
         }
         else
         {
             RectSpriteRenderer.color = Color.clear;
-            this.transform.localScale = Vector3.zero;
         }
+    }
+
+    private void Update()
+    {
+        
     }
     public Vector3 low, high;
     public void SetCorners(Vector3 pos1,Vector3 pos2)
@@ -76,5 +75,29 @@ public class CursorUI : MonoBehaviour
         Vector3 size = high - low;
         this.transform.localScale = size;
        // this.transform.GetChild(0).localScale = size;
+    }
+
+    public void DrawTileAccessable(Vector2Int coords,int width,int height)
+    {
+     
+        Vector3 pos = new Vector3();
+        for (int x = coords.x; x < coords.x + width; x++)
+        {
+            for (int y = coords.y; y < coords.y + height; y++)
+            {
+                pos.x = x;
+                pos.y = y;
+                if (WorldController.Instance.IsTraversible(x, y) == false)
+                {
+                    Debug.DrawLine(pos, pos + (Vector3.one * .5f), Color.red);
+                }
+                else
+                {
+                    Debug.DrawLine(pos, pos + (Vector3.one * .5f), Color.green);
+
+                }
+            }
+
+        }
     }
 }
