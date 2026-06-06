@@ -94,7 +94,7 @@ public class HarvestPlanter_Behaviour : BehaviourBase
                     PlanterBehaviour pb = (PlanterBehaviour)target.myBehaviour;
                     if (pb != null)
                     {
-                        pb.Harvest();
+                        pb.Harvest(unitToMove.Position());
                         done = true;
                     }
                 }

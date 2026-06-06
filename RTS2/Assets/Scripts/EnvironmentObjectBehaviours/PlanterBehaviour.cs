@@ -32,7 +32,7 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
         }
     }
 
-    public void Harvest()
+    public void Harvest(Vector3 UnitHarvestingPos)
     {
         Grown = false;
         DoneFirstUpdate = false;
@@ -41,7 +41,7 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
 
         for (int x = 0; x < HarvestData.Count; x++)
         {
-            HarvestData[x].GenerateResoruces(myObject.GetPosition());
+            HarvestData[x].GenerateResoruces(UnitHarvestingPos);
         }
         if (GrowingPlant != null)
         {

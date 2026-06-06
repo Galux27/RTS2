@@ -6398,6 +6398,10 @@ MonoBehaviour:
   TimeTakenForGroups: 0
   batchCoords: {x: 0, y: 0}
   TestCoords: {x: 0, y: 0}
+  batch: {x: 0, y: 0}
+  chunk: {x: 0, y: 0}
+  local: {x: 0, y: 0}
+  IsNodeNull: 0
 --- !u!1 &935836950
 GameObject:
   m_ObjectHideFlags: 0
