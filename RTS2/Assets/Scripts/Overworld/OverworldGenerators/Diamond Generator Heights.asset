@@ -9,7 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22719301bd0687d429c1d1554d972181, type: 3}
-  m_Name: Overworld Minor Feature Generator
+  m_Script: {fileID: 11500000, guid: b270f7eac8ca17a41bde4797138f3def, type: 3}
+  m_Name: Diamond Generator Heights
   m_EditorClassIdentifier: 
-  MinorFeaturesToGenerate: 400
+  argSize: 513
+  seed: 1578
+  roughness: 0.78
+  scale: 1
+  Increments: 11

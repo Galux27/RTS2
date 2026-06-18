@@ -293,6 +293,10 @@ public static class OverworldPathfinding
 
     public static float GetNodeWeight(OverworldTile node)
     {
+        if (node == null)
+        {
+            return 9999999999999f;
+        }
         float retVal = 0f;
         retVal += node.Elevation;
 

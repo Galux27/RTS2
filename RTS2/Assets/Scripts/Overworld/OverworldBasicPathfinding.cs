@@ -4,10 +4,46 @@ using UnityEngine;
 
 public static class OverworldBasicPathfinding 
 {
-    public const int SimplifySize = 25;
+    public const int SimplifySize = 27;
     public static BasicOverworldPathfindingNode[,] SimplifiedWorld;
+
+
+    public static List<int> Factor(int number)
+    {
+        var factors = new List<int>();
+        int max = (int)Mathf.Sqrt(number);  // Round down
+
+        for (int factor = 1; factor <= max; ++factor) // Test from 1 to the square root, or the int below it, inclusive.
+        {
+            if (number % factor == 0)
+            {
+                factors.Add(factor);
+                if (factor != number / factor) // Don't add the square root twice!  Thanks Jon
+                    factors.Add(number / factor);
+            }
+        }
+        return factors;
+    }
+
     public static void InitOverworldBasicPathfinding(OverworldTile[,] world)
     {
+        int SimplifySize = OverworldBasicPathfinding.SimplifySize;
+        List<int> factors = Factor(world.GetLength(1));
+
+        int closest = 99999999;
+        for(int x = 0; x < factors.Count; x++)
+        {
+            if (factors[x] < 25)
+            {
+                continue;
+            }
+            if (factors[x]-25 < closest)
+            {
+                closest = factors[x] - 25;
+                SimplifySize = factors[x];
+            }
+        }
+        Debug.Log("Simplify Factor " + SimplifySize);
         SimplifiedWorld = new BasicOverworldPathfindingNode[Mathf.CeilToInt( world.GetLength(0)/ SimplifySize), Mathf.CeilToInt(world.GetLength(1) / SimplifySize)];
         for (int x = 0; x < SimplifiedWorld.GetLength(0); x++)
         {
@@ -16,9 +52,8 @@ public static class OverworldBasicPathfinding
                 SimplifiedWorld[x,y] = new BasicOverworldPathfindingNode(x, y,SimplifySize);
             }
         }
-
       
-
+      
         Vector2Int parentCoords = new Vector2Int(),LocalCoords=new Vector2Int();
         for (int x = 0; x < world.GetLength(0); x++)
         {
@@ -28,7 +63,14 @@ public static class OverworldBasicPathfinding
                 parentCoords.y = y / SimplifySize;
                 LocalCoords.x = x % SimplifySize;
                 LocalCoords.y = y % SimplifySize;
-                SimplifiedWorld[parentCoords.x, parentCoords.y].AddLocalCoord(world[x, y], LocalCoords);
+                try
+                {
+                    SimplifiedWorld[parentCoords.x, parentCoords.y].AddLocalCoord(world[x, y], LocalCoords);
+                }
+                catch
+                {
+                    Debug.LogError("Error " + parentCoords.ToString()+"/"+SimplifiedWorld.GetLength(0)+","+SimplifiedWorld.GetLength(1) + ",," + LocalCoords.ToString() + ",," + x + "," + y);
+                }
             }
         }
 

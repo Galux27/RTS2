@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SettlementPopulationMinimum: 2000
   SettlementPopulationMaximum: 50000
-  NumberOfSettlements: 100
-  ExpandChance: 40
+  NumberOfSettlements: 150
+  ExpandChance: 49
   MinSettlementElemevation: 51
-  MaxSettlementElemevation: 65
+  MaxSettlementElemevation: 75

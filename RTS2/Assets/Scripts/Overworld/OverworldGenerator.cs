@@ -62,7 +62,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         {
             for (int y = 0; y < OverworldHeight; y++)
             {
-                ALifeSystem.GenerateEntitiesForOverworldTile(OverworldTiles[x, y]);
+            //    ALifeSystem.GenerateEntitiesForOverworldTile(OverworldTiles[x, y]);
              
             }
         }
@@ -239,7 +239,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                 OverworldTiles[x, y] = new OverworldTile(x, y);
             }
         }
-        for (int x=0;x < FeatureGenerators.Count - 1; x++)
+        for (int x=0;x < FeatureGenerators.Count; x++)
         {
             FeatureGenerators[x].GenerateFeature(OverworldTiles);
 
@@ -256,7 +256,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         yield return new WaitForSeconds(.1f);
         FeatureGenerators[index].GenerateFeature(OverworldTiles);
         OverworldRenderer.Instance.RenderWorld();
-        if(index < FeatureGenerators.Count - 1)
+        if(index < FeatureGenerators.Count)
         {
             index++;
             StartCoroutine(GenerateWorld());
@@ -343,6 +343,11 @@ public class OverworldTile: ISerialize
             if (Features.Contains(OverworldFeature.LargeWaterBody) )
             {
                 Features.Remove(OverworldFeature.LargeWaterBody);
+            }
+
+            if(Elevation> OverworldGenerator.Instance.MaxElevation * .8f)
+            {
+                Features.Add(OverworldFeature.Mountain);
             }
         }
     }

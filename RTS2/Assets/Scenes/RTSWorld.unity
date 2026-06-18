@@ -3071,12 +3071,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7760031061541316046, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
       propertyPath: OverworldWidth
-      value: 200
+      value: 513
       objectReference: {fileID: 0}
     - target: {fileID: 7760031061541316046, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
       propertyPath: OverworldHeight
-      value: 200
+      value: 513
       objectReference: {fileID: 0}
+    - target: {fileID: 7760031061541316046, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
+      propertyPath: 'FeatureGenerators.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: bd1a5ab292f32ee479bcb80df1d53556, type: 2}
     - target: {fileID: 8925274598619898778, guid: a29e14087fea7544fa0665cf39327a06, type: 3}
       propertyPath: m_Pivot.x
       value: 0
