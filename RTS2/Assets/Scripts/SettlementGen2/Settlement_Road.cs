@@ -13,7 +13,8 @@ public class Settlement_Road
     public bool EndedByLink = false;
     public Color debugColor;
     public List<float> PointsToSplitAt = new List<float>();
-    public Settlement_Road(Vector2 start,Vector2 dir,float len,Settlement_Road createdFrom=null)
+    public Settlement_RoadType RoadType;
+    public Settlement_Road(Vector2 start,Vector2 dir,float len, Settlement_RoadType myType,Settlement_Road createdFrom=null)
     {
         StartPos= start;
         Direction= dir.normalized;
@@ -22,6 +23,7 @@ public class Settlement_Road
         debugColor=new Color(Random.value,Random.value,Random.value,1f);
         MyID = new Settlement_RoadID();
         RoadNode = new Settlement_RoadJunction(GetPositionOnRoad(.5f));
+        RoadType = myType;
         if (createdFrom != null)
         {
             createdFrom.AddRoadConnection(this);
@@ -87,9 +89,9 @@ public class Settlement_Road
         Settlement_Road[] retVal = new Settlement_Road[2];
         Vector2 end = Vector2.Lerp(StartPos,EndPos,pointToSplit);
         Vector2 dir = end - StartPos;
-        retVal[0] = new Settlement_Road(StartPos, dir.normalized, dir.magnitude);
+        retVal[0] = new Settlement_Road(StartPos, dir.normalized, dir.magnitude,RoadType);
         dir = EndPos - end;
-        retVal[1]=new Settlement_Road(end, dir.normalized, dir.magnitude);
+        retVal[1]=new Settlement_Road(end, dir.normalized, dir.magnitude, RoadType);
         return retVal;
     }
 
@@ -342,4 +344,12 @@ public class Settlement_RoadID
     }
 
     public uint ID;
+}
+
+public enum Settlement_RoadType
+{
+    Highway,
+    Avenue,
+    Road,
+    Dirt
 }

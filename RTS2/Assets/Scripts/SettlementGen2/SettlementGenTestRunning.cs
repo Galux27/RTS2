@@ -11,24 +11,34 @@ public class SettlementGenTestRunning : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space))
         {
             settlement=SettlementGenerator.GenerateSettlement(settings);
+            settlement.GenerateSettlementAreas(settings,64);
         }
-        if (settlement != null)
+        if (settlement != null&&settlement.areas!=null)
         {
-            for (int x = 0; x < settlement.roads.Count; x++)
+            for(int q = 0; q < settlement.areas.GetLength(0); q++)
             {
-                Debug.DrawLine(settlement.roads[x].StartPos, settlement.roads[x].EndPos, settlement.roads[x].debugColor);
+                for(int  r = 0;r<settlement.areas.GetLength(1); r++)
+                {
+                   
+                    for (int x = 0; x < settlement.areas[q, r].roads.Count; x++)
+                    {
+                        Debug.DrawLine(settlement.areas[q, r].roads[x].StartPos, settlement.areas[q, r].roads[x].EndPos, settlement.areas[q, r].DebugColour);
+                    }
+
+
+                    for (int x = 0; x < settlement.areas[q, r].avenues.Count; x++)
+                    {
+                        Debug.DrawLine(settlement.areas[q, r].avenues[x].StartPos, settlement.areas[q, r].avenues[x].EndPos, settlement.areas[q, r].DebugColour);
+                    }
+
+                    for (int x = 0; x < settlement.areas[q, r].highways.Count; x++)
+                    {
+                        Debug.DrawLine(settlement.areas[q, r].highways[x].StartPos, settlement.areas[q, r].highways[x].EndPos, settlement.areas[q, r].DebugColour);
+                    }
+                }
             }
 
 
-            for (int x = 0; x < settlement.avenues.Count; x++)
-            {
-                Debug.DrawLine(settlement.avenues[x].StartPos, settlement.avenues[x].EndPos,Color.magenta);
-            }
-
-            for (int x = 0; x < settlement.highways.Count; x++)
-            {
-                Debug.DrawLine(settlement.highways[x].StartPos, settlement.highways[x].EndPos, Color.cyan);
-            }
         }
     }
 }
