@@ -10,30 +10,52 @@ public  static class SettlementGenerator
         validRoads.Clear();
         workingCopy.Clear();
         highways.Clear();
+        avenues.Clear();
+        roads.Clear();
+        DoneRoads = false;
         DoneHighways = false;
+        DoneAvenues = false;
         GeneratedSettlement settlement=new GeneratedSettlement();
-        Vector2 startPos =GetEdge(settings);
-        Vector2 dir = settings.Center - startPos;
-
-        for(int x = 0; x < settings.StartingHighwayCount; x++)
-        {
-            if (IsPointFarEnoughAway(settlement.highways, settings.DistBetweenHighways ,startPos))
-            {
-                validRoads.Add(new Settlement_Road(startPos, dir.normalized, dir.magnitude * Random.Range(.25f, .5f)));
-                //settlement.AddHighway();
-               
-            }
-            startPos= GetEdge(settings);
-            dir = settings.Center - startPos;
-        }
-
+        GenerateInitialHighways(settings);
+        Debug.Log("Settlement Gen: initial highways done ");
         HighwayGenerationPass(settings);
         settlement.highways = highways;
+        Debug.Log("Settlement Gen: highway gen done");
+
+        GenerateInitialAvenues(settings);
+        Debug.Log("Settlement Gen: initial avenues done");
+
+        AvenueGenerationPass(settings);
+        settlement.avenues = avenues;
+        Debug.Log("Settlement Gen: avenue gen done");
+        GenerateInitialRoads(settings);
+        RoadGenerationPass(settings);
+        settlement.roads = roads;
         return settlement;
     }
 
-    static List<Settlement_Road> workingCopy = new List<Settlement_Road>(), validRoads = new List<Settlement_Road>(),highways=new List<Settlement_Road>();
-    static bool DoneHighways = false;
+    static void GenerateInitialHighways(Settlement_Settings settings)
+    {
+        Vector2 startPos = GetEdge(settings);
+        Vector2 dir = settings.Center - startPos;
+
+        for (int x = 0; x < settings.StartingHighwayCount; x++)
+        {
+            //if (IsPointFarEnoughAway(validRoads, settings.DistBetweenHighways, startPos))
+            {
+                validRoads.Add(new Settlement_Road(startPos, dir.normalized, settings.HighwayLength));
+                //settlement.AddHighway();
+
+            }
+            startPos = GetEdge(settings);
+            dir = settings.Center - startPos;
+        }
+    }
+
+    static List<Settlement_Road> workingCopy = new List<Settlement_Road>(),
+        validRoads = new List<Settlement_Road>(),highways=new List<Settlement_Road>(),
+        avenues=new List<Settlement_Road>(),roads=new List<Settlement_Road>();
+    static bool DoneHighways = false,DoneAvenues=false,DoneRoads=false;
     static void HighwayGenerationPass(Settlement_Settings settings)
     {
         while (!DoneHighways)
@@ -63,32 +85,222 @@ public  static class SettlementGenerator
         bool foundEnd = false;
         Vector2 newEndPoint = original.StartPos + (original.Direction * original.Length);
 
-        for (int x = 0; x < highways.Count; x++) 
+        if (CheckForIntersection(validRoads, original.StartPos, ref newEndPoint, out intersection))
         {
-            if (LineUtil.IntersectRoadSegments2D(original.StartPos, newEndPoint, highways[x].StartPos, highways[x].EndPos,out intersection)) {
-                if (Vector2.Distance(original.StartPos, highways[x].EndPos) > 1f)
-                {
-                    foundEnd = true;
-                    newEndPoint = intersection;
-                    break;
-                }
-            }
-           
+            foundEnd = true;
+        }
+
+        if (CheckForIntersection(highways, original.StartPos, ref newEndPoint, out intersection))
+        {
+            foundEnd = true;
         }
 
         //original checks for if the new end positions are close to the start/end positions of the existing roads
         //
-        original.EndPos = newEndPoint;
+        original.UpdateEndPosition(newEndPoint);
+        original.EndedByLink = foundEnd;
         highways.Add(original);
 
         if (!foundEnd &&!IsPositionNearEdge(newEndPoint,settings))
         {
             newStart = newEndPoint;
-            workingCopy.Add(new Settlement_Road(newStart, (original.Direction + new Vector2(Random.Range(-.1f,.1f)*settings.HighwayDirOffsetScale,Random.Range(-.1f,.1f) * settings.HighwayDirOffsetScale)).normalized, original.Length));
+            workingCopy.Add(new Settlement_Road(newStart, (original.Direction + new Vector2(Random.Range(-.1f,.1f)*settings.HighwayDirOffsetScale,Random.Range(-.1f,.1f) * settings.HighwayDirOffsetScale)).normalized, settings.HighwayLength));
         }
 
     }
 
+
+    static void GenerateInitialAvenues(Settlement_Settings settings)
+    {
+        validRoads.Clear();
+        workingCopy.Clear();
+        int initialHighways = highways.Count;
+        for(int x=0;x<initialHighways;x++)
+        {
+            Vector2 pos = highways[x].GetPositionOnRoad(.5f);
+            highways[x].AddPointToSplit(.5f);
+            validRoads.Add(new Settlement_Road(pos, highways[x].Perp(false).normalized, settings.AvenueLength));
+            validRoads.Add(new Settlement_Road(pos, highways[x].Perp(true).normalized, settings.AvenueLength));
+
+        }
+    }
+    static int totalPasses = 0;
+    static void AvenueGenerationPass(Settlement_Settings settings)
+    {
+   
+     
+
+        totalPasses = 0;
+        while (!DoneAvenues&&totalPasses< settings.MaxAvenuePasses)
+        {
+            for (int x = 0; x < validRoads.Count; x++)
+            {
+                if (!validRoads[x].EndedByLink)
+                {
+                    GenerateAvenue(validRoads[x], settings);
+                }
+            }
+            validRoads.Clear();
+            validRoads.AddRange(workingCopy);
+            workingCopy.Clear();
+            totalPasses++;
+            if (validRoads.Count == 0)
+            {
+                DoneAvenues = true;
+            }
+        }
+
+        validRoads.Clear();
+        workingCopy.Clear();
+    }
+
+    static void GenerateAvenue(Settlement_Road original, Settlement_Settings settings)
+    {
+        bool foundEnd = false;
+        Vector2 newEndPoint = original.EndPos;
+
+        if (CheckForIntersection(validRoads, original.StartPos, ref newEndPoint, out intersection))
+        {
+            foundEnd = true;
+        }
+
+        if (CheckForIntersection(highways, original.StartPos, ref newEndPoint, out intersection))
+        {
+            foundEnd = true;
+        }
+
+
+        if (CheckForIntersection(avenues, original.StartPos, ref newEndPoint, out intersection))
+        {
+            foundEnd = true;
+        }
+
+
+        original.UpdateEndPosition( newEndPoint);
+        original.EndedByLink = foundEnd;
+        avenues.Add(original);
+
+        
+
+
+        if (!foundEnd && !IsPositionNearEdge(newEndPoint, settings) && Vector2.Distance(settings.Center, original.EndPos) < settings.Size.magnitude/2f)
+        {
+            newStart = newEndPoint;
+            workingCopy.Add(new Settlement_Road(newStart, (original.Direction).normalized, settings.AvenueLength));
+        }
+
+    }
+
+
+    static void GenerateInitialRoads(Settlement_Settings settings)
+    {
+        validRoads.Clear();
+        workingCopy.Clear();
+        int initialRoads = avenues.Count;
+        for (int x = 0; x < initialRoads; x++)
+        {
+            if (avenues[x].Length > settings.MinAvenueLengthForRoad)
+            {
+                Vector2 pos = avenues[x].GetPositionOnRoad(.5f);
+                avenues[x].AddPointToSplit(.5f);
+                validRoads.Add(new Settlement_Road(pos, avenues[x].Perp(false).normalized, settings.RoadLength));
+                validRoads.Add(new Settlement_Road(pos, avenues[x].Perp(true).normalized, settings.RoadLength));
+            }
+        }
+    }
+    static void RoadGenerationPass(Settlement_Settings settings)
+    {
+        totalPasses = 0;
+        while (!DoneRoads && totalPasses < settings.MaxRoadPasses)
+        {
+            for (int x = 0; x < validRoads.Count; x++)
+            {
+                if (!validRoads[x].EndedByLink)
+                {
+                    GenerateRoads(validRoads[x], settings);
+                }
+            }
+            validRoads.Clear();
+            validRoads.AddRange(workingCopy);
+            workingCopy.Clear();
+            totalPasses++;
+            if (validRoads.Count == 0)
+            {
+                DoneRoads = true;
+            }
+        }
+
+        validRoads.Clear();
+        workingCopy.Clear();
+    }
+
+    static void GenerateRoads(Settlement_Road original, Settlement_Settings settings)
+    {
+        bool foundEnd = false;
+        Vector2 newEndPoint = original.EndPos;
+
+        if (CheckForIntersection(validRoads, original.StartPos, ref newEndPoint, out intersection))
+        {
+            foundEnd = true;
+        }
+        if (CheckForIntersection(avenues, original.StartPos, ref newEndPoint, out intersection))
+        {
+            foundEnd = true;
+        }
+
+        if (CheckForIntersection(highways, original.StartPos, ref newEndPoint, out intersection))
+        {
+            foundEnd = true;
+        }
+
+        if (CheckForIntersection(roads, original.StartPos, ref newEndPoint, out intersection))
+        {
+            foundEnd = true;
+        }
+
+
+        original.UpdateEndPosition(newEndPoint);
+        original.EndedByLink = foundEnd;
+        roads.Add(original);
+
+
+
+
+        if (!foundEnd && !IsPositionNearEdge(newEndPoint, settings))
+        {
+            newStart = newEndPoint;
+            if (Random.Range(0, 100) < 20)
+            {
+                workingCopy.Add(new Settlement_Road(newStart, (original.Perp(false)).normalized, settings.RoadLength));
+
+            }
+            else
+            {
+                workingCopy.Add(new Settlement_Road(newStart, (original.Direction).normalized, settings.RoadLength));
+
+            }
+        }
+
+    }
+
+
+    static bool CheckForIntersection(List<Settlement_Road> toTestAgainst,Vector2 start,ref Vector2 end,out Vector2 intersection)
+    {
+        for (int x = 0; x < toTestAgainst.Count; x++)
+        {
+            if (LineUtil.IntersectRoadSegments2D(start, end, toTestAgainst[x].StartPos, toTestAgainst[x].EndPos, out intersection))
+            {
+                if (Vector2.Distance(start, intersection) > .1f)
+                {
+                    end = intersection;
+                    return true;
+                }
+            }
+
+        }
+        intersection = Vector2.zero;
+        return false;
+    }
 
     static bool IsPositionNearEdge(Vector2 pos,Settlement_Settings settings)
     {

@@ -4,12 +4,7 @@ public class SettlementGenTestRunning : MonoBehaviour
 {
     public Settlement_Settings settings;
    public GeneratedSettlement settlement;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
+   
     // Update is called once per frame
     void Update()
     {
@@ -19,9 +14,20 @@ public class SettlementGenTestRunning : MonoBehaviour
         }
         if (settlement != null)
         {
-            for(int x=0;x<settlement.highways.Count;x++)
+            for (int x = 0; x < settlement.roads.Count; x++)
             {
-                Debug.DrawLine(settlement.highways[x].StartPos,settlement.highways[x].EndPos, settlement.highways[x].debugColor);  
+                Debug.DrawLine(settlement.roads[x].StartPos, settlement.roads[x].EndPos, settlement.roads[x].debugColor);
+            }
+
+
+            for (int x = 0; x < settlement.avenues.Count; x++)
+            {
+                Debug.DrawLine(settlement.avenues[x].StartPos, settlement.avenues[x].EndPos,Color.magenta);
+            }
+
+            for (int x = 0; x < settlement.highways.Count; x++)
+            {
+                Debug.DrawLine(settlement.highways[x].StartPos, settlement.highways[x].EndPos, Color.cyan);
             }
         }
     }

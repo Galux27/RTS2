@@ -1,21 +1,29 @@
 using UnityEngine;
-
+using System.Collections.Generic;
 [System.Serializable]
 public class Settlement_Road 
 {
     public Vector2 StartPos, Direction;
     public float Length;
-    Vector2 endPos;
+    public Vector2 endPos;
     public bool EndedByLink = false;
     public Color debugColor;
+    public List<float> PointsToSplitAt = new List<float>();
     public Settlement_Road(Vector2 start,Vector2 dir,float len)
     {
         StartPos= start;
-        Direction= dir;
+        Direction= dir.normalized;
         Length= len;
-        EndPos = StartPos + (dir * len);
+        EndPos = StartPos + (Direction * len);
         debugColor=new Color(Random.value,Random.value,Random.value,1f);
     }
+
+    public void UpdateEndPosition(Vector2 pos)
+    {
+        Length=Vector2.Distance(StartPos, pos);
+        EndPos = pos;
+    }
+
 
     public Vector2 EndPos
     {
@@ -34,6 +42,27 @@ public class Settlement_Road
         return Vector2.Distance(StartPos,pos) > dist && Vector2.Distance(pos,EndPos)>dist;
     }
 
+    public Vector2 Perp(bool negative)
+    {
+        if (negative)
+        {
+            return Vector2.Perpendicular(endPos - StartPos)*-1;
+        }
+        else
+        {
+            return Vector2.Perpendicular(endPos - StartPos);
+        }
+    }
+
+   
+    public void AddPointToSplit(float point)
+    {
+        PointsToSplitAt.Add(point);
+    }
+    public Vector2 GetPositionOnRoad(float pos)
+    {
+        return Vector2.Lerp(StartPos, EndPos, pos);
+    }
 
     public Settlement_Road[] SplitRoad(float pointToSplit)
     {
