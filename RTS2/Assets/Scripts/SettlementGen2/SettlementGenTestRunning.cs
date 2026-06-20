@@ -36,12 +36,20 @@ public class SettlementGenTestRunning : MonoBehaviour
 
                     for (int x = 0; x < settlement.areas[q, r].highways.Count; x++)
                     {
-                        Debug.DrawLine(settlement.areas[q, r].highways[x].StartPos, settlement.areas[q, r].highways[x].EndPos, settlement.areas[q, r].DebugColour);
+                        Debug.DrawLine(settlement.areas[q, r].highways[x].StartPos, settlement.areas[q, r].highways[x].EndPos, Color.cyan);
                     }
+
+
                 }
             }
 
+            for(int x = 0; x < settlement.River.RiverSections.Count; x++)
+            {
+                Debug.DrawLine(settlement.River.RiverSections[x].StartPos, settlement.River.RiverSections[x].EndPos, Color.blue);
+                Debug.DrawLine(settlement.River.RiverSections[x].PosSideStart, settlement.River.RiverSections[x].PosSideEnd, Color.blue);
+                Debug.DrawLine(settlement.River.RiverSections[x].NegSideStart, settlement.River.RiverSections[x].NegSideEnd, Color.blue);
 
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ public  static class SettlementGenerator
     public static void GenerateSettlement(GeneratedSettlement settlement, Settlement_Settings settings)
     {
         CurrentlyGenerating = settlement;
+        settlement.SetRiver(RiverGenerator.GenerateRiver(settings));
         validRoads.Clear();
         workingCopy.Clear();
         highways.Clear();
@@ -163,10 +164,10 @@ public  static class SettlementGenerator
         validRoads.Clear();
         workingCopy.Clear();
     }
-
+    static Vector2 RiverIntersect;
     static void GenerateAvenue(Settlement_Road original, Settlement_Settings settings)
     {
-        bool foundEnd = false;
+        bool foundEnd = false, add = true ;
         Vector2 newEndPoint = original.EndPos;
 
         if (CheckForIntersection(validRoads, original.StartPos, ref newEndPoint, out intersection))
@@ -190,6 +191,16 @@ public  static class SettlementGenerator
             foundEnd = true;
         }
 
+       if(RiverGenerator.CheckForIntersection(original.StartPos,original.endPos,CurrentlyGenerating.River.RiverSections,out RiverIntersect))
+        {
+            foundEnd = true;
+            newEndPoint = RiverIntersect;
+            add = false;
+        }
+        if (!add)
+        {
+            return;
+        }
         original.UpdateEndPosition( newEndPoint);
         original.EndedByLink = foundEnd;
         avenues.Add(original);
@@ -252,7 +263,7 @@ public  static class SettlementGenerator
 
     static void GenerateRoads(Settlement_Road original, Settlement_Settings settings)
     {
-        bool foundEnd = false;
+        bool foundEnd = false, add = true ;
         Vector2 newEndPoint = original.EndPos;
 
         if (CheckForIntersection(validRoads, original.StartPos, ref newEndPoint, out intersection))
@@ -278,7 +289,17 @@ public  static class SettlementGenerator
         {
             foundEnd = true;
         }
+        if (RiverGenerator.CheckForIntersection(original.StartPos, original.endPos, CurrentlyGenerating.River.RiverSections, out RiverIntersect))
+        {
+            foundEnd = true;
+            newEndPoint = RiverIntersect;
+            add = false;
+        }
 
+        if (!add)
+        {
+            return;
+        }
         original.UpdateEndPosition(newEndPoint);
         original.EndedByLink = foundEnd;
         roads.Add(original);
@@ -413,6 +434,7 @@ public  static class SettlementGenerator
 [System.Serializable]
 public class GeneratedSettlement
 {
+    public Settlement_River River;
     public List<Settlement_Road> highways=new List<Settlement_Road>(),avenues = new List<Settlement_Road>(), roads = new List<Settlement_Road>();
     public GeneratedSettlementArea[,] areas;
     int width;
@@ -439,6 +461,10 @@ public class GeneratedSettlement
 
     }
 
+    public void SetRiver(Settlement_River river)
+    {
+        River=river;
+    }
 
     public GeneratedSettlementArea GetAreaFromPosition(Vector2 pos)
     {
@@ -489,11 +515,11 @@ public class GeneratedSettlementArea
     {
         Point = bottomLeft;
         DebugColour = new Color(Random.value, Random.value, Random.value);
-        int r = Random.Range(0, 100);
-        if (r < 15)
-        {
-            CanUse = false;
-        }
+        //int r = Random.Range(0, 100);
+        //if (r < 15)
+        //{
+        //    CanUse = false;
+        //}
     }
     public Color DebugColour;
     public Vector2 Point;
