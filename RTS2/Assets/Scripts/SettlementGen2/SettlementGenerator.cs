@@ -95,6 +95,11 @@ public  static class SettlementGenerator
             foundEnd = true;
         }
 
+        if(CheckForMovingEndToOtherPoint(highways, ref newEndPoint, settings.DistBetweenHighways))
+        {
+            foundEnd = true;
+        }
+
         //original checks for if the new end positions are close to the start/end positions of the existing roads
         //
         original.UpdateEndPosition(newEndPoint);
@@ -119,8 +124,8 @@ public  static class SettlementGenerator
         {
             Vector2 pos = highways[x].GetPositionOnRoad(.5f);
             highways[x].AddPointToSplit(.5f);
-            validRoads.Add(new Settlement_Road(pos, highways[x].Perp(false).normalized, settings.AvenueLength));
-            validRoads.Add(new Settlement_Road(pos, highways[x].Perp(true).normalized, settings.AvenueLength));
+            validRoads.Add(new Settlement_Road(pos, highways[x].Perp(false).normalized, settings.AvenueLength, highways[x]));
+            validRoads.Add(new Settlement_Road(pos, highways[x].Perp(true).normalized, settings.AvenueLength, highways[x]));
 
         }
     }
@@ -175,6 +180,10 @@ public  static class SettlementGenerator
             foundEnd = true;
         }
 
+       if( CheckForMovingEndToOtherPoint(avenues, ref newEndPoint, settings.DistBetweenAvenues))
+        {
+            foundEnd = true;
+        }
 
         original.UpdateEndPosition( newEndPoint);
         original.EndedByLink = foundEnd;
@@ -186,7 +195,7 @@ public  static class SettlementGenerator
         if (!foundEnd && !IsPositionNearEdge(newEndPoint, settings) && Vector2.Distance(settings.Center, original.EndPos) < settings.Size.magnitude/2f)
         {
             newStart = newEndPoint;
-            workingCopy.Add(new Settlement_Road(newStart, (original.Direction).normalized, settings.AvenueLength));
+            workingCopy.Add(new Settlement_Road(newStart, (original.Direction).normalized, settings.AvenueLength,original));
         }
 
     }
@@ -203,8 +212,8 @@ public  static class SettlementGenerator
             {
                 Vector2 pos = avenues[x].GetPositionOnRoad(.5f);
                 avenues[x].AddPointToSplit(.5f);
-                validRoads.Add(new Settlement_Road(pos, avenues[x].Perp(false).normalized, settings.RoadLength));
-                validRoads.Add(new Settlement_Road(pos, avenues[x].Perp(true).normalized, settings.RoadLength));
+                validRoads.Add(new Settlement_Road(pos, avenues[x].Perp(false).normalized, settings.RoadLength, avenues[x]));
+                validRoads.Add(new Settlement_Road(pos, avenues[x].Perp(true).normalized, settings.RoadLength, avenues[x]));
             }
         }
     }
@@ -258,6 +267,10 @@ public  static class SettlementGenerator
             foundEnd = true;
         }
 
+        if(CheckForMovingEndToOtherPoint(roads, ref newEndPoint, settings.DistBetweenRoads))
+        {
+            foundEnd = true;
+        }
 
         original.UpdateEndPosition(newEndPoint);
         original.EndedByLink = foundEnd;
@@ -271,18 +284,43 @@ public  static class SettlementGenerator
             newStart = newEndPoint;
             if (Random.Range(0, 100) < 20)
             {
-                workingCopy.Add(new Settlement_Road(newStart, (original.Perp(false)).normalized, settings.RoadLength));
+                workingCopy.Add(new Settlement_Road(newStart, (original.Perp(false)).normalized, settings.RoadLength, original));
 
             }
             else
             {
-                workingCopy.Add(new Settlement_Road(newStart, (original.Direction).normalized, settings.RoadLength));
+                workingCopy.Add(new Settlement_Road(newStart, (original.Direction).normalized, settings.RoadLength, original));
 
             }
         }
 
     }
 
+
+    static bool CheckForMovingEndToOtherPoint(List<Settlement_Road> toTestAgainst,  ref Vector2 end,float maxDist)
+    {
+      
+        float dist = maxDist;
+        Vector2 newPos = end;
+        for(int x = 0; x < toTestAgainst.Count; x++)
+        {
+            if (toTestAgainst[x].IsPointCloseToStart(end, dist))
+            {
+                dist = Vector2.Distance(end, toTestAgainst[x].StartPos);
+
+                newPos = toTestAgainst[x].StartPos;
+                return true;
+            }
+
+            //if (toTestAgainst[x].IsPointCloseToEnd(end, maxDist))
+            //{
+            //    end = toTestAgainst[x].EndPos;
+            //    return true;
+            //}
+        }
+        end = newPos;
+        return false;
+    }
 
     static bool CheckForIntersection(List<Settlement_Road> toTestAgainst,Vector2 start,ref Vector2 end,out Vector2 intersection)
     {
@@ -324,19 +362,7 @@ public  static class SettlementGenerator
         return false;
     }
 
-    static bool IsPointFarEnoughAway(List<Settlement_Road> toCheck,float minDist,Vector2 position)
-    {
-        for(int x=0;x < toCheck.Count; x++)
-        {
-            if (toCheck[x].IsPointCloseToPositions(position, minDist))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
+  
     static Vector2 GetEdge(Settlement_Settings settings)
     {
         Vector2 edge = new Vector2();

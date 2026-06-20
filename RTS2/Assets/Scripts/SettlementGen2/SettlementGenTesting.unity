@@ -271,12 +271,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     StartingHighwayCount: 6
-    DistBetweenHighways: 6
-    DistBetweenAvenues: 0
-    DistBetweenRoads: 0
+    DistBetweenHighways: 25
+    DistBetweenAvenues: 15
+    DistBetweenRoads: 10
     MinAvenueLengthForRoad: 15
     Center: {x: 0, y: 0}
-    Size: {x: 500, y: 500}
+    Size: {x: 640, y: 640}
     HighwayDirOffsetScale: 3
     MaxAvenuePasses: 22
     MaxRoadPasses: 22

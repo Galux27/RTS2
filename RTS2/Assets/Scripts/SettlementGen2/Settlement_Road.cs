@@ -3,19 +3,29 @@ using System.Collections.Generic;
 [System.Serializable]
 public class Settlement_Road 
 {
+    public Settlement_RoadID MyID;
+
+    public Settlement_RoadJunction RoadNode;
+
     public Vector2 StartPos, Direction;
     public float Length;
     public Vector2 endPos;
     public bool EndedByLink = false;
     public Color debugColor;
     public List<float> PointsToSplitAt = new List<float>();
-    public Settlement_Road(Vector2 start,Vector2 dir,float len)
+    public Settlement_Road(Vector2 start,Vector2 dir,float len,Settlement_Road createdFrom=null)
     {
         StartPos= start;
         Direction= dir.normalized;
         Length= len;
         EndPos = StartPos + (Direction * len);
         debugColor=new Color(Random.value,Random.value,Random.value,1f);
+        MyID = new Settlement_RoadID();
+        RoadNode = new Settlement_RoadJunction(GetPositionOnRoad(.5f));
+        if (createdFrom != null)
+        {
+            createdFrom.AddRoadConnection(this);
+        }
     }
 
     public void UpdateEndPosition(Vector2 pos)
@@ -24,6 +34,11 @@ public class Settlement_Road
         EndPos = pos;
     }
 
+    public void AddRoadConnection(Settlement_Road road)
+    {
+        RoadNode.AddConnection(road);
+        road.RoadNode.AddConnection(this);
+    }
 
     public Vector2 EndPos
     {
@@ -37,11 +52,14 @@ public class Settlement_Road
         }
     }
 
-    public bool IsPointCloseToPositions(Vector2 pos,float dist)
+    public bool IsPointCloseToStart(Vector2 pos,float dist)
     {
-        return Vector2.Distance(StartPos,pos) > dist && Vector2.Distance(pos,EndPos)>dist;
+        return Vector2.Distance(StartPos,pos) < dist;
     }
-
+    public bool IsPointCloseToEnd(Vector2 pos, float dist)
+    {
+        return Vector2.Distance(EndPos, pos) < dist;
+    }
     public Vector2 Perp(bool negative)
     {
         if (negative)
@@ -290,4 +308,38 @@ public static class LineUtil
     }
 
 
+}
+
+public class Settlement_RoadJunction
+{
+    public Vector2 position;
+    public List<uint> connections;
+    public Settlement_RoadJunction(Vector2 pos)
+    {
+        position = pos;
+        connections = new List<uint>();
+    }
+
+    public void AddConnection(Settlement_Road road)
+    {
+        if (!connections.Contains(road.MyID.ID))
+        {
+            connections.Add(road.MyID.ID);
+        }
+    }
+    
+}
+
+
+
+public class Settlement_RoadID
+{
+    static uint currentID = 0;
+    public Settlement_RoadID()
+    {
+        ID = currentID;
+        currentID++;
+    }
+
+    public uint ID;
 }
