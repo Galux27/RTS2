@@ -10,8 +10,11 @@ public class SettlementGenTestRunning : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            settlement=SettlementGenerator.GenerateSettlement(settings);
-            settlement.GenerateSettlementAreas(settings,64);
+            settlement = new GeneratedSettlement();
+            settlement.GenerateSettlementAreas(settings, 64);
+
+            SettlementGenerator.GenerateSettlement(settlement,settings);
+            settlement.PopulateAreas(settings, 64);
         }
         if (settlement != null&&settlement.areas!=null)
         {
