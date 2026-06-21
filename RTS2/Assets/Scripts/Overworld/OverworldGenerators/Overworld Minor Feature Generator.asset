@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22719301bd0687d429c1d1554d972181, type: 3}
   m_Name: Overworld Minor Feature Generator
   m_EditorClassIdentifier: 
-  MinorFeaturesToGenerate: 400
+  MinorFeaturesToGenerate: 1000

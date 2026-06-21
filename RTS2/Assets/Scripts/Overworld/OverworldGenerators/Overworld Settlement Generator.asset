@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Overworld Settlement Generator
   m_EditorClassIdentifier: 
   SettlementPopulationMinimum: 2000
-  SettlementPopulationMaximum: 50000
-  NumberOfSettlements: 150
-  ExpandChance: 49
+  SettlementPopulationMaximum: 25000
+  NumberOfSettlements: 100
+  ExpandChance: 50
   MinSettlementElemevation: 51
-  MaxSettlementElemevation: 75
+  MaxSettlementElemevation: 89

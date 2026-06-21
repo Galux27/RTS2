@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 public class OverworldRenderer : MonoBehaviour
@@ -52,6 +53,18 @@ public class OverworldRenderer : MonoBehaviour
                     }
                   
                 } 
+            }
+        }
+        Vector2Int pos = Vector2Int.zero;
+        if (OverworldGenerator.Instance.Settlements != null)
+        {
+            for (int q = 0; q < OverworldGenerator.Instance.Settlements.Length; q++)
+            {
+                for (int r = 0; r < OverworldGenerator.Instance.Settlements[q].pointsInSettlement.Count; r++)
+                {
+                    pos = OverworldGenerator.Instance.Settlements[q].pointsInSettlement[r];
+                    texture.SetPixel(pos.x, pos.y, OverworldGenerator.Instance.Settlements[q].DebugColour);
+                }
             }
         }
         texture.Apply();

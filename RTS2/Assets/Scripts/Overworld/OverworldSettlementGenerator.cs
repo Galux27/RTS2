@@ -23,7 +23,7 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
         List<Vector2Int> coordsUsed = new List<Vector2Int>();
         for (int x = 0; x < NumberOfSettlements; x++)
         {
-            while (!validCoords(coords, width, height, world) && coordsUsed.Contains(coords)==false)
+            while (!validCoords(coords, world,coordsUsed) && coordsUsed.Contains(coords)==false)
             {
                 coords.x = Random.Range(0, width);
                 coords.y = Random.Range(0, height);
@@ -35,6 +35,7 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
             {
                 settlements[x].AddToWaitingRoom(neighbourCache[q]);
             }
+            coordsUsed.Add(coords);
             coords.x = Random.Range(0, width);
             coords.y = Random.Range(0, height);
         }
@@ -117,6 +118,32 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
         {
             return true;
         }
+
+     
+        return false;
+    }
+    bool validCoords(Vector2Int coords, OverworldTile[,] world,List<Vector2Int> existing = null)
+    {
+        if (coords.x < 0 || coords.y < 0 || coords.y >= height || coords.x >= width)
+        {
+            return false;
+        }
+        //for (int q = 0; q < existing.Count; q++)
+        //{
+        //    if (Vector2Int.Distance(coords, existing[q]) < 100)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+
+        if (world[coords.x, coords.y].Elevation >= MinSettlementElemevation && world[coords.x, coords.y].Elevation <= MaxSettlementElemevation)
+        {
+            return true;
+        }
+       
+        
+
         return false;
     }
     bool validCoords(Vector2Int coords, int width, int height, OverworldTile[,] world)
@@ -125,7 +152,10 @@ public class OverworldSettlementGenerator : OverworldFeatureGenerator
         {
             return false;
         }
-        if (world[coords.x,coords.y].Elevation >=MinSettlementElemevation && world[coords.x, coords.y].Elevation <= MaxSettlementElemevation)
+
+
+        if (world[coords.x,coords.y].Elevation >=MinSettlementElemevation
+            && world[coords.x, coords.y].Elevation <= MaxSettlementElemevation)
         {
             return true;
         }
@@ -141,7 +171,7 @@ public class OverworldSettlement
     public int Id;
     public List<Vector2Int> pointsInSettlement,waitingRoom;
     public int RemainingPopulationToDistribute,TotalPopulation;
-
+    public Color DebugColour;
     public OverworldSettlement(int pop)
     {
         Id=BaseSettlmentID;
@@ -150,6 +180,7 @@ public class OverworldSettlement
         RemainingPopulationToDistribute = pop;
         TotalPopulation = pop;
         pointsInSettlement = new List<Vector2Int>();
+        DebugColour = new Color(Random.value, Random.value, Random.value);
     }
 
     public void AddToWaitingRoom(Vector2Int tiles)

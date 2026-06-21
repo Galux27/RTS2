@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class OverworldGenerator : MonoBehaviour, ISerialize
@@ -39,6 +40,18 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
    public OverworldTile[,] OverworldTiles;
     public List<OverworldFeatureGenerator> FeatureGenerators;
     public OverworldSettlement[] Settlements;
+
+    public OverworldSettlement GetSettlementByID(uint id)
+    {
+        for(int x = 0; x < Settlements.Length; x++)
+        {
+            if (Settlements[x].Id == id)
+            {
+                return Settlements[x];
+            }
+        }
+        return null;
+    }
     public void Generate()
     {
         EasyStopwatch.StartStopwatch();
@@ -253,22 +266,29 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
     int index = 0;
     IEnumerator GenerateWorld()
     {
-        yield return new WaitForSeconds(.1f);
-        FeatureGenerators[index].GenerateFeature(OverworldTiles);
-        OverworldRenderer.Instance.RenderWorld();
-        if(index < FeatureGenerators.Count)
+       
+            yield return new WaitForSeconds(.1f);
+        try
         {
-            index++;
-            StartCoroutine(GenerateWorld());
-        }
-        else
+            FeatureGenerators[index].GenerateFeature(OverworldTiles);
+            OverworldRenderer.Instance.RenderWorld();
+            if (index < FeatureGenerators.Count)
+            {
+                index++;
+                StartCoroutine(GenerateWorld());
+            }
+            else
+            {
+                EasyStopwatch.StopStopwatch();
+                Debug.Log("Generation took " + EasyStopwatch.GetStopwatchElapsedTime());
+                OnGenerationDone();
+
+            }
+        }catch(System.Exception e)
         {
-            EasyStopwatch.StopStopwatch();
-            Debug.Log("Generation took " + EasyStopwatch.GetStopwatchElapsedTime());
-            OnGenerationDone();
-
+            Debug.LogError(e.ToString());
+            Debug.Break();
         }
-
     }
 
     public DataToSerialize GetDataToSerialize()
@@ -317,7 +337,7 @@ public class OverworldTile: ISerialize
     public int Population = 0;
     public OverworldPathfindingNode Node;
     public string Settlement = "";
-
+    public OverworldSettlementDetails SettlementDetails;
 
     public OverworldTile(int x,int y,float elevation=0)
     {
@@ -358,7 +378,10 @@ public class OverworldTile: ISerialize
     {
         RiverPoint = new Vector2Int(index, length);
     }
-
+    public void SetSettlementID(uint id)
+    {
+        SettlementDetails = new OverworldSettlementDetails(id);
+    }
 
     public void AddFeatureToTile(OverworldFeature feature)
     {
@@ -455,6 +478,18 @@ public class OverworldTile: ISerialize
 
 }
 
+
+public class OverworldSettlementDetails
+{
+    static uint BaseID = 1;
+    public uint ID;
+
+    public OverworldSettlementDetails(uint id)
+    {
+        this.ID= id;
+    }
+    
+}
 public enum OverworldFeature
 {
     River,
