@@ -206,4 +206,67 @@ public class OverworldSettlement
     {
         return RemainingPopulationToDistribute > 0&&waitingRoom.Count>0;
     }
+
+    public Settlement_Settings GetSettingsForSettlement()
+    {
+        Settlement_Settings settings = new Settlement_Settings();
+
+        Vector2Int Min = new Vector2Int(9999999, 999999), Max = new Vector2Int(-9999999, -9999999);
+        Vector2Int cp = pointsInSettlement[0];
+        OverworldTile curTile = null;
+        for(int x = 0; x < pointsInSettlement.Count; x++)
+        {
+            cp = pointsInSettlement[x];
+            if (cp.x < Min.x)
+            {
+                Min.x = cp.x;
+            }
+            if (cp.x > Max.x)
+            {
+                Max.x = cp.x;
+            }
+
+            if (cp.y < Min.y)
+            {
+                Min.y = cp.y;
+            }
+            if (cp.y> Max.x)
+            {
+                Max.y = cp.y;
+            }
+            curTile = OverworldGenerator.Instance.OverworldTiles[cp.x, cp.y];
+            if (curTile.Features.Contains(OverworldFeature.MajorRoad))
+            {
+                settings.ManualHighwayPoints.Add(cp);
+
+            }
+            if (curTile.Features.Contains(OverworldFeature.MinorRoad))
+            {
+                settings.ManualAvenuePoints.Add(cp);
+            }
+            if (curTile.Features.Contains(OverworldFeature.Backroad))
+            {
+                settings.ManualRoadPoints.Add(cp);
+            }
+            if (curTile.Features.Contains(OverworldFeature.River))
+            {
+                settings.ManualRiverPoints.Add(cp);
+            }
+        }
+
+        settings.Center = Vector2.Lerp(Min, Max, .5f);
+        settings.Size = Max - Min;
+        settings.DistBetweenAvenues = 15;
+        settings.DistBetweenRoads = 10;
+        settings.MaxAvenuePasses = 22;
+        settings.MaxRoadPasses = 22;
+        settings.AvenueLength = 25;
+        settings.RoadLength = 15;
+        settings.GenerateHighwayStarts = false;
+        settings.RiverWidth = 7;
+        settings.RiverSectionLength = 11;
+        
+        return settings;
+    }
+
 }
