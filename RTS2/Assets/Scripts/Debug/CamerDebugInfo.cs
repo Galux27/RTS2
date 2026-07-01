@@ -23,6 +23,10 @@ public class CamerDebugInfo : MonoBehaviour
             Vector2Int coords = BatchImIn.GetChunkCoordsFromWorldPos(this.transform.position);
             ChunkImIn = BatchImIn.Chunks[coords.x, coords.y];
             TileImIn = BatchImIn.GetTileFromPosition(this.transform.position);
+            if (ChunkImIn == null)
+            {
+                return;
+            }
             NodeImOver = ChunkImIn.PathfindingNodes[TileImIn.Local.x, TileImIn.Local.y].PathNodeGroupID;
             IdImIn = NodeIDPathing.GetPathNodeID(NodeImOver);
             if (TileImIn != null)

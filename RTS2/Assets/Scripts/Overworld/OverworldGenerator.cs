@@ -41,6 +41,19 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
     public List<OverworldFeatureGenerator> FeatureGenerators;
     public OverworldSettlement[] Settlements;
 
+    public OverworldSettlement GetSettlementByID(int id)
+    {
+        for (int x = 0; x < Settlements.Length; x++)
+        {
+            if (Settlements[x].Id == id)
+            {
+                return Settlements[x];
+            }
+        }
+        return null;
+    }
+
+
     public OverworldSettlement GetSettlementByID(uint id)
     {
         for(int x = 0; x < Settlements.Length; x++)
@@ -182,6 +195,8 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         OverworldStartingCoords = coords;
     }
 
+    public Vector2Int WorldCenter;
+   
     public Vector2Int GetOverworldStartingCoords()
     {
         if (!hasSetOverworldStartingCoords)
@@ -233,11 +248,12 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                     }
                 }
             }
-
-           // OverworldStartingCoords = new Vector2Int(Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)), Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)));
+            WorldCenter = OverworldStartingCoords * WorldChunkManager.ChunkBatchSize;
+            // OverworldStartingCoords = new Vector2Int(Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)), Mathf.RoundToInt(Random.Range(OverworldWidth * .1f, OverworldWidth * .9f)));
             //hasSetOverworldStartingCoords = true;
+            CameraController.Instance.SetInitialPosition(WorldCenter);
         }
-        return OverworldStartingCoords;
+        return Vector2Int.zero ;
     }
 
 
@@ -378,7 +394,7 @@ public class OverworldTile: ISerialize
     {
         RiverPoint = new Vector2Int(index, length);
     }
-    public void SetSettlementID(uint id)
+    public void SetSettlementID(int id)
     {
         SettlementDetails = new OverworldSettlementDetails(id);
     }
@@ -401,6 +417,7 @@ public class OverworldTile: ISerialize
 
     public void SetPopulation(OverworldSettlement settlement,int pop)
     {
+        SetSettlementID(settlement.Id);
         this.Settlement = settlement.Id.ToString();
         this.Population = pop;
     }
@@ -481,10 +498,10 @@ public class OverworldTile: ISerialize
 
 public class OverworldSettlementDetails
 {
-    static uint BaseID = 1;
-    public uint ID;
+    static int BaseID = 1;
+    public int ID;
 
-    public OverworldSettlementDetails(uint id)
+    public OverworldSettlementDetails(int id)
     {
         this.ID= id;
     }

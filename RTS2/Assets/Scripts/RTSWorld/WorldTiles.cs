@@ -58,6 +58,7 @@ public class WorldTilesManager
         {
             return WorldTileIndexes[type];
         }
+        
         return 0;
     }
     public Color GetTileMinimapColour(string key)

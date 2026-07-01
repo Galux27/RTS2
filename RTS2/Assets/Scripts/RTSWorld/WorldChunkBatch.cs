@@ -27,7 +27,7 @@ public class WorldChunkBatch : MonoBehaviour
 
         WorldChunkBatch wcb = WorldChunkBatchPool.GetChunkBatch();
         wcb.SetCoords(coords, overworld);
-
+        Debug.Log("Batch: Creating chunk batch at " + coords + "," + overworld);
         return wcb;
 
     }
@@ -102,6 +102,8 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void AddRoad(RoadData road)
     {
+        Debug.Log("Batch: road added to " +coords);
+
         Roads.Add(road);
         //road.GenerateRoad();
     }
@@ -188,7 +190,7 @@ public class WorldChunkBatch : MonoBehaviour
         {
             if (Roads[x].Type == toGen)
             {
-                RoadGenerator.GenerateRoad(Roads[x],ref Roads);
+                RoadGenerator.GenerateRoad(Roads[x],ref Roads,this);
                // Roads[x].RenderRoad(this);
                // Roads[x].LogCount();
             }

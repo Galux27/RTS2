@@ -275,8 +275,9 @@ MonoBehaviour:
     DistBetweenAvenues: 15
     DistBetweenRoads: 10
     MinAvenueLengthForRoad: 15
+    GenerateHighwayStarts: 0
     Center: {x: 0, y: 0}
-    Size: {x: 640, y: 640}
+    Size: {x: 1024, y: 1024}
     HighwayDirOffsetScale: 3
     RiverBendScale: 5.79
     MaxAvenuePasses: 22
@@ -287,6 +288,10 @@ MonoBehaviour:
     RiverPoints: 6
     RiverWidth: 7
     RiverSectionLength: 11
+    ManualHighwayPoints: []
+    ManualAvenuePoints: []
+    ManualRoadPoints: []
+    ManualRiverPoints: []
   settlement:
     River:
       RiverSections: []
@@ -294,8 +299,66 @@ MonoBehaviour:
     highways: []
     avenues: []
     roads: []
+--- !u!1001 &279165802346277262
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -35.721863
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 65.26976
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 85.44802
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704060205443504201, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369886863967263203, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: m_Name
+      value: SettlementGeneratorSettings
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1977600524}
+  - {fileID: 279165802346277262}

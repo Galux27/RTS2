@@ -19,7 +19,7 @@ public class RoadGeneratorTest : MonoBehaviour
             data.HasEdge = true;
             data.EdgeTile = EdgeTile;
             data.RoadTile=RoadTile;
-            RoadGenerator.GenerateRoad(data,ref testRoads);
+            RoadGenerator.GenerateRoad(data,ref testRoads,null);
             testRoads.Add(data);
         }
 

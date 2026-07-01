@@ -16,7 +16,7 @@ public class RoadTypeManager : MonoBehaviour
         }
     }
 
-    public Dictionary<string, RoadDetails> AllRoadDetailss;
+    public Dictionary<string, RoadDetails> AllRoadDetails;
 
     private void Awake()
     {
@@ -26,17 +26,17 @@ public class RoadTypeManager : MonoBehaviour
 
     void LoadRoadTypes()
     {
-        AllRoadDetailss = new Dictionary<string, RoadDetails>();
+        AllRoadDetails = new Dictionary<string, RoadDetails>();
         Object[] RoadDetailss = Resources.LoadAll(RoadLocation);
         for (int x = 0; x < RoadDetailss.Length; x++)
         {
             RoadDetails i = (RoadDetails)RoadDetailss[x];
-            if (AllRoadDetailss.ContainsKey(i.RoadType.ToString()) == false)
+            if (AllRoadDetails.ContainsKey(i.RoadType.ToString()) == false)
             {
-                AllRoadDetailss.Add(i.RoadType.ToString(), i);
+                AllRoadDetails.Add(i.RoadType.ToString(), i);
             }
         }
-        Debug.Log("RoadDetailss: loaded " + AllRoadDetailss.Count);
+        Debug.Log("RoadDetailss: loaded " + AllRoadDetails.Count);
     }
 
 }

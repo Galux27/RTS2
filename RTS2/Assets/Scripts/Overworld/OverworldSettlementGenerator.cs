@@ -172,6 +172,9 @@ public class OverworldSettlement
     public List<Vector2Int> pointsInSettlement,waitingRoom;
     public int RemainingPopulationToDistribute,TotalPopulation;
     public Color DebugColour;
+    public GeneratedSettlement GeneratedInstance;
+
+
     public OverworldSettlement(int pop)
     {
         Id=BaseSettlmentID;
@@ -206,56 +209,77 @@ public class OverworldSettlement
     {
         return RemainingPopulationToDistribute > 0&&waitingRoom.Count>0;
     }
+    
+
+    public void GenerateSettlement()
+    {
+        Settlement_Settings settings = GetSettingsForSettlement();
+        GeneratedInstance = new GeneratedSettlement();
+        GeneratedInstance.GenerateSettlementAreas(settings,WorldChunkManager.ChunkBatchSize);
+
+        SettlementGenerator.GenerateSettlement(GeneratedInstance, settings);
+        Debug.LogError("Generated settlement ID " + Id + "," + settings.Center + "," + settings.Size+","+GeneratedInstance.highways.Count+","+GeneratedInstance.avenues.Count+","+GeneratedInstance.roads.Count);
+
+        GeneratedInstance.PopulateAreas(settings, 64);
+
+    }
+
 
     public Settlement_Settings GetSettingsForSettlement()
     {
-        Settlement_Settings settings = new Settlement_Settings();
+        Settlement_Settings settings = SettlementGeneratorSettingsController.Instance.BaseSettings;
 
         Vector2Int Min = new Vector2Int(9999999, 999999), Max = new Vector2Int(-9999999, -9999999);
         Vector2Int cp = pointsInSettlement[0];
+        Vector2Int wp = cp* WorldChunkManager.ChunkBatchSize;
+        Vector2Int overworldOffset = OverworldGenerator.Instance.GetOverworldStartingCoords() * WorldChunkManager.ChunkBatchSize;
         OverworldTile curTile = null;
         for(int x = 0; x < pointsInSettlement.Count; x++)
         {
             cp = pointsInSettlement[x];
-            if (cp.x < Min.x)
+            wp = cp * WorldChunkManager.ChunkBatchSize;
+            if (wp.x < Min.x)
             {
-                Min.x = cp.x;
+                Min.x = wp.x;
             }
-            if (cp.x > Max.x)
+            if (wp.x > Max.x)
             {
-                Max.x = cp.x;
+                Max.x = wp.x;
             }
 
-            if (cp.y < Min.y)
+            if (wp.y < Min.y)
             {
-                Min.y = cp.y;
+                Min.y = wp.y;
             }
-            if (cp.y> Max.x)
+            if (wp.y> Max.y)
             {
-                Max.y = cp.y;
+                Max.y = wp.y;
             }
             curTile = OverworldGenerator.Instance.OverworldTiles[cp.x, cp.y];
             if (curTile.Features.Contains(OverworldFeature.MajorRoad))
             {
-                settings.ManualHighwayPoints.Add(cp);
+                settings.ManualHighwayPoints.Add(wp);
 
             }
             if (curTile.Features.Contains(OverworldFeature.MinorRoad))
             {
-                settings.ManualAvenuePoints.Add(cp);
+                settings.ManualAvenuePoints.Add(wp);
             }
             if (curTile.Features.Contains(OverworldFeature.Backroad))
             {
-                settings.ManualRoadPoints.Add(cp);
+                settings.ManualRoadPoints.Add(wp);
             }
             if (curTile.Features.Contains(OverworldFeature.River))
             {
-                settings.ManualRiverPoints.Add(cp);
+                settings.ManualRiverPoints.Add(wp);
             }
         }
-
+        settings.GenerateHighwayStarts = true;
+        settings.StartingHighwayCount = 5;
+        settings.RiverPoints = 0;
         settings.Center = Vector2.Lerp(Min, Max, .5f);
         settings.Size = Max - Min;
+        Debug.LogError("Settlement Settings " + settings.Center + "," + settings.Size);
         settings.DistBetweenAvenues = 15;
         settings.DistBetweenRoads = 10;
         settings.MaxAvenuePasses = 22;

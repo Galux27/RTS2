@@ -16,5 +16,5 @@ MonoBehaviour:
   RoadWidth: 4
   TileID: MajorRoad
   HasEdge: 0
-  EdgeTileID: Mud
+  EdgeTileID: Ground
   EdgeWidth: 1

@@ -108,10 +108,14 @@ public class BatchRoad : ISerialize
         RoadEnd = end;
         this.Width= width;
         Segments = new List<RoadSegment>();
-        //Segments.Add(new RoadSegment(start, end));
+        Segments.Add(new RoadSegment(Vec2ToInt( start), Vec2ToInt(end)));
+        IsGenerated = true;
     }
 
-
+    Vector2Int Vec2ToInt(Vector2 val)
+    {
+        return new Vector2Int(Mathf.FloorToInt(val.x),Mathf.FloorToInt(val.y));
+    }
     public virtual void GenerateRoad()
     {
         Segments = new List<RoadSegment>();

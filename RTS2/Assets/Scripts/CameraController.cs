@@ -27,6 +27,13 @@ public class CameraController : MonoBehaviour
         GameCamera = GetComponent<Camera>();
     }
 
+    public void SetInitialPosition(Vector2 position)
+    {
+        Debug.Log("Setting initial position to " + position);
+        this.transform.position = new Vector3(position.x, position.y, -10);
+    }
+
+
     void Update()
     {
 
