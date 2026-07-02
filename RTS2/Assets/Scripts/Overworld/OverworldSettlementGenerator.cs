@@ -220,7 +220,8 @@ public class OverworldSettlement
         SettlementGenerator.GenerateSettlement(GeneratedInstance, settings);
         Debug.LogError("Generated settlement ID " + Id + "," + settings.Center + "," + settings.Size+","+GeneratedInstance.highways.Count+","+GeneratedInstance.avenues.Count+","+GeneratedInstance.roads.Count);
 
-        GeneratedInstance.PopulateAreas(settings, 64);
+        GeneratedInstance.PopulateAreas(settings, WorldChunkManager.ChunkBatchSize);
+        SettlementGenerator.DebugDrawSettlementRoads(GeneratedInstance, 100f);
 
     }
 
@@ -284,8 +285,9 @@ public class OverworldSettlement
         settings.DistBetweenRoads = 10;
         settings.MaxAvenuePasses = 22;
         settings.MaxRoadPasses = 22;
-        settings.AvenueLength = 25;
-        settings.RoadLength = 15;
+        settings.AvenueLength = 50;
+        settings.RoadLength = 25;
+        settings.HighwayLength = 75;
         settings.GenerateHighwayStarts = false;
         settings.RiverWidth = 7;
         settings.RiverSectionLength = 11;

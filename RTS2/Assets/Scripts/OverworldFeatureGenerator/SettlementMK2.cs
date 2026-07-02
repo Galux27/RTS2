@@ -28,24 +28,31 @@ public class SettlementMK2 : OverworldFeatureToWorldConverter
             toGenerate.GenerateSettlement();
         }
         Debug.LogError("Generated settlement at " + toGenerateIn.OverworldCoords.ToString()+","+OverworldGenerator.Instance.GetOverworldStartingCoords());
-        GeneratedSettlementArea area= toGenerate.GeneratedInstance.GetAreaFromOverworld(toGenerateIn.OverworldCoords,toGenerateIn.coords);
-        SettlementGenerator.DebugDrawSettlementRoads(toGenerate.GeneratedInstance, 100f);
+        GeneratedSettlementArea area = toGenerate.GeneratedInstance.AreaFromCoords(toGenerateIn.coords);//GetAreaFromOverworld(toGenerateIn.OverworldCoords,toGenerateIn.coords);
+        if (area == null)
+        {
+            return;
+        }
+        
         List<RoadData> roads = new List<RoadData>();
+       
+       
+        
         RoadDetails road = RoadTypeManager.Instance.AllRoadDetails[RoadType.MajorRoad.ToString()];
 
-        List<Settlement_Road> roadsToAdd = toGenerate.GeneratedInstance.GetRoadsInWorldBatch(toGenerateIn, toGenerate.GeneratedInstance.highways);
+        List<Settlement_Road> roadsToAdd = area.highways;//toGenerate.GeneratedInstance.GetRoadsInWorldBatch(toGenerateIn, toGenerate.GeneratedInstance.highways);
         
         for(int x = 0; x < roadsToAdd.Count; x++)
         {
             toGenerateIn.AddRoad(new RoadData(roadsToAdd[x].StartPos, roadsToAdd[x].endPos, road.RoadWidth, RoadType.MajorRoad));
         }
-        roadsToAdd = toGenerate.GeneratedInstance.GetRoadsInWorldBatch(toGenerateIn, toGenerate.GeneratedInstance.avenues);
+        roadsToAdd = area.avenues;//toGenerate.GeneratedInstance.GetRoadsInWorldBatch(toGenerateIn, toGenerate.GeneratedInstance.avenues);
         road = RoadTypeManager.Instance.AllRoadDetails[RoadType.MinorRoad.ToString()];
         for (int x = 0; x < roadsToAdd.Count; x++)
         {
             toGenerateIn.AddRoad(new RoadData(roadsToAdd[x].StartPos, roadsToAdd[x].endPos, road.RoadWidth, RoadType.MinorRoad));
         }
-        roadsToAdd = toGenerate.GeneratedInstance.GetRoadsInWorldBatch(toGenerateIn, toGenerate.GeneratedInstance.roads);
+        roadsToAdd = area.roads;//toGenerate.GeneratedInstance.GetRoadsInWorldBatch(toGenerateIn, toGenerate.GeneratedInstance.roads);
 
         road = RoadTypeManager.Instance.AllRoadDetails[RoadType.Backroad.ToString()];
         for (int x = 0; x < roadsToAdd.Count; x++)

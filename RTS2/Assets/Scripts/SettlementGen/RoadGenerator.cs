@@ -5,7 +5,6 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Rendering;
-using static UnityEditor.PlayerSettings;
 
 public static class RoadGenerator
 {
@@ -260,7 +259,7 @@ public static class RoadGenerator
 
             }else
             {
-                Debug.LogError("Batch: batch is null " + startCoords + "," + direction + "," + Batch+","+startCoords);
+                Debug.LogError("Batch: batch is null " +data.StartPos+","+data.EndPos + "," + direction + "," + Batch+","+ currentBatch);
             }
             startPos += direction;
 

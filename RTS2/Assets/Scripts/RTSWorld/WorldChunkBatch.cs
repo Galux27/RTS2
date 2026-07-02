@@ -102,7 +102,7 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void AddRoad(RoadData road)
     {
-        Debug.Log("Batch: road added to " +coords);
+        Debug.Log("Batch: road added " + road.StartPos+","+road.EndPos);
 
         Roads.Add(road);
         //road.GenerateRoad();

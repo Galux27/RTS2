@@ -7184,15 +7184,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6208570359048072191, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
       propertyPath: BaseSettings.RoadLength
-      value: 50
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 6208570359048072191, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
       propertyPath: BaseSettings.AvenueLength
-      value: 75
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 6208570359048072191, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
       propertyPath: BaseSettings.HighwayLength
-      value: 100
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 6208570359048072191, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
       propertyPath: BaseSettings.DistBetweenRoads
