@@ -17,6 +17,7 @@ public class WorldTilesManager
     Dictionary<string, WorldTileType> WorldTiles;
     Dictionary<string, uint> WorldTileIndexes;
     Dictionary<float, WaterTile> WaterTiles;
+    Dictionary<string, HashSet<uint>> CanPlaceDictionary;
     public WorldTilesManager(WorldTiles toUse)
     {
         List<WorldTileType> tileTypes = toUse.tileTypes;
@@ -33,6 +34,26 @@ public class WorldTilesManager
         {
             WaterTiles.Add(toUse.WaterTiles[x].WaterHeight, toUse.WaterTiles[x]);
         }
+
+        CanPlaceDictionary = new Dictionary<string, HashSet<uint>>();
+        for (int x = 0; x < tileTypes.Count; x++)
+        {
+            if (tileTypes[x].TilesICantBePlacedOn.Count > 0)
+            {
+                CanPlaceDictionary.Add(tileTypes[x].tileType, new HashSet<uint>());
+                for(int i=0;i< tileTypes[x].TilesICantBePlacedOn.Count; i++)
+                {
+                    CanPlaceDictionary[tileTypes[x].tileType].Add(WorldTileIndexes[tileTypes[x].TilesICantBePlacedOn[i]]);
+                }
+            }
+        }
+    }
+
+    public bool CanTileBePlacedOnAnother(string tileToPlace,uint placingOver)
+    {
+        if(!CanPlaceDictionary.ContainsKey(tileToPlace)) return true;
+
+        return !CanPlaceDictionary[tileToPlace].Contains(placingOver);
     }
 
     public TileBase GetTileForWaterLevel(float level)
@@ -91,6 +112,7 @@ public class WorldTileType
     public string tileType;
     public TileBase tileBase;
     public Color MinimapColour;
+    public List<string> TilesICantBePlacedOn;
 
 }
 [System.Serializable]

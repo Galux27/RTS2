@@ -152,8 +152,8 @@ public  static class SettlementGenerator
         original.EndedByLink = foundEnd;
         highways.Add(original);
         Debug.Log("Highway: from " + original.StartPos + " to " + newEndPoint+","+ IsPositionNearEdge(newEndPoint, settings)+","+foundEnd+","+i);
-        //&&!IsRoadInInvalidChunk(original,CurrentlyGenerating)
-        if (!foundEnd &&!IsPositionNearEdge(newEndPoint,settings))
+        //
+        if (!foundEnd &&!IsPositionNearEdge(newEndPoint,settings) && !IsRoadInInvalidChunk(original, CurrentlyGenerating))
         {
             newStart = newEndPoint;
             workingCopy.Add(new Settlement_Road(newStart, (original.Direction + new Vector2(Random.Range(-.1f,.1f)*settings.HighwayDirOffsetScale,Random.Range(-.1f,.1f) * settings.HighwayDirOffsetScale)).normalized, settings.HighwayLength, Settlement_RoadType.Highway));
@@ -176,11 +176,51 @@ public  static class SettlementGenerator
         {
             Vector2 pos = highways[x].GetPositionOnRoad(.5f);
             highways[x].AddPointToSplit(.5f);
-            validRoads.Add(new Settlement_Road(pos, highways[x].Perp(false).normalized, settings.AvenueLength, Settlement_RoadType.Avenue, highways[x]));
-            validRoads.Add(new Settlement_Road(pos, highways[x].Perp(true).normalized, settings.AvenueLength, Settlement_RoadType.Avenue, highways[x]));
+
+            Vector2 dir = GetRandomRightAngleDirectionFromRoad(highways[x]);
+
+            validRoads.Add(new Settlement_Road(pos, dir.normalized, settings.AvenueLength, Settlement_RoadType.Avenue, highways[x]));
+            validRoads.Add(new Settlement_Road(pos, (dir*-1).normalized, settings.AvenueLength, Settlement_RoadType.Avenue, highways[x]));
 
         }
     }
+
+    static bool IsHorizontalMoreThanVertical(Vector2 dir)
+    {
+        return Mathf.Abs(dir.x)> Mathf.Abs(dir.y);
+    }
+
+    static Vector2 GetRandomRightAngleDirectionFromRoad(Settlement_Road gettingFrom)
+    {
+        Vector2 dir = gettingFrom.endPos - gettingFrom.StartPos;
+        dir = dir.normalized;
+        if (IsHorizontalMoreThanVertical(dir))
+        {
+            int r = Random.Range(0, 100);
+            if (r<50)
+            {
+                return Vector2.left;
+            }
+            else
+            {
+                return Vector2.right;
+            }
+        }
+        else
+        {
+            int r = Random.Range(0, 100);
+            if (r < 50)
+            {
+                return Vector2.up;
+            }
+            else
+            {
+                return Vector2.down;
+            }
+        }
+        return Vector2.zero;
+    }
+
     static int totalPasses = 0;
     static void AvenueGenerationPass(Settlement_Settings settings)
     {
@@ -274,10 +314,11 @@ public  static class SettlementGenerator
             if (avenues[x].Length > settings.MinAvenueLengthForRoad)
             {
                 float split = Random.Range(.45f, .55f);
+                Vector2 dir = GetRandomRightAngleDirectionFromRoad(avenues[x]);
                 Vector2 pos = avenues[x].GetPositionOnRoad(split);
                 avenues[x].AddPointToSplit(split);
-                validRoads.Add(new Settlement_Road(pos, avenues[x].Perp(false).normalized, settings.RoadLength, Settlement_RoadType.Road, avenues[x]));
-                validRoads.Add(new Settlement_Road(pos, avenues[x].Perp(true).normalized, settings.RoadLength, Settlement_RoadType.Road, avenues[x]));
+                validRoads.Add(new Settlement_Road(pos, dir.normalized, settings.RoadLength, Settlement_RoadType.Road, avenues[x]));
+                validRoads.Add(new Settlement_Road(pos, (dir*-1).normalized, settings.RoadLength, Settlement_RoadType.Road, avenues[x]));
             }
         }
     }

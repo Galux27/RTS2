@@ -176,6 +176,19 @@ public class WorldChunkBatch : MonoBehaviour
         }
     }
 
+    public void GenerateSidewalks(RoadType toGen)
+    {
+        for (int x = 0; x < Roads.Count; x++)
+        {
+            if (Roads[x].Type == toGen)
+            {
+                RoadGenerator.GenerateRoad(Roads[x], ref Roads, this);
+                // Roads[x].RenderRoad(this);
+                // Roads[x].LogCount();
+            }
+        }
+    }
+
     public void GenerateRoads(RoadType toGen)
     {
         //for(int x = 0; x < Roads.Count; x++)
@@ -190,13 +203,15 @@ public class WorldChunkBatch : MonoBehaviour
         {
             if (Roads[x].Type == toGen)
             {
-                RoadGenerator.GenerateRoad(Roads[x],ref Roads,this);
+                RoadGenerator.GenerateRoadEdges(Roads[x],ref Roads,this);
                // Roads[x].RenderRoad(this);
                // Roads[x].LogCount();
             }
         }
-          //  RefreshElevationTiles();
-        
+
+       
+        //  RefreshElevationTiles();
+
     }
 
     public void AddWorldBlend(WorldTileBlend blend)

@@ -83,8 +83,11 @@ public class MapGenerator : MonoBehaviour
             OverworldConverters[OverworldFeature.Settlement].GenerateFeature(toGenerateIn);
 
         }
-     
-            toGenerateIn.GenerateRoads(RoadType.Backroad);
+        toGenerateIn.GenerateSidewalks(RoadType.Backroad);
+        toGenerateIn.GenerateSidewalks(RoadType.MinorRoad);
+        toGenerateIn.GenerateSidewalks(RoadType.MajorRoad);
+
+        toGenerateIn.GenerateRoads(RoadType.Backroad);
             toGenerateIn.GenerateRoads(RoadType.MinorRoad);
             toGenerateIn.GenerateRoads(RoadType.MajorRoad);
 

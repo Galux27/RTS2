@@ -16,54 +16,74 @@ MonoBehaviour:
   - tileType: Ground
     tileBase: {fileID: 11400000, guid: 827f86ba2f2d54046a9aecd64a00917d, type: 2}
     MinimapColour: {r: 0.18039216, g: 0.14901961, b: 0.09411765, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: Sand
     tileBase: {fileID: 11400000, guid: fa37ad7b3669d914b82ae4171f069ec5, type: 2}
     MinimapColour: {r: 0.827451, g: 0.8117647, b: 0.43137255, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: Mud
     tileBase: {fileID: 11400000, guid: 827f86ba2f2d54046a9aecd64a00917d, type: 2}
     MinimapColour: {r: 0.30588236, g: 0.23529412, b: 0.16078432, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: MinorRoad
     tileBase: {fileID: 11400000, guid: ed308fe68fbb89a49a6ce9b7fc9cf27a, type: 2}
     MinimapColour: {r: 0.16078432, g: 0.16470589, b: 0.19215687, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: Tiled
     tileBase: {fileID: 11400000, guid: 7b147e2d95cf4824189a23bb77a7bc62, type: 2}
     MinimapColour: {r: 0.40784314, g: 0.40392157, b: 0.40784314, a: 1}
+    TilesICantBePlacedOn:
+    - MinorRoad
+    - MajorRoad
+    - BackRoad
   - tileType: MajorRoad
     tileBase: {fileID: 11400000, guid: ed308fe68fbb89a49a6ce9b7fc9cf27a, type: 2}
     MinimapColour: {r: 0.16078432, g: 0.16470589, b: 0.19215687, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: BackRoad
     tileBase: {fileID: 11400000, guid: ed308fe68fbb89a49a6ce9b7fc9cf27a, type: 2}
     MinimapColour: {r: 0.16078432, g: 0.16470589, b: 0.19215687, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: Error
     tileBase: {fileID: 11400000, guid: 08c875459d09f1344a436f673acf984a, type: 2}
     MinimapColour: {r: 1, g: 0, b: 0.8666667, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: Mountain
     tileBase: {fileID: 11400000, guid: 2e08aeae967c6324d8efd24e2b431ee0, type: 2}
     MinimapColour: {r: 0.2901961, g: 0.28627452, b: 0.2901961, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: Grass
     tileBase: {fileID: 11400000, guid: 970da9c3881c6064cbb90da9f70fc70d, type: 2}
     MinimapColour: {r: 0.2901961, g: 0.40392157, b: 0.17254902, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: Wood
     tileBase: {fileID: 11400000, guid: 2eeedba79f97c004dbbe55ea473b4b65, type: 2}
     MinimapColour: {r: 0.82745105, g: 0.5921569, b: 0.25490198, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: Industrial
     tileBase: {fileID: 11400000, guid: ff81c31364acb5e44a0082dada6d1395, type: 2}
     MinimapColour: {r: 0.34901962, g: 0.34117648, b: 0.34117648, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: IndustrialRusty
     tileBase: {fileID: 11400000, guid: 6e5386797425e2841936d63d11c3d35c, type: 2}
     MinimapColour: {r: 0.34901962, g: 0.34117648, b: 0.34117648, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: BlackWhiteTiled
     tileBase: {fileID: 11400000, guid: 7416dcf569335c14f8f2988c4015f06b, type: 2}
     MinimapColour: {r: 0, g: 0, b: 0, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: WhiteTiled
     tileBase: {fileID: 11400000, guid: 9cdaff0845fdcd04aa772fc2d1504c62, type: 2}
     MinimapColour: {r: 1, g: 1, b: 1, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: BlueCarpet
     tileBase: {fileID: 11400000, guid: 41c0a5b312060cc40adc2c18742f8338, type: 2}
     MinimapColour: {r: 0.27058825, g: 0.44705886, b: 0.89019614, a: 1}
+    TilesICantBePlacedOn: []
   - tileType: GreenCarpet
     tileBase: {fileID: 11400000, guid: 7ffee2b4810f20e40b941c5be880e66e, type: 2}
     MinimapColour: {r: 0.3647059, g: 0.60784316, b: 0.47450984, a: 1}
+    TilesICantBePlacedOn: []
   WaterTiles:
   - WaterHeight: 1
     Tiles:
