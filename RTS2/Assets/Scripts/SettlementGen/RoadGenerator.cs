@@ -140,7 +140,6 @@ public static class RoadGenerator
         List<RoadData> intersectingRoads = new List<RoadData>();
         List<RoadIntersection> AllRoadIntersections = new List<RoadIntersection>();
         RoadIntersection toAdd = null;
-        
         Edges = new HashSet<Vector2Int>();
         Vector2 Direction = data.EndPos - data.StartPos;
         Direction = Direction.normalized;

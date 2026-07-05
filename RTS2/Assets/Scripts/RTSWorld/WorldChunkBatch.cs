@@ -100,11 +100,11 @@ public class WorldChunkBatch : MonoBehaviour
         WorldTileBlending.OnWorldChunkBatchGenerated(this);
     }
 
-    public void AddRoad(RoadData road)
+    public void AddRoad(RoadData data)
     {
-        Debug.Log("Batch: road added " + road.StartPos+","+road.EndPos);
-
-        Roads.Add(road);
+        Debug.Log("Batch: road added " + data.StartPos+","+data.EndPos);
+        Debug.DrawLine(new Vector3(data.StartPos.x, data.StartPos.y), new Vector3(data.EndPos.x, data.EndPos.y), Color.cyan, 999f);
+        Roads.Add(data);
         //road.GenerateRoad();
     }
 

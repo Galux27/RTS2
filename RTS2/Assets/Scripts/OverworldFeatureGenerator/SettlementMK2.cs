@@ -15,14 +15,24 @@ public class SettlementMK2 : OverworldFeatureToWorldConverter
     public override void GenerateFeature(WorldChunkBatch toGenerateIn)
     {
         OverworldTile tile = OverworldGenerator.Instance.OverworldTiles[toGenerateIn.OverworldCoords.x, toGenerateIn.OverworldCoords.y];
-        if (tile.SettlementDetails == null)
+       
+        List<OverworldTile> AdjacentTiles = OverworldGenerator.Instance.GetNeighbours(toGenerateIn.OverworldCoords);
+        OverworldSettlementDetails details = tile.SettlementDetails; 
+
+        if (details == null)
         {
-            Debug.LogError("No settlement details found, returning");
+            for(int x = 0; x < AdjacentTiles.Count; x++)
+            {
+                if (AdjacentTiles[x].SettlementDetails != null)
+                {
+                    details = AdjacentTiles[x].SettlementDetails;
+                }
+            }
             return;
         }
         OverworldGenerator.Instance.GetOverworldStartingCoords();
         Vector2Int worldCenter = Vector2Int.zero ;
-        OverworldSettlement toGenerate= OverworldGenerator.Instance.GetSettlementByID(tile.SettlementDetails.ID);
+        OverworldSettlement toGenerate= OverworldGenerator.Instance.GetSettlementByID(details.ID);
         if (toGenerate.GeneratedInstance == null)
         {
             toGenerate.GenerateSettlement();

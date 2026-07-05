@@ -78,7 +78,7 @@ public class MapGenerator : MonoBehaviour
         toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
         toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
         toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);
-        if (overworldTile.Features.Contains(OverworldFeature.Settlement))
+       // if (overworldTile.Features.Contains(OverworldFeature.Settlement))
         {
             OverworldConverters[OverworldFeature.Settlement].GenerateFeature(toGenerateIn);
 

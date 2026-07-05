@@ -19,6 +19,7 @@ public  static class SettlementGenerator
         DoneRoads = false;
         DoneHighways = false;
         DoneAvenues = false;
+        AddRoadsFromOverworld(settings);
         GenerateInitialHighways(settings);
         Debug.Log("Settlement Gen: initial highways done ");
         HighwayGenerationPass(settings);
@@ -31,13 +32,76 @@ public  static class SettlementGenerator
         AvenueGenerationPass(settings);
         settlement.avenues = avenues;
         Debug.Log("Settlement Gen: avenue gen done");
-        GenerateInitialRoads(settings);
+       GenerateInitialRoads(settings);
         RoadGenerationPass(settings);
         settlement.roads = roads;
     }
 
 
-    public static void DebugDrawSettlementRoads(GeneratedSettlement settlement,float duration)
+    static List<GeneratedSettlementArea> NeighbouringAreas(int x,int y)
+    {
+        List<GeneratedSettlementArea> retVal = new List<GeneratedSettlementArea>();
+        if (x > 0)
+        {
+            retVal.Add(CurrentlyGenerating.areas[x - 1, y]);
+        }
+
+        if (x < CurrentlyGenerating.areas.GetLength(0) - 1)
+        {
+            retVal.Add(CurrentlyGenerating.areas[x + 1, y]);
+        }
+        if (y > 0)
+        {
+            retVal.Add(CurrentlyGenerating.areas[x , y - 1]);
+        }
+
+        if (y < CurrentlyGenerating.areas.GetLength(1) - 1)
+        {
+            retVal.Add(CurrentlyGenerating.areas[x , y + 1]);
+        }
+        return retVal;
+    }
+
+    static void AddRoadsFromOverworld(Settlement_Settings settings)
+    {
+        List<GeneratedSettlementArea> neighbours = new List<GeneratedSettlementArea>();
+        OverworldTile tile = null,neighbour=null;
+        GeneratedSettlementArea current = null;
+        int count = 0;
+        for (int q = 0; q < CurrentlyGenerating.areas.GetLength(0); q++)
+        {
+            for (int r = 0; r < CurrentlyGenerating.areas.GetLength(1); r++)
+            {
+                current = CurrentlyGenerating.areas[q, r];
+                neighbours = NeighbouringAreas(q, r);
+                tile = OverworldGenerator.Instance.OverworldTiles[current.OverworldTile.x, current.OverworldTile.y];
+                for(int x = 0; x < neighbours.Count; x++)
+                {
+                    neighbour = OverworldGenerator.Instance.GetOverworldTile(neighbours[x].OverworldTile);
+                    if (neighbour.Features.Contains(OverworldFeature.MajorRoad) && tile.Features.Contains(OverworldFeature.MajorRoad))
+                    {
+                        highways.Add(new Settlement_Road(current.Center(),  (neighbours[x].Center()- current.Center()).normalized, WorldChunkManager.ChunkBatchSize , Settlement_RoadType.Highway));
+                        count++;
+                    }else if (neighbour.Features.Contains(OverworldFeature.MinorRoad) && tile.Features.Contains(OverworldFeature.MinorRoad))
+                    {
+                        avenues.Add(new Settlement_Road(current.Center(), (neighbours[x].Center() - current.Center()).normalized, WorldChunkManager.ChunkBatchSize , Settlement_RoadType.Avenue));
+                        count++;
+
+                    }
+                    else if (neighbour.Features.Contains(OverworldFeature.Backroad) && tile.Features.Contains(OverworldFeature.Backroad))
+                    {
+                        roads.Add(new Settlement_Road(current.Center(), (neighbours[x].Center() - current.Center()).normalized, WorldChunkManager.ChunkBatchSize , Settlement_RoadType.Road));
+                        count++;
+
+                    }
+                }
+
+            }
+        }
+        Debug.Log("Total roads from overworld " + count);
+    }
+
+        public static void DebugDrawSettlementRoads(GeneratedSettlement settlement,float duration)
     {
         if (settlement != null && settlement.areas != null)
         {
@@ -93,6 +157,19 @@ public  static class SettlementGenerator
             startPos = GetEdge(settings);
             dir = settings.Center - startPos;
         }
+    }
+
+    static bool IsARoadNearMyStart(Vector2 potentialPos, List<Settlement_Road> toCheck,float maxDist)
+    {
+        
+        for(int x = 0; x < toCheck.Count; x++)
+        {
+            if (Vector2.Distance(toCheck[x].StartPos, potentialPos) < maxDist || Vector2.Distance(toCheck[x].EndPos,potentialPos) < maxDist)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     static List<Settlement_Road> workingCopy = new List<Settlement_Road>(),
@@ -175,6 +252,10 @@ public  static class SettlementGenerator
         for(int x=0;x<initialHighways;x++)
         {
             Vector2 pos = highways[x].GetPositionOnRoad(.5f);
+            if (IsARoadNearMyStart(pos, validRoads, settings.DistBetweenAvenues))
+            {
+                continue;
+            }
             highways[x].AddPointToSplit(.5f);
 
             Vector2 dir = GetRandomRightAngleDirectionFromRoad(highways[x]);
@@ -190,35 +271,87 @@ public  static class SettlementGenerator
         return Mathf.Abs(dir.x)> Mathf.Abs(dir.y);
     }
 
-    static Vector2 GetRandomRightAngleDirectionFromRoad(Settlement_Road gettingFrom)
+    static Vector2 GetRandomAngledOffsetFromRoad(Settlement_Road gettingFrom)
     {
+        return Vector2.zero;
+        Vector2 retVal = Vector2.zero;
         Vector2 dir = gettingFrom.endPos - gettingFrom.StartPos;
         dir = dir.normalized;
-        if (IsHorizontalMoreThanVertical(dir))
+        bool isHorizontal = IsHorizontalMoreThanVertical(dir);
+        int r = 0;
+        if (isHorizontal)
         {
-            int r = Random.Range(0, 100);
-            if (r<50)
+            r = Random.Range(0, 100);
+            if (r < 95)
             {
-                return Vector2.left;
+
+            }
+            else if (r <= 97)
+            {
+                retVal += new Vector2(0, .5f);
             }
             else
             {
-                return Vector2.right;
+                retVal -= new Vector2(0, .5f);
+
             }
         }
         else
         {
-            int r = Random.Range(0, 100);
-            if (r < 50)
+            r = Random.Range(0, 100);
+            if (r < 95)
             {
-                return Vector2.up;
+
+            }
+            else if (r <= 97)
+            {
+                retVal += new Vector2(.5f, 0);
             }
             else
             {
-                return Vector2.down;
+                retVal -= new Vector2(.5f, 0);
+
             }
         }
-        return Vector2.zero;
+        return retVal;
+    }
+
+
+    static Vector2 GetRandomRightAngleDirectionFromRoad(Settlement_Road gettingFrom)
+    {
+        Vector2 retVal = Vector2.zero;
+        Vector2 dir = gettingFrom.endPos - gettingFrom.StartPos;
+        dir = dir.normalized;
+        bool isHorizontal = IsHorizontalMoreThanVertical(dir);
+        int r = 0;
+        if (isHorizontal)
+        {
+            r = Random.Range(0, 100);
+            if (r<50)
+            {
+                retVal = Vector2.left;
+            }
+            else
+            {
+                retVal = Vector2.right;
+            }
+        }
+        else
+        {
+           r = Random.Range(0, 100);
+            if (r < 50)
+            {
+                retVal = Vector2.up;
+            }
+            else
+            {
+                retVal = Vector2.down;
+            }
+        }
+
+
+
+        return retVal;
     }
 
     static int totalPasses = 0;
@@ -289,6 +422,10 @@ public  static class SettlementGenerator
         }
         original.UpdateEndPosition( newEndPoint);
         original.EndedByLink = foundEnd;
+        if (IsRoadInInvalidChunk(original, CurrentlyGenerating))
+        {
+            return;
+        }
         avenues.Add(original);
 
         
@@ -314,8 +451,13 @@ public  static class SettlementGenerator
             if (avenues[x].Length > settings.MinAvenueLengthForRoad)
             {
                 float split = Random.Range(.45f, .55f);
-                Vector2 dir = GetRandomRightAngleDirectionFromRoad(avenues[x]);
                 Vector2 pos = avenues[x].GetPositionOnRoad(split);
+                if (IsARoadNearMyStart(pos, validRoads, settings.DistBetweenRoads))
+                {
+                    continue;
+                }
+                Vector2 dir = GetRandomRightAngleDirectionFromRoad(avenues[x]);
+
                 avenues[x].AddPointToSplit(split);
                 validRoads.Add(new Settlement_Road(pos, dir.normalized, settings.RoadLength, Settlement_RoadType.Road, avenues[x]));
                 validRoads.Add(new Settlement_Road(pos, (dir*-1).normalized, settings.RoadLength, Settlement_RoadType.Road, avenues[x]));
@@ -353,6 +495,13 @@ public  static class SettlementGenerator
         bool foundEnd = false, add = true ;
         Vector2 newEndPoint = original.EndPos;
 
+        Vector2 offset = GetRandomAngledOffsetFromRoad(original);
+        if (offset != Vector2.zero)
+        {
+            newEndPoint = original.StartPos + ((original.Direction + offset) * original.Length);
+        }
+
+
         if (CheckForIntersection(validRoads, original.StartPos, ref newEndPoint, out intersection))
         {
             foundEnd = true;
@@ -372,10 +521,10 @@ public  static class SettlementGenerator
             foundEnd = true;
         }
 
-        if(CheckForMovingEndToOtherPoint(roads, ref newEndPoint, settings.DistBetweenRoads))
-        {
-            foundEnd = true;
-        }
+        //if(CheckForMovingEndToOtherPoint(roads, ref newEndPoint, settings.DistBetweenRoads))
+        //{
+        //    foundEnd = true;
+        //}
         if (RiverGenerator.CheckForIntersection(original.StartPos, original.endPos, CurrentlyGenerating.River.RiverSections, out RiverIntersect))
         {
             foundEnd = true;
@@ -389,6 +538,13 @@ public  static class SettlementGenerator
         }
         original.UpdateEndPosition(newEndPoint);
         original.EndedByLink = foundEnd;
+
+
+        if(IsRoadInInvalidChunk(original, CurrentlyGenerating))
+        {
+            return;
+        }
+
         roads.Add(original);
 
 
@@ -416,15 +572,19 @@ public  static class SettlementGenerator
     {
       
         float dist = maxDist;
+        float dist2 = 9999999f;
         Vector2 newPos = end;
+        Vector2 closestPoint = Vector2.zero;
         for(int x = 0; x < toTestAgainst.Count; x++)
         {
-            if (toTestAgainst[x].IsPointCloseToStart(end, dist))
+            closestPoint = toTestAgainst[x].NearestPointOnLine(end);
+            dist2 = Vector2.Distance(closestPoint, end);
+            if (dist2<dist&&dist2<maxDist)
             {
-                dist = Vector2.Distance(end, toTestAgainst[x].StartPos);
+                dist = dist2;
 
-                newPos = toTestAgainst[x].StartPos;
-                return true;
+                newPos = closestPoint;
+                
             }
 
             //if (toTestAgainst[x].IsPointCloseToEnd(end, maxDist))
@@ -433,6 +593,7 @@ public  static class SettlementGenerator
             //    return true;
             //}
         }
+
         end = newPos;
         return false;
     }
@@ -674,10 +835,10 @@ public class GeneratedSettlement
             for(int y = 0; y < height; y++)
             {
                 areaBatch = new Vector2Int(batch.x + (WorldChunkManager.ChunkBatchSize * x), batch.y + (WorldChunkManager.ChunkBatchSize * y));
-                overworldTile = new Vector2Int(areaBatch.x / WorldChunkManager.ChunkBatchSize, areaBatch.y / WorldChunkManager.ChunkBatchSize)-Vector2Int.one;
+                overworldTile = new Vector2Int(areaBatch.x / WorldChunkManager.ChunkBatchSize, areaBatch.y / WorldChunkManager.ChunkBatchSize);
                 areas[x, y] = new GeneratedSettlementArea(
                     new Vector2(low.x+ (WorldChunkManager.ChunkBatchSize * x), low.y + (WorldChunkManager.ChunkBatchSize * y)),
-                    areaBatch);
+                    areaBatch,overworldTile);
                 Debug.Log("Setting overworld tile: " + overworldTile + " has settlement " + OverworldGenerator.Instance.GetOverworldTile(overworldTile).Features.Contains(OverworldFeature.Settlement));
                 if (OverworldGenerator.Instance.GetOverworldTile(overworldTile).Features.Contains(OverworldFeature.Settlement)==false)
                 {
@@ -709,6 +870,8 @@ public class GeneratedSettlement
         return areas[xc, yc];
     }
 
+   
+
     public void PopulateAreas(Settlement_Settings settings, int areaSize)
     {
         //rewrite this so it goes through all areas and checks if roads are in them
@@ -721,24 +884,71 @@ public class GeneratedSettlement
 
                 for (int q = 0; q < highways.Count; q++)
                 {
-                    if (curArea.IsPointInArea(highways[q].StartPos)|| curArea.IsPointInArea(Vector2.Lerp( highways[q].StartPos, highways[q].EndPos,.5f)) || curArea.IsPointInArea(highways[q].endPos))
+                    bool added = false;
+
+                    if (curArea.IsPointInArea(highways[q].StartPos)
+                        || curArea.IsPointInArea(Vector2.Lerp( highways[q].StartPos, highways[q].EndPos,.5f)) 
+                        || curArea.IsPointInArea(highways[q].endPos))
                     {
                         curArea.AddHighway(highways[q]);
+                        added = true;
+                    }
+
+                    if (!added)
+                    {
+                        for(float f = 0f; f < 1f; f += .1f)
+                        {
+                            if (curArea.IsPointInArea(Vector2.Lerp(highways[q].StartPos, highways[q].EndPos, f)))
+                            {
+                                curArea.AddHighway(highways[q]);
+                                break;
+                            }
+                        }
                     }
                 }
 
                 for (int q = 0; q < avenues.Count; q++)
                 {
+                    bool added = false;
+
                     if (curArea.IsPointInArea(avenues[q].StartPos) || curArea.IsPointInArea(Vector2.Lerp(avenues[q].StartPos, avenues[q].EndPos, .5f)) || curArea.IsPointInArea(avenues[q].endPos))
                     {
                         curArea.AddAvenue(avenues[q]);
+                        added = true;
+
+                    }
+                    if (!added)
+                    {
+                        for (float f = 0f; f < 1f; f += .1f)
+                        {
+                            if (curArea.IsPointInArea(Vector2.Lerp(avenues[q].StartPos, avenues[q].EndPos, f)))
+                            {
+                                curArea.AddHighway(avenues[q]);
+                                break;
+                            }
+                        }
                     }
                 }
                 for (int q = 0; q <roads.Count; q++)
                 {
+                    bool added = false;
+
                     if (curArea.IsPointInArea(roads[q].StartPos) || curArea.IsPointInArea(Vector2.Lerp(roads[q].StartPos, roads[q].EndPos, .5f)) || curArea.IsPointInArea(roads[q].endPos))
                     {
                         curArea.AddRoad(roads[q]);
+                        added = true;
+
+                    }
+                    if (!added)
+                    {
+                        for (float f = 0f; f < 1f; f += .1f)
+                        {
+                            if (curArea.IsPointInArea(Vector2.Lerp(roads[q].StartPos, roads[q].EndPos, f)))
+                            {
+                                curArea.AddHighway(roads[q]);
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -751,23 +961,24 @@ public class GeneratedSettlement
 
 public class GeneratedSettlementArea
 {
-    public GeneratedSettlementArea(Vector2 bottomLeft,Vector2Int batchCoords)
+    public GeneratedSettlementArea(Vector2 bottomLeft,Vector2Int batchCoords,Vector2Int overworldCoords)
     {
         Point = bottomLeft;
         this.batchCoords = batchCoords;
         topCorner = batchCoords + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize);
         DebugColour = new Color(Random.value, Random.value, Random.value);
-        //int r = Random.Range(0, 100);
-        //if (r < 15)
-        //{
-        //    CanUse = false;
-        //}
+        OverworldTile = overworldCoords;
     }
 
+
+    public Vector2 Center()
+    {
+        return Vector2.Lerp(Point, topCorner,.5f);
+    }
    
     public Color DebugColour;
     public Vector2 Point;
-    public Vector2Int batchCoords,topCorner;
+    public Vector2Int batchCoords,topCorner,OverworldTile;
     public List<Settlement_Road> highways = new List<Settlement_Road>(), avenues = new List<Settlement_Road>(), roads = new List<Settlement_Road>();
     public bool CanUse = true;
     public void AddHighway(Settlement_Road highway)

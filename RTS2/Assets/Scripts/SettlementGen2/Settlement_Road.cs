@@ -42,6 +42,19 @@ public class Settlement_Road
         road.RoadNode.AddConnection(this);
     }
 
+    //linePnt - point the line passes through
+    //lineDir - unit vector in direction of line, either direction works
+    //pnt - the point to find nearest on line for
+    public Vector3 NearestPointOnLine( Vector2 Point)
+    {
+        Vector2 lineDir = EndPos - StartPos;
+        lineDir = lineDir.normalized;
+        lineDir.Normalize();//this needs to be a unit vector
+        Vector2 v = Point - StartPos;
+        var d = Vector3.Dot(v, lineDir);
+        return StartPos + lineDir * d;
+    }
+
     public Vector2 EndPos
     {
         get

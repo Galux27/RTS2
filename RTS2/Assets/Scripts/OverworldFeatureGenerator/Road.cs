@@ -19,10 +19,135 @@ public class Road : OverworldFeatureToWorldConverter
         return Mathf.Max(1, width / 2);
     }
 
+
+    RoadType ConvertToRoadType(OverworldFeature applying)
+    {
+        if (applying == OverworldFeature.MajorRoad)
+        {
+            return RoadType.MajorRoad;
+        }else if(applying== OverworldFeature.MinorRoad)
+        {
+            return RoadType.MinorRoad;
+        }else if (applying == OverworldFeature.MinorRoad)
+        {
+            return RoadType.MinorRoad;
+        }
+        return RoadType.None;
+    }
+
+
+    void GenerateRoadToExistingSettlement(WorldChunkBatch toGenerateIn,OverworldTile myTile,List<OverworldTile> AdjacentTiles)
+    {
+        List<OverworldTile> AdjacentWithSameFeature = new List<OverworldTile>();
+        for (int x = 0; x < AdjacentTiles.Count; x++)
+        {
+            if (AdjacentTiles[x].Features.Contains(GetFeatureIGenerate()) 
+                && !AdjacentTiles[x].Features.Contains(OverworldFeature.Settlement))
+            {
+                AdjacentWithSameFeature.Add(AdjacentTiles[x]);
+            }
+        }
+        if (AdjacentWithSameFeature.Count == 0)
+        {
+            return;
+        }
+        Dictionary<RoadType, List<Vector2Int>> Roads = new Dictionary<RoadType, List<Vector2Int>>();
+        RoadType myType = GetRoadTypeFromOverworldFeature(myFeature);
+        Vector2Int roadStart = toGenerateIn.Center();//centerChunk.ChunkTiles[centerChunk.ChunkTiles.GetLength(0)/2,centerChunk.ChunkTiles.GetLength(1)/2].Coords();
+      
+            List<PathfindingNode> path = null;
+        Vector2Int target = Vector2Int.zero;
+        Vector2Int offCenter = roadStart;
+
+        
+        int mod = 0;
+        if (GetFeatureIGenerate() != OverworldFeature.MajorRoad)
+        {
+            mod = -1;
+        }
+
+        for (int x = 0; x < AdjacentWithSameFeature.Count; x++)
+        {
+           // if (!ShouldWeSkipRoad(myTile, AdjacentWithSameFeature[x]))
+            {
+                if (AdjacentWithSameFeature[x].X > toGenerateIn.OverworldCoords.x)
+                {
+                    target = roadStart + new Vector2Int((WorldChunkManager.ChunkBatchSize / 2) + mod, 0);
+                }
+                else if (AdjacentWithSameFeature[x].X < toGenerateIn.OverworldCoords.x)
+                {
+                    target = roadStart - new Vector2Int((WorldChunkManager.ChunkBatchSize / 2) + mod, 0);
+
+                }
+                else if (AdjacentWithSameFeature[x].Y > toGenerateIn.OverworldCoords.y)
+                {
+                    target = roadStart + new Vector2Int(0, (WorldChunkManager.ChunkBatchSize / 2) + mod);
+
+                }
+                else if (AdjacentWithSameFeature[x].Y < toGenerateIn.OverworldCoords.y)
+                {
+                    target = roadStart - new Vector2Int(0, (WorldChunkManager.ChunkBatchSize / 2) + mod);
+
+                }
+
+                bool gotStart = false;
+                float dist = 9999999f, dist2 = 0;
+                Vector2 closestPoint = roadStart;
+                for (int q = 0; q < toGenerateIn.Roads.Count; q++)
+                {
+                    if (toGenerateIn.Roads[q].Type == myType)
+                    {
+
+                        dist2 = Vector2.Distance(toGenerateIn.Roads[q].StartPos, target);
+                        if (dist2 < dist)
+                        {
+                            dist = dist2;
+                            closestPoint = toGenerateIn.Roads[q].StartPos;
+                        }
+
+                        dist2 = Vector2.Distance(toGenerateIn.Roads[q].EndPos, target);
+                        if (dist2 < dist)
+                        {
+                            dist = dist2;
+                            closestPoint = toGenerateIn.Roads[q].EndPos;
+                        }
+                    }
+                }
+                roadStart = new Vector2Int( Mathf.RoundToInt( closestPoint.x),Mathf.RoundToInt(closestPoint.y));
+
+
+                offCenter = new Vector2Int((int)Mathf.Lerp(roadStart.x, target.x, .25f), (int)Mathf.Lerp(roadStart.y, target.y, .25f));
+                Vector2 dir = target - roadStart;
+                dir = dir.normalized;
+                Vector2Int centerOffset = new Vector2Int(Mathf.RoundToInt(dir.x * (width / 2)), Mathf.RoundToInt(dir.y * (width / 2)));
+                AddRoad(toGenerateIn, GetRoadTypeFromOverworldFeature(myFeature), roadStart, target, width);
+                Debug.Log("Generating road settlement connection from " + roadStart + " to " + target + " in batch " + toGenerateIn.coords);
+            }
+        }
+    }
+
+
     public override void GenerateFeature(WorldChunkBatch toGenerateIn)
     {
+        if (ConvertToRoadType(myFeature) == RoadType.None)
+        {
+            return;
+        }
+      
         List<OverworldTile> AdjacentTiles = OverworldGenerator.Instance.GetNeighbours(toGenerateIn.OverworldCoords);
         OverworldTile myTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
+
+        if (myTile.Features.Contains(OverworldFeature.Settlement))
+        {
+            return;
+        }
+        width = RoadTypeManager.Instance.AllRoadDetails[ConvertToRoadType(myFeature).ToString()].RoadWidth;
+
+        //if (myTile.Features.Contains(OverworldFeature.Settlement))
+        //{
+        //    GenerateRoadToExistingSettlement(toGenerateIn, myTile, AdjacentTiles);
+
+        //}
         List<OverworldTile> AdjacentWithSameFeature = new List<OverworldTile>();
         for(int x = 0; x < AdjacentTiles.Count; x++)
         {
@@ -47,8 +172,6 @@ public class Road : OverworldFeatureToWorldConverter
         {
             if (!ShouldWeSkipRoad(myTile, AdjacentWithSameFeature[x]))
             {
-                
-            
                 if (AdjacentWithSameFeature[x].X > toGenerateIn.OverworldCoords.x)
                 {
                     target = center + new Vector2Int( (WorldChunkManager.ChunkBatchSize / 2)+mod, 0);
@@ -86,7 +209,8 @@ public class Road : OverworldFeatureToWorldConverter
             case OverworldFeature.MajorRoad:
                 break;
             case OverworldFeature.MinorRoad:
-                if (checking.Features.Contains(OverworldFeature.MajorRoad)&&tile.Features.Contains(OverworldFeature.MajorRoad))
+                if (checking.Features.Contains(OverworldFeature.MajorRoad)
+                    &&tile.Features.Contains(OverworldFeature.MajorRoad))
                 {
                     return true;
                 }

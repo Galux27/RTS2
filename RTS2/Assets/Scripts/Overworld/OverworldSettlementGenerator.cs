@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
-using UnityEditor.Rendering;
 using UnityEngine;
 [CreateAssetMenu(fileName = "Overworld Settlement Generator", menuName = "Overworld/Settlement Generator", order = 1)]
 public class OverworldSettlementGenerator : OverworldFeatureGenerator
@@ -281,7 +280,7 @@ public class OverworldSettlement
         settings.Center = Vector2.Lerp(Min, Max, .5f);
         settings.Size = Max - Min;
         Debug.LogError("Settlement Settings " + settings.Center + "," + settings.Size);
-        settings.DistBetweenAvenues = 15;
+        settings.DistBetweenAvenues = 45;
         settings.DistBetweenRoads = 10;
         settings.MaxAvenuePasses = 22;
         settings.MaxRoadPasses = 22;
