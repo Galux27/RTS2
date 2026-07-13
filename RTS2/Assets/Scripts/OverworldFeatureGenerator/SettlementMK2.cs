@@ -28,7 +28,11 @@ public class SettlementMK2 : OverworldFeatureToWorldConverter
                     details = AdjacentTiles[x].SettlementDetails;
                 }
             }
-            return;
+            if (details == null)
+            {
+                Debug.LogError("Abandoning settlement gen in " + toGenerateIn.coords + " due to no details");
+                return;
+            }
         }
         OverworldGenerator.Instance.GetOverworldStartingCoords();
         Vector2Int worldCenter = Vector2Int.zero ;

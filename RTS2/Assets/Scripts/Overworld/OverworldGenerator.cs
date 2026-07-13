@@ -32,6 +32,17 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         return OverworldTiles[coords.x, coords.y];
     }
 
+    public bool DoTilesAllContainFeature(List<OverworldTile> tiles, OverworldFeature feature)
+    {
+        for (int x = 0; x < tiles.Count; x++)
+        {
+            if (!tiles[x].Features.Contains(feature))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
      Vector2Int OverworldStartingCoords;
     bool hasSetOverworldStartingCoords = false;

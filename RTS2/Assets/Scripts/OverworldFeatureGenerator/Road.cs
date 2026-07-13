@@ -137,7 +137,7 @@ public class Road : OverworldFeatureToWorldConverter
         List<OverworldTile> AdjacentTiles = OverworldGenerator.Instance.GetNeighbours(toGenerateIn.OverworldCoords);
         OverworldTile myTile = OverworldGenerator.Instance.GetOverworldTile(toGenerateIn.OverworldCoords);
 
-        if (myTile.Features.Contains(OverworldFeature.Settlement))
+        if (myTile.Features.Contains(OverworldFeature.Settlement)&&OverworldGenerator.Instance.DoTilesAllContainFeature(AdjacentTiles,OverworldFeature.Settlement))
         {
             return;
         }

@@ -82,13 +82,16 @@ public  static class SettlementGenerator
                     {
                         highways.Add(new Settlement_Road(current.Center(),  (neighbours[x].Center()- current.Center()).normalized, WorldChunkManager.ChunkBatchSize , Settlement_RoadType.Highway));
                         count++;
-                    }else if (neighbour.Features.Contains(OverworldFeature.MinorRoad) && tile.Features.Contains(OverworldFeature.MinorRoad))
+                    }
+                    
+                    if (neighbour.Features.Contains(OverworldFeature.MinorRoad) && tile.Features.Contains(OverworldFeature.MinorRoad))
                     {
                         avenues.Add(new Settlement_Road(current.Center(), (neighbours[x].Center() - current.Center()).normalized, WorldChunkManager.ChunkBatchSize , Settlement_RoadType.Avenue));
                         count++;
 
                     }
-                    else if (neighbour.Features.Contains(OverworldFeature.Backroad) && tile.Features.Contains(OverworldFeature.Backroad))
+                    
+                    if (neighbour.Features.Contains(OverworldFeature.Backroad) && tile.Features.Contains(OverworldFeature.Backroad))
                     {
                         roads.Add(new Settlement_Road(current.Center(), (neighbours[x].Center() - current.Center()).normalized, WorldChunkManager.ChunkBatchSize , Settlement_RoadType.Road));
                         count++;

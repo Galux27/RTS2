@@ -31,7 +31,7 @@ public class OverworldMajorRoadGenerator : OverworldFeatureGenerator
             }
         }
         OverworldBasicPathfinding.InitOverworldBasicPathfinding(world);
-
+        float dist3 = 0f;
         for (int x = 0; x < MajorSettlements.Count - 1; x++)
         {
             if (MajorSettlements[x].pointsInSettlement.Count == 0 || MajorSettlements[x + 1].pointsInSettlement.Count == 0)
@@ -43,6 +43,14 @@ public class OverworldMajorRoadGenerator : OverworldFeatureGenerator
             {
                 for (int q = 0; q < path.Count; q++)
                 {
+                    if (q > 0)
+                    {
+                        dist3 = Vector2.Distance(path[q].coords, path[q - 1].coords);
+                        if (dist3 > 1)
+                        {
+                            world[path[q - 1].coords.x, path[q].coords.y].AddFeatureToTile(OverworldFeature.MajorRoad);
+                        }
+                    }
                     world[path[q].coords.x, path[q].coords.y].AddFeatureToTile(OverworldFeature.MajorRoad);
                 }
             }
@@ -69,6 +77,14 @@ public class OverworldMajorRoadGenerator : OverworldFeatureGenerator
                 {
 
                     world[path[q].coords.x, path[q].coords.y].AddFeatureToTile(OverworldFeature.MinorRoad);
+                    if (q > 0)
+                    {
+                        dist3 = Vector2.Distance(path[q].coords, path[q - 1].coords);
+                        if (dist3 > 1)
+                        {
+                            world[path[q - 1].coords.x, path[q].coords.y].AddFeatureToTile(OverworldFeature.MajorRoad);
+                        }
+                    }
                 }
             }
             OverworldBasicPathfinding.UpdateBasicWeightings();
