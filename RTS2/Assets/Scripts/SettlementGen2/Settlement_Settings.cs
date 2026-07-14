@@ -6,7 +6,7 @@ public class Settlement_Settings
 
 
 
-    public int StartingHighwayCount;
+    public int StartingHighwayCount,StartingAvenueCount,StartingRoadCount;
     public float DistBetweenHighways,DistBetweenAvenues,DistBetweenRoads,MinAvenueLengthForRoad;
     public bool GenerateHighwayStarts;
     public Vector2 Center, Size;

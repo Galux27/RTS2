@@ -23,17 +23,23 @@ public  static class SettlementGenerator
         GenerateInitialHighways(settings);
         Debug.Log("Settlement Gen: initial highways done ");
         HighwayGenerationPass(settings);
-        settlement.highways = highways;
         Debug.Log("Settlement Gen: highway gen done");
-
+        
+        settlement.highways = highways;
+        
         GenerateInitialAvenues(settings);
         Debug.Log("Settlement Gen: initial avenues done");
 
         AvenueGenerationPass(settings);
-        settlement.avenues = avenues;
         Debug.Log("Settlement Gen: avenue gen done");
-       GenerateInitialRoads(settings);
+        //ValidateAllAvenues();
+        settlement.avenues = avenues;
+
+        GenerateInitialRoads(settings);
         RoadGenerationPass(settings);
+
+        ValidateAllRoads();
+
         settlement.roads = roads;
     }
 
@@ -252,6 +258,7 @@ public  static class SettlementGenerator
         validRoads.Clear();
         workingCopy.Clear();
         int initialHighways = highways.Count;
+        int count = 0;
         for(int x=0;x<initialHighways;x++)
         {
             Vector2 pos = highways[x].GetPositionOnRoad(.5f);
@@ -265,6 +272,11 @@ public  static class SettlementGenerator
 
             validRoads.Add(new Settlement_Road(pos, dir.normalized, settings.AvenueLength, Settlement_RoadType.Avenue, highways[x]));
             validRoads.Add(new Settlement_Road(pos, (dir*-1).normalized, settings.AvenueLength, Settlement_RoadType.Avenue, highways[x]));
+            count++;
+            if (count > settings.StartingAvenueCount)
+            {
+                break;
+            }
 
         }
     }
@@ -703,6 +715,74 @@ public  static class SettlementGenerator
         }
         return EdgeTiles[Random.Range(0,EdgeTiles.Count)];
     }
+
+
+    static void ValidateAllRoads()
+    {
+       
+        roads = ValidateRoads(roads, highways,false,15);
+        roads = ValidateRoads(roads, avenues,false,10f);
+       // roads = ValidateRoads(roads, roads,true,10f);
+      
+    }
+
+
+    static void ValidateAllAvenues()
+    {
+       avenues = ValidateRoads(avenues, highways);
+       avenues = ValidateRoads(avenues, avenues,true);
+
+    }
+
+    static List<Settlement_Road> ValidateRoads(List<Settlement_Road> roads,List<Settlement_Road> comp,bool isSameList=false,float dist=5f)
+    {
+        List<Settlement_Road> retVal = new List<Settlement_Road>();
+        if (!isSameList)
+        {
+            for (int x = 0; x < roads.Count; x++)
+            {
+                bool hit = false;
+                for (int q = 0; q < comp.Count; q++)
+                {
+                    if (Settlement_Road.IsRoadTooCloseToOtherRoad(roads[x], comp[q],dist))
+                    {
+                        hit = true;
+                        break;
+                    }
+                }
+                if (!hit)
+                {
+                    retVal.Add(roads[x]);
+                }
+            }
+        }
+        else
+        {
+            List<int> invalid = new List<int>();
+            for (int x = 0; x < roads.Count; x++)
+            {
+                bool hit = false;
+                for (int q = 0; q < comp.Count; q++)
+                {
+                    if (x!=q&& Settlement_Road.IsRoadTooCloseToOtherRoad(roads[x], comp[q],dist))
+                    {
+                        if (!invalid.Contains(q))
+                        {
+                            hit = true;
+                            invalid.Add(q);
+                            break;
+                        }
+                        }
+                    }
+                if (!hit)
+                {
+                    retVal.Add(roads[x]);
+                }
+            }
+        }
+        return retVal;
+    }
+
 }
 
 [System.Serializable]

@@ -275,7 +275,8 @@ public class OverworldSettlement
             }
         }
         settings.GenerateHighwayStarts = true;
-        settings.StartingHighwayCount = 5;
+        //settings.StartingHighwayCount = 5;
+       
         settings.RiverPoints = 0;
         settings.Center = Vector2.Lerp(Min, Max, .5f);
         settings.Size = Max - Min;

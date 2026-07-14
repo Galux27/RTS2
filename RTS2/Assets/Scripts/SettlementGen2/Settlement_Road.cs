@@ -1,8 +1,40 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+
 [System.Serializable]
 public class Settlement_Road 
 {
+
+    public static bool IsRoadTooCloseToOtherRoad(Settlement_Road road,Settlement_Road comparing,float distToCheck=5)
+    {
+        Vector2 p1 = road.StartPos;
+        Vector2 p2 = road.EndPos;
+
+        Vector2 dir = road.Direction.normalized;
+        Vector2 compDir = comparing.Direction.normalized;
+
+        if (dir == compDir || dir * -1 == compDir)
+        {
+            
+        
+
+         dir = Vector2.Perpendicular(road.Direction).normalized;
+
+
+
+        Vector2 intersection = new Vector2();
+        if (LineUtil.IntersectRoadSegments2D(p1, p1+dir*distToCheck, comparing.StartPos, comparing.EndPos, out intersection)
+            || LineUtil.IntersectRoadSegments2D(p1, p1 - dir * distToCheck, comparing.StartPos, comparing.EndPos, out intersection)
+            || LineUtil.IntersectRoadSegments2D(p2, p2 + dir * distToCheck, comparing.StartPos, comparing.EndPos, out intersection)
+            || LineUtil.IntersectRoadSegments2D(p2, p2 - dir * distToCheck, comparing.StartPos, comparing.EndPos, out intersection)) { 
+            return true;
+        }
+
+        }
+        return false;
+    }
+
     public Settlement_RoadID MyID;
 
     public Settlement_RoadJunction RoadNode;
