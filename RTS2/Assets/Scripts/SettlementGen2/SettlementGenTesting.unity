@@ -270,10 +270,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
-    StartingHighwayCount: 6
-    DistBetweenHighways: 25
-    DistBetweenAvenues: 15
-    DistBetweenRoads: 10
+    StartingHighwayCount: 5
+    StartingAvenueCount: 0
+    StartingRoadCount: 0
+    DistBetweenHighways: 205.9
+    DistBetweenAvenues: 55
+    DistBetweenRoads: 61.4
     MinAvenueLengthForRoad: 15
     GenerateHighwayStarts: 0
     Center: {x: 0, y: 0}
@@ -281,11 +283,11 @@ MonoBehaviour:
     HighwayDirOffsetScale: 3
     RiverBendScale: 5.79
     MaxAvenuePasses: 22
-    MaxRoadPasses: 22
-    HighwayLength: 50
-    AvenueLength: 25
-    RoadLength: 15
-    RiverPoints: 6
+    MaxRoadPasses: 40
+    HighwayLength: 100
+    AvenueLength: 50
+    RoadLength: 30.09
+    RiverPoints: 0
     RiverWidth: 7
     RiverSectionLength: 11
     ManualHighwayPoints: []

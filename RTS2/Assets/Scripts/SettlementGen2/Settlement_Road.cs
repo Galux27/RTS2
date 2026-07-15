@@ -13,7 +13,10 @@ public class Settlement_Road
 
         Vector2 dir = road.Direction.normalized;
         Vector2 compDir = comparing.Direction.normalized;
-
+        if (comparing.IsConnectedTo(road))
+        {
+            return false    ;
+        }
         if (dir == compDir || dir * -1 == compDir)
         {
             
@@ -66,6 +69,11 @@ public class Settlement_Road
     {
         Length=Vector2.Distance(StartPos, pos);
         EndPos = pos;
+    }
+
+    public bool IsConnectedTo(Settlement_Road road)
+    {
+        return RoadNode.connections.Contains(road.MyID.ID);
     }
 
     public void AddRoadConnection(Settlement_Road road)

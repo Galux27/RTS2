@@ -7211,6 +7211,14 @@ PrefabInstance:
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6208570359048072191, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: BaseSettings.StartingAvenueCount
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208570359048072191, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
+      propertyPath: BaseSettings.StartingHighwayCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208570359048072191, guid: 839385fd5560b8f4181c81383a6fba42, type: 3}
       propertyPath: BaseSettings.MinAvenueLengthForRoad
       value: 20
       objectReference: {fileID: 0}

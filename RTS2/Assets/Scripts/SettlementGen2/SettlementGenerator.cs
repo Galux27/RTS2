@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,7 +21,11 @@ public  static class SettlementGenerator
         DoneRoads = false;
         DoneHighways = false;
         DoneAvenues = false;
-        AddRoadsFromOverworld(settings);
+        if (GameObject.FindObjectOfType<WorldChunkManager>() != null)
+        {
+
+            AddRoadsFromOverworld(settings);
+        }
         GenerateInitialHighways(settings);
         Debug.Log("Settlement Gen: initial highways done ");
         HighwayGenerationPass(settings);
@@ -121,18 +127,18 @@ public  static class SettlementGenerator
 
                     for (int x = 0; x < settlement.areas[q, r].roads.Count; x++)
                     {
-                        Debug.DrawLine(settlement.areas[q, r].roads[x].StartPos, settlement.areas[q, r].roads[x].EndPos, settlement.areas[q, r].DebugColour, duration);
+                        Debug.DrawLine(settlement.areas[q, r].roads[x].StartPos, settlement.areas[q, r].roads[x].EndPos,/* settlement.areas[q, r].DebugColour*/Color.magenta, duration);
                     }
 
 
                     for (int x = 0; x < settlement.areas[q, r].avenues.Count; x++)
                     {
-                        Debug.DrawLine(settlement.areas[q, r].avenues[x].StartPos, settlement.areas[q, r].avenues[x].EndPos, settlement.areas[q, r].DebugColour, duration);
+                        Debug.DrawLine(settlement.areas[q, r].avenues[x].StartPos, settlement.areas[q, r].avenues[x].EndPos, /*settlement.areas[q, r].DebugColour*/Color.cyan, duration);
                     }
 
                     for (int x = 0; x < settlement.areas[q, r].highways.Count; x++)
                     {
-                        Debug.DrawLine(settlement.areas[q, r].highways[x].StartPos, settlement.areas[q, r].highways[x].EndPos, Color.cyan, duration);
+                        Debug.DrawLine(settlement.areas[q, r].highways[x].StartPos, settlement.areas[q, r].highways[x].EndPos, Color.blue, duration);
                     }
 
 
@@ -156,7 +162,7 @@ public  static class SettlementGenerator
 
         for (int x = 0; x < settings.StartingHighwayCount; x++)
         {
-            //if (IsPointFarEnoughAway(validRoads, settings.DistBetweenHighways, startPos))
+           
             {
                 Debug.Log("Highway: Initial Tile at " + startPos);
                 validRoads.Add(new Settlement_Road(startPos, dir.normalized, settings.HighwayLength, Settlement_RoadType.Highway));
@@ -237,12 +243,16 @@ public  static class SettlementGenerator
         original.UpdateEndPosition(newEndPoint);
         original.EndedByLink = foundEnd;
         highways.Add(original);
-        Debug.Log("Highway: from " + original.StartPos + " to " + newEndPoint+","+ IsPositionNearEdge(newEndPoint, settings)+","+foundEnd+","+i);
         //
         if (!foundEnd &&!IsPositionNearEdge(newEndPoint,settings) && !IsRoadInInvalidChunk(original, CurrentlyGenerating))
         {
             newStart = newEndPoint;
             workingCopy.Add(new Settlement_Road(newStart, (original.Direction + new Vector2(Random.Range(-.1f,.1f)*settings.HighwayDirOffsetScale,Random.Range(-.1f,.1f) * settings.HighwayDirOffsetScale)).normalized, settings.HighwayLength, Settlement_RoadType.Highway));
+        }
+        else
+        {
+            Debug.Log("Highway: from " + original.StartPos + " to " + newEndPoint + "," + IsPositionNearEdge(newEndPoint, settings) + "," + foundEnd + "," + i + "," + IsRoadInInvalidChunk(original, CurrentlyGenerating));
+
         }
 
     }
@@ -273,10 +283,10 @@ public  static class SettlementGenerator
             validRoads.Add(new Settlement_Road(pos, dir.normalized, settings.AvenueLength, Settlement_RoadType.Avenue, highways[x]));
             validRoads.Add(new Settlement_Road(pos, (dir*-1).normalized, settings.AvenueLength, Settlement_RoadType.Avenue, highways[x]));
             count++;
-            if (count > settings.StartingAvenueCount)
-            {
-                break;
-            }
+            //if (count > settings.StartingAvenueCount && settings.StartingAvenueCount>0)
+            //{
+            //    break;
+            //}
 
         }
     }
@@ -284,6 +294,19 @@ public  static class SettlementGenerator
     static bool IsHorizontalMoreThanVertical(Vector2 dir)
     {
         return Mathf.Abs(dir.x)> Mathf.Abs(dir.y);
+    }
+
+    static Vector2 GetPerpFromRoad(Settlement_Road gettingFrom)
+    {
+        if (Random.Range(0, 100) < 50)
+        {
+            return Vector2.Perpendicular(gettingFrom.Direction);
+        }
+        else
+        {
+            return Vector2.Perpendicular(gettingFrom.Direction * -1);
+
+        }
     }
 
     static Vector2 GetRandomAngledOffsetFromRoad(Settlement_Road gettingFrom)
@@ -334,6 +357,7 @@ public  static class SettlementGenerator
 
     static Vector2 GetRandomRightAngleDirectionFromRoad(Settlement_Road gettingFrom)
     {
+      
         Vector2 retVal = Vector2.zero;
         Vector2 dir = gettingFrom.endPos - gettingFrom.StartPos;
         dir = dir.normalized;
@@ -463,17 +487,16 @@ public  static class SettlementGenerator
         int initialRoads = avenues.Count;
         for (int x = 0; x < initialRoads; x++)
         {
-            if (avenues[x].Length > settings.MinAvenueLengthForRoad)
+           // if (avenues[x].Length > settings.MinAvenueLengthForRoad)
             {
-                float split = Random.Range(.45f, .55f);
-                Vector2 pos = avenues[x].GetPositionOnRoad(split);
+                Vector2 pos = avenues[x].GetPositionOnRoad(.5f);
                 if (IsARoadNearMyStart(pos, validRoads, settings.DistBetweenRoads))
                 {
                     continue;
                 }
-                Vector2 dir = GetRandomRightAngleDirectionFromRoad(avenues[x]);
+                Vector2 dir = GetPerpFromRoad(avenues[x]);
 
-                avenues[x].AddPointToSplit(split);
+                avenues[x].AddPointToSplit(.5f);
                 validRoads.Add(new Settlement_Road(pos, dir.normalized, settings.RoadLength, Settlement_RoadType.Road, avenues[x]));
                 validRoads.Add(new Settlement_Road(pos, (dir*-1).normalized, settings.RoadLength, Settlement_RoadType.Road, avenues[x]));
             }
@@ -481,6 +504,7 @@ public  static class SettlementGenerator
     }
     static void RoadGenerationPass(Settlement_Settings settings)
     {
+
         totalPasses = 0;
         while (!DoneRoads && totalPasses < settings.MaxRoadPasses)
         {
@@ -536,10 +560,13 @@ public  static class SettlementGenerator
             foundEnd = true;
         }
 
-        //if(CheckForMovingEndToOtherPoint(roads, ref newEndPoint, settings.DistBetweenRoads))
-        //{
-        //    foundEnd = true;
-        //}
+        if (!foundEnd&&CheckForMovingEndToOtherPoint(roads, ref newEndPoint, 2f))
+        {
+            foundEnd = true;
+        }
+       
+       
+
         if (RiverGenerator.CheckForIntersection(original.StartPos, original.endPos, CurrentlyGenerating.River.RiverSections, out RiverIntersect))
         {
             foundEnd = true;
@@ -554,24 +581,40 @@ public  static class SettlementGenerator
         original.UpdateEndPosition(newEndPoint);
         original.EndedByLink = foundEnd;
 
-
-        if(IsRoadInInvalidChunk(original, CurrentlyGenerating))
+      //  if (!foundEnd)
         {
-            return;
+            for (int x = 0; x < roads.Count; x++)
+            {
+                //need to add something to make sure that it isn't checking the road it was created off
+                if (Settlement_Road.IsRoadTooCloseToOtherRoad(roads[x], original, 15f))
+                {
+                    return;
+                }
+            }
+
+       
         }
+
 
         roads.Add(original);
 
 
 
 
-        if (!foundEnd && !IsPositionNearEdge(newEndPoint, settings) && !IsRoadInInvalidChunk(original, CurrentlyGenerating))
+        if (!foundEnd && !IsPositionNearEdge(newEndPoint, settings) )
         {
             newStart = newEndPoint;
-            if (Random.Range(0, 100) < 20)
+            if (Random.Range(0, 100) < 10)
             {
-                workingCopy.Add(new Settlement_Road(newStart, (original.Perp(false)).normalized, settings.RoadLength, Settlement_RoadType.Road, original));
+                if (Random.Range(0, 100) < 50)
+                {
+                    workingCopy.Add(new Settlement_Road(newStart, (original.Perp(false)).normalized, settings.RoadLength, Settlement_RoadType.Road, original));
+                }
+                else
+                {
+                    workingCopy.Add(new Settlement_Road(newStart, (original.Perp(true)).normalized, settings.RoadLength, Settlement_RoadType.Road, original));
 
+                }
             }
             else
             {
@@ -719,10 +762,9 @@ public  static class SettlementGenerator
 
     static void ValidateAllRoads()
     {
-       
         roads = ValidateRoads(roads, highways,false,15);
         roads = ValidateRoads(roads, avenues,false,10f);
-       // roads = ValidateRoads(roads, roads,true,10f);
+       // roads = ValidateRoads(roads, roads,true,2f);
       
     }
 
@@ -764,16 +806,16 @@ public  static class SettlementGenerator
                 bool hit = false;
                 for (int q = 0; q < comp.Count; q++)
                 {
-                    if (x!=q&& Settlement_Road.IsRoadTooCloseToOtherRoad(roads[x], comp[q],dist))
+                    if (x!=q && Settlement_Road.IsRoadTooCloseToOtherRoad(roads[x], comp[q],dist))
                     {
                         if (!invalid.Contains(q))
                         {
                             hit = true;
-                            invalid.Add(q);
+                            invalid.Add(x);
                             break;
                         }
-                        }
                     }
+                }
                 if (!hit)
                 {
                     retVal.Add(roads[x]);
@@ -908,8 +950,14 @@ public class GeneratedSettlement
         high = settings.Center + (settings.Size * .5f);
 
         Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), tile = new Vector2Int();
-        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(low.x, low.y, out batch, out chunk, out tile);
-
+        if (GameObject.FindObjectOfType<WorldChunkManager>() != null)
+        {
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(low.x, low.y, out batch, out chunk, out tile);
+        }
+        else
+        {
+            batch = new Vector2Int(-(width / 2) * areaSize, -(height / 2) * areaSize) ;
+        }
         Vector2Int areaBatch = new Vector2Int();
         Vector2Int overworldTile = new Vector2Int();
         areas = new GeneratedSettlementArea[width, height];
@@ -922,17 +970,24 @@ public class GeneratedSettlement
                 areas[x, y] = new GeneratedSettlementArea(
                     new Vector2(low.x+ (WorldChunkManager.ChunkBatchSize * x), low.y + (WorldChunkManager.ChunkBatchSize * y)),
                     areaBatch,overworldTile);
-                Debug.Log("Setting overworld tile: " + overworldTile + " has settlement " + OverworldGenerator.Instance.GetOverworldTile(overworldTile).Features.Contains(OverworldFeature.Settlement));
-                if (OverworldGenerator.Instance.GetOverworldTile(overworldTile).Features.Contains(OverworldFeature.Settlement)==false)
+                //  Debug.Log("Setting overworld tile: " + overworldTile + " has settlement " + OverworldGenerator.Instance.GetOverworldTile(overworldTile).Features.Contains(OverworldFeature.Settlement));
+                if (GameObject.FindObjectOfType<WorldChunkManager>() != null)
                 {
-                    areas[x, y].CanUse = false;
+                    if (OverworldGenerator.Instance.GetOverworldTile(overworldTile).Features.Contains(OverworldFeature.Settlement) == false)
+                    {
+                        areas[x, y].CanUse = false;
+                    }
+                    else
+                    {
+                        areas[x, y].CanUse = true;
+
+                    }
                 }
                 else
                 {
                     areas[x, y].CanUse = true;
 
                 }
-
             }
         }
         

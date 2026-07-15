@@ -15,7 +15,14 @@ public class SettlementGenTestRunning : MonoBehaviour
 
             SettlementGenerator.GenerateSettlement(settlement,settings);
             settlement.PopulateAreas(settings, 64);
+
         }
-        
+
+        if (settlement != null)
+        {
+            SettlementGenerator.DebugDrawSettlementRoads(settlement, Time.deltaTime);
+
+        }
+
     }
 }
