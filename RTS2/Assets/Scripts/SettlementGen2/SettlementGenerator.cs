@@ -13,6 +13,7 @@ public  static class SettlementGenerator
         HasEdges = false;
         CurrentlyGenerating = settlement;
         settlement.SetRiver(RiverGenerator.GenerateRiver(settings));
+        settlement.SetCornerPoints(settings);
         validRoads.Clear();
         workingCopy.Clear();
         highways.Clear();
@@ -31,7 +32,7 @@ public  static class SettlementGenerator
         HighwayGenerationPass(settings);
         Debug.Log("Settlement Gen: highway gen done");
         
-        settlement.highways = highways;
+        settlement.SetHighways( highways);
         
         GenerateInitialAvenues(settings);
         Debug.Log("Settlement Gen: initial avenues done");
@@ -39,16 +40,52 @@ public  static class SettlementGenerator
         AvenueGenerationPass(settings);
         Debug.Log("Settlement Gen: avenue gen done");
         //ValidateAllAvenues();
-        settlement.avenues = avenues;
+        settlement.SetAvenues( avenues);
 
         GenerateInitialRoads(settings);
         RoadGenerationPass(settings);
 
         ValidateAllRoads();
 
-        settlement.roads = roads;
+        settlement.SetRoads( roads);
+
+        GenerateBuildingArea(settlement);
+
     }
 
+    static void GenerateBuildingArea(GeneratedSettlement settlement)
+    {
+        SettlementBuildingArea area = null;
+        for(int x = 0; x < settlement.roads.Count; x++)
+        {
+            area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.roads[x], settlement, false);
+            if (area != null)
+            {
+                settlement.BuildingAreas.Add(area);
+            }
+            area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.roads[x], settlement, true);
+            if (area != null)
+            {
+                settlement.BuildingAreas.Add(area);
+            }
+            area = null;
+        }
+
+        for (int x = 0; x < settlement.avenues.Count; x++)
+        {
+            area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.avenues[x], settlement, false);
+            if (area != null)
+            {
+                settlement.BuildingAreas.Add(area);
+            }
+            area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.avenues[x], settlement, true);
+            if (area != null)
+            {
+                settlement.BuildingAreas.Add(area);
+            }
+            area = null;
+        }
+    }
 
     static List<GeneratedSettlementArea> NeighbouringAreas(int x,int y)
     {
@@ -120,28 +157,52 @@ public  static class SettlementGenerator
     {
         if (settlement != null && settlement.areas != null)
         {
+            for (int x = 0; x < settlement.BuildingAreas.Count; x++)
+            {
+                Debug.DrawLine(settlement.BuildingAreas[x].Origin, settlement.BuildingAreas[x].FarAlongRoad, Color.white, duration);
+                Debug.DrawLine(settlement.BuildingAreas[x].Origin, settlement.BuildingAreas[x].PerpFromStart, Color.white, duration);
+                Debug.DrawLine(settlement.BuildingAreas[x].FarAlongRoad, settlement.BuildingAreas[x].PerpFromFarAlong, Color.white, duration);
+                Debug.DrawLine(settlement.BuildingAreas[x].PerpFromStart, settlement.BuildingAreas[x].PerpFromFarAlong, Color.white, duration);
+
+            }
             for (int q = 0; q < settlement.areas.GetLength(0); q++)
             {
                 for (int r = 0; r < settlement.areas.GetLength(1); r++)
                 {
+                    Vector2 offset = new Vector2(10, 10);
 
+                  
                     for (int x = 0; x < settlement.areas[q, r].roads.Count; x++)
                     {
                         Debug.DrawLine(settlement.areas[q, r].roads[x].StartPos, settlement.areas[q, r].roads[x].EndPos,/* settlement.areas[q, r].DebugColour*/Color.magenta, duration);
+                    
+                        //if(settlement.areas[q, r].roads[x].IsValidForAreaStart(settlement))
+                        //{
+                        //    Debug.DrawLine(settlement.areas[q, r].roads[x].RoadNode.position, settlement.areas[q, r].roads[x].RoadNode.position + offset, Color.white, duration);
+                        //}
                     }
 
 
                     for (int x = 0; x < settlement.areas[q, r].avenues.Count; x++)
                     {
                         Debug.DrawLine(settlement.areas[q, r].avenues[x].StartPos, settlement.areas[q, r].avenues[x].EndPos, /*settlement.areas[q, r].DebugColour*/Color.cyan, duration);
+
+                        //if (settlement.areas[q, r].avenues[x].IsValidForAreaStart(settlement))
+                        //{
+                        //    Debug.DrawLine(settlement.areas[q, r].avenues[x].RoadNode.position, settlement.areas[q, r].avenues[x].RoadNode.position + offset, Color.white, duration);
+                        //}
                     }
 
                     for (int x = 0; x < settlement.areas[q, r].highways.Count; x++)
                     {
                         Debug.DrawLine(settlement.areas[q, r].highways[x].StartPos, settlement.areas[q, r].highways[x].EndPos, Color.blue, duration);
+                        //if (settlement.areas[q, r].highways[x].IsValidForAreaStart(settlement))
+                        //{
+                        //    Debug.DrawLine(settlement.areas[q, r].highways[x].StartPos, settlement.areas[q, r].highways[x].StartPos + offset, Color.white, duration);
+                        //}
                     }
 
-
+                    
                 }
             }
 
@@ -541,6 +602,7 @@ public  static class SettlementGenerator
         }
 
 
+        //add road connection for roads that intersect others
         if (CheckForIntersection(validRoads, original.StartPos, ref newEndPoint, out intersection))
         {
             foundEnd = true;
@@ -656,7 +718,53 @@ public  static class SettlementGenerator
         return false;
     }
 
-    static bool CheckForIntersection(List<Settlement_Road> toTestAgainst,Vector2 start,ref Vector2 end,out Vector2 intersection)
+    
+
+    public static void CheckForIntersectionAgainstSettlementEdge(Vector2 start,ref Vector2 end)
+    {
+        Vector2 newEnd = Vector2.zero;
+        if(LineUtil.IntersectLineSegments2D(start, end, CurrentlyGenerating.Corners[0], CurrentlyGenerating.Corners[1], out newEnd))
+        {
+            end = newEnd;
+        }
+        if (LineUtil.IntersectLineSegments2D(start, end, CurrentlyGenerating.Corners[1], CurrentlyGenerating.Corners[2], out newEnd))
+        {
+            end = newEnd;
+        }
+        if (LineUtil.IntersectLineSegments2D(start, end, CurrentlyGenerating.Corners[2], CurrentlyGenerating.Corners[3], out newEnd))
+        {
+            end = newEnd;
+        }
+        if (LineUtil.IntersectLineSegments2D(start, end, CurrentlyGenerating.Corners[3], CurrentlyGenerating.Corners[0], out newEnd))
+        {
+            end = newEnd;
+        }
+
+    }
+
+
+    public static bool CheckForIntersectionAgainstAll(List<Settlement_Road> toTestAgainst, Vector2 start, ref Vector2 end, out Vector2 intersection)
+    {
+        for (int x = 0; x < toTestAgainst.Count; x++)
+        {
+            if (LineUtil.IntersectRoadSegments2D(start, end, toTestAgainst[x].StartPos, toTestAgainst[x].EndPos, out intersection,1f,1f,false))
+            {
+                if (Vector2.Distance(start, intersection) > .1f)
+                {
+                    end = intersection;
+                }
+            }
+
+        }
+
+        intersection = Vector2.zero;
+        return false;
+    }
+
+
+
+
+    public static bool CheckForIntersection(List<Settlement_Road> toTestAgainst,Vector2 start,ref Vector2 end,out Vector2 intersection)
     {
         for (int x = 0; x < toTestAgainst.Count; x++)
         {
@@ -830,10 +938,53 @@ public  static class SettlementGenerator
 [System.Serializable]
 public class GeneratedSettlement
 {
+    public List<Vector2> Corners = new List<Vector2>();
     public Settlement_River River;
     public List<Settlement_Road> highways=new List<Settlement_Road>(),
         avenues = new List<Settlement_Road>(),
         roads = new List<Settlement_Road>();
+
+    public List<SettlementBuildingArea> BuildingAreas=new List<SettlementBuildingArea>();
+
+    public Dictionary<uint, Settlement_Road> RoadDictionary = new Dictionary<uint, Settlement_Road>();
+
+    public void SetRoads(List<Settlement_Road> roads)
+    {
+        this.roads = roads;
+        for(int x=0;x<roads.Count;x++)
+        {
+            RoadDictionary.Add(roads[x].MyID.ID, roads[x]);
+        }
+    }
+    public void SetAvenues(List<Settlement_Road> roads)
+    {
+        this.avenues = roads;
+        for (int x = 0; x < roads.Count; x++)
+        {
+            RoadDictionary.Add(roads[x].MyID.ID, roads[x]);
+        }
+    }
+    public void SetHighways(List<Settlement_Road> roads)
+    {
+        this.highways = roads;
+        for (int x = 0; x < roads.Count; x++)
+        {
+            RoadDictionary.Add(roads[x].MyID.ID, roads[x]);
+        }
+    }
+    public void SetCornerPoints(Settlement_Settings settings)
+    {
+        Corners = new List<Vector2>();
+        float halfWidth = settings.Size.x / 2;
+        float halfHeight = settings.Size.y / 2;
+        Corners.Add(settings.Center + new Vector2(-halfWidth, -halfHeight));
+        Corners.Add(settings.Center + new Vector2(-halfWidth, halfHeight));
+        Corners.Add(settings.Center + new Vector2(halfWidth, halfHeight));
+        Corners.Add(settings.Center + new Vector2(halfWidth, -halfHeight));
+
+
+    }
+
     public GeneratedSettlementArea[,] areas;
     int width;
     int height;

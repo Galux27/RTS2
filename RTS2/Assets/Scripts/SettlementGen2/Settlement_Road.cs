@@ -82,6 +82,28 @@ public class Settlement_Road
         road.RoadNode.AddConnection(this);
     }
 
+    public bool IsValidForAreaStart(GeneratedSettlement mySettlement)
+    {
+        if (RoadNode == null || RoadNode.connections.Count == 0)
+        {
+            return false;
+        }
+        bool retVal = false;
+        Settlement_Road road = null;
+        for(int x = 0; x < RoadNode.connections.Count; x++)
+        {
+            if (mySettlement.RoadDictionary.ContainsKey(RoadNode.connections[x])){
+                road = mySettlement.RoadDictionary[RoadNode.connections[x]];
+                if (road.RoadType != this.RoadType||road.Direction!=this.Direction)
+                {
+                    retVal = true;
+                    break;
+                }
+            }
+        }
+        return retVal;
+    }
+
     //linePnt - point the line passes through
     //lineDir - unit vector in direction of line, either direction works
     //pnt - the point to find nearest on line for

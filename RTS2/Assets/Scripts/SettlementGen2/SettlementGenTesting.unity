@@ -286,7 +286,7 @@ MonoBehaviour:
     MaxRoadPasses: 40
     HighwayLength: 100
     AvenueLength: 50
-    RoadLength: 30.09
+    RoadLength: 15
     RiverPoints: 0
     RiverWidth: 7
     RiverSectionLength: 11
@@ -295,6 +295,7 @@ MonoBehaviour:
     ManualRoadPoints: []
     ManualRiverPoints: []
   settlement:
+    Corners: []
     River:
       RiverSections: []
       MeetingPoint: {x: 0, y: 0}
