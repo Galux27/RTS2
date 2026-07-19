@@ -185,7 +185,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      ReinforcedConcreteWalls_0: -7554320984705725877
+      ReinforcedConcreteWalls_1: 7220280540030682237
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

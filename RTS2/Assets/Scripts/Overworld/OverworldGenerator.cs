@@ -99,7 +99,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         {
             for (int y = 0; y < OverworldHeight; y++)
             {
-            //    ALifeSystem.GenerateEntitiesForOverworldTile(OverworldTiles[x, y]);
+                ALifeSystem.GenerateEntitiesForOverworldTile(OverworldTiles[x, y]);
              
             }
         }
