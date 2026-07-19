@@ -56,22 +56,28 @@ public  static class SettlementGenerator
     static void GenerateBuildingArea(GeneratedSettlement settlement)
     {
         SettlementBuildingArea area = null;
+        SettlementBuildingArea area2 = null;
         for(int x = 0; x < settlement.roads.Count; x++)
         {
-            area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.roads[x], settlement, false);
-            if (area != null)
+            if (settlement.roads[x].IsValidForAreaStart(settlement))
             {
-                settlement.BuildingAreas.Add(area);
-            }
-            area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.roads[x], settlement, true);
-            if (area != null)
-            {
-                settlement.BuildingAreas.Add(area);
-            }
-            area = null;
-        }
+                area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.roads[x], settlement, false);
 
-        for (int x = 0; x < settlement.avenues.Count; x++)
+                area2 = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.roads[x], settlement, true);
+                if (area != null)
+                {
+                    settlement.BuildingAreas.Add(area);
+                }
+                if (area2 != null)
+                {
+                    settlement.BuildingAreas.Add(area2);
+                }
+                area = null;
+                area2 = null;
+            }
+            }
+
+            for (int x = 0; x < settlement.avenues.Count; x++)
         {
             area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.avenues[x], settlement, false);
             if (area != null)
@@ -174,7 +180,7 @@ public  static class SettlementGenerator
                   
                     for (int x = 0; x < settlement.areas[q, r].roads.Count; x++)
                     {
-                        Debug.DrawLine(settlement.areas[q, r].roads[x].StartPos, settlement.areas[q, r].roads[x].EndPos,/* settlement.areas[q, r].DebugColour*/Color.magenta, duration);
+                        Debug.DrawLine(settlement.areas[q, r].roads[x].StartPos, settlement.areas[q, r].roads[x].EndPos, settlement.areas[q, r].roads[x].debugColor, duration);
                     
                         //if(settlement.areas[q, r].roads[x].IsValidForAreaStart(settlement))
                         //{
@@ -743,11 +749,18 @@ public  static class SettlementGenerator
     }
 
 
-    public static bool CheckForIntersectionAgainstAll(List<Settlement_Road> toTestAgainst, Vector2 start, ref Vector2 end, out Vector2 intersection)
+    public static bool CheckForIntersectionAgainstAll(List<Settlement_Road> toTestAgainst, Vector2 start, ref Vector2 end, out Vector2 intersection,float width1=1f,float width2=1f,List<Settlement_Road> toIgnore=null)
     {
         for (int x = 0; x < toTestAgainst.Count; x++)
         {
-            if (LineUtil.IntersectRoadSegments2D(start, end, toTestAgainst[x].StartPos, toTestAgainst[x].EndPos, out intersection,1f,1f,false))
+            if (toIgnore != null)
+            {
+                if (toIgnore.Contains(toTestAgainst[x]))
+                {
+                    continue;
+                }
+            }
+            if (LineUtil.IntersectRoadSegments2D(start, end, toTestAgainst[x].StartPos, toTestAgainst[x].EndPos, out intersection,width1,width2,false))
             {
                 if (Vector2.Distance(start, intersection) > .1f)
                 {

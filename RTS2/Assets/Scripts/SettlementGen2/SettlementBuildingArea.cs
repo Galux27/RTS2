@@ -74,18 +74,18 @@ public static class SettlementBuildingAreaHelpers
         SettlementGenerator.CheckForIntersectionAgainstSettlementEdge(startPos, ref endPoint);
         Vector2 intersection = Vector2.zero;
 
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.roads, startPos, ref endPoint, out intersection);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.highways, startPos, ref endPoint, out intersection);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.avenues, startPos, ref endPoint, out intersection);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.roads, startPos, ref endPoint, out intersection, 5, 5);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.highways, startPos, ref endPoint, out intersection, 5, 5);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.avenues, startPos, ref endPoint, out intersection, 5, 5);
 
         Vector2 endPoint2 = startPos -( road.Direction.normalized * MaxAreaSize);
         SettlementGenerator.CheckForIntersectionAgainstSettlementEdge(startPos, ref endPoint2);
 
         CheckForIntersectionWithBuildingArea(startPos, ref endPoint2, generatingIn);
 
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.roads, startPos, ref endPoint2, out intersection);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.highways, startPos, ref endPoint2, out intersection);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.avenues, startPos, ref endPoint2, out intersection); float dist1 = Vector2.Distance(endPoint, startPos);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.roads, startPos, ref endPoint2, out intersection, 5, 5);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.highways, startPos, ref endPoint2, out intersection, 5, 5);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.avenues, startPos, ref endPoint2, out intersection, 5, 5); float dist1 = Vector2.Distance(endPoint, startPos);
         float dist2 = Vector2.Distance(endPoint2,startPos);
         if (dist2 > dist1)
         {
@@ -103,17 +103,17 @@ public static class SettlementBuildingAreaHelpers
         SettlementGenerator.CheckForIntersectionAgainstSettlementEdge(startPos, ref perpEndPoint);
 
         CheckForIntersectionWithBuildingArea(startPos, ref perpEndPoint, generatingIn);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.roads, startPos, ref perpEndPoint, out intersection);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.highways, startPos, ref perpEndPoint, out intersection);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.avenues, startPos, ref perpEndPoint, out intersection);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.roads, startPos, ref perpEndPoint, out intersection, 5, 5);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.highways, startPos, ref perpEndPoint, out intersection, 5, 5);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.avenues, startPos, ref perpEndPoint, out intersection, 5, 5);
 
         Vector2 perpEndPoint2 = startPos - (perp * MaxAreaSize);
         SettlementGenerator.CheckForIntersectionAgainstSettlementEdge(startPos, ref perpEndPoint2);
 
         CheckForIntersectionWithBuildingArea(startPos, ref perpEndPoint2, generatingIn);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.roads, startPos, ref perpEndPoint2, out intersection);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.highways, startPos, ref perpEndPoint2, out intersection);
-        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.avenues, startPos, ref perpEndPoint2, out intersection);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.roads, startPos, ref perpEndPoint2, out intersection, 5, 5);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.highways, startPos, ref perpEndPoint2, out intersection,5,5);
+        SettlementGenerator.CheckForIntersectionAgainstAll(generatingIn.avenues, startPos, ref perpEndPoint2, out intersection, 5, 5);
         float perpDist1 = Vector2.Distance(perpEndPoint, startPos);
         float perpDist2 = Vector2.Distance(perpEndPoint2, startPos);
        
@@ -184,7 +184,6 @@ public static class SettlementBuildingAreaHelpers
         //check if the end point of the shorter of the two lines can reach the longer
         //if so create the area using that intersection as the final point
         //else ababdon the area
-        return new SettlementBuildingArea(endPoint, perpEndPoint, startPos,perpEndPoint3);
     }
 
     static void CheckForIntersectionWithBuildingArea(Vector2 start,ref Vector2 end,GeneratedSettlement settlement)
