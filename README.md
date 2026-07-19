@@ -1,1 +1,1 @@
-An in progress RTS game by Richard Scott, most recent work will be on the RTSMap branch as of 18/04/25. Can be run using the "SampleScene" scene.
+An in progress RTS game by Richard Scott, check out the main branch and open the RTSWorld scene to run, takes a while (90s locally) to start up due to world generation.
