@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 public class SettlementTileArea 
 {
     public const int MinWidth = 10, MinHeight = 10;
-    public int[,] TileArea;
+    public int[,] TileArea, BuildingArea;
     Vector2 bottomLeft, topRight;
     int width,height;
     public bool Valid = true;
@@ -13,6 +13,7 @@ public class SettlementTileArea
     public SettlementTileArea(GeneratedSettlement settlement,Settlement_Settings settings)
     {
         TileArea = new int[Mathf.RoundToInt(settings.Size.x), Mathf.RoundToInt(settings.Size.y)];
+        BuildingArea= new int[Mathf.RoundToInt(settings.Size.x), Mathf.RoundToInt(settings.Size.y)];
         width = TileArea.GetLength(0);
         height= TileArea.GetLength(1);
        bottomLeft = settings.Center - (settings.Size / 2);
@@ -31,15 +32,15 @@ public class SettlementTileArea
         }
         for (int x = 0; x < settlement.avenues.Count; x++)
         {
-            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.avenues[x], settings, false), Sections.Count));
-            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.avenues[x], settings, true), Sections.Count));
+            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.avenues[x], settings, false), Sections.Count+1));
+            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.avenues[x], settings, true), Sections.Count + 1));
 
         }
 
         for (int x = 0; x < settlement.roads.Count; x++)
         {
-            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, false),Sections.Count));
-            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, true), Sections.Count));
+            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, false),Sections.Count + 1));
+            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, true), Sections.Count + 1));
 
         }
 
@@ -48,13 +49,27 @@ public class SettlementTileArea
             Sections[q].Expand(this);
             
             Debug.Log("Finished area was " + Sections[q].Low + "->" + Sections[q].High+","+(Sections[q].High- Sections[q].Low));
-            Sections[q].IsValid = Sections[q].DoesAreaMeetMinSize();
+            if (Sections[q].IsValid)
+            {
+                Sections[q].IsValid = Sections[q].DoesAreaMeetMinSize();
+            }
             if (Sections[q].IsValid) {
                 for (int x = Sections[q].Low.x; x < Sections[q].High.x; x++)
                 {
                     for (int y = Sections[q].Low.y; y < Sections[q].High.y; y++)
                     {
                         SetTileArea(x, y, Sections[q].ID);
+                    }
+                }
+                Sections[q].GenerateBuildingAreas();
+                for(int i = 0; i < Sections[q].BuildingAreas.Count; i++)
+                {
+                    for(int x = Sections[q].BuildingAreas[i].Low.x;x< Sections[q].BuildingAreas[i].High.x; x++)
+                    {
+                        for (int y = Sections[q].BuildingAreas[i].Low.y; y < Sections[q].BuildingAreas[i].High.y; y++)
+                        {
+                            SetBuildingTileArea(x, y, i+1);
+                        }
                     }
                 }
             }
@@ -87,7 +102,7 @@ public class SettlementTileArea
             {
                // if (TileArea[x, y] < 0)
                 {
-                    retVal.SetPixel(x, y, IntToColor(TileArea[x, y]));
+                    retVal.SetPixel(x, y, IntToColor(TileArea[x, y],x,y));
                 }
             }
         }
@@ -97,11 +112,27 @@ public class SettlementTileArea
         return retVal;
     }
 
-    Color IntToColor(int i)
+    Color IntToColor(int i,int x,int y)
     {
         if (i > 0)
         {
-            return Sections[i - 1].DebugColour;
+            if (Sections[i - 1].BuildingAreas.Count > 0 && CoordsValid(x,y))
+            {
+                try
+                {
+                    int val = Mathf.Clamp(BuildingArea[x, y] - 1, 0, int.MaxValue);
+                    return Sections[i - 1].BuildingAreas[val].DebugColor;
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError("error parsing " + i + "," + x + "," + y + "," + BuildingArea[x, y]+","+ Sections[i - 1].BuildingAreas.Count+","+Sections.Count+e.ToSafeString());
+                    return Color.yellow;
+                }
+            }
+            else
+            {
+                return Sections[i - 1].DebugColour;
+            }
         }
         if (i == -1)
         {
@@ -139,7 +170,7 @@ public class SettlementTileArea
         {
             for(int x = coords.x - width / 2; x < coords.x + width / 2; x++)
             {
-                for (int y = coords.y - width / 2; y < coords.y + width / 2; y++)
+                for (int y = coords.y - height / 2; y < coords.y + height / 2; y++)
                 {
                     if (CoordsValid(x, y))
                     {
@@ -162,6 +193,21 @@ public class SettlementTileArea
         }
         return true;
     }
+    void SetBuildingTileArea(int x, int y, int val)
+    {
+        try
+        {
+            //if (BuildingArea[x, y] == 0)
+            {
+                BuildingArea[x, y] = val;
+            }
+        }
+        catch
+        {
+            Debug.LogError("error setting " + x + "," + y+","+BuildingArea.GetLength(0)+","+BuildingArea.GetLength(1));
+        }
+    }
+
     void SetTileArea(int x,int y, int val)
     {
         try
@@ -203,20 +249,24 @@ public class SettlementTileAreaSection
     public Vector2Int Low, High;
     public Color DebugColour;
     public bool IsValid = true;
+    public List<BuildingTileArea> BuildingAreas = new List<BuildingTileArea>();
     public SettlementTileAreaSection(Vector2Int start,int id)
     {
         this.StartPosition = start;
         this.ID = id;
         Low = StartPosition;
         High=StartPosition;
-        ValidDirections = new List<TileAreaDir>();
-        ValidDirections.Add(TileAreaDir.HorizontalNegative);
-        ValidDirections.Add(TileAreaDir.HorizontalPositive);
-        ValidDirections.Add(TileAreaDir.VerticalNegative);
-        ValidDirections.Add(TileAreaDir.VerticalPositive);
+        ValidDirections = new List<TileAreaDir>
+        {
+            TileAreaDir.HorizontalNegative,
+            TileAreaDir.HorizontalPositive,
+            TileAreaDir.VerticalNegative,
+            TileAreaDir.VerticalPositive
+        };
+
         DebugColour = new Color(Random.value, 0, 0, 1f);
     }
-
+    #region AreaGeneration
     public bool DoesAreaMeetMinSize()
     {
         return High.x-Low.x>SettlementTileArea.MinWidth && High.y-Low.y>SettlementTileArea.MinHeight;
@@ -224,6 +274,19 @@ public class SettlementTileAreaSection
 
     public void Expand(SettlementTileArea area)
     {
+        try
+        {
+            if (area.TileArea[Low.x, Low.y] != 0)
+            {
+                IsValid = false;
+                return;
+            }
+        }
+        catch
+        {
+            IsValid = false;
+            return;
+        }
         while (ValidDirections.Count > 0)
         {
             if (ValidDirections.Contains(TileAreaDir.HorizontalNegative))
@@ -345,6 +408,50 @@ public class SettlementTileAreaSection
             High.y--;
             ValidDirections.Remove(TileAreaDir.VerticalPositive);
         }
+    }
+    #endregion
+
+    public void GenerateBuildingAreas()
+    {
+        BuildingTemplate houseTemplate = BuildingDataManager.Instance.BuildingTemplates["House"];
+        int width=Random.Range(houseTemplate.MinWidth,houseTemplate.MaxWidth);
+        int height = Random.Range(houseTemplate.MinHeight,houseTemplate.MaxHeight);
+
+        int areaWidth = High.x - Low.x;
+        int areaHeight = High.y - Low.y;
+
+        int modWidth = Mathf.FloorToInt(areaWidth / width);
+        int modHeight = Mathf.FloorToInt(areaHeight / height);
+        int remainderWidth = areaWidth % width;
+        int remainderHeight = areaHeight % height;
+        if (modWidth == 0 || modHeight == 0)
+        {
+            return;
+        }
+        Debug.Log("Total building areas will be " + modWidth + "x" + modHeight+" from " + Low);
+        Vector2Int size= new Vector2Int(width, height);
+        Vector2Int pos = Low;
+        for(int x = 0; x < modWidth; x++)
+        {
+            for(int y = 0; y < modHeight; y++)
+            {
+                pos.x = Low.x + (x * width);
+                pos.y = Low.y + (y * height);
+                BuildingAreas.Add(new BuildingTileArea(pos, pos + size));
+            }
+        }
+    }
+}
+
+public class BuildingTileArea
+{
+    public Vector2Int Low, High;
+    public Color DebugColor;
+    public BuildingTileArea(Vector2Int low,Vector2Int high)
+    {
+        Low = low;
+        High = high;
+        DebugColor = new Color(Random.value, Random.value, Random.value, 1f);
     }
 }
 

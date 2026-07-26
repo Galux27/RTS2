@@ -170,6 +170,8 @@ public  static class SettlementGenerator
                 Debug.DrawLine(settlement.BuildingAreas[x].FarAlongRoad, settlement.BuildingAreas[x].PerpFromFarAlong, Color.white, duration);
                 Debug.DrawLine(settlement.BuildingAreas[x].PerpFromStart, settlement.BuildingAreas[x].PerpFromFarAlong, Color.white, duration);
 
+
+
             }
             for (int q = 0; q < settlement.areas.GetLength(0); q++)
             {
