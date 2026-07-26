@@ -4,12 +4,17 @@ using Unity.VisualScripting;
 
 public class SettlementTileArea 
 {
+    public const int MinWidth = 10, MinHeight = 10;
     public int[,] TileArea;
     Vector2 bottomLeft, topRight;
+    int width,height;
+    public bool Valid = true;
     public List<SettlementTileAreaSection> Sections=new List<SettlementTileAreaSection>();
     public SettlementTileArea(GeneratedSettlement settlement,Settlement_Settings settings)
     {
         TileArea = new int[Mathf.RoundToInt(settings.Size.x), Mathf.RoundToInt(settings.Size.y)];
+        width = TileArea.GetLength(0);
+        height= TileArea.GetLength(1);
        bottomLeft = settings.Center - (settings.Size / 2);
        topRight = settings.Center + (settings.Size / 2);
         for (int x = 0; x < settlement.roads.Count; x++)
@@ -41,12 +46,16 @@ public class SettlementTileArea
         for(int q = 0; q < Sections.Count; q++)
         {
             Sections[q].Expand(this);
-            Debug.Log("Finished area was " + Sections[q].Low + "->" + Sections[q].High);
-            for(int x = Sections[q].Low.x; x < Sections[q].High.x; x++)
-            {
-                for (int y = Sections[q].Low.y; y < Sections[q].High.y; y++)
+            
+            Debug.Log("Finished area was " + Sections[q].Low + "->" + Sections[q].High+","+(Sections[q].High- Sections[q].Low));
+            Sections[q].IsValid = Sections[q].DoesAreaMeetMinSize();
+            if (Sections[q].IsValid) {
+                for (int x = Sections[q].Low.x; x < Sections[q].High.x; x++)
                 {
-                    SetTileArea(x, y, Sections[q].ID);
+                    for (int y = Sections[q].Low.y; y < Sections[q].High.y; y++)
+                    {
+                        SetTileArea(x, y, Sections[q].ID);
+                    }
                 }
             }
         }
@@ -65,7 +74,7 @@ public class SettlementTileArea
 
             pos=Vector2.Lerp(startPos, endPos, f);
             coords = ConvertPosToGridCoords(pos, settings);
-            SetTileArea(coords, RoadTypeToInt(road));
+            SetTileArea(coords, RoadTypeToInt(road),4,4);
         }
     }
 
@@ -124,16 +133,34 @@ public class SettlementTileArea
         }
     }
 
-    void SetTileArea(Vector2Int coords,int val)
+    void SetTileArea(Vector2Int coords,int val,int width,int height)
     {
         try
         {
-            TileArea[coords.x, coords.y] = val;
+            for(int x = coords.x - width / 2; x < coords.x + width / 2; x++)
+            {
+                for (int y = coords.y - width / 2; y < coords.y + width / 2; y++)
+                {
+                    if (CoordsValid(x, y))
+                    {
+                        TileArea[x, y] = val;
+                    }
+                }
+            }
         }
         catch
         {
             Debug.LogError("error setting " + coords);
         }
+    }
+
+    bool CoordsValid(int x,int y)
+    {
+        if (x < 0 || y < 0 || x >= width || y >= height)
+        {
+            return false;
+        }
+        return true;
     }
     void SetTileArea(int x,int y, int val)
     {
@@ -175,6 +202,7 @@ public class SettlementTileAreaSection
     public List<TileAreaDir> ValidDirections;
     public Vector2Int Low, High;
     public Color DebugColour;
+    public bool IsValid = true;
     public SettlementTileAreaSection(Vector2Int start,int id)
     {
         this.StartPosition = start;
@@ -187,6 +215,11 @@ public class SettlementTileAreaSection
         ValidDirections.Add(TileAreaDir.VerticalNegative);
         ValidDirections.Add(TileAreaDir.VerticalPositive);
         DebugColour = new Color(Random.value, 0, 0, 1f);
+    }
+
+    public bool DoesAreaMeetMinSize()
+    {
+        return High.x-Low.x>SettlementTileArea.MinWidth && High.y-Low.y>SettlementTileArea.MinHeight;
     }
 
     public void Expand(SettlementTileArea area)
