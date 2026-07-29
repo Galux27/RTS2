@@ -57,7 +57,7 @@ public class BuildingGenerator : MonoBehaviour
         }
     }
 
-    void ApplyBuidlingToWorld(GeneratedBuilding b)
+    public void ApplyBuidlingToWorld(GeneratedBuilding b)
     {
         Vector2Int pos = b.Position;
         RoomTile cur = null;
@@ -79,15 +79,24 @@ public class BuildingGenerator : MonoBehaviour
                     continue;
                 }
                 WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batchCoords, out chunkCoords, out localCoords);
-                obj = WorldChunkManager.Instance.GetChunkBatch(batchCoords).Chunks[chunkCoords.x, chunkCoords.y].GetEnvObjectNearPoint(pos, 2f);
-                ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(cur.FloorTile);
+                try
+                {
+                    obj = WorldChunkManager.Instance.GetChunkBatch(batchCoords).Chunks[chunkCoords.x, chunkCoords.y].GetEnvObjectNearPoint(pos, 2f);
+                }
+                catch
+                {
+                    Debug.LogError("Error trying to get object in batch " + (WorldChunkManager.Instance.GetChunkBatch(batchCoords) == null)+" "+batchCoords+","+chunkCoords+","+localCoords+","+b.Position);
+                    return;
+                }
+              
                 if (obj != null)
                 {
 
                     obj.DestroyInstance();
                     obj = null;
                 }
-                
+                ID = WorldRenderer.Instance.WorldTilesManager.GetTileID(cur.FloorTile);
+
                 //if (cur.HasDoor)
                 //{
 
@@ -97,7 +106,7 @@ public class BuildingGenerator : MonoBehaviour
                 //        , new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
                 //}
                 //else
-                
+
                 if (cur.HasWall)
                 {
 
@@ -194,10 +203,7 @@ public class BuildingGenerator : MonoBehaviour
  
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            GenerateBuilding();
-        }
+       
     }
 }
 [System.Serializable]

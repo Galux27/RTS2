@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using JetBrains.Annotations;
+using UnityEngine.UIElements;
 
 public class SettlementTileArea 
 {
@@ -74,8 +76,26 @@ public class SettlementTileArea
                 }
             }
         }
+
+        GenerateBuildingsInSections(settlement);
     }
 
+
+    public void GenerateBuildingsInSections(GeneratedSettlement settlement)
+    {
+       
+        for (int q = 0; q < Sections.Count; q++)
+        {
+            if (Sections[q].IsValid)
+            {
+                for (int i = 0; i < Sections[q].BuildingAreas.Count; i++)
+                {
+                    Sections[q].BuildingAreas[i].GenerateBuildingForArea(settlement);
+                }
+            }
+
+        }
+    }
 
     void ConvertSettlementRoadToGrid(Settlement_Road road, Settlement_Settings settings)
     {
@@ -428,6 +448,12 @@ public class SettlementTileAreaSection
         {
             return;
         }
+        float xRemainder = remainderWidth / modWidth;
+        float yRemainder = remainderHeight / modHeight;
+        if (modWidth == 0 || modHeight == 0)
+        {
+            return;
+        }
         Debug.Log("Total building areas will be " + modWidth + "x" + modHeight+" from " + Low);
         Vector2Int size= new Vector2Int(width, height);
         Vector2Int pos = Low;
@@ -435,8 +461,8 @@ public class SettlementTileAreaSection
         {
             for(int y = 0; y < modHeight; y++)
             {
-                pos.x = Low.x + (x * width);
-                pos.y = Low.y + (y * height);
+                pos.x = Low.x + (x * width)+ Mathf.FloorToInt(x*xRemainder);
+                pos.y = Low.y + (y * height) + Mathf.FloorToInt(y * yRemainder);
                 BuildingAreas.Add(new BuildingTileArea(pos, pos + size));
             }
         }
@@ -452,6 +478,16 @@ public class BuildingTileArea
         Low = low;
         High = high;
         DebugColor = new Color(Random.value, Random.value, Random.value, 1f);
+    }
+    public GeneratedBuilding MyBuilding;
+    public void GenerateBuildingForArea(GeneratedSettlement settlement)
+    {
+        Vector2Int Size = High - Low;
+        Vector2Int Position =new Vector2Int(Mathf.RoundToInt( settlement.Corners[0].x), Mathf.RoundToInt(settlement.Corners[0].y))+Low;
+        
+        BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
+        Debug.Log("Generating building at " + Position + " size " + Size);
+        MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Position, BuildingDataManager.Instance.BuildingTemplates["House"], 50);
     }
 }
 

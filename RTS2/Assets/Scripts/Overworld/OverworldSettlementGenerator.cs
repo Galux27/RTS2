@@ -220,6 +220,10 @@ public class OverworldSettlement
         Debug.LogError("Generated settlement ID " + Id + "," + settings.Center + "," + settings.Size+","+GeneratedInstance.highways.Count+","+GeneratedInstance.avenues.Count+","+GeneratedInstance.roads.Count);
 
         GeneratedInstance.PopulateAreas(settings, WorldChunkManager.ChunkBatchSize);
+
+        SettlementTileArea area = new SettlementTileArea(GeneratedInstance, settings);
+        GeneratedInstance.AssignBuildingsToArea(area, 64,settings);
+
         SettlementGenerator.DebugDrawSettlementRoads(GeneratedInstance, 100f);
 
     }

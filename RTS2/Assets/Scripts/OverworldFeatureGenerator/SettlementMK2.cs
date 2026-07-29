@@ -73,6 +73,8 @@ public class SettlementMK2 : OverworldFeatureToWorldConverter
         {
             toGenerateIn.AddRoad(new RoadData(roadsToAdd[x].StartPos, roadsToAdd[x].endPos, road.RoadWidth, RoadType.Backroad));
         }
+
+        toGenerateIn.SetBuildings(area.Buildings);
         Debug.LogError("Total Roads Found " + toGenerateIn.Roads.Count);
         //toGenerateIn.Roads = roads;
         //if (toGenerateIn.Zones.Count > 0)

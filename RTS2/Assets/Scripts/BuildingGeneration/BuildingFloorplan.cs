@@ -6,7 +6,7 @@ public class BuildingFloorplan
 {
     public virtual GeneratedBuilding Generate(RoomGenerator RoomGen,int width,int height,Vector2Int pos,BuildingTemplate template,int maxPasses)
     {
-        
+        Debug.Log("Generating building at " + pos + " width " + width + "," + height );
         GeneratedBuilding building = new GeneratedBuilding(width, height, pos,template.BuildingName );
         int count = 0;
         GeneratedRoom curRoom = null;

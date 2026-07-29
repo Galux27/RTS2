@@ -55,42 +55,7 @@ public  static class SettlementGenerator
 
     static void GenerateBuildingArea(GeneratedSettlement settlement)
     {
-        SettlementBuildingArea area = null;
-        SettlementBuildingArea area2 = null;
-        for(int x = 0; x < settlement.roads.Count; x++)
-        {
-            if (settlement.roads[x].IsValidForAreaStart(settlement))
-            {
-                area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.roads[x], settlement, false);
-
-                area2 = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.roads[x], settlement, true);
-                if (area != null)
-                {
-                    settlement.BuildingAreas.Add(area);
-                }
-                if (area2 != null)
-                {
-                    settlement.BuildingAreas.Add(area2);
-                }
-                area = null;
-                area2 = null;
-            }
-            }
-
-            for (int x = 0; x < settlement.avenues.Count; x++)
-        {
-            area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.avenues[x], settlement, false);
-            if (area != null)
-            {
-                settlement.BuildingAreas.Add(area);
-            }
-            area = SettlementBuildingAreaHelpers.GenerateBuildingArea(settlement.avenues[x], settlement, true);
-            if (area != null)
-            {
-                settlement.BuildingAreas.Add(area);
-            }
-            area = null;
-        }
+        
     }
 
     static List<GeneratedSettlementArea> NeighbouringAreas(int x,int y)
@@ -163,16 +128,7 @@ public  static class SettlementGenerator
     {
         if (settlement != null && settlement.areas != null)
         {
-            for (int x = 0; x < settlement.BuildingAreas.Count; x++)
-            {
-                Debug.DrawLine(settlement.BuildingAreas[x].Origin, settlement.BuildingAreas[x].FarAlongRoad, Color.white, duration);
-                Debug.DrawLine(settlement.BuildingAreas[x].Origin, settlement.BuildingAreas[x].PerpFromStart, Color.white, duration);
-                Debug.DrawLine(settlement.BuildingAreas[x].FarAlongRoad, settlement.BuildingAreas[x].PerpFromFarAlong, Color.white, duration);
-                Debug.DrawLine(settlement.BuildingAreas[x].PerpFromStart, settlement.BuildingAreas[x].PerpFromFarAlong, Color.white, duration);
-
-
-
-            }
+           
             for (int q = 0; q < settlement.areas.GetLength(0); q++)
             {
                 for (int r = 0; r < settlement.areas.GetLength(1); r++)
@@ -959,7 +915,6 @@ public class GeneratedSettlement
         avenues = new List<Settlement_Road>(),
         roads = new List<Settlement_Road>();
 
-    public List<SettlementBuildingArea> BuildingAreas=new List<SettlementBuildingArea>();
 
     public Dictionary<uint, Settlement_Road> RoadDictionary = new Dictionary<uint, Settlement_Road>();
 
@@ -1003,8 +958,8 @@ public class GeneratedSettlement
     public GeneratedSettlementArea[,] areas;
     int width;
     int height;
-    Vector2 low;
-    Vector2 high;
+    Vector2Int low;
+    Vector2Int high;
     Vector2Int Batch, Chunk, Coords;
 
     public List<Settlement_Road> GetRoadsInWorldBatch(WorldChunkBatch batch,List<Settlement_Road> toGetFrom)
@@ -1108,12 +1063,64 @@ public class GeneratedSettlement
         return areas[arrayCoords.x, arrayCoords.y];
     }
 
+    public void AssignBuildingsToArea(SettlementTileArea tileArea, int areaSize,Settlement_Settings settings)
+    {
+        int width = areas.GetLength(0) - 1;
+        int height = areas.GetLength(1) - 1;
+
+        low = Vec2ToInt(settings.Center - (settings.Size * .5f));
+        high = Vec2ToInt(settings.Center + (settings.Size * .5f));
+        float xLerp = 0f, yLerp = 0f;
+        int xCoord=0,yCoord=0;  
+        Vector2Int workingPos = Vector2Int.zero;
+
+        Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), tile = new Vector2Int();
+        if (GameObject.FindObjectOfType<WorldChunkManager>() != null)
+        {
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(this.low.x, this.low.y, out batch, out chunk, out tile);
+        }
+        else
+        {
+            batch = new Vector2Int(-(width / 2) * areaSize, -(height / 2) * areaSize);
+        }
+
+        for (int q = 0; q < tileArea.Sections.Count; q++)
+        {
+            if (tileArea.Sections[q].IsValid)
+            {
+                for(int x = 0; x < tileArea.Sections[q].BuildingAreas.Count; x++)
+                {
+                    workingPos = batch + tileArea.Sections[q].BuildingAreas[x].Low;
+                    xLerp = Mathf.InverseLerp(low.x, high.x, workingPos.x);
+                    yLerp = Mathf.InverseLerp(low.y, high.y, workingPos.y);
+                    xCoord = Mathf.FloorToInt( Mathf.Lerp(0, width, xLerp));
+                    yCoord = Mathf.FloorToInt(Mathf.Lerp(0, height, yLerp));
+                    areas[xCoord, yCoord].AddBuilding(tileArea.Sections[q].BuildingAreas[x]); 
+
+                }
+            }
+        }
+
+        for(int x = 0; x < areas.GetLength(0); x++)
+        {
+            for(int y=0;y<areas.GetLength(1); y++)
+            {
+                Debug.Log("Area: "+x + "," + y + " has " + areas[x, y].Buildings.Count + " buildings ");
+            }
+        }
+    }
+
+    Vector2Int Vec2ToInt(Vector2 val)
+    {
+        return new Vector2Int(Mathf.RoundToInt(val.x), Mathf.RoundToInt(val.y));
+    }
+
     public void GenerateSettlementAreas(Settlement_Settings settings,int areaSize)
     {
         width = Mathf.RoundToInt( settings.Size.x / areaSize);
         height = Mathf.RoundToInt(settings.Size.y / areaSize);
-        low = settings.Center - (settings.Size * .5f);
-        high = settings.Center + (settings.Size * .5f);
+        low = Vec2ToInt( settings.Center - (settings.Size * .5f));
+        high = Vec2ToInt(settings.Center + (settings.Size * .5f));
 
         Vector2Int batch = new Vector2Int(), chunk = new Vector2Int(), tile = new Vector2Int();
         if (GameObject.FindObjectOfType<WorldChunkManager>() != null)
@@ -1134,7 +1141,7 @@ public class GeneratedSettlement
                 areaBatch = new Vector2Int(batch.x + (WorldChunkManager.ChunkBatchSize * x), batch.y + (WorldChunkManager.ChunkBatchSize * y));
                 overworldTile = new Vector2Int(areaBatch.x / WorldChunkManager.ChunkBatchSize, areaBatch.y / WorldChunkManager.ChunkBatchSize);
                 areas[x, y] = new GeneratedSettlementArea(
-                    new Vector2(low.x+ (WorldChunkManager.ChunkBatchSize * x), low.y + (WorldChunkManager.ChunkBatchSize * y)),
+                    new Vector2Int(low.x+ (WorldChunkManager.ChunkBatchSize * x), low.y + (WorldChunkManager.ChunkBatchSize * y)),
                     areaBatch,overworldTile);
                 //  Debug.Log("Setting overworld tile: " + overworldTile + " has settlement " + OverworldGenerator.Instance.GetOverworldTile(overworldTile).Features.Contains(OverworldFeature.Settlement));
                 if (GameObject.FindObjectOfType<WorldChunkManager>() != null)
@@ -1265,7 +1272,7 @@ public class GeneratedSettlement
 
 public class GeneratedSettlementArea
 {
-    public GeneratedSettlementArea(Vector2 bottomLeft,Vector2Int batchCoords,Vector2Int overworldCoords)
+    public GeneratedSettlementArea(Vector2Int bottomLeft,Vector2Int batchCoords,Vector2Int overworldCoords)
     {
         Point = bottomLeft;
         this.batchCoords = batchCoords;
@@ -1281,9 +1288,10 @@ public class GeneratedSettlementArea
     }
    
     public Color DebugColour;
-    public Vector2 Point;
+    public Vector2Int Point;
     public Vector2Int batchCoords,topCorner,OverworldTile;
     public List<Settlement_Road> highways = new List<Settlement_Road>(), avenues = new List<Settlement_Road>(), roads = new List<Settlement_Road>();
+    public List<BuildingTileArea> Buildings = new List<BuildingTileArea>();
     public bool CanUse = true;
     public void AddHighway(Settlement_Road highway)
     {
@@ -1291,6 +1299,12 @@ public class GeneratedSettlementArea
 
         highways.Add(highway);
     }
+
+    public void AddBuilding(BuildingTileArea area)
+    {
+        Buildings.Add(area);
+    }
+
     public void AddAvenue(Settlement_Road highway)
     {
         Debug.Log("Added road at " + vecToInt(highway.StartPos) + ","+ vecToInt(highway.endPos) + " to " + batchCoords);

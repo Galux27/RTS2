@@ -117,7 +117,7 @@ public class WorldChunkManager : MonoBehaviour
             {
                 ChunkBatches[coords].NeedsGeneration = !ExistingChunkData.ContainsKey(coords);
             }
-
+            Debug.LogError("Generating chunk batch " + coords);
             ChunkBatches[coords].InitWorldChunks();
             MapGenerator.Instance.GenerateMap(ChunkBatches[coords]);
             ChunkBatches[coords].GeneratePathfindingGroups();

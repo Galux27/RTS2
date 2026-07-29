@@ -165,14 +165,19 @@ public class WorldChunkBatch : MonoBehaviour
         return intersection;
     }
     public List<BuildingZone> Zones = new List<BuildingZone>();
+    public List<BuildingTileArea> Buildings = new List<BuildingTileArea>();
+
+    public void SetBuildings(List<BuildingTileArea> buildings)
+    {
+        Buildings = buildings;
+    }
+
+
     public void GenerateBuildings()
     {
-        for(int x = 0; x < Zones.Count; x++)
+        for(int x = 0; x < Buildings.Count; x++)
         {
-            for(int y = 0; y < Zones[x].Buildings.Count; y++)
-            {
-                BuildingGenerator.Instance.GenerateBuilding(Zones[x].Buildings[y]);
-            }
+            BuildingGenerator.Instance.ApplyBuidlingToWorld(Buildings[x].MyBuilding);      
         }
     }
 
