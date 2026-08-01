@@ -741,22 +741,30 @@ public class WorldChunkBatch : MonoBehaviour
         List<string> dataFromFile = SerializationHelpers.ReadFile(path);
         for (int q = 0; q < dataFromFile.Count; q++)
         {
-            try
+            if (!dataFromFile[q].Contains(DataKeys.RoadType))
             {
-                WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
-                int x = wc.LocalXCoord;
-                int y = wc.LocalYCoord;
-                wc.SetAllChunkBatches(this.coords);
+                try
+                {
+                    WorldChunk wc = DataReaders.ParseWorldChunk(dataFromFile[q]);
+                    int x = wc.LocalXCoord;
+                    int y = wc.LocalYCoord;
+                    wc.SetAllChunkBatches(this.coords);
 
-                Chunks[x, y] = wc;
+                    Chunks[x, y] = wc;
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError("error parsing chunk " + dataFromFile[q] + "," + dataFromFile.Count);
+                    Debug.LogError(e.ToString());
+                }
+
             }
-            catch(System.Exception e)
+            else
             {
-                Debug.LogError("error parsing chunk " + dataFromFile[q]);
-                Debug.LogError(e.ToString());
+                Debug.Log("Write something to parse road " + dataFromFile[q]);
             }
 
-            }
+        }
         for (int x = 0; x < Chunks.GetLength(0); x++)
         {
             for (int y = 0; y < Chunks.GetLength(1); y++)

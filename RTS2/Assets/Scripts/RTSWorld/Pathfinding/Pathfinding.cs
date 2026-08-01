@@ -93,27 +93,33 @@ public static class Pathfinding
 
            
             index = node.GetNeighbourInDireciton(0, -1);
-            checking = node.neighbours[index].Node;
-            neighbourToMeIndex = checking.GetNeighbourInDireciton(0, 1);
-            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y - 1, out wallBatch, out wallChunk, out wallTile);
-            compWall = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y ].WallSegments[wallTile.x, wallTile.y];
-            if (compWall.HasDoor == false)
-            {
-                node.neighbours[index].IsAccessable = false;
+            if (index >= 0) { 
+                checking = node.neighbours[index].Node;
+                neighbourToMeIndex = checking.GetNeighbourInDireciton(0, 1);
+                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x, y - 1, out wallBatch, out wallChunk, out wallTile);
+                compWall = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y ].WallSegments[wallTile.x, wallTile.y];
+                if (compWall.HasDoor == false)
+                {
+                    node.neighbours[index].IsAccessable = false;
 
-                checking.neighbours[neighbourToMeIndex].IsAccessable = false;
-            }
+                    checking.neighbours[neighbourToMeIndex].IsAccessable = false;
+                }
 
             
-            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x - 1, y, out wallBatch, out wallChunk, out wallTile);
-            compWall = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y ].WallSegments[wallTile.x, wallTile.y];
-            if (compWall.HasDoor == false) { 
-                index = node.GetNeighbourInDireciton(-1, 0);
-            checking = node.neighbours[index].Node;
-            node.neighbours[index].IsAccessable = false;
-            neighbourToMeIndex = checking.GetNeighbourInDireciton(1, 0);
-            checking.neighbours[neighbourToMeIndex].IsAccessable = false;
-        }
+                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x - 1, y, out wallBatch, out wallChunk, out wallTile);
+                compWall = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y ].WallSegments[wallTile.x, wallTile.y];
+                    if (compWall.HasDoor == false)
+                    {
+                        index = node.GetNeighbourInDireciton(-1, 0);
+                    if (index > -1)
+                    {
+                        checking = node.neighbours[index].Node;
+                        node.neighbours[index].IsAccessable = false;
+                        neighbourToMeIndex = checking.GetNeighbourInDireciton(1, 0);
+                        checking.neighbours[neighbourToMeIndex].IsAccessable = false;
+                    }
+                    }
+            }
             
 
              

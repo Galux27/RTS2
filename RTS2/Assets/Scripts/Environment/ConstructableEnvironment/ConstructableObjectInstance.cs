@@ -94,11 +94,15 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     public override void CleanupInstance()
     {
-        if (Object.GetComponent<ConstructableObjectWorldReference>())
+        if (Object != null)
         {
-            Component.Destroy(Object.GetComponent<ConstructableObjectWorldReference>());
+            if (Object.GetComponent<ConstructableObjectWorldReference>()!=null)
+            {
+                Component.Destroy(Object.GetComponent<ConstructableObjectWorldReference>());
+            }
+            OnObjectDeselected();
         }
-        OnObjectDeselected();
+       
         if (ConstructableObjectManager.Instance.AllObjects[ObjectKey].RequiresUpdate)
         {
             GameController.Instance.OnUpdate -= OnUpdate;

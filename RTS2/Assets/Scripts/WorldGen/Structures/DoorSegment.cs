@@ -8,15 +8,12 @@ public class DoorSegment : WallSegment
     public DoorSegment(int x, int y, Tilemap toPlaceOn, WallTile wallType,int localX,int localY,bool render=true) : base(x, y,wallType,localX,localY)
     {
         WallType = WallType.Door;
-
+        Debug.Log("Created door at " + x + "," + y + " render " + render);
         myAnim = WallHelpers.GetDoorVisual(this, WorldController.Instance.WallManager);
-        DoorAnimator=new TilemapAnimator(myAnim,toPlaceOn,new Vector3Int(x,y,0));
+        DoorAnimator=new TilemapAnimator(myAnim,toPlaceOn,new Vector3Int(x,y,0),render);
         DoorAnimator.OnEnd += OnAnimEnd;
-        if (render)
-        {
-            SetTile(myAnim.AnimationFrames[0]);
-        }
-        }
+        SetTile(myAnim.AnimationFrames[0]);
+    }
         TilemapAnimation myAnim;
     public TilemapAnimator DoorAnimator;
     public int UnitsInTile = 0;
@@ -49,6 +46,18 @@ public class DoorSegment : WallSegment
         return toUse.MySenses.Intelligence >= 50;
     }
 
+    public override void UnRender()
+    {
+        Debug.Log("Un rendering wall at ");
+        DoorAnimator.OnUnrender();
+        base.UnRender();
+    }
+    public override void RenderWall()
+    {
+        Debug.Log("Rendering door at ");
+        base.RenderWall();
+        DoorAnimator.OnRender();
+    }
     public bool NeedToOpenDoor()
     {
         return currentState == DoorState.Closed || currentState == DoorState.Closing;

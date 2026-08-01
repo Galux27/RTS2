@@ -776,7 +776,7 @@ public class WorldChunk:ISerialize
         {
             for (int y = 0; y < WallSegments.GetLength(1); y++)
             {
-                if (WallSegments[x, y].HasWall)
+                if (WallSegments[x, y].HasWall|| WallSegments[x, y].HasDoor)
                 {
                     WallHelpers.CalculateTileType(ref WallSegments[x, y], WorldController.Instance.WallManager, WallSegments[x, y].baseWallType);
                     WallSegments[x, y].RenderWall();

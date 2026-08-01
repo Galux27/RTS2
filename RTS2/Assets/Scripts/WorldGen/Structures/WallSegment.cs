@@ -102,13 +102,13 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize,ObjectBounds
               ToDraw = tile;
     }
 
-    public void RenderWall()
+    public virtual void RenderWall()
     {
         WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), ToDraw);
         Drawn = true;
     }
 
-    public void UnRender()
+    public virtual void UnRender()
     {
         WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), null) ;
 

@@ -16,14 +16,17 @@ public class TilemapAnimator
     
 
 
-    public TilemapAnimator(TilemapAnimation animation,Tilemap toEdit, Vector3Int coords)
+    public TilemapAnimator(TilemapAnimation animation,Tilemap toEdit, Vector3Int coords,bool InitTileSprite=false)
     {
         Animation = animation;
         ToEdit = toEdit;
         Timer = animation.TimePerFrame;
         Coords = coords;
         TilemapAnimationController.Instance.AddAnimator(this);
-        UpdateTile();
+        if (InitTileSprite)
+        {
+            UpdateTile();
+        }
     }
 
     public void Cleanup()
@@ -80,6 +83,17 @@ public class TilemapAnimator
         index=Mathf.Clamp(index, 0, Animation.AnimationFrames.Count-1);
         ToEdit.SetTile(Coords, Animation.AnimationFrames[index]);
         OnFrameChange?.Invoke();
+    }
+
+    public void OnRender()
+    {
+        UpdateTile();
+    }
+
+    public void OnUnrender()
+    {
+        ToEdit.SetTile(Coords, null);
+
     }
 
     public Action OnStart, OnEnd, OnFrameChange;

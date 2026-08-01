@@ -490,10 +490,35 @@ public class SettlementTileAreaSection
         }
         Vector2Int size= new Vector2Int(width, height);
         Vector2Int pos = Low;
-       
-        for(int x = Low.x+horizontalBorder; x < High.x - (width+horizontalBorder); x+=width+horizontalSpacing)
+
+        int xStart = Low.x + horizontalBorder;
+        int yStart = Low.y + verticalBorder;
+        int xEnd = High.x - (width + horizontalBorder);
+        int yEnd = High.y - (height + verticalBorder);
+        int xIncrement = width + horizontalSpacing;
+        int yIncrement = height + verticalBorder;
+        int xRemainder = xStart;
+        int xCount = 0;
+        int yCount = 0;
+        while (xRemainder + xIncrement < xEnd)
         {
-            for (int y = Low.y+verticalBorder; y < High.y - (height+verticalBorder); y +=height + verticalSpacing)
+            xCount++;
+            xRemainder += xIncrement;
+        }
+        int yRemainder = yStart;
+        while(yRemainder + yIncrement < yEnd)
+        {
+            yCount++;
+            yRemainder += yIncrement;
+        }
+        yRemainder = yEnd - yRemainder;
+        xRemainder = xEnd - xRemainder;
+        yRemainder /= Mathf.Max(1, yCount);
+        xRemainder/=Mathf.Max(1, xCount);
+
+        for (int x =xStart; x <xEnd; x+=xIncrement+xRemainder)
+        {
+            for (int y = yStart; y < yEnd; y +=yIncrement+yRemainder)
             {
                 pos.x = x;
                 pos.y=y;
