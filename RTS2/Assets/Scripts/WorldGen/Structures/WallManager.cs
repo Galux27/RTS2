@@ -361,7 +361,7 @@ public class WallManager
                     }
                     wall = WallHelpers.GetWallAtCoords(x1, y1);
 
-                    if (wall.HasWall)
+                    if (wall!=null && wall.HasWall)
                     {
                         WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
                         if (toGetFrom.IsRendered)

@@ -75,7 +75,7 @@ public class WorldChunkManager : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType<WorldChunkManager>();
-                if (instance.IsInit==false)
+                if (instance!=null && instance.IsInit==false)
                 {
                     instance.Init();
                 }
@@ -586,7 +586,7 @@ public class WorldChunkManager : MonoBehaviour
 
     public void RemoveContainerObject(Inventory toRemove)
     {
-        GetWorldChunkBatchFromPosition(toRemove.transform.position).RemoveContainerObject(toRemove);
+        GetWorldChunkBatchFromPosition(toRemove.transform.position)?.RemoveContainerObject(toRemove);
 
     }
 

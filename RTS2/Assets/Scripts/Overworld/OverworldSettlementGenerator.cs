@@ -226,6 +226,12 @@ public class OverworldSettlement
 
         SettlementGenerator.DebugDrawSettlementRoads(GeneratedInstance, 100f);
 
+#if UNITY_EDITOR
+        DebugCheats.Instance.LastSettlement = GeneratedInstance;
+        DebugCheats.Instance.LastArea = area;
+        DebugCheats.Instance.LastSettings = settings;
+#endif
+
     }
 
 

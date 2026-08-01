@@ -94,7 +94,10 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
     public override void CleanupInstance()
     {
-       Component.Destroy(Object.GetComponent<ConstructableObjectWorldReference>());
+        if (Object.GetComponent<ConstructableObjectWorldReference>())
+        {
+            Component.Destroy(Object.GetComponent<ConstructableObjectWorldReference>());
+        }
         OnObjectDeselected();
         if (ConstructableObjectManager.Instance.AllObjects[ObjectKey].RequiresUpdate)
         {

@@ -24,7 +24,7 @@ public class Inventory : MonoBehaviour, Storage, ISerialize
     {
         if (!this.GetComponent<Unit>())
         {
-            WorldChunkManager.Instance.RemoveContainerObject(this);
+            WorldChunkManager.Instance?.RemoveContainerObject(this);
             //Vector2Int chunk = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(this.transform.position);
             //WorldChunkManager.Instance.Chunks[chunk.x, chunk.y].RemoveContainerObject(this);
         }

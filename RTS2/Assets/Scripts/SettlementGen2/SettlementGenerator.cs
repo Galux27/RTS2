@@ -1068,6 +1068,7 @@ public class GeneratedSettlement
         int width = areas.GetLength(0) - 1;
         int height = areas.GetLength(1) - 1;
 
+
         low = Vec2ToInt(settings.Center - (settings.Size * .5f));
         high = Vec2ToInt(settings.Center + (settings.Size * .5f));
         float xLerp = 0f, yLerp = 0f;
@@ -1088,16 +1089,25 @@ public class GeneratedSettlement
         {
             if (tileArea.Sections[q].IsValid)
             {
-                for(int x = 0; x < tileArea.Sections[q].BuildingAreas.Count; x++)
+                if (WorldBuldingMoniter.Instance != null)
                 {
-                    workingPos = batch + tileArea.Sections[q].BuildingAreas[x].Low;
-                    xLerp = Mathf.InverseLerp(low.x, high.x, workingPos.x);
-                    yLerp = Mathf.InverseLerp(low.y, high.y, workingPos.y);
-                    xCoord = Mathf.FloorToInt( Mathf.Lerp(0, width, xLerp));
-                    yCoord = Mathf.FloorToInt(Mathf.Lerp(0, height, yLerp));
-                    areas[xCoord, yCoord].AddBuilding(tileArea.Sections[q].BuildingAreas[x]); 
-
+                    WorldBuldingMoniter.Instance.AddBuildingZones(tileArea.Sections[q].BuildingAreas);
                 }
+                else
+                {
+                    for (int x = 0; x < tileArea.Sections[q].BuildingAreas.Count; x++)
+                    {
+
+                        workingPos = tileArea.Sections[q].BuildingAreas[x].Low;
+                        xLerp = Mathf.InverseLerp(low.x, high.x, workingPos.x);
+                        yLerp = Mathf.InverseLerp(low.y, high.y, workingPos.y);
+                        xCoord = Mathf.FloorToInt(Mathf.Lerp(0, width, xLerp));
+                        yCoord = Mathf.FloorToInt(Mathf.Lerp(0, height, yLerp));
+                        areas[xCoord, yCoord].AddBuilding(tileArea.Sections[q].BuildingAreas[x]);
+
+                    }
+                }
+               
             }
         }
 

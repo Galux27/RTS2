@@ -212,6 +212,7 @@ public class GeneratedBuilding
     public List<GeneratedRoom> MyRooms;
     public int Width, Height;
     public Vector2Int Position;
+
     public RoomTile[,] Tiles;
     List<Vector2Int> Edges;
     public Dictionary<int, RoomLink> Links;
@@ -229,6 +230,11 @@ public class GeneratedBuilding
     bool InRange(int x,int y)
     {
         return x>=0&&y>=0&&x<Width&&y<Height;
+    }
+
+    public Vector2Int GetTopCorner()
+    {
+        return Position+new Vector2Int(Width,Height);   
     }
 
     bool isDirectlyAdjacent(int v1,int v2)

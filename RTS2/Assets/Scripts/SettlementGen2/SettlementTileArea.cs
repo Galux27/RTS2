@@ -20,17 +20,24 @@ public class SettlementTileArea
         height= TileArea.GetLength(1);
        bottomLeft = settings.Center - (settings.Size / 2);
        topRight = settings.Center + (settings.Size / 2);
+        RoadDetails road = null;
         for (int x = 0; x < settlement.roads.Count; x++)
         {
-            ConvertSettlementRoadToGrid(settlement.roads[x], settings);
+            road = RoadTypeManager.Instance.AllRoadDetails[RoadType.Backroad.ToString()];
+
+            ConvertSettlementRoadToGrid(settlement.roads[x], settings,road);
         }
         for (int x = 0; x < settlement.avenues.Count; x++)
         {
-            ConvertSettlementRoadToGrid(settlement.avenues[x], settings);
+            road = RoadTypeManager.Instance.AllRoadDetails[RoadType.MinorRoad.ToString()];
+
+            ConvertSettlementRoadToGrid(settlement.avenues[x], settings, road);
         }
         for (int x = 0; x < settlement.highways.Count; x++)
         {
-            ConvertSettlementRoadToGrid(settlement.highways[x], settings);
+            road = RoadTypeManager.Instance.AllRoadDetails[RoadType.MajorRoad.ToString()];
+
+            ConvertSettlementRoadToGrid(settlement.highways[x], settings, road);
         }
         for (int x = 0; x < settlement.avenues.Count; x++)
         {
@@ -76,9 +83,13 @@ public class SettlementTileArea
                 }
             }
         }
-
+        for (int q = 0; q < Sections.Count; q++)
+        {
+            Sections[q].ApplyWorldOffsetToArea(settings);
+        }
         GenerateBuildingsInSections(settlement);
-    }
+        
+        }
 
 
     public void GenerateBuildingsInSections(GeneratedSettlement settlement)
@@ -97,7 +108,7 @@ public class SettlementTileArea
         }
     }
 
-    void ConvertSettlementRoadToGrid(Settlement_Road road, Settlement_Settings settings)
+    void ConvertSettlementRoadToGrid(Settlement_Road road, Settlement_Settings settings,RoadDetails roadDeets)
     {
         Vector2 startPos = road.StartPos;
         Vector2 endPos = road.EndPos;
@@ -109,7 +120,7 @@ public class SettlementTileArea
 
             pos=Vector2.Lerp(startPos, endPos, f);
             coords = ConvertPosToGridCoords(pos, settings);
-            SetTileArea(coords, RoadTypeToInt(road),4,4);
+            SetTileArea(coords, RoadTypeToInt(road),roadDeets.RoadWidth+roadDeets.EdgeWidth+2, roadDeets.RoadWidth + roadDeets.EdgeWidth+2);
         }
     }
 
@@ -270,6 +281,33 @@ public class SettlementTileAreaSection
     public Color DebugColour;
     public bool IsValid = true;
     public List<BuildingTileArea> BuildingAreas = new List<BuildingTileArea>();
+
+    public void ApplyWorldOffsetToArea(Settlement_Settings settings)
+    {
+        Vector2Int bottomCorner = new Vector2Int(Mathf.RoundToInt( settings.Center.x - (settings.Size.x / 2)),Mathf.RoundToInt( settings.Center.y - (settings.Size.y / 2)));
+        Low += bottomCorner;
+        High += bottomCorner;
+        for(int x = 0; x < BuildingAreas.Count; x++)
+        {
+            BuildingAreas[x].ApplyWorldOffsetToArea(bottomCorner);
+        }
+    }
+
+
+    public void DebugDrawArea()
+    {
+     
+        Vector3 low = new Vector3(Low.x, Low.y);
+        Vector3 high = new Vector3(High.x, High.y);
+
+        Vector3 c1 = new Vector3(Low.x, High.y);
+        Vector3 c2 = new Vector3(High.x, Low.y);
+        Debug.DrawLine(low , c1, DebugColour);
+        Debug.DrawLine( c1,high, DebugColour);
+        Debug.DrawLine( high,c2, DebugColour);
+        Debug.DrawLine(c2, low, DebugColour);
+
+    }
     public SettlementTileAreaSection(Vector2Int start,int id)
     {
         this.StartPosition = start;
@@ -436,34 +474,31 @@ public class SettlementTileAreaSection
         BuildingTemplate houseTemplate = BuildingDataManager.Instance.BuildingTemplates["House"];
         int width=Random.Range(houseTemplate.MinWidth,houseTemplate.MaxWidth);
         int height = Random.Range(houseTemplate.MinHeight,houseTemplate.MaxHeight);
-
         int areaWidth = High.x - Low.x;
         int areaHeight = High.y - Low.y;
+        int horizontalSpacing = 2, verticalSpacing = 2;
+        int horizontalBorder=2,verticalBorder=2;
+        if(Low.x + width + (horizontalSpacing + horizontalBorder) > High.x - (horizontalBorder))
+        {
+            horizontalSpacing = 0;
+            
+        }
+        if (Low.y + height + (verticalSpacing + verticalBorder) > High.y - (verticalBorder))
+        {
+            verticalSpacing = 0;
 
-        int modWidth = Mathf.FloorToInt(areaWidth / width);
-        int modHeight = Mathf.FloorToInt(areaHeight / height);
-        int remainderWidth = areaWidth % width;
-        int remainderHeight = areaHeight % height;
-        if (modWidth == 0 || modHeight == 0)
-        {
-            return;
         }
-        float xRemainder = remainderWidth / modWidth;
-        float yRemainder = remainderHeight / modHeight;
-        if (modWidth == 0 || modHeight == 0)
-        {
-            return;
-        }
-        Debug.Log("Total building areas will be " + modWidth + "x" + modHeight+" from " + Low);
         Vector2Int size= new Vector2Int(width, height);
         Vector2Int pos = Low;
-        for(int x = 0; x < modWidth; x++)
+       
+        for(int x = Low.x+horizontalBorder; x < High.x - (width+horizontalBorder); x+=width+horizontalSpacing)
         {
-            for(int y = 0; y < modHeight; y++)
+            for (int y = Low.y+verticalBorder; y < High.y - (height+verticalBorder); y +=height + verticalSpacing)
             {
-                pos.x = Low.x + (x * width)+ Mathf.FloorToInt(x*xRemainder);
-                pos.y = Low.y + (y * height) + Mathf.FloorToInt(y * yRemainder);
+                pos.x = x;
+                pos.y=y;
                 BuildingAreas.Add(new BuildingTileArea(pos, pos + size));
+
             }
         }
     }
@@ -479,15 +514,37 @@ public class BuildingTileArea
         High = high;
         DebugColor = new Color(Random.value, Random.value, Random.value, 1f);
     }
+
+    public void ApplyWorldOffsetToArea(Vector2Int bottomCorner)
+    {
+        Low += bottomCorner;
+        High += bottomCorner;
+
+    }
+
+
+    public void DebugDrawArea()
+    {
+        Vector3 low = new Vector3(Low.x, Low.y);
+        Vector3 high = new Vector3(High.x, High.y);
+
+        Vector3 c1 = new Vector3(Low.x, High.y);
+        Vector3 c2 = new Vector3(High.x, Low.y);
+        Debug.DrawLine(low, c1, DebugColor);
+        Debug.DrawLine(c1, high, DebugColor);
+        Debug.DrawLine(high, c2, DebugColor);
+        Debug.DrawLine(c2, low, DebugColor);
+
+    }
+
     public GeneratedBuilding MyBuilding;
     public void GenerateBuildingForArea(GeneratedSettlement settlement)
     {
         Vector2Int Size = High - Low;
-        Vector2Int Position =new Vector2Int(Mathf.RoundToInt( settlement.Corners[0].x), Mathf.RoundToInt(settlement.Corners[0].y))+Low;
         
         BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
-        Debug.Log("Generating building at " + Position + " size " + Size);
-        MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Position, BuildingDataManager.Instance.BuildingTemplates["House"], 50);
+        Debug.Log("Generating building at " +Low + " size " + Size);
+        MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates["House"], 50);
     }
 }
 

@@ -169,16 +169,19 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void SetBuildings(List<BuildingTileArea> buildings)
     {
-        Buildings = buildings;
+
+        WorldBuldingMoniter.Instance.AddBuildingZones(buildings);
+        //Buildings = buildings;
     }
 
+    bool CanGenerateBuilding(GeneratedBuilding building)
+    {
+        return WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(building.Position-Vector2Int.one)!=null && WorldChunkManager.Instance.GetWorldChunkBatchFromPosition(building.GetTopCorner()+Vector2Int.one)!=null;
+    }
 
     public void GenerateBuildings()
     {
-        for(int x = 0; x < Buildings.Count; x++)
-        {
-            BuildingGenerator.Instance.ApplyBuidlingToWorld(Buildings[x].MyBuilding);      
-        }
+        WorldBuldingMoniter.Instance.OnWorldChunkBatchGenerated(this);
     }
 
     public void GenerateSidewalks(RoadType toGen)
