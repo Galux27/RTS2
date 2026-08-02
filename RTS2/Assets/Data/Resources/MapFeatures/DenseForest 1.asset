@@ -30,4 +30,4 @@ MonoBehaviour:
   - Tree_9
   - Tree_10
   MinQuantityToSpawn: 150
-  MaxQuantityToSpawn: 400
+  MaxQuantityToSpawn: 250

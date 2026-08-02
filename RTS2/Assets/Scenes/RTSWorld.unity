@@ -2329,10 +2329,18 @@ MonoBehaviour:
       TileToSet: Mountain
       Use: 1
     RefreshElevationOnGenerate: 1
+  - toGenerateFor: 1
+    features:
+    - {fileID: 11400000, guid: a626ad4e26f37f341b52795876807f78, type: 2}
+    UnnaturalFeatures: []
+    FeaturesToGenerate: 100
+    floorTileGenerator:
+      TileToSet: Mountain
+      Use: 1
+    RefreshElevationOnGenerate: 0
   DefaultFeatures:
     toGenerateFor: 0
     features:
-    - {fileID: 11400000, guid: 78c7732265362a9438197807f58d9360, type: 2}
     - {fileID: 11400000, guid: d5bc94e3ecb71814ab2f0d9b2c37154b, type: 2}
     - {fileID: 11400000, guid: 2516cede25602904fba4da26388db422, type: 2}
     - {fileID: 11400000, guid: fd276b50c9199ec4db9e7960f1bcadec, type: 2}

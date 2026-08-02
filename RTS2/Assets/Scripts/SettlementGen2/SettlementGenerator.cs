@@ -7,11 +7,15 @@ using UnityEngine.UIElements;
 
 public  static class SettlementGenerator 
 {
-    static GeneratedSettlement CurrentlyGenerating;
+   public static GeneratedSettlement CurrentlyGenerating;
+    public static Settlement_Settings CurrentlyGeneratingSettings;
+    public static Vector2 CurrentlyGeneratingBottomLeft;
     public static void GenerateSettlement(GeneratedSettlement settlement, Settlement_Settings settings)
     {
         HasEdges = false;
         CurrentlyGenerating = settlement;
+        CurrentlyGeneratingSettings = settings;
+        CurrentlyGeneratingBottomLeft = CurrentlyGeneratingSettings.Center - (SettlementGenerator.CurrentlyGeneratingSettings.Size / 2f);
         settlement.SetRiver(RiverGenerator.GenerateRiver(settings));
         settlement.SetCornerPoints(settings);
         validRoads.Clear();
@@ -627,7 +631,7 @@ public  static class SettlementGenerator
 
 
 
-        if (!foundEnd && !IsPositionNearEdge(newEndPoint, settings) )
+        if (!foundEnd && !IsPositionNearEdge(newEndPoint, settings) &&!IsRoadInInvalidChunk(original,CurrentlyGenerating))
         {
             newStart = newEndPoint;
             if (Random.Range(0, 100) < 10)
@@ -1182,9 +1186,13 @@ public class GeneratedSettlement
         River=river;
     }
 
-    public GeneratedSettlementArea GetAreaFromPosition(Vector2 pos)
+    public GeneratedSettlementArea GetAreaFromPosition(Vector2 pos,bool isNormalized=true)
     {
         int xc = 0, yc = 0;
+        if (!isNormalized) {
+            
+            pos+=SettlementGenerator.CurrentlyGeneratingBottomLeft;
+        }
 
         xc = Mathf.FloorToInt(Mathf.Lerp(0, width - 1, Mathf.InverseLerp(low.x, high.x, pos.x)));
         yc = Mathf.FloorToInt(Mathf.Lerp(0, height - 1, Mathf.InverseLerp(low.y, high.y, pos.y)));

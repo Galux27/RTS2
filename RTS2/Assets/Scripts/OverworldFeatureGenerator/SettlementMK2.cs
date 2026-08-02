@@ -41,7 +41,7 @@ public class SettlementMK2 : OverworldFeatureToWorldConverter
         {
             toGenerate.GenerateSettlement();
         }
-        Debug.LogError("Generated settlement at " + toGenerateIn.OverworldCoords.ToString()+","+OverworldGenerator.Instance.GetOverworldStartingCoords());
+        Debug.LogError("Generated settlement at " + toGenerateIn.OverworldCoords.ToString()+","+OverworldGenerator.Instance.GetOverworldStartingCoords()+","+toGenerateIn.coords);
         GeneratedSettlementArea area = toGenerate.GeneratedInstance.AreaFromCoords(toGenerateIn.coords);//GetAreaFromOverworld(toGenerateIn.OverworldCoords,toGenerateIn.coords);
         if (area == null)
         {

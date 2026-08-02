@@ -55,7 +55,7 @@ public class SettlementTileArea
 
         for(int q = 0; q < Sections.Count; q++)
         {
-            Sections[q].Expand(this);
+            Sections[q].Expand(this,settlement);
             
             Debug.Log("Finished area was " + Sections[q].Low + "->" + Sections[q].High+","+(Sections[q].High- Sections[q].Low));
             if (Sections[q].IsValid)
@@ -330,7 +330,7 @@ public class SettlementTileAreaSection
         return High.x-Low.x>SettlementTileArea.MinWidth && High.y-Low.y>SettlementTileArea.MinHeight;
     }
 
-    public void Expand(SettlementTileArea area)
+    public void Expand(SettlementTileArea area,GeneratedSettlement currentlyGenerating)
     {
         try
         {
@@ -350,29 +350,29 @@ public class SettlementTileAreaSection
             if (ValidDirections.Contains(TileAreaDir.HorizontalNegative))
             {
                 Low.x--;
-                CheckForHorizontalNegativeValid(area);
+                CheckForHorizontalNegativeValid(area,currentlyGenerating);
             }
             if (ValidDirections.Contains(TileAreaDir.VerticalNegative))
             {
                 Low.y--;
-                CheckForVerticalNegativeValid(area);
+                CheckForVerticalNegativeValid(area, currentlyGenerating);
             }
 
             if (ValidDirections.Contains(TileAreaDir.HorizontalPositive))
             {
                 High.x++;
-                CheckForHorizontalPositiveValid(area);
+                CheckForHorizontalPositiveValid(area, currentlyGenerating);
             }
             if (ValidDirections.Contains(TileAreaDir.VerticalPositive))
             {
                 High.y++;
-                CheckForVerticalPositiveValid(area);
+                CheckForVerticalPositiveValid(area, currentlyGenerating);
             }
         }
 
     }
 
-    void CheckForHorizontalNegativeValid(SettlementTileArea area)
+    void CheckForHorizontalNegativeValid(SettlementTileArea area, GeneratedSettlement currentlyGenerating)
     {
         if (Low.x < 0)
         {
@@ -383,7 +383,7 @@ public class SettlementTileAreaSection
         bool hitAnything = false;
         for(int y=Low.y; y < High.y; y++)
         {
-            if (area.TileArea[Low.x, y] != 0)
+            if (area.TileArea[Low.x, y] != 0 || currentlyGenerating.GetAreaFromPosition(new Vector2(Low.x,y),false).CanUse == false)
             {
                 hitAnything = true;
                 break;
@@ -396,7 +396,7 @@ public class SettlementTileAreaSection
         }
     }
 
-    void CheckForHorizontalPositiveValid(SettlementTileArea area)
+    void CheckForHorizontalPositiveValid(SettlementTileArea area, GeneratedSettlement currentlyGenerating)
     {
         if (High.x >=area.TileArea.GetLength(0))
         {
@@ -407,7 +407,7 @@ public class SettlementTileAreaSection
         bool hitAnything = false;
         for (int y = Low.y; y < High.y; y++)
         {
-            if (area.TileArea[High.x, y] != 0)
+            if (area.TileArea[High.x, y] != 0 || currentlyGenerating.GetAreaFromPosition(new Vector2(High.x, y), false).CanUse == false)
             {
                 hitAnything = true;
                 break;
@@ -420,7 +420,7 @@ public class SettlementTileAreaSection
         }
     }
 
-    void CheckForVerticalNegativeValid(SettlementTileArea area)
+    void CheckForVerticalNegativeValid(SettlementTileArea area, GeneratedSettlement currentlyGenerating)
     {
         if (Low.y < 0)
         {
@@ -431,7 +431,7 @@ public class SettlementTileAreaSection
         bool hitAnything = false;
         for (int x = Low.x; x < High.x; x++)
         {
-            if (area.TileArea[x, Low.y] != 0)
+            if (area.TileArea[x, Low.y] != 0 || currentlyGenerating.GetAreaFromPosition(new Vector2(x, Low.y), false).CanUse == false)
             {
                 hitAnything = true;
                 break;
@@ -444,7 +444,7 @@ public class SettlementTileAreaSection
         }
     }
 
-    void CheckForVerticalPositiveValid(SettlementTileArea area)
+    void CheckForVerticalPositiveValid(SettlementTileArea area, GeneratedSettlement currentlyGenerating)
     {
         if (High.y >= area.TileArea.GetLength(1))
         {
@@ -455,7 +455,7 @@ public class SettlementTileAreaSection
         bool hitAnything = false;
         for (int x = Low.x; x < High.x; x++)
         {
-            if (area.TileArea[x, High.y] != 0)
+            if (area.TileArea[x, High.y] != 0 || currentlyGenerating.GetAreaFromPosition(new Vector2(x, High.y), false).CanUse == false)
             {
                 hitAnything = true;
                 break;

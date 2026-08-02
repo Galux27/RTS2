@@ -60,7 +60,6 @@ public class MapGenerator : MonoBehaviour
             {
                 DefaultFeatures.GenerateForFeature(toGenerateIn,DefaultFeatures.features);
             }
-
          
             if (!wasGenerated)
             {
@@ -78,6 +77,7 @@ public class MapGenerator : MonoBehaviour
         toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
         toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
         toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);
+        
        // if (overworldTile.Features.Contains(OverworldFeature.Settlement))
         {
             OverworldConverters[OverworldFeature.Settlement].GenerateFeature(toGenerateIn);
@@ -139,10 +139,10 @@ public class FeatureMapGenerator
         int featureGenerating = 0;
         if (OverworldGenerator.Instance.SeaLevel < overworldTile.Elevation)
         {
-            for (int x = 0; x < FeaturesToGenerate; x++)
+            for (int x = 0; x < features.Count; x++)
             {
                 featureGenerating = Random.Range(0, features.Count);
-                features[featureGenerating].GenerateFeature(toGenerateIn);
+                features[x].GenerateFeature(toGenerateIn);
             }
         }
         if (RefreshElevationOnGenerate)
