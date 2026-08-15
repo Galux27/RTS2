@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04a53a824c9acec4b9a6a77978517078, type: 3}
-  m_Name: BuildingTemplate
+  m_Name: House
   m_EditorClassIdentifier: 
   BuildingName: House
   PotentialRooms:

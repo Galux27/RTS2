@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57896610a77a024ba59f95e22968c95, type: 3}
+  m_Name: Mailbox
+  m_EditorClassIdentifier: 
+  Name: Mailbox
+  ForwardsSprite: {fileID: -3461341969827082290, guid: 09ba37ed2dc65fc4ca5a4fdd21670677, type: 3}
+  SideSprite: {fileID: 0}
+  BackwardsSprite: {fileID: 0}
+  HarvestedSprite: {fileID: 0}
+  BlocksTile: 1
+  Width: 1
+  Height: 1
+  CanHarvest: 0
+  IsDecoration: 0
+  RequiresUpdate: 0
+  DestroyOnHarvest: 1
+  Resources:
+    resources: []
+    HarvestLength: 0
+  CapacityData:
+    CapacityData: []
+  MaxHealth: 0
+  Cost: 0
+  TimeToBuild: 0
+  RequirementsToBuild: []
+  MyBehaviour: {fileID: 0}

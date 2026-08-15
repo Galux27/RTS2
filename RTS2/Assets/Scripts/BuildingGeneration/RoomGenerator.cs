@@ -100,29 +100,130 @@ public class RoomGenerator
         room.RoomTiles[0, coords.y].IsValidForDoor = true;
         coords.y = Random.Range(2, room.size.y - 2);
         room.RoomTiles[room.size.x-1, coords.y].IsValidForDoor = true;
-        //BlockOffTilesNearDoor(coords.x, 0,room);
-        //BlockOffTilesNearDoor(coords.x, room.size.y - 1, room);
-        //BlockOffTilesNearDoor(0, coords.y, room);
-        //BlockOffTilesNearDoor(room.size.x - 1, coords.y, room);
+       
 
     }
 
-    void BlockOffTilesNearDoor(int xp,int yp, GeneratedRoom room)
+    void PopulateRoomEnvObjectsInGrid(GeneratedRoom room,RoomTemplate template)
     {
-        for(int x = xp - 1; x <= xp + 1; x++)
+        RoomTemplateProp prop = null;
+        Dictionary<string, int> propCounts = new Dictionary<string, int>();
+        ConstructableObject obj = null;
+        int width = 0, height = 0;
+        for (int x = 0; x < template.Props.Count; x++)
         {
-            for (int y = yp - 1; y <= yp + 1; y++)
+            propCounts.Add(template.Props[x].PropName, 0);
+        }
+
+        for (int yStart = room.size.y - 1; yStart > 0; yStart--)
+        {
+            for (int xStart = room.size.x - 1; xStart > 0; xStart--)
             {
-                if (room.IsValid(x, y)&&(x==xp&&y==yp)==false)
+                for (int p = 0; p < template.Props.Count; p++)
                 {
-                    room.RoomTiles[x, y].HasProp = true;
+                    prop = template.Props[p];
+                    if (propCounts[prop.PropName] < prop.MaxQuantity)
+                    {
+                        obj = ConstructableObjectManager.Instance.AllObjects[prop.PropName];
+                        width = obj.Width;
+                        height = obj.Height;
+                        if (prop.NeedsEdge)
+                        {
+                            width += 2;
+                            height += 2;
+                        }
+
+
+                        bool valid = true;
+                        if (xStart + width > room.size.x || yStart + height > room.size.y)
+                        {
+                            valid = false;
+                        }
+                        // if (valid)
+                        bool foundWall = false;
+                        bool foundDoor = false;
+                        if (valid)
+                        {
+                            for (int x = xStart; x < xStart + width; x++)
+                            {
+                                for (int y = yStart - 1; y < yStart + height + 1; y++)
+                                {
+                                    if (room.IsValid(x, y))
+                                    {
+                                        if (x >= xStart && x < xStart + width && y >= yStart && y < yStart + width)
+                                        {
+                                            if (room.TileHasNothing(x, y) == false)
+                                            {
+                                                valid = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (room.RoomTiles[x, y].HasWall)
+                                            {
+                                                foundWall = true;
+                                            }
+
+                                        }
+
+                                        if (room.RoomTiles[x, y].IsValidForDoor)
+                                        {
+                                            foundDoor = true;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        foundWall = true;
+                                    }
+
+                                }
+                            }
+
+
+                            if (prop.MustBeOnRoomEdge && !foundWall || foundDoor)
+                            {
+                                valid = false;
+                            }
+
+                            if (valid)
+                            {
+                                {
+                                    for (int x = xStart; x < xStart + width; x++)
+                                    {
+                                        for (int y = yStart; y < yStart + height; y++)
+                                        {
+
+                                            room.RoomTiles[x, y].HasProp = true;
+                                        }
+                                    }
+                                    room.AddEnvObject(new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart, yStart)));
+                                    if (!propCounts.ContainsKey(prop.PropName))
+                                    {
+                                        propCounts.Add(prop.PropName, 0);
+                                    }
+                                    propCounts[prop.PropName]++;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
+
+
+
+
     public void PopulateRoomEnvObjects(GeneratedRoom room, RoomTemplate template)
     {
+        if (template.CanBeGridBased)
+        {
+            PopulateRoomEnvObjectsInGrid(room, template);
+            return;
+        }
+
         RoomTemplateProp prop = null;
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
         ConstructableObject obj = null;

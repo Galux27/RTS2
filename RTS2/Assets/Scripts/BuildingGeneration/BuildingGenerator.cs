@@ -32,15 +32,25 @@ public class BuildingGenerator : MonoBehaviour
     const int MaxGenerationPasses = 50;
     public GeneratedRoom MyRoom;
     public bool IsGenerating = false;
+
+    public BuildingTemplate testTemplate;
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GenerateBuilding();
+        }
+    }
+
     public void GenerateBuilding()
     {
         IsGenerating = true;
-        int width = Random.Range(BuildingTemplate.MinWidth, BuildingTemplate.MaxWidth);
-        int height = Random.Range(BuildingTemplate.MinHeight, BuildingTemplate.MaxHeight);
+        int width = Random.Range(testTemplate.MinWidth, testTemplate.MaxWidth);
+        int height = Random.Range(testTemplate.MinHeight, testTemplate.MaxHeight);
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
             (int)CameraController.Instance.transform.position.y);
         BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
-        ApplyBuidlingToWorld(floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), BuildingTemplate, MaxGenerationPasses));
+        ApplyBuidlingToWorld(floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses));
         IsGenerating = false;
     }
 
@@ -201,10 +211,7 @@ public class BuildingGenerator : MonoBehaviour
         }
     }
  
-    private void Update()
-    {
-       
-    }
+    
 }
 [System.Serializable]
 public class GeneratedBuilding
@@ -562,7 +569,6 @@ public class GeneratedBuilding
             }
             GenerateExteriorDoors();
         }
-
         foreach (KeyValuePair<int,RoomLink> kvp in Links)
         {
 

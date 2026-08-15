@@ -8,7 +8,7 @@ public class RoomTemplate : ScriptableObject
     public string RoomID;
     public string Wall, Door, Floor;
     public List<RoomTemplateProp> Props;
-    public bool CanHaveWindows = false,CanHaveExternalDoor=false;
+    public bool CanHaveWindows = false,CanHaveExternalDoor=false,CanBeGridBased=false;
     public int MinWidth, MaxWidth, MinHeight, MaxHeight;
 }
 [System.Serializable]

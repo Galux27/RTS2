@@ -471,7 +471,7 @@ public class SettlementTileAreaSection
 
     public void GenerateBuildingAreas()
     {
-        BuildingTemplate houseTemplate = BuildingDataManager.Instance.BuildingTemplates["House"];
+        BuildingTemplate houseTemplate = BuildingDataManager.Instance.BuildingTemplates["Warehouse"];
         int width=Random.Range(houseTemplate.MinWidth,houseTemplate.MaxWidth);
         int height = Random.Range(houseTemplate.MinHeight,houseTemplate.MaxHeight);
         int areaWidth = High.x - Low.x;
@@ -569,7 +569,7 @@ public class BuildingTileArea
         
         BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
         Debug.Log("Generating building at " +Low + " size " + Size);
-        MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates["House"], 50);
+        MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates["Warehouse"], 50);
     }
 }
 
