@@ -26,6 +26,10 @@ MonoBehaviour:
   - roomTemplate: {fileID: 11400000, guid: 7fc7df044b3350a43851308b912c0b79, type: 2}
     Min: 1
     Max: 1
+  MainRoom:
+    roomTemplate: {fileID: 0}
+    Min: 0
+    Max: 1
   MinWidth: 10
   MaxWidth: 15
   MinHeight: 10
@@ -35,3 +39,4 @@ MonoBehaviour:
   MaxExternalDoors: 1
   CorridorFloor: Wood
   CorridorWall: Wood
+  FloorplanType: 1

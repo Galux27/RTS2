@@ -14,15 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildingName: Warehouse
   PotentialRooms:
-  - roomTemplate: {fileID: 11400000, guid: 8dcad6ddd8b0b99499c466cf2639059c, type: 2}
+  - roomTemplate: {fileID: 11400000, guid: b24bfd246b1d926498e3a361248f59f5, type: 2}
     Min: 1
     Max: 1
-  MinWidth: 18
-  MaxWidth: 25
-  MinHeight: 20
-  MaxHeight: 25
+  - roomTemplate: {fileID: 11400000, guid: 2c57aa31adb5d1040a5aa540cc80b237, type: 2}
+    Min: 1
+    Max: 1
+  - roomTemplate: {fileID: 11400000, guid: 5f1db5dbbe131a1438306d5de43e4ee2, type: 2}
+    Min: 1
+    Max: 1
+  MainRoom:
+    roomTemplate: {fileID: 11400000, guid: 8dcad6ddd8b0b99499c466cf2639059c, type: 2}
+    Min: 1
+    Max: 1
+  MinWidth: 35
+  MaxWidth: 40
+  MinHeight: 35
+  MaxHeight: 40
   MinRooms: 1
   MaxRooms: 1
   MaxExternalDoors: 1
   CorridorFloor: Wood
   CorridorWall: Wood
+  FloorplanType: 2

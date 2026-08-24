@@ -197,7 +197,7 @@ public class RoomGenerator
                                             room.RoomTiles[x, y].HasProp = true;
                                         }
                                     }
-                                    room.AddEnvObject(new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart, yStart)));
+                                    room.AddEnvObject(room.RoomTiles[xStart,yStart],new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart, yStart)));
                                     if (!propCounts.ContainsKey(prop.PropName))
                                     {
                                         propCounts.Add(prop.PropName, 0);
@@ -314,7 +314,7 @@ public class RoomGenerator
                                             room.RoomTiles[x, y].HasProp = true;
                                         }
                                     }
-                                    room.AddEnvObject(new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart, yStart)));
+                                    room.AddEnvObject(room.RoomTiles[xStart,yStart],new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart, yStart)));
                                     if (!propCounts.ContainsKey(prop.PropName))
                                     {
                                         propCounts.Add(prop.PropName, 0);
@@ -346,12 +346,62 @@ public class RoomGenerator
         }
     }
 
-    void PopulateWallTiles(GeneratedRoom room,RoomTemplate template,GeneratedBuilding building)
+
+    public void PopulateWallTilesThatAreOnExteriorOfBuilding(GeneratedRoom room, RoomTemplate template, GeneratedBuilding building)
     {
         int width = room.RoomTiles.GetLength(0);
         int height = room.RoomTiles.GetLength(1);
 
-        bool isXedge=false,isYedge=false;
+        bool isXedge = false, isYedge = false;
+        if (room.Position.x + width >= building.Width)
+        {
+            isXedge = true;
+        }
+        if (room.Position.y + height >= building.Height)
+        {
+            isYedge = true;
+        }
+
+        for (int x = 0; x < width; x++)
+        {
+            if (room.Position.y == building.Position.y)
+            {
+                room.RoomTiles[x, 0].SetWall(template.Wall);
+            }
+            if (isYedge)
+            {
+                room.RoomTiles[x, height - 1].SetWall(template.Wall);
+            }
+
+        }
+
+        for (int x = 0; x < height; x++)
+        {
+            if (room.Position.x == building.Position.x)
+            {
+                room.RoomTiles[0, x].SetWall(template.Wall);
+            }
+            if (isXedge || template.CanHaveInternalWalls)
+            {
+                room.RoomTiles[width - 1, x].SetWall(template.Wall);
+            }
+        }
+    }
+
+ 
+
+
+    void PopulateWallTiles(GeneratedRoom room,RoomTemplate template,GeneratedBuilding building)
+    {
+        if (!template.CanGenerateAnyWalls)
+        {
+            PopulateWallTilesThatAreOnExteriorOfBuilding(room, template, building);
+            return;
+        }
+        int width = room.RoomTiles.GetLength(0);
+        int height = room.RoomTiles.GetLength(1);
+
+        bool isXedge=false,isYedge=false,isLowXEdge=false,isLowYEdge=false;
         if(room.Position.x+width>=building.Width)
         {
             isXedge=true;
@@ -361,22 +411,48 @@ public class RoomGenerator
             isYedge=true;
         }
 
+        if (room.Position.x == 0)
+        {
+            isLowXEdge = true;
+        }
+        Debug.Log("generating room " + room.Position + "," + building.Position);
+        if (room.Position.y == 0)
+        {
+            isLowYEdge = true;
+        }
+
         for (int x = 0; x < width; x++)
         {
-            room.RoomTiles[x, 0].SetWall(template.Wall);
+
+            if (isLowYEdge || template.CanHaveInternalWalls)
+            {
+                room.RoomTiles[x, 0].SetWall(template.Wall);
+            }
             if (isYedge)
             {
                 room.RoomTiles[x, height - 1].SetWall(template.Wall);
             }
-           
+            else if (template.CanHaveInternalWalls)
+            {
+                room.RoomTiles[x, height - 1].SetWall(template.Wall);
+
+            }
+
         }
 
         for (int x = 0; x < height; x++)
         {
-            room.RoomTiles[0, x].SetWall(template.Wall);
+            if (isLowXEdge || template.CanHaveInternalWalls)
+            {
+                room.RoomTiles[0, x].SetWall(template.Wall);
+            }
             if (isXedge)
             {
                 room.RoomTiles[width - 1, x].SetWall(template.Wall);
+            }else if (template.CanHaveInternalWalls)
+            {
+                room.RoomTiles[width - 1, x].SetWall(template.Wall);
+
             }
         }
     }
@@ -388,7 +464,7 @@ public class GeneratedRoom
     public RoomTile[,] RoomTiles;
     public Vector2Int Position;
     public Vector2Int size;
-    public List<GeneratedRoomProp> EnvObjects;
+    public Dictionary<RoomTile,GeneratedRoomProp> EnvObjects;
     public int RoomID = -1;
     public GeneratedRoom(Vector2Int size,Vector2Int pos,string type,int ID)
     {
@@ -408,6 +484,44 @@ public class GeneratedRoom
         this.size = size;
     }
 
+    public void ResetRoom(Vector2Int position,Vector2Int size)
+    {
+        
+
+
+        float startX = Mathf.InverseLerp(this.Position.x,this.Position.x+this.size.x, position.x);
+        float startY = Mathf.InverseLerp(this.Position.y, this.Position.y + this.size.y, position.y);
+        float endX = Mathf.InverseLerp(this.Position.x, this.Position.x + this.size.x, position.x+size.x);
+        float endY = Mathf.InverseLerp(this.Position.y, this.Position.y + this.size.y, position.y + size.y);
+
+        int xStart = Mathf.FloorToInt(Mathf.Lerp(0,this.size.x,startX));
+        int xEnd = Mathf.FloorToInt(Mathf.Lerp(0, this.size.x, endX));
+        int yStart = Mathf.FloorToInt(Mathf.Lerp(0, this.size.y, startY));
+        int yEnd = Mathf.FloorToInt(Mathf.Lerp(0, this.size.y,endY));
+
+        for (; xStart < xEnd; xStart++)
+        {
+            for(int y = yStart; y < yEnd; y++)
+            {
+                RoomTiles[xStart, y].ResetTile();
+                CheckToRemoveEnvObject(RoomTiles[xStart, y]);
+            }
+        }
+
+    }
+
+    void CheckToRemoveEnvObject(RoomTile tile)
+    {
+        if (EnvObjects == null)
+        {
+            return;
+        }
+        if (EnvObjects.ContainsKey(tile))
+        {
+            EnvObjects.Remove(tile);
+        }
+    }
+
     public Vector2Int GetEdgeCoord()
     {
         int x = 0, y = 0;
@@ -424,13 +538,13 @@ public class GeneratedRoom
         return new Vector2Int(Position.x + x, Position.y + y);
     }
 
-    public void AddEnvObject(GeneratedRoomProp prop)
+    public void AddEnvObject(RoomTile tile,GeneratedRoomProp prop)
     {
         if (EnvObjects == null)
         {
-            EnvObjects = new List<GeneratedRoomProp>();
+            EnvObjects = new Dictionary<RoomTile, GeneratedRoomProp>();
         }
-        EnvObjects.Add(prop);
+        EnvObjects.Add(tile,prop);
     }
 
     public bool IsValid(int x,int y)
@@ -461,7 +575,26 @@ public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;
     public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false,IsCorridor=false,IsValidForDoor=false;
-    public int RoomID;
+    public int RoomID=-1;
+
+
+    public bool HasBeenUsed()
+    {
+        return RoomID >0;
+    }
+
+    public void ResetTile()
+    {
+        FloorTile = string.Empty;
+        SetID(-1);
+        ClearWall();
+        HasFloor = false;
+        HasDoor = false;
+        HasProp = false;
+        IsCorridor = false;
+        IsValidForDoor = false;
+        
+    }
 
 
     public void SetID(int id)

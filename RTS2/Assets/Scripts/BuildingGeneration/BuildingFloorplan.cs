@@ -1,12 +1,97 @@
 using System.Collections.Generic;
+using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class BuildingFloorplan 
 {
+    public static BuildingFloorplan GetFloorplanByType(BuildingFloorplanType typeToGet)
+    {
+        switch (typeToGet)
+        {
+            case BuildingFloorplanType.Basic:
+                return new BuildingFloorplan();
+                break;
+            case BuildingFloorplanType.Square:
+                return new SquareBuildingFloorplan(10, Vector2Int.one * 5);
+                break;
+            case BuildingFloorplanType.SquareNoSplit:
+                return new SquareBuildingNoSplitFloorplan();
+                break;
+            default:
+                return new BuildingFloorplan();
+                break;
+        }
+    }
+
+    
+
+    public Vector2Int GetStartingCoordsForRoom(int width,int height,GeneratedBuilding building)
+    {
+        int y1 = 0,y2=building.Height - height;
+        bool Valid = true;
+        for (int q = 0; q < building.Width - width; q++)
+        {
+            for (int x = q; x < building.Width; x++)
+            {
+                for (int y = y1; y < y1 + height; y++)
+                {
+                    if (building.Tiles[x, y].HasBeenUsed())
+                    {
+                        Valid = false;
+                        break;
+                    }
+                   
+                }
+                if (!Valid)
+                {
+                    break;
+                }
+            }
+
+            if (Valid)
+            {
+                return new Vector2Int(q, y1);
+            }
+            else
+            {
+                Valid = true;
+            }
+
+            for (int x = q; x < building.Width; x++)
+            {
+                for (int y = y2; y < y2 + height; y++)
+                {
+                    if (building.Tiles[x, y].HasBeenUsed())
+                    {
+                        Valid = false;
+                        break;
+                    }
+
+                }
+                if (!Valid)
+                {
+                    break;
+                }
+            }
+
+            if (Valid)
+            {
+                return new Vector2Int(q, y2);
+            }
+            else
+            {
+                Valid = true;
+            }
+        }
+        return new Vector2Int(-1, -1);
+
+    }
+
+
     public virtual GeneratedBuilding Generate(RoomGenerator RoomGen,int width,int height,Vector2Int pos,BuildingTemplate template,int maxPasses)
     {
-        Debug.Log("Generating building at " + pos + " width " + width + "," + height );
+        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height );
         GeneratedBuilding building = new GeneratedBuilding(width, height, pos,template.BuildingName );
         int count = 0;
         GeneratedRoom curRoom = null;
@@ -27,7 +112,14 @@ public class BuildingFloorplan
                 {
 
                     curRoom = RoomGen.GenerateRoom(startPosition + new Vector2Int((width - 1) * modifier.x, (height - 1) * modifier.y), new Vector2Int(width, height), roomTemplate, building.MyRooms.Count,building);
+                    Debug.Log("Building Gen: generated building room at " + curRoom.Position+","+curRoom.size);
+
                     building.AddRoom(curRoom);
+                }
+                else
+                {
+                    Debug.Log("Building Gen: failed to generate room of size " + width + "," + height+" from area");
+
                 }
                 // startPosition = building.GetEdgeOrStart(new Vector2Int(width, height));
 
@@ -53,6 +145,8 @@ public class SquareBuildingFloorplan : BuildingFloorplan
     Vector2Int size;
     public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
     {
+        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height);
+
         size = new Vector2Int(width, height);
         GeneratedBuilding building = new GeneratedBuilding(width, height,pos, template.BuildingName);
         int count = 0;
@@ -228,3 +322,81 @@ public struct SplitRoom
     }
 }
 
+public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
+{
+    Vector2Int size;
+    public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
+    {
+        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height);
+
+        size = new Vector2Int(width, height);
+        GeneratedBuilding building = new GeneratedBuilding(width, height, pos, template.BuildingName);
+        int count = 0;
+        GeneratedRoom curRoom = null;
+        Vector2Int modifier = Vector2Int.zero;
+        int[,] points = new int[width, height];
+
+        List<SplitRoom> potentialNewSplits = new List<SplitRoom>();
+
+        //while (count < maxPasses && CurrentSplits.Count < maxSplits)
+        //{
+        //    int index = Random.Range(0, CurrentSplits.Count);
+        //    potentialNewSplits = SplitRoom(CurrentSplits[index]);
+        //    if (AreSplitsValid(potentialNewSplits))
+        //    {
+        //        CurrentSplits.RemoveAt(index);
+        //        CurrentSplits.AddRange(potentialNewSplits);
+        //    }
+        //    count++;
+        //}
+
+
+        BuildingRoomData roomTemplate = template.MainRoom;
+       curRoom = RoomGen.GenerateRoom(Vector2Int.zero, size, roomTemplate.roomTemplate, building.MyRooms.Count, building);
+        building.AddRoom(curRoom);
+        RoomTemplate subRoomTemplate = null;
+        for(int x = 0; x < template.PotentialRooms.Count; x++)
+        {
+            subRoomTemplate = building.GetRoomToGenerate(template);
+            if (subRoomTemplate != null)
+            {
+                Vector2Int roomSize = new Vector2Int(Random.Range(subRoomTemplate.MinWidth, subRoomTemplate.MaxWidth), Random.Range(subRoomTemplate.MinHeight, subRoomTemplate.MaxHeight));
+                
+                Debug.Log("Building Gen: trying to get sub room location from " + roomSize .x+ "," + roomSize.y + " building size " + building.Width + "," + building.Height);
+                Vector2Int start = GetStartingCoordsForRoom(roomSize.x, roomSize.y, building);
+                Debug.Log("Building Gen: got position to start " + start);
+
+                if (start.x >= 0)
+                {
+                    
+                    building.ResetAreaOfBuilding(start, roomSize);
+
+                    curRoom = RoomGen.GenerateRoom(start, roomSize, subRoomTemplate, building.MyRooms.Count, building);
+                    building.AddRoom(curRoom,true);
+                }
+            }
+        }
+
+
+        //for (int x = 0; x < CurrentSplits.Count; x++)
+        //{
+        //    roomTemplate = building.GetRoomToGenerate(template);
+        //    if (roomTemplate != null)
+        //    {
+        //        curRoom = RoomGen.GenerateRoom(CurrentSplits[x].coords, CurrentSplits[x].size, roomTemplate, building.MyRooms.Count, building);
+        //        building.AddRoom(curRoom);
+        //    }
+        //}
+        building.UpdateEdgeTiles();
+
+        building.GenerateDoors();
+        return building;
+    }
+}
+
+public enum BuildingFloorplanType
+{
+    Basic,
+    Square,
+    SquareNoSplit
+}

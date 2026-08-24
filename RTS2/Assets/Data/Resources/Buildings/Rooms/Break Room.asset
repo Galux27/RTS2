@@ -10,25 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c6ea39d6222d0b4d88b96ce1df32000, type: 3}
-  m_Name: Warehouse
+  m_Name: Break Room
   m_EditorClassIdentifier: 
-  RoomID: Warehouse
+  RoomID: Break Room
   Wall: Concrete
   Door: Wood
-  Floor: Wood
+  Floor: BlackWhiteTiled
   Props:
-  - PropName: Pallete
-    MaxQuantity: 200
-    NeedsEdge: 1
-    MustBeOnRoomEdge: 0
-  - PropName: Warehouse Shelves
-    MaxQuantity: 200
-    NeedsEdge: 1
-    MustBeOnRoomEdge: 0
+  - PropName: Cooker
+    MaxQuantity: 1
+    NeedsEdge: 0
+    MustBeOnRoomEdge: 1
+  - PropName: Fridge
+    MaxQuantity: 1
+    NeedsEdge: 0
+    MustBeOnRoomEdge: 1
+  - PropName: Sofa
+    MaxQuantity: 1
+    NeedsEdge: 0
+    MustBeOnRoomEdge: 1
   CanHaveWindows: 1
   CanHaveExternalDoor: 1
-  CanBeGridBased: 1
-  MinWidth: 20
-  MaxWidth: 20
-  MinHeight: 20
-  MaxHeight: 20
+  CanBeGridBased: 0
+  CanHaveInternalWalls: 1
+  MinWidth: 7
+  MaxWidth: 12
+  MinHeight: 7
+  MaxHeight: 12

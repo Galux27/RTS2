@@ -7,10 +7,12 @@ public class BuildingTemplate : ScriptableObject
 {
     public string BuildingName;
     public List<BuildingRoomData> PotentialRooms;
+    public BuildingRoomData MainRoom;
     public int MinWidth, MaxWidth, MinHeight, MaxHeight;
     public int MinRooms, MaxRooms;
     public int MaxExternalDoors;
     public string CorridorFloor, CorridorWall;
+    public BuildingFloorplanType FloorplanType;
    public BuildingRoomData GetDataByID(string id)
     {
         for(int x=0;x<PotentialRooms.Count;x++)

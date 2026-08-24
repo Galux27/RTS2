@@ -38,18 +38,18 @@ public class BuildingGenerator : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            GenerateBuilding();
+            GenerateTestBuilding();
         }
     }
 
-    public void GenerateBuilding()
+    public void GenerateTestBuilding()
     {
         IsGenerating = true;
         int width = Random.Range(testTemplate.MinWidth, testTemplate.MaxWidth);
         int height = Random.Range(testTemplate.MinHeight, testTemplate.MaxHeight);
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
             (int)CameraController.Instance.transform.position.y);
-        BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
+        BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(testTemplate.FloorplanType);
         ApplyBuidlingToWorld(floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses));
         IsGenerating = false;
     }
@@ -96,7 +96,7 @@ public class BuildingGenerator : MonoBehaviour
                 catch
                 {
                     Debug.LogError("Error trying to get object in batch " + (WorldChunkManager.Instance.GetChunkBatch(batchCoords) == null)+" "+batchCoords+","+chunkCoords+","+localCoords+","+b.Position);
-                    return;
+                    continue;
                 }
               
                 if (obj != null)
@@ -202,11 +202,13 @@ public class BuildingGenerator : MonoBehaviour
         {
             if (b.MyRooms[x].EnvObjects != null)
             {
-                for (int y = 0; y < b.MyRooms[x].EnvObjects.Count; y++)
+                foreach(KeyValuePair<RoomTile,GeneratedRoomProp> kvp in b.MyRooms[x].EnvObjects)
                 {
-                    envObjPos = b.Position + b.MyRooms[x].Position + b.MyRooms[x].EnvObjects[y].pos;
-                    ConstructableObjectManager.Instance.CreateObject_Generator(envObjPos, new Vector3(envObjPos.x, envObjPos.y), b.MyRooms[x].EnvObjects[y].ID);
+                    envObjPos = b.Position + b.MyRooms[x].Position + kvp.Value.pos;
+                    ConstructableObjectManager.Instance.CreateObject_Generator(envObjPos, new Vector3(envObjPos.x, envObjPos.y), kvp.Value.ID);
+
                 }
+              
             }
         }
     }
@@ -234,6 +236,25 @@ public class GeneratedBuilding
         Tiles=new RoomTile[width,height];   
         buildingType=type;
     }
+
+    public void ResetAreaOfBuilding(Vector2Int coords,Vector2Int size)
+    {
+
+        for(int x = 0; x < MyRooms.Count; x++)
+        {
+            MyRooms[x].ResetRoom(coords, size);
+        }
+
+        for(int x = coords.x; x < coords.x + size.x; x++)
+        {
+            for(int y = coords.y; y < coords.y + size.y; y++)
+            {
+                Tiles[x, y].ResetTile();
+                
+            }
+        }
+    }
+
     bool InRange(int x,int y)
     {
         return x>=0&&y>=0&&x<Width&&y<Height;
@@ -769,7 +790,7 @@ public class GeneratedBuilding
         }
     }
 
-    public void ApplyRoom(GeneratedRoom room)
+    public void ApplyRoom(GeneratedRoom room,bool CanOverwrite=false)
     {
         Vector2Int Origin =  room.Position;
        // Origin.x -= 1;
@@ -782,7 +803,7 @@ public class GeneratedBuilding
             {
                 try
                 {
-                    if (Tiles[x + Origin.x, y + Origin.y] == null)
+                    if (Tiles[x + Origin.x, y + Origin.y] == null||CanOverwrite)
                     {
                         Tiles[x + Origin.x, y + Origin.y] = room.RoomTiles[x, y];
                         hasAnything = true;
@@ -797,10 +818,10 @@ public class GeneratedBuilding
         }
     }
 
-    public void AddRoom(GeneratedRoom room)
+    public void AddRoom(GeneratedRoom room,bool CanOverwrite=false)
     {
         MyRooms.Add(room);
-        ApplyRoom(room);
+        ApplyRoom(room,CanOverwrite);
         UpdateEdgeTiles();
     }
 

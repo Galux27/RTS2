@@ -566,8 +566,8 @@ public class BuildingTileArea
     public void GenerateBuildingForArea(GeneratedSettlement settlement)
     {
         Vector2Int Size = High - Low;
-        
-        BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
+
+        BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(BuildingDataManager.Instance.BuildingTemplates["Warehouse"].FloorplanType);
         Debug.Log("Generating building at " +Low + " size " + Size);
         MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates["Warehouse"], 50);
     }
