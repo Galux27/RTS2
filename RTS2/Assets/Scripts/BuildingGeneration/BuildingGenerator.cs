@@ -249,7 +249,7 @@ public class GeneratedBuilding
         {
             for(int y = coords.y; y < coords.y + size.y; y++)
             {
-                Tiles[x, y].ResetTile();
+                Tiles[x, y].ResetTile(x<(coords.x + size.x-1) &&y<(coords.y + size.y-1));
                 
             }
         }

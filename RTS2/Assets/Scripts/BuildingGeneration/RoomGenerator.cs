@@ -632,12 +632,15 @@ public class RoomTile
         return RoomID >0;
     }
 
-    public void ResetTile()
+    public void ResetTile(bool resetFloor=false)
     {
-        FloorTile = string.Empty;
+        if (resetFloor)
+        {
+            FloorTile = string.Empty;
+            HasFloor = false;
+        }
         SetID(-1);
         ClearWall();
-        HasFloor = false;
         HasDoor = false;
         HasProp = false;
         IsCorridor = false;
