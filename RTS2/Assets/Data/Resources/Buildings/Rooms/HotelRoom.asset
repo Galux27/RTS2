@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c6ea39d6222d0b4d88b96ce1df32000, type: 3}
+  m_Name: HotelRoom
+  m_EditorClassIdentifier: 
+  RoomID: HotelRoom
+  Wall: Concrete
+  Door: Wood
+  Floor: BlueCarpet
+  Props:
+  - PropName: SingleBed
+    MaxQuantity: 1
+    NeedsEdge: 0
+    MustBeOnRoomEdge: 0
+  - PropName: BedsideCupboard
+    MaxQuantity: 1
+    NeedsEdge: 0
+    MustBeOnRoomEdge: 1
+  - PropName: BedsideDraws
+    MaxQuantity: 2
+    NeedsEdge: 0
+    MustBeOnRoomEdge: 1
+  CanHaveWindows: 1
+  CanHaveExternalDoor: 0
+  CanBeGridBased: 0
+  CanHaveInternalWalls: 0
+  CanGenerateAnyWalls: 1
+  MinWidth: 5
+  MaxWidth: 7
+  MinHeight: 4
+  MaxHeight: 7
+  AttachedRooms:
+  - roomTemplate: {fileID: 11400000, guid: 7ac49ee569886a14b87ac830ff87ad5d, type: 2}
+    Min: 1
+    Max: 1

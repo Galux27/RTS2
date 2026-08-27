@@ -814,7 +814,7 @@ public class GeneratedBuilding
                     Debug.LogError("error applying " + x + "," + y + " origin " + Origin + 
                         " dims " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1)+" room " +room.RoomTiles.GetLength(0)+"x"+room.RoomTiles.GetLength(1));
                 }
-                }
+            }
         }
     }
 

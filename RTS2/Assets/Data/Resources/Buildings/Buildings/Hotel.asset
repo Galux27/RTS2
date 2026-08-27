@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04a53a824c9acec4b9a6a77978517078, type: 3}
+  m_Name: Hotel
+  m_EditorClassIdentifier: 
+  BuildingName: Hotel
+  PotentialRooms:
+  - roomTemplate: {fileID: 11400000, guid: 0818b1922393ce3419855b0cd5c2b44f, type: 2}
+    Min: 10
+    Max: 20
+  MainRoom:
+    roomTemplate: {fileID: 11400000, guid: c6d4470fc2901a1459b221bb3e0ea936, type: 2}
+    Min: 1
+    Max: 1
+  MinWidth: 35
+  MaxWidth: 40
+  MinHeight: 35
+  MaxHeight: 40
+  MinRooms: 1
+  MaxRooms: 1
+  MaxExternalDoors: 1
+  CorridorFloor: Wood
+  CorridorWall: Wood
+  FloorplanType: 3

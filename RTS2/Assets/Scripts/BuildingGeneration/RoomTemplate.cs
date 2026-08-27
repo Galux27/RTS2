@@ -10,6 +10,9 @@ public class RoomTemplate : ScriptableObject
     public List<RoomTemplateProp> Props;
     public bool CanHaveWindows = false,CanHaveExternalDoor=false,CanBeGridBased=false,CanHaveInternalWalls=false,CanGenerateAnyWalls=true;
     public int MinWidth, MaxWidth, MinHeight, MaxHeight;
+
+    public List<BuildingRoomData> AttachedRooms;
+
 }
 [System.Serializable]
 public class RoomTemplateProp

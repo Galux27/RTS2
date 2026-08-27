@@ -75,6 +75,10 @@ public class WorldTilesManager
 
     public uint GetTileID(string type)
     {
+        if (type == null)
+        {
+            return 0;
+        }
         if (WorldTileIndexes.ContainsKey(type))
         {
             return WorldTileIndexes[type];

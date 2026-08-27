@@ -2,12 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class RoomGenerator 
 {
+
+    public void GetTilesFromBuilding(GeneratedRoom room,GeneratedBuilding building)
+    {
+        //work out why this breaks the tiles 
+   
+        Vector2Int Origin = room.Position;
+        Origin.x = Mathf.Clamp(Origin.x, 0, building.Tiles.GetLength(0) - 1);
+        Origin.y = Mathf.Clamp(Origin.y, 0, building.Tiles.GetLength(1) - 1);
+        for (int x = 0; x < room.size.x; x++)
+        {
+            for (int y = 0; y < room.size.y; y++)
+            {
+                try
+                {
+                    if (building.Tiles[x + Origin.x, y + Origin.y] != null)
+                    {
+                        room.RoomTiles[x, y].CopyData( building.Tiles[x + Origin.x, y + Origin.y]);
+                    }
+                }
+                catch
+                {
+                    Debug.LogError("Out of range " + x + "," + y + "," + Origin + "," + building.Tiles.GetLength(0) + "," + building.Tiles.GetLength(1)+","+room.size);
+                }
+               
+            }
+        }
+    }
+
     public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template,int id,GeneratedBuilding building)
     {
         GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID,id);
+        GetTilesFromBuilding(room, building);
+
         PopulateWallTiles(room, template,building);
         GenerateLocationsForDoors(room);
         PopulateFloorTiles(room, template);
@@ -331,8 +362,8 @@ public class RoomGenerator
 
     void PopulateFloorTiles(GeneratedRoom room, RoomTemplate template)
     {
-        int width = room.RoomTiles.GetLength(0);
-        int height = room.RoomTiles.GetLength(1);
+        int width = room.RoomTiles.GetLength(0)-1;
+        int height = room.RoomTiles.GetLength(1)-1;
         for (int x = 0; x < width; x++)
         {
           for(int y = 0; y < height; y++)
@@ -578,6 +609,24 @@ public class RoomTile
     public int RoomID=-1;
 
 
+    public void CopyData(RoomTile toCopy)
+    {
+        if (toCopy.HasDoor)
+        {
+            SetDoor(toCopy.DoorTile);
+        }
+        if (toCopy.HasFloor)
+        {
+            SetFloor(toCopy.FloorTile);
+        }
+
+        if (toCopy.HasWall)
+        {
+            SetWall(toCopy.WallTile);
+        }
+    }
+
+
     public bool HasBeenUsed()
     {
         return RoomID >0;
@@ -621,6 +670,10 @@ public class RoomTile
 
     public void SetFloor(string type)
     {
+        if (HasFloor)
+        {
+            Debug.Log("Replacing " + FloorTile + " with " + type);
+        }
         FloorTile = type;
         HasFloor = true;
     }
