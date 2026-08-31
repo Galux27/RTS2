@@ -50,8 +50,10 @@ public class BuildingGenerator : MonoBehaviour
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
             (int)CameraController.Instance.transform.position.y);
         BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(testTemplate.FloorplanType);
-        ApplyBuidlingToWorld(floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses));
+        GeneratedBuilding building = floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses);
+        ApplyBuidlingToWorld(building);
         IsGenerating = false;
+        RoomTileDebug.DebugDrawAllTiles(building);
     }
 
     public void GenerateBuilding(BuildingZoneBuilding building)

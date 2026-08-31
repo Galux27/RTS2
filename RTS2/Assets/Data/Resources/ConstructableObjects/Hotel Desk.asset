@@ -18,7 +18,7 @@ MonoBehaviour:
   BackwardsSprite: {fileID: 0}
   HarvestedSprite: {fileID: 0}
   BlocksTile: 1
-  Width: 3
+  Width: 4
   Height: 2
   CanHarvest: 0
   IsDecoration: 0
@@ -48,9 +48,9 @@ MonoBehaviour:
       - Direction: 1
         WallAccessibility: 3
       - Direction: 2
-        WallAccessibility: 2
+        WallAccessibility: 3
       - Direction: 3
-        WallAccessibility: 2
+        WallAccessibility: 3
       OtherObjectAccessiblityData:
       - Direction: 0
         ObjectAccessibility: 1

@@ -122,6 +122,7 @@ public class RoomGenerator
 
     public void GenerateLocationsForDoors(GeneratedRoom room)
     {
+        Debug.Log("Generating location for doors " + room.RoomTiles.GetLength(0) + "," + room.RoomTiles.GetLength(1));
         Vector2Int coords = new Vector2Int();
         coords.x=Random.Range(2,room.size.x-2);
         room.RoomTiles[coords.x, 0].IsValidForDoor = true ;
@@ -255,193 +256,48 @@ public class RoomGenerator
         {
             return;
         }
+        if (template.CanBeGridBased)
+        {
+            return;
+        }
         RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
-
-        
-
-
-
-        RoomTemplateProp prop = null;
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
-        ConstructableObject obj = null;
-        int width = 0, height = 0;
+
         for (int x = 0; x < template.Props.Count; x++)
         {
             propCounts.Add(template.Props[x].PropName, 0);
         }
-        List<Vector2Int> ValidPosition = new List<Vector2Int>();
-        for(int x = 0; x < room.size.x; x++)
-        {
-            for(int y = 0; y < room.size.y; y++)
-            {
-                ValidPosition.Add(new Vector2Int(x, y));
-            }
-        }
-
-        Vector2Int GetPotentialPositionForProp(EnvironmentObject toPlace)
-        {
-            Vector2Int retVal = Vector2Int.zero;
-            bool done = false;
-            while (!done)
-            {
-                retVal = ValidPosition[Random.Range(0, ValidPosition.Count)];
-                if(retVal.x<=room.size.x-toPlace.Size().x && retVal.y <= room.size.y - toPlace.Size().y)
-                {
-                    done = true;
-                }
-            }
-            return retVal;
-        }
-
-        int attempts = 0;
-        bool runOutOfPropsToPlace= false;
-        int maxAttemtps = room.size.x * room.size.y;
-        maxAttemtps *= 10;
+        bool Done = false;
         RoomTemplateProp currentProp = null;
-        int propIndex = 0;
         EnvironmentObject toPlace = null;
-        int successes = 0;
-       
-        while(attempts<maxAttemtps && runOutOfPropsToPlace == false&&ValidPosition.Count>0)
+        int attempts = 0;
+        bool runOutOfPropsToPlace = false;
+        string PropToPlace = string.Empty;
+        int maxAttemtps = 200;
+        while (!Done&&attempts<maxAttemtps)
         {
-            propIndex = Random.Range(0, template.Props.Count);
-            currentProp = template.Props[propIndex];
 
-
-            if(propCounts[currentProp.PropName] >= currentProp.MaxQuantity)
+            currentProp = template.GetPropByName(roomObjectPlacement.GetPropToPlaceByLargest(propCounts,template));
+            if (currentProp!=null)
             {
-                bool foundNew = false;
-                for(int x = 0; x < template.Props.Count; x++)
+                Vector2Int posToPlace = roomObjectPlacement.GetCoordinateForProp(currentProp.PropName);
+                if (posToPlace.x >= 0)
                 {
-                    if(propCounts[template.Props[x].PropName] < template.Props[x].MaxQuantity)
-                    {
-                        currentProp = template.Props[x];
-                        foundNew = true;
-                        break;
-                    }
-                    
-                }
-                if (foundNew==false)
-                {
-                    runOutOfPropsToPlace= true;
-                }
-            }
-            if (!runOutOfPropsToPlace)
-            {
-               
-                toPlace = ConstructableObjectManager.Instance.AllObjects[currentProp.PropName];
-                Vector2Int startPos = GetPotentialPositionForProp(toPlace);
+                    toPlace = ConstructableObjectManager.Instance.AllObjects[currentProp.PropName];
 
-                if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(toPlace, room, startPos, building))
-                {
-                    successes++;
-                    List<Vector2Int> toRemove= AddEnvObjectToRoom(room, startPos, toPlace, building);
+                    List<Vector2Int> toRemove = AddEnvObjectToRoom(room, posToPlace, toPlace, building);
+
                     propCounts[currentProp.PropName]++;
-                    for(int x = 0; x < toRemove.Count; x++)
-                    {
-                        ValidPosition.Remove(toRemove[x]);
-                    }
+
+                    roomObjectPlacement.RefreshObjectValidity(building, room);
                 }
             }
-
+            else
+            {
+                Done = true;
+            }
             attempts++;
         }
-        Debug.Log("Prop Placement: " + successes + "," + attempts + ",");
-       /* for (int yStart = room.size.y - 1; yStart > 0; yStart--)
-        {
-            for (int xStart = room.size.x - 1; xStart > 0; xStart--)
-            {
-                for (int p = 0; p < template.Props.Count; p++)
-                {
-                    prop = template.Props[p];
-                    if (propCounts[prop.PropName] < prop.MaxQuantity)
-                    {
-                        obj = ConstructableObjectManager.Instance.AllObjects[prop.PropName];
-                        width = obj.Width;
-                        height = obj.Height;
-                        if (prop.NeedsEdge)
-                        {
-                            width += 2;
-                            height += 2;
-                        }
-
-
-                        bool valid = true;
-                        if (xStart + width > room.size.x || yStart + height > room.size.y)
-                        {
-                            valid = false;
-                        }
-                        // if (valid)
-                        bool foundWall = false;
-                        bool foundDoor = false;
-                        if (valid)
-                        {
-                            for (int x = xStart - 1; x < xStart + width + 1; x++)
-                            {
-                                for (int y = yStart - 1; y < yStart + height + 1; y++)
-                                {
-                                    if (room.IsValid(x, y))
-                                    {
-                                        if (x >= xStart && x < xStart + width && y >= yStart && y < yStart + width)
-                                        {
-                                            if (room.TileHasNothing(x, y) == false)
-                                            {
-                                                valid = false;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (room.RoomTiles[x, y].HasWall)
-                                            {
-                                                foundWall = true;
-                                            }
-
-                                        }
-
-                                        if (room.RoomTiles[x, y].IsValidForDoor)
-                                        {
-                                            foundDoor = true;
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        foundWall = true;
-                                    }
-
-                                }
-                            }
-
-
-                            if (prop.MustBeOnRoomEdge && !foundWall || foundDoor)
-                            {
-                                valid = false;
-                            }
-
-                            if (valid)
-                            {
-                                {
-                                    for (int x = xStart; x < xStart + width; x++)
-                                    {
-                                        for (int y = yStart; y < yStart + height; y++)
-                                        {
-
-                                            room.RoomTiles[x, y].HasProp = true;
-                                        }
-                                    }
-                                    room.AddEnvObject(room.RoomTiles[xStart, yStart], new GeneratedRoomProp(prop.PropName, new Vector2Int(xStart, yStart)));
-                                    if (!propCounts.ContainsKey(prop.PropName))
-                                    {
-                                        propCounts.Add(prop.PropName, 0);
-                                    }
-                                    propCounts[prop.PropName]++;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
     }
 
     List<Vector2Int> AddEnvObjectToRoom(GeneratedRoom room,Vector2Int pos,EnvironmentObject objectToAdd,GeneratedBuilding building)
@@ -730,6 +586,19 @@ public class GeneratedRoom
         this.size = size;
     }
 
+    public void SetAsCorridor()
+    {
+        for (int x = 0; x < size.x; x++)
+        {
+            for (int y = 0; y < size.y; y++)
+            {
+                RoomTiles[x, y].IsCorridor = true;
+            }
+        }
+
+    }
+
+
     public void ResetRoom(Vector2Int position,Vector2Int size)
     {
         
@@ -821,6 +690,7 @@ public class GeneratedRoomProp
     }
 }
 
+[System.Serializable]
 public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;

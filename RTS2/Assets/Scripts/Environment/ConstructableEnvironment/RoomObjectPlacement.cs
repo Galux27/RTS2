@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 public class RoomObjectPlacement
 {
+    //Add prioritizing by criteria
+    //e.g. higher priority for distance from door
     public Dictionary<string,RoomObjectPositions> AllObjectsInRoom = new Dictionary<string, RoomObjectPositions>();
     public RoomObjectPlacement(RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
     {
@@ -35,6 +37,31 @@ public class RoomObjectPlacement
             } 
         }
         return Vector2Int.one * -1;
+    }
+
+    /// <summary>
+    /// Gets a prop to place in the room prioritizing size of the prop
+    /// </summary>
+    /// <param name="propsPlaced"></param>
+    /// <param name="template"></param>
+    /// <returns></returns>
+    public string GetPropToPlaceByLargest(Dictionary<string,int> propsPlaced,RoomTemplate template)
+    {
+        float size = 0;
+        string retVal = string.Empty;
+        foreach (KeyValuePair<string, RoomObjectPositions> kvp in AllObjectsInRoom)
+        {
+            if (propsPlaced[kvp.Key] < template.GetMaxQuantity(kvp.Key))
+            {
+                if (AllObjectsInRoom[kvp.Key].ObjectToPlace.Size().magnitude > size)
+                {
+                    size =  AllObjectsInRoom[kvp.Key].ObjectToPlace.Size().magnitude;
+                    retVal = kvp.Key;
+                }
+            }
+        }
+
+        return retVal;
     }
 }
 public class RoomObjectPositions

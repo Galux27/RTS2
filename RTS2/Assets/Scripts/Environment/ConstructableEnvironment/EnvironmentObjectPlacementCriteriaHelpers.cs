@@ -5,6 +5,11 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     public static int doorFail = 0, wallFail = 0, accessFail = 0, adjacencyFail = 0;
     public static bool IsPositionValidForObject(EnvironmentObject objectToCreate,GeneratedRoom room, Vector2Int coordinates,GeneratedBuilding building)
     {
+        if (!IsPositionInRange(coordinates, room, objectToCreate))
+        {
+            return false;
+        }
+
         if (DoesPositionContainExistingProp(coordinates, room, objectToCreate, building))
         {
             return false;
@@ -15,7 +20,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
             return true;
         }
         
-        if (!DoWeMeedDoorCriteria(coordinates, room, objectToCreate,building))
+        if (!DoWeMeetDoorCriteria(coordinates, room, objectToCreate,building))
         {
             return false;
         }
@@ -34,6 +39,10 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
         return true;
     }
 
+    static bool IsPositionInRange(Vector2Int position,GeneratedRoom room,EnvironmentObject objectToCreate)
+    {
+        return position.x >= 0 && position.y >= 0 && position.x + objectToCreate.Size().x < room.size.x && position.y + objectToCreate.Size().y < room.size.y;
+    }
 
     static bool DoesPositionContainExistingProp(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
     {
@@ -121,7 +130,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
 
     #endregion
     #region Doors
-    static bool DoWeMeedDoorCriteria(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
+    static bool DoWeMeetDoorCriteria(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
     {
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
         {
@@ -140,10 +149,22 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
         for(int x = 0; x < 4; x++)
         {
             DirectionFromObject direction=(DirectionFromObject)x;
-            Vector2Int StartPos = GetPositionOnEdgeFromDirection(position, direction, objectToCreate);
+            Vector2Int StartPos = GetPositionOnObjectFromDirection(position, direction, objectToCreate);
             Vector2Int Axis = AxisFromDirection(direction);
             int Size = SizeFromDirection(direction, objectToCreate);
             Vector2Int curPos = StartPos;
+            for (int i = 0; i < Size; i++)
+            {
+                curPos = StartPos + (Axis * i);
+                curPos = building.ConvertRoomCoordsToBuildingCoords(curPos, room);
+                if (!DoesTileMeetDoorCriteria(building.Tiles[curPos.x, curPos.y], data))
+                {
+                    return false;
+                }
+            }
+
+            StartPos = GetPositionOnObjectFromDirection(position, direction, objectToCreate);
+            curPos = StartPos;
             for (int i = 0; i < Size; i++)
             {
                 curPos = StartPos + (Axis * i);

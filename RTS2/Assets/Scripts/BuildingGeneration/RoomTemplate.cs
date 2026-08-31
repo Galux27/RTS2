@@ -13,6 +13,28 @@ public class RoomTemplate : ScriptableObject
 
     public List<BuildingRoomData> AttachedRooms;
 
+    public int GetMaxQuantity(string toGet)
+    {
+        for(int x = 0; x < Props.Count; x++)
+        {
+            if (Props[x].PropName == toGet)
+            {
+                return Props[x].MaxQuantity;
+            }
+        }
+        return 0;
+    }
+    public RoomTemplateProp GetPropByName(string toGet)
+    {
+        for (int x = 0; x < Props.Count; x++)
+        {
+            if (Props[x].PropName == toGet)
+            {
+                return Props[x];
+            }
+        }
+        return null;
+    }
 }
 [System.Serializable]
 public class RoomTemplateProp

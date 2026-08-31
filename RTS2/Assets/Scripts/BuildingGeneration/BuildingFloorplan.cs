@@ -592,6 +592,7 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         Vector2Int startPos = new Vector2Int(MainRoomPosition.x+(MainRoomSize.x)-1, MainRoomPosition.y);
         curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
         building.AddRoom(curRoom, true);
+        curRoom.SetAsCorridor();
         Corridors.Add(curRoom);
 
         startPos.x = 1;
@@ -599,6 +600,8 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         size.x = MainRoomPosition.x;
         size.y = corridor.MaxHeight;
         curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
+        curRoom.SetAsCorridor();
+
         building.AddRoom(curRoom, true);
         Corridors.Add(curRoom);
 
@@ -612,6 +615,8 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             size.y = (height - MainRoomSize.y);
             curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
             building.AddRoom(curRoom, true);
+            curRoom.SetAsCorridor();
+
             Corridors.Add(curRoom);
 
         }
@@ -623,6 +628,8 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             size.y = (height - MainRoomSize.y);
             curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
             building.AddRoom(curRoom, true);
+            curRoom.SetAsCorridor();
+
             Corridors.Add(curRoom);
 
         }
