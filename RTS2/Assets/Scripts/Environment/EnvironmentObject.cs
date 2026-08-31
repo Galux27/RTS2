@@ -18,6 +18,9 @@ public class EnvironmentObject : ScriptableObject
     public HarvestableResourceData Resources;
     public ResourceCapacityData CapacityData;
     public float MaxHealth;
+
+    public EnvironmentObjectPlacementCriteria PlacementCriteria;
+
     public Vector3 Size()
     {
         return new Vector3(Width, Height);

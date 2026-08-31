@@ -790,6 +790,15 @@ public class GeneratedBuilding
         }
     }
 
+
+    public Vector2Int ConvertRoomCoordsToBuildingCoords(Vector2Int coords,GeneratedRoom room)
+    {
+        Vector2Int Origin = room.Position + coords; ;
+        Origin.x = Mathf.Clamp(Origin.x, 0, Tiles.GetLength(0) - 1);
+        Origin.y = Mathf.Clamp(Origin.y, 0, Tiles.GetLength(1) - 1);
+        return Origin;
+    }
+
     public void ApplyRoom(GeneratedRoom room,bool CanOverwrite=false)
     {
         Vector2Int Origin =  room.Position;
@@ -817,6 +826,16 @@ public class GeneratedBuilding
             }
         }
     }
+
+    public void PopulatePropsInRooms(RoomGenerator roomGen)
+    {
+        for(int x = 0; x < MyRooms.Count; x++)
+        {
+            roomGen.PopulateRoomEnvObjects(MyRooms[x],this);
+            ApplyRoom(MyRooms[x],true);
+        }
+    }
+
 
     public void AddRoom(GeneratedRoom room,bool CanOverwrite=false)
     {

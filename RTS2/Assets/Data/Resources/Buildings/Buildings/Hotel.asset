@@ -15,7 +15,7 @@ MonoBehaviour:
   BuildingName: Hotel
   PotentialRooms:
   - roomTemplate: {fileID: 11400000, guid: 0818b1922393ce3419855b0cd5c2b44f, type: 2}
-    Min: 10
+    Min: 20
     Max: 20
   MainRoom:
     roomTemplate: {fileID: 11400000, guid: c6d4470fc2901a1459b221bb3e0ea936, type: 2}

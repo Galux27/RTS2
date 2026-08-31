@@ -32,12 +32,12 @@ MonoBehaviour:
   CanHaveWindows: 1
   CanHaveExternalDoor: 0
   CanBeGridBased: 0
-  CanHaveInternalWalls: 0
+  CanHaveInternalWalls: 1
   CanGenerateAnyWalls: 1
-  MinWidth: 5
-  MaxWidth: 7
-  MinHeight: 4
-  MaxHeight: 7
+  MinWidth: 6
+  MaxWidth: 8
+  MinHeight: 6
+  MaxHeight: 8
   AttachedRooms:
   - roomTemplate: {fileID: 11400000, guid: 7ac49ee569886a14b87ac830ff87ad5d, type: 2}
     Min: 1

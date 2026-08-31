@@ -30,6 +30,36 @@ MonoBehaviour:
   CapacityData:
     CapacityData: []
   MaxHealth: 30
+  PlacementCriteria:
+    MyAccessiblityData:
+    - ObjectAccessibily:
+      - Direction: 0
+        Accessiblity: 2
+      - Direction: 1
+        Accessiblity: 0
+      - Direction: 2
+        Accessiblity: 2
+      - Direction: 3
+        Accessiblity: 2
+      DoorAccessibilty: 1
+      WallAccessibilities:
+      - Direction: 0
+        WallAccessibility: 0
+      - Direction: 1
+        WallAccessibility: 3
+      - Direction: 2
+        WallAccessibility: 0
+      - Direction: 3
+        WallAccessibility: 0
+      OtherObjectAccessiblityData:
+      - Direction: 0
+        ObjectAccessibility: 0
+      - Direction: 1
+        ObjectAccessibility: 1
+      - Direction: 2
+        ObjectAccessibility: 0
+      - Direction: 3
+        ObjectAccessibility: 0
   Cost: 100
   TimeToBuild: 5
   RequirementsToBuild:

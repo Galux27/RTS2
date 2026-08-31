@@ -27,6 +27,111 @@ public class BuildingFloorplan
         }
     }
 
+
+    public static List<Vector2Int> GetValidEdgeTilesForRoom(int width, int height, GeneratedBuilding building, GeneratedRoom roomToBuildOff)
+    {
+        List<Vector2Int> ValidTilesToStartOn = new List<Vector2Int>();
+        int xStart = 0;// Mathf.Clamp( roomToBuildOff.Position.x-width,0,building.Width);
+        int yStart = 0;// Mathf.Clamp(roomToBuildOff.Position.y-height,0,building.Height);
+        //NEED TOA DD SOMETHING TO CHECK IF THE TILE THATS WIDTH/HEIGHT AWAY IS VALID THEN ADD THAT COORDINATE ASWELL
+        for (int x = xStart; x < building.Width - width; x++)
+        {
+            for (int y = yStart; y < building.Height - height; y++)
+            {
+                if (IsBuildingTileRoomEdge(building, roomToBuildOff, x, y) ||
+                    IsBuildingTileRoomEdge(building, roomToBuildOff, x + width-1, y) || IsBuildingTileRoomEdge(building, roomToBuildOff, x, y + height-1))
+                {
+                    ValidTilesToStartOn.Add(new Vector2Int(x, y));
+                }
+            }
+        }
+        return ValidTilesToStartOn;
+    }
+
+    public static Vector2Int GetEdgeOfRoomLargeEnough(int width,int height,GeneratedBuilding building,GeneratedRoom roomToBuildOff)
+    {
+        List<Vector2Int> ValidTilesToStartOn = GetValidEdgeTilesForRoom(width,height,building,roomToBuildOff);
+
+        Vector2Int startPos = Vector2Int.zero;
+        for(int i = 0; i < ValidTilesToStartOn.Count; i++)
+        {
+            startPos = ValidTilesToStartOn[i];
+            bool valid = true;
+            for(int x = startPos.x; x < startPos.x + width; x++)
+            {
+                for(int y = startPos.y; y < startPos.y + height; y++)
+                {
+                    if (!IsTileValidForAdjacentRoom(x, y, building, roomToBuildOff)){
+                        valid = false;
+                        break;
+                    }
+                }
+                if (!valid)
+                {
+                    break;
+                }
+            }
+            if (valid)
+            {
+                Debug.Log("Room start coords " + ValidTilesToStartOn[i]);
+
+                return ValidTilesToStartOn[i];
+            }
+        }
+
+        
+
+        return Vector2Int.one * -1;
+    }
+
+    static bool IsTileValidForAdjacentRoom(int x,int y,GeneratedBuilding generatingIn,GeneratedRoom baseRoom)
+    {
+        if (x < 0 || y < 0 || x >= generatingIn.Tiles.GetLength(0) || y >= generatingIn.Tiles.GetLength(1))
+        {
+            return false;
+        }
+
+        if (generatingIn.Tiles[x, y] == null)
+        {
+            return true;
+        }
+        else
+        {
+            if (generatingIn.Tiles[x, y].RoomID == baseRoom.RoomID)
+            {
+                if (!generatingIn.Tiles[x, y].HasWall)
+                {
+                    return false;
+                }
+            }else if(generatingIn.Tiles[x, y].RoomID != baseRoom.RoomID)
+            {
+                if (!generatingIn.Tiles[x, y].HasWall)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    static bool IsBuildingTileRoomEdge(GeneratedBuilding toCheck,GeneratedRoom room,int x,int y)
+    {
+        if(x<0||y<0||x>=toCheck.Tiles.GetLength(1)|| y >= toCheck.Tiles.GetLength(1))
+        {
+            return false;
+        }
+        if (toCheck.Tiles[x,y] == null)
+        {
+            return false;
+        }
+        if (toCheck.Tiles[x, y].RoomID!=room.RoomID) 
+        {
+            return false;
+        }
+        return true;
+    }
+
     static List<Vector2Int> RandomList = new List<Vector2Int>();
     public static Vector2Int GetValidEdgeCoordinatesForRoom(int width,int height,GeneratedBuilding building)
     {
@@ -256,6 +361,8 @@ public class SquareBuildingFloorplan : BuildingFloorplan
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();
+        building.PopulatePropsInRooms(RoomGen);
+
         return building;
     }
 
@@ -449,12 +556,15 @@ public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();
+        building.PopulatePropsInRooms(RoomGen);
+
         return building;
     }
 }
 
 public class CorridorBasedFloorplan : BuildingFloorplan
 {
+    const int MaxAttempts = 2000;
     const string CorridorName = "Corridor";
     Vector2Int size;
     public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
@@ -476,12 +586,13 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         bool OnTopOfBuilding = MainRoomPosition.y > 0;
         curRoom = RoomGen.GenerateRoom(MainRoomPosition, MainRoomSize, roomTemplate.roomTemplate, building.MyRooms.Count, building);
         building.AddRoom(curRoom);
-
+        List<GeneratedRoom> Corridors = new List<GeneratedRoom>();
         RoomTemplate corridor = BuildingDataManager.Instance.RoomTemplates[CorridorName];
         size = new Vector2Int((width-(MainRoomPosition.x + (MainRoomSize.x))), corridor.MaxHeight);
         Vector2Int startPos = new Vector2Int(MainRoomPosition.x+(MainRoomSize.x)-1, MainRoomPosition.y);
         curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
         building.AddRoom(curRoom, true);
+        Corridors.Add(curRoom);
 
         startPos.x = 1;
         startPos.y = MainRoomPosition.y;
@@ -489,6 +600,7 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         size.y = corridor.MaxHeight;
         curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
         building.AddRoom(curRoom, true);
+        Corridors.Add(curRoom);
 
         Debug.Log("Building on top " + OnTopOfBuilding);
 
@@ -500,6 +612,8 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             size.y = (height - MainRoomSize.y);
             curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
             building.AddRoom(curRoom, true);
+            Corridors.Add(curRoom);
+
         }
         else
         {
@@ -509,43 +623,54 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             size.y = (height - MainRoomSize.y);
             curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
             building.AddRoom(curRoom, true);
+            Corridors.Add(curRoom);
+
         }
+        RoomTemplate subRoomTemplate = null;
+        int RoomsToAddOffCorridors = 0;
+        int attempts = 0,successes=0;
+        int corridorIndex = 0;
+        Vector2Int SubRoomSize = Vector2Int.zero;
+        Vector2Int startCoords = Vector2Int.zero;
+        for (int i = 0; i < template.PotentialRooms.Count; i++)
+        {
+            attempts = 0;
+            successes = 0;
+            RoomsToAddOffCorridors = Random.Range(template.PotentialRooms[i].Min, template.PotentialRooms[i].Max);
+            subRoomTemplate = template.PotentialRooms[i].roomTemplate;
+            SubRoomSize.x = Random.Range(subRoomTemplate.MinWidth, subRoomTemplate.MaxWidth);
+            SubRoomSize.y = Random.Range(subRoomTemplate.MinHeight, subRoomTemplate.MaxHeight);
+            corridorIndex = 0;
+            while (corridorIndex < Corridors.Count && successes < RoomsToAddOffCorridors&&attempts< MaxAttempts)
+            {
 
+                startCoords = BuildingFloorplan.GetEdgeOfRoomLargeEnough(SubRoomSize.x,SubRoomSize.y, building, Corridors[corridorIndex]);
+                if (startCoords.x >= 0)
+                {
+                    curRoom = RoomGen.GenerateRoom(startCoords, SubRoomSize, subRoomTemplate, building.MyRooms.Count, building);
+                    building.AddRoom(curRoom, true);
+                    successes++;
+                }
+                else
+                {
+                    corridorIndex++;
+                }
+              
+                attempts++;
+            }
+        }
+        Debug.Log("Attempts made for room " + attempts + "/" + successes);
 
-
-        /*  List<SplitRoom> potentialNewSplits = new List<SplitRoom>();
-
-          BuildingRoomData roomTemplate = template.MainRoom;
-          curRoom = RoomGen.GenerateRoom(Vector2Int.zero, size, roomTemplate.roomTemplate, building.MyRooms.Count, building);
-          building.AddRoom(curRoom);
-          RoomTemplate subRoomTemplate = null;
-          for (int x = 0; x < template.PotentialRooms.Count; x++)
-          {
-              subRoomTemplate = building.GetRoomToGenerate(template);
-              if (subRoomTemplate != null)
-              {
-                  Vector2Int roomSize = new Vector2Int(Random.Range(subRoomTemplate.MinWidth, subRoomTemplate.MaxWidth), Random.Range(subRoomTemplate.MinHeight, subRoomTemplate.MaxHeight));
-
-                  Vector2Int start = GetStartingCoordsForRoom(roomSize.x, roomSize.y, building);
-
-                  if (start.x >= 0)
-                  {
-
-                      building.ResetAreaOfBuilding(start, roomSize);
-
-                      curRoom = RoomGen.GenerateRoom(start, roomSize, subRoomTemplate, building.MyRooms.Count, building);
-                      building.AddRoom(curRoom, true);
-                  }
-              }
-          }
-
-
-        */
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();
+        building.PopulatePropsInRooms(RoomGen);
+
+
         return building;
     }
+
+ 
 }
 
 public enum BuildingFloorplanType
