@@ -8,7 +8,7 @@ public class RoomTemplate : ScriptableObject
     public string RoomID;
     public string Wall, Door, Floor;
     public List<RoomTemplateProp> Props;
-    public bool CanHaveWindows = false,CanHaveExternalDoor=false,CanBeGridBased=false,CanHaveInternalWalls=false,CanGenerateAnyWalls=true;
+    public bool CanHaveWindows = false, CanHaveExternalDoor = false, CanBeGridBased = false, CanHaveInternalWalls = false, CanGenerateAnyWalls = true, GenerateDoorsToOtherRooms = true, GenerateDoorsToCorridors = true;
     public int MinWidth, MaxWidth, MinHeight, MaxHeight;
 
     public List<BuildingRoomData> AttachedRooms;

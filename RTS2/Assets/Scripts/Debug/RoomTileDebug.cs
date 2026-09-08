@@ -31,7 +31,7 @@ public class RoomTileDebug : MonoBehaviour
         g.transform.localScale = Vector3.one * .5f;
         RoomTileDebug rtd=g.AddComponent<RoomTileDebug>();
         rtd.TileIRepresent=tile;
-        rtd.transform.position = new Vector3(position.x+.5f, position.y+.5f, 1);
+        rtd.transform.position = new Vector3(position.x+.5f, position.y+.5f, 0);
         return g;
     }
 

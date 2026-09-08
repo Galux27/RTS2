@@ -1,3 +1,4 @@
+using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
@@ -52,6 +53,8 @@ public class BuildingGenerator : MonoBehaviour
         BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(testTemplate.FloorplanType);
         GeneratedBuilding building = floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses);
         ApplyBuidlingToWorld(building);
+        Dictionary<Vector2Int,GeneratedBuilding> splits= building.SplitBuildingIntoChunks();
+
         IsGenerating = false;
         RoomTileDebug.DebugDrawAllTiles(building);
     }
@@ -97,7 +100,7 @@ public class BuildingGenerator : MonoBehaviour
                 }
                 catch
                 {
-                    Debug.LogError("Error trying to get object in batch " + (WorldChunkManager.Instance.GetChunkBatch(batchCoords) == null)+" "+batchCoords+","+chunkCoords+","+localCoords+","+b.Position);
+                    Debug.LogError("Error trying to get object in batch " + (WorldChunkManager.Instance.GetChunkBatch(batchCoords) == null)+b.Position+","+b.Width+","+b.Height);
                     continue;
                 }
               
@@ -548,6 +551,8 @@ public class GeneratedBuilding
                 else
                 {
                     int id = Tiles[x, y].RoomID;
+                    RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[MyRooms[id].RoomType];
+
                     if (!Links.ContainsKey(id))
                     {
                         Links.Add(id, new RoomLink(id));
@@ -568,13 +573,13 @@ public class GeneratedBuilding
                                     {
                                         if (Tiles[x1, y1].IsCorridor)
                                         {
-                                            if (!Links[id].HasCorridorLink)
+                                            if (!Links[id].HasCorridorLink && template.GenerateDoorsToCorridors)
                                             {
                                                 Links[id].CorridorLink = new Vector2Int(x, y);
                                                 Links[id].HasCorridorLink = true;
                                             }
                                         }
-                                        else if (Tiles[x1, y1].RoomID != Tiles[x, y].RoomID)
+                                        else if (Tiles[x1, y1].RoomID != Tiles[x, y].RoomID&&template.GenerateDoorsToOtherRooms)
                                         {
                                             Links[id].AddLink(Tiles[x1, y1].RoomID, new Vector2Int(x, y));
 
@@ -801,6 +806,49 @@ public class GeneratedBuilding
         return Origin;
     }
 
+
+    public void ApplySlicedRoom(GeneratedRoom room,GeneratedBuilding slicedFrom)
+    {
+        //code isn't working because the the conversion is done from the original building and the application is done in the sliced building
+        //need to write something to convert between the building passed into here and the building its applied to
+        
+        
+        Vector2Int Origin = Position;
+        Vector2Int Difference = room.Position-Origin;
+        //work out difference between the two rooms starting positions, then subtract from the origin used?
+       // Origin.x = Mathf.Clamp(Origin.x, 0, Tiles.GetLength(0) - 1);
+       // Origin.y = Mathf.Clamp(Origin.y, 0, Tiles.GetLength(1) - 1);
+        Debug.LogError("error applying room original building pos "+ Origin +" difference between slice from and new building  "+Difference+
+                       " building size " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1) + " room size " + room.RoomTiles.GetLength(0) + "x" + room.RoomTiles.GetLength(1) + " error " 
+                       + " room pos " + room.Position +" this pos " + Position);
+        int xi = 0, yi = 0;
+        for (int x = 0; x < room.size.x; x++)
+        {
+            for (int y = 0; y < room.size.y; y++)
+            {
+                xi = x + Difference.x;
+                yi= y + Difference.y;
+                if (xi > 0 && yi > 0)
+                {
+                    try
+                    {
+                        if (Tiles[xi, yi] == null)
+                        {
+                            Tiles[xi, yi] = room.RoomTiles[x, y];
+                            hasAnything = true;
+                        }
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError("error applying " + x+"("+xi+")" + "," + y + "(" + yi + ")" + " origin " + Origin + " difference " + Difference +
+                            " dims " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1) + " room " + room.RoomTiles.GetLength(0) + "x" + room.RoomTiles.GetLength(1) + " error " + e.ToString()
+                            + " room pos " + room.Position);
+                    }
+                }
+            }
+        }
+    }
+
     public void ApplyRoom(GeneratedRoom room,bool CanOverwrite=false)
     {
         Vector2Int Origin =  room.Position;
@@ -820,10 +868,10 @@ public class GeneratedBuilding
                         hasAnything = true;
                     }
                 }
-                catch
+                catch(System.Exception e)
                 {
                     Debug.LogError("error applying " + x + "," + y + " origin " + Origin + 
-                        " dims " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1)+" room " +room.RoomTiles.GetLength(0)+"x"+room.RoomTiles.GetLength(1));
+                        " dims " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1)+" room " +room.RoomTiles.GetLength(0)+"x"+room.RoomTiles.GetLength(1)+" error " + e.ToString());
                 }
             }
         }
@@ -837,10 +885,29 @@ public class GeneratedBuilding
             ApplyRoom(MyRooms[x],true);
         }
     }
-
+    /// <summary>
+    /// For when your're adding a room to a building thats beign sliced to fit the chunk system
+    /// </summary>
+    /// <param name="room"></param>
+    /// <param name="originalBuilding"></param>
+    /// <param name="CanOverwrite"></param>
+    public void AddRoom(GeneratedRoom room,GeneratedBuilding originalBuilding, bool CanOverwrite = false)
+    {
+        if (room == null)
+        {
+            return;
+        }
+        MyRooms.Add(room);
+        ApplySlicedRoom(room,originalBuilding);
+        UpdateEdgeTiles();
+    }
 
     public void AddRoom(GeneratedRoom room,bool CanOverwrite=false)
     {
+        if (room == null)
+        {
+            return;
+        }
         MyRooms.Add(room);
         ApplyRoom(room,CanOverwrite);
         UpdateEdgeTiles();
@@ -933,6 +1000,111 @@ public class GeneratedBuilding
             }
         }
         return true;   
+    }
+
+    /// <summary>
+    /// Split building into more buidlings that match up with the chunk sizes
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<Vector2Int,GeneratedBuilding> SplitBuildingIntoChunks()
+    {
+        Dictionary<Vector2Int, GeneratedBuilding> Buildings = new Dictionary<Vector2Int, GeneratedBuilding>();
+        //work out lowest batch coord needed and highest
+        Vector2Int RoundedPositionLow = new Vector2Int(RoundToMultiple(Position.x, WorldChunkManager.ChunkBatchSize), RoundToMultiple(Position.y, WorldChunkManager.ChunkBatchSize));
+        Vector2Int RoundedPositionHigh = new Vector2Int(RoundToMultiple(Position.x+Width, WorldChunkManager.ChunkBatchSize), RoundToMultiple(Position.y+Height, WorldChunkManager.ChunkBatchSize));
+        Debug.Log("Generating building from split chunk positions low " + RoundedPositionLow + ", high" + RoundedPositionHigh+" original position "+Position+", width " + Width+" height " + Height);
+        //check if rounding needs to be altered
+        if (RoundedPositionLow.x > Position.x)
+        {
+            RoundedPositionLow.x -= WorldChunkManager.ChunkBatchSize;
+        }
+
+        if (RoundedPositionLow.y > Position.y)
+        {
+            RoundedPositionLow.y -= WorldChunkManager.ChunkBatchSize;
+        }
+
+        if (RoundedPositionHigh.x > Position.x + Width)
+        {
+            RoundedPositionHigh.x -= WorldChunkManager.ChunkBatchSize;
+        }
+        if (RoundedPositionHigh.x > Position.x + Width)
+        {
+            RoundedPositionHigh.x -= WorldChunkManager.ChunkBatchSize;
+        }
+
+        Vector2Int batchCoords = RoundedPositionLow;
+        GeneratedBuilding buidlingGenerated = null;
+        //go through each chunk batch encompassing the building
+        for(int x = RoundedPositionLow.x; x <= RoundedPositionHigh.x; x += WorldChunkManager.ChunkBatchSize)
+        {
+            for (int y = RoundedPositionLow.y; y <= RoundedPositionHigh.y; y += WorldChunkManager.ChunkBatchSize)
+            {
+                batchCoords.x = x;
+                batchCoords.y = y;
+                buidlingGenerated = GenerateBuildingFromSplit(batchCoords);
+                if (buidlingGenerated != null)
+                {
+                    Buildings.Add(batchCoords, buidlingGenerated);
+                }
+            }
+        }
+
+        return Buildings;   
+    }
+
+    GeneratedBuilding GenerateBuildingFromSplit(Vector2Int chunkBatchToPutIn)
+    {
+        Vector2Int ChunkEndPosition = chunkBatchToPutIn + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize);
+        //think this code is wrong try adding the square intersection from the room slicing to work out what size the building should be
+        //local coordinates to start the split from
+        int xStart = 0, yStart = 0 ;
+
+      
+        Vector2Int buildingMaxPosition = Position + new Vector2Int(Width, Height);
+        //local coordinates to end the split on
+       
+
+        int x5 = Mathf.Max(chunkBatchToPutIn.x, Position.x);
+        int y5 = Mathf.Max(chunkBatchToPutIn.y, Position.y);
+        int x6 = Mathf.Min(ChunkEndPosition.x, Position.x+Width);
+        int y6 = Mathf.Min(ChunkEndPosition.y, Position.y+Height);
+        if (x5 >= x6 || y5 >= y6)
+        {
+            return null;
+        }
+
+        //create new building for chunk batch
+        //copy over any relevant data
+
+        int newBuildingWidth = x6 - x5;
+        int newBuildingHeight = y6 - y5;
+        Vector2Int min = new Vector2Int(x5, y5);
+        Vector2Int max = new Vector2Int(x6, y6);
+        Debug.Log("Generating building from split width" + newBuildingWidth + ", height" + newBuildingHeight + ", min" + min.ToString() + ", max " + max.ToString()+",chunk batch "+chunkBatchToPutIn+", position "+Position);
+        GeneratedBuilding building = new GeneratedBuilding(newBuildingWidth, newBuildingHeight, new Vector2Int(x5, y5), this.buildingType);
+
+        GeneratedRoom room = null;
+        for(int x = 0; x < MyRooms.Count; x++)
+        {
+            //if (MyRooms[x].IsPartOfRoomInArea(min, max, this))
+            {
+                room = MyRooms[x].TakeSliceOfRoom(min, max, this);
+                if (room != null)
+                {
+                    building.AddRoom(room,this);
+                    room = null;
+                }
+            }
+        }
+
+        //check through each room and create a new room based off it with any tiles that should be in this chunk batch  
+        return building;
+    }
+
+    public int RoundToMultiple(int value, int roundTo)
+    {
+        return (value / roundTo) * roundTo;
     }
 }
 

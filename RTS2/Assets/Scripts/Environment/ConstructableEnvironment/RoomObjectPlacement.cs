@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.UIElements;
 public class RoomObjectPlacement
 {
@@ -33,7 +34,17 @@ public class RoomObjectPlacement
         {
             if (AllObjectsInRoom[propKey].ValidPositions.Count > 0)
             {
-                return AllObjectsInRoom[propKey].ValidPositions[Random.Range(0, AllObjectsInRoom[propKey].ValidPositions.Count)].Coords;
+                RoomObjectPosition retVal = AllObjectsInRoom[propKey].GetFurthestFromDoor();
+                    if (retVal != null)
+                    {
+                        return retVal.Coords;
+                    }
+                    else
+                    {
+                        return Vector2Int.one * -1;
+
+                    }
+                
             } 
         }
         return Vector2Int.one * -1;
@@ -74,9 +85,29 @@ public class RoomObjectPositions
         ObjectToPlace=ConstructableObjectManager.Instance.AllObjects[objectToPlace];
     }
 
+    public RoomObjectPosition GetFurthestFromDoor()
+    {
+        RoomObjectPosition RetVal = null;
+        float dist = 0f;
+        for(int x = 0; x < ValidPositions.Count; x++)
+        {
+            
+            if (ValidPositions[x].DoorWeight > dist)
+            {
+                dist = ValidPositions[x].DoorWeight;
+                RetVal = ValidPositions[x];
+            }
+        }
+
+
+        return RetVal;
+    }
+
     public void InitPositions(GeneratedRoom room,GeneratedBuilding building)
     {
         Vector2Int position = Vector2Int.zero;
+        float wallWeight = 0, doorWeight = 0, propWeight = 0;
+        Vector2Int propSize = ObjectToPlace.SizeAsVec2();
         for(int x = 0; x < room.size.x; x++)
         {
             for(int y = 0; y < room.size.y; y++)
@@ -85,7 +116,8 @@ public class RoomObjectPositions
                 position.y = y;
                 if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(ObjectToPlace, room, position, building))
                 {
-                    ValidPositions.Add(new RoomObjectPosition(position));
+                    room.GetWeightsForPropPlacement(position, propSize, out doorWeight, out wallWeight, out propWeight);
+                    ValidPositions.Add(new RoomObjectPosition(position, doorWeight,wallWeight, propWeight));
                 }
             }
         }
@@ -95,11 +127,15 @@ public class RoomObjectPositions
     public void RefreshPositions(GeneratedRoom room, GeneratedBuilding building)
     {
         List<RoomObjectPosition> StillValidPositions = new List<RoomObjectPosition>();
-        for(int x = 0; x < ValidPositions.Count; x++)
+        float wallWeight = 0, doorWeight = 0, propWeight = 0;
+        Vector2Int propSize = ObjectToPlace.SizeAsVec2();
+        for (int x = 0; x < ValidPositions.Count; x++)
         {
             if(EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(ObjectToPlace, room, ValidPositions[x].Coords, building))
             {
+                room.GetWeightsForPropPlacement(ValidPositions[x].Coords, propSize, out doorWeight, out wallWeight, out propWeight);
                 StillValidPositions.Add(ValidPositions[x]);
+                StillValidPositions[StillValidPositions.Count-1].UpdateWeights(doorWeight, wallWeight, propWeight);
             }
         }
 
@@ -112,9 +148,20 @@ public class RoomObjectPositions
 public class RoomObjectPosition 
 {
     public Vector2Int Coords;
-    public RoomObjectPosition(Vector2Int coords)
+    public float DoorWeight, WallWeight, PropWeight;
+    public RoomObjectPosition(Vector2Int coords,float door,float wall,float prop)
     {
         Coords = coords;
+        DoorWeight = door;
+        WallWeight = wall;
+        PropWeight= prop;
+    }
+
+    public void UpdateWeights(float door, float wall, float prop)
+    {
+        DoorWeight = door;
+        WallWeight = wall;
+        PropWeight = prop;
     }
     public bool IsPositionStillValid(Vector2Int newPos,int width,int height)
     {

@@ -591,20 +591,24 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         size = new Vector2Int((width-(MainRoomPosition.x + (MainRoomSize.x))), corridor.MaxHeight);
         Vector2Int startPos = new Vector2Int(MainRoomPosition.x+(MainRoomSize.x)-1, MainRoomPosition.y);
         curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
-        building.AddRoom(curRoom, true);
-        curRoom.SetAsCorridor();
-        Corridors.Add(curRoom);
-
+        if (curRoom != null)
+        {
+            building.AddRoom(curRoom, true);
+            curRoom.SetAsCorridor();
+            Corridors.Add(curRoom);
+        }
         startPos.x = 1;
         startPos.y = MainRoomPosition.y;
         size.x = MainRoomPosition.x;
         size.y = corridor.MaxHeight;
         curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
-        curRoom.SetAsCorridor();
+        if (curRoom != null)
+        {
+            curRoom.SetAsCorridor();
 
-        building.AddRoom(curRoom, true);
-        Corridors.Add(curRoom);
-
+            building.AddRoom(curRoom, true);
+            Corridors.Add(curRoom);
+        }
         Debug.Log("Building on top " + OnTopOfBuilding);
 
         if (OnTopOfBuilding)
@@ -614,11 +618,13 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             size.x = corridor.MaxWidth;
             size.y = (height - MainRoomSize.y);
             curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
-            building.AddRoom(curRoom, true);
-            curRoom.SetAsCorridor();
+            if (curRoom != null)
+            {
+                building.AddRoom(curRoom, true);
+                curRoom.SetAsCorridor();
 
-            Corridors.Add(curRoom);
-
+                Corridors.Add(curRoom);
+            }
         }
         else
         {
@@ -627,11 +633,13 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             size.x = corridor.MaxWidth;
             size.y = (height - MainRoomSize.y);
             curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
-            building.AddRoom(curRoom, true);
-            curRoom.SetAsCorridor();
+            if (curRoom != null)
+            {
+                building.AddRoom(curRoom, true);
+                curRoom.SetAsCorridor();
 
-            Corridors.Add(curRoom);
-
+                Corridors.Add(curRoom);
+            }
         }
         RoomTemplate subRoomTemplate = null;
         int RoomsToAddOffCorridors = 0;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using static UnityEngine.Rendering.DebugUI;
 
 public class RoomGenerator 
 {
@@ -36,6 +37,11 @@ public class RoomGenerator
 
     public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template,int id,GeneratedBuilding building)
     {
+        Debug.Log("Generating room of size " + size + " at " + pos + " part of " + template.name);
+        if (size.x < 3 || size.y < 3)
+        {
+            return null;
+        }
         GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID,id);
         GetTilesFromBuilding(room, building);
 
@@ -260,6 +266,7 @@ public class RoomGenerator
         {
             return;
         }
+        room.RefreshTileWeights();
         RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
 
@@ -312,6 +319,7 @@ public class RoomGenerator
                 retVal.Add(new Vector2Int(x, y));
             }
         }
+        room.RefreshWeightsForProps();
         return retVal;
     }
 
@@ -546,7 +554,14 @@ public class RoomGenerator
         {
             if (isLowXEdge || template.CanHaveInternalWalls)
             {
-                room.RoomTiles[0, x].SetWall(template.Wall);
+                try
+                {
+                    room.RoomTiles[0, x].SetWall(template.Wall);
+                }catch(System.Exception e)
+                {
+                    Debug.LogError(e.ToSafeString());
+                    Debug.LogError("error setting room tiles x was " + x + " dimensions " + width + "," + height + "," + room.RoomTiles.GetLength(0) + "," + room.RoomTiles.GetLength(1));
+                }
             }
             if (isXedge)
             {
@@ -586,6 +601,76 @@ public class GeneratedRoom
         this.size = size;
     }
 
+    public bool IsPartOfRoomInArea(Vector2Int min,Vector2Int max,GeneratedBuilding building)
+    {
+        return PointInRange(min, max,building.Position+ Position) || PointInRange(min, max, building.Position + Position + size);
+    }
+
+
+    /// <summary>
+    /// pass in coordinates and gets a room that contains all the area of this room within its bounds
+    /// </summary>
+    /// <param name="min">low bound in world coords</param>
+    /// <param name="max">high bound in world coords</param>
+    /// <param name="building">building the room is part of</param>
+    /// <returns></returns>
+    public GeneratedRoom TakeSliceOfRoom(Vector2Int min,Vector2Int max,GeneratedBuilding building)
+    {
+        Vector2Int roomStart = building.Position + Position;
+        Vector2Int roomMax = building.Position+ Position + size;
+        //gets intersection of squares
+         int x5 =Mathf.Max(min.x, roomStart.x);
+         int y5 = Mathf.Max(min.y, roomStart.y);
+         int x6 = Mathf.Min(max.x, roomMax.x);
+         int y6 = Mathf.Min(max.y, roomMax.y);
+        if (x5>=x6||y5>=y6)
+        {
+            return null;
+        }
+        int width = x6 - x5;
+        int height = y6 - y5;
+
+        int localXStart = Mathf.FloorToInt( Mathf.InverseLerp(roomStart.x, roomMax.x, x5)*size.x);
+        int localYStart = Mathf.FloorToInt(Mathf.InverseLerp(roomStart.y, roomMax.y, y5) * size.y);
+        GeneratedRoom room = new GeneratedRoom(new Vector2Int(width, height), new Vector2Int(x5, y5), RoomType, RoomID);
+
+        Debug.Log("Room Slice: room area " + roomStart + " to " + roomMax + " area checking " + min + " to " + max+" intersection "+ x5+","+y5+" to "+ x6+","+y6);
+
+        Debug.Log("Taking slice of room " + x5 + "," + y5 + " max " + x6 + "," + y6 + ",local" + localXStart + 
+            "," + localYStart+" building pos " +building.Position+",size b "+building.Width+","+building.Height+", room size"+this.size
+            +" area start " + min+" area end " +max+",slice size "+ width+","+height+" room pos "+ room.Position);
+
+     //code isn't working because the the conversion is done from the original building and the application is done in the sliced building
+     //need to write something to convert between the building passed into here and the building its applied to
+
+        Vector2Int position = Vector2Int.zero;
+        int newX = localXStart, newY = localYStart;
+
+        for(int x = 0; x < width; x++)
+        {
+            for(int y = 0; y < height; y++)
+            {
+                room.RoomTiles[x, y].CopyData(RoomTiles[newX, newY]);
+                newY++;
+            }
+            newX++;
+            newY = localYStart;
+        }
+
+
+      
+
+
+        return room;
+    }
+
+   
+
+    bool PointInRange(Vector2Int min,Vector2Int max,Vector2Int pos)
+    {
+        return pos.x>=min.x&&pos.x<=max.x && pos.y>=min.y&&pos.y<=max.y;
+    }
+
     public void SetAsCorridor()
     {
         for (int x = 0; x < size.x; x++)
@@ -601,9 +686,6 @@ public class GeneratedRoom
 
     public void ResetRoom(Vector2Int position,Vector2Int size)
     {
-        
-
-
         float startX = Mathf.InverseLerp(this.Position.x,this.Position.x+this.size.x, position.x);
         float startY = Mathf.InverseLerp(this.Position.y, this.Position.y + this.size.y, position.y);
         float endX = Mathf.InverseLerp(this.Position.x, this.Position.x + this.size.x, position.x+size.x);
@@ -678,6 +760,130 @@ public class GeneratedRoom
             && RoomTiles[x, y].HasProp == false&&RoomTiles[x,y].IsValidForDoor==false;
     }
 
+
+    public void RefreshTileWeights()
+    {
+        List<Vector2Int> DoorCoordinates = new List<Vector2Int>();
+        List<Vector2Int> WallCoordinates = new List<Vector2Int>();
+
+        for(int x = 0; x < RoomTiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < RoomTiles.GetLength(1); y++)
+            {
+                if (RoomTiles[x, y].HasDoor)
+                {
+                    DoorCoordinates.Add(new Vector2Int(x, y));
+                }
+
+                if (RoomTiles[x, y].HasWall)
+                {
+                    WallCoordinates.Add(new Vector2Int(x, y));
+                }
+            }
+        }
+        Vector2Int curPos = Vector2Int.zero;
+        for (int x = 0; x < RoomTiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < RoomTiles.GetLength(1); y++)
+            {
+                curPos.x = x;
+                curPos.y = y;
+
+                if (RoomTiles[x, y].HasDoor)
+                {
+                    RoomTiles[x, y].AvgDistToDoor = 0;
+                }
+                else
+                {
+                    RoomTiles[x, y].AvgDistToDoor = GetAvgOfPositionList(DoorCoordinates, curPos);
+
+                }
+                if (RoomTiles[x, y].HasWall)
+                {
+                    RoomTiles[x, y].AvgDistToWall = 0;
+
+                }
+                else
+                {
+                    RoomTiles[x, y].AvgDistToWall = GetAvgOfPositionList(WallCoordinates, curPos);
+
+                }
+
+            }
+        }
+    }
+
+    float GetAvgOfPositionList(List<Vector2Int> positions,Vector2Int coords)
+    {
+        if (positions.Count == 0)
+        {
+            return 0;
+        }
+        float retVal = 0f;
+        for(int x = 0; x < positions.Count; x++)
+        {
+            retVal += Vector2Int.Distance(positions[x], coords);
+        }
+
+        return retVal/positions.Count;
+    }
+
+    public void GetWeightsForPropPlacement(Vector2Int position,Vector2Int size,out float doorWeight,out float wallWeight,out float propWeight)
+    {
+        doorWeight = 99999;
+        wallWeight = 99999;
+        propWeight = 99999;
+        int totalTiles = size.x * size.y;
+        for(int x = position.x; x < position.x + size.x; x++)
+        {
+            for(int y = position.y; y < position.y + size.y; y++)
+            {
+               
+                doorWeight = Mathf.Min(doorWeight, RoomTiles[x, y].AvgDistToDoor);
+                wallWeight = Mathf.Min(wallWeight,RoomTiles[x, y].AvgDistToWall);
+                propWeight = Mathf.Min(propWeight,RoomTiles[x, y].AvgDistToProp);
+
+            }
+        }
+        
+    }
+
+    public void RefreshWeightsForProps()
+    {
+        List<Vector2Int> PropCoordinates = new List<Vector2Int>();
+
+        for (int x = 0; x < RoomTiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < RoomTiles.GetLength(1); y++)
+            {
+                if (RoomTiles[x, y].HasProp)
+                {
+                    PropCoordinates.Add(new Vector2Int(x, y));
+                }
+
+            }
+        }
+        Vector2Int curPos = Vector2Int.zero;
+
+        for (int x = 0; x < RoomTiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < RoomTiles.GetLength(1); y++)
+            {
+                curPos.x = x;
+                curPos.y = y;
+                if (RoomTiles[x, y].HasProp)
+                {
+                    RoomTiles[x, y].AvgDistToProp = 0;
+                }
+                else
+                {
+                    RoomTiles[x, y].AvgDistToProp=GetAvgOfPositionList(PropCoordinates,curPos);
+                }
+
+            }
+        }
+    }
+
 }
 public class GeneratedRoomProp
 {
@@ -697,6 +903,7 @@ public class RoomTile
     public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false,IsCorridor=false,IsValidForDoor=false;
     public int RoomID=-1;
 
+    public float AvgDistToWall=0f,AvgDistToDoor,AvgDistToProp=0f;
 
     public void CopyData(RoomTile toCopy)
     {
@@ -737,6 +944,7 @@ public class RoomTile
         
     }
 
+   
 
     public void SetID(int id)
     {

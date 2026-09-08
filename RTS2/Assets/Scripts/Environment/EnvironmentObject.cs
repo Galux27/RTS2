@@ -26,6 +26,11 @@ public class EnvironmentObject : ScriptableObject
         return new Vector3(Width, Height);
     }
 
+    public Vector2Int SizeAsVec2()
+    {
+        return new Vector2Int(Width, Height);
+    }
+
     public int GetWidth
     {
         get
