@@ -616,25 +616,26 @@ public class GeneratedRoom
     /// <returns></returns>
     public GeneratedRoom TakeSliceOfRoom(Vector2Int min,Vector2Int max,GeneratedBuilding building)
     {
-        Vector2Int roomStart = building.Position + Position;
+        Vector2Int RoomPosition = Position;
+        Vector2Int roomStart = building.Position + RoomPosition;
         Vector2Int roomMax = building.Position+ Position + size;
         //gets intersection of squares
          int x5 =Mathf.Max(min.x, roomStart.x);
          int y5 = Mathf.Max(min.y, roomStart.y);
          int x6 = Mathf.Min(max.x, roomMax.x);
          int y6 = Mathf.Min(max.y, roomMax.y);
-        if (x5>=x6||y5>=y6)
+        if (x5>x6||y5>y6)
         {
             return null;
         }
         int width = x6 - x5;
         int height = y6 - y5;
 
-        int localXStart = Mathf.FloorToInt( Mathf.InverseLerp(roomStart.x, roomMax.x, x5)*size.x);
-        int localYStart = Mathf.FloorToInt(Mathf.InverseLerp(roomStart.y, roomMax.y, y5) * size.y);
+        int localXStart = Mathf.RoundToInt( Mathf.InverseLerp(roomStart.x, roomMax.x, x5)*size.x);
+        int localYStart = Mathf.RoundToInt(Mathf.InverseLerp(roomStart.y, roomMax.y, y5) * size.y);
         GeneratedRoom room = new GeneratedRoom(new Vector2Int(width, height), new Vector2Int(x5, y5), RoomType, RoomID);
 
-        Debug.Log("Room Slice: room area " + roomStart + " to " + roomMax + " area checking " + min + " to " + max+" intersection "+ x5+","+y5+" to "+ x6+","+y6);
+        Debug.Log("Room Slice: room area " + roomStart + " to " + roomMax + " area checking " + min + " to " + max+" intersection "+ x5+","+y5+" to "+ x6+","+y6+" local "+localXStart+","+localYStart+" size " + width+","+height+" room size "+ size);
 
         Debug.Log("Taking slice of room " + x5 + "," + y5 + " max " + x6 + "," + y6 + ",local" + localXStart + 
             "," + localYStart+" building pos " +building.Position+",size b "+building.Width+","+building.Height+", room size"+this.size

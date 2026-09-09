@@ -52,11 +52,19 @@ public class BuildingGenerator : MonoBehaviour
             (int)CameraController.Instance.transform.position.y);
         BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(testTemplate.FloorplanType);
         GeneratedBuilding building = floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses);
-        ApplyBuidlingToWorld(building);
         Dictionary<Vector2Int,GeneratedBuilding> splits= building.SplitBuildingIntoChunks();
+        
+        foreach(KeyValuePair<Vector2Int,GeneratedBuilding> kvp in splits)
+        {
+            Debug.Log("applying building in " + kvp.Value);
+            ApplyBuidlingToWorld(kvp.Value);
+            RoomTileDebug.DebugDrawAllTiles(kvp.Value);
 
+        }
+        // ApplyBuidlingToWorld(building);
+        //
         IsGenerating = false;
-        RoomTileDebug.DebugDrawAllTiles(building);
+       // RoomTileDebug.DebugDrawAllTiles(building);
     }
 
     public void GenerateBuilding(BuildingZoneBuilding building)
@@ -818,9 +826,9 @@ public class GeneratedBuilding
         //work out difference between the two rooms starting positions, then subtract from the origin used?
        // Origin.x = Mathf.Clamp(Origin.x, 0, Tiles.GetLength(0) - 1);
        // Origin.y = Mathf.Clamp(Origin.y, 0, Tiles.GetLength(1) - 1);
-        Debug.LogError("error applying room original building pos "+ Origin +" difference between slice from and new building  "+Difference+
-                       " building size " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1) + " room size " + room.RoomTiles.GetLength(0) + "x" + room.RoomTiles.GetLength(1) + " error " 
-                       + " room pos " + room.Position +" this pos " + Position);
+        //Debug.LogError("error applying room original building pos "+ Origin +" difference between slice from and new building  "+Difference+
+        //               " building size " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1) + " room size " + room.RoomTiles.GetLength(0) + "x" + room.RoomTiles.GetLength(1) + " error " 
+        //               + " room pos " + room.Position +" this pos " + Position);
         int xi = 0, yi = 0;
         for (int x = 0; x < room.size.x; x++)
         {
@@ -828,11 +836,11 @@ public class GeneratedBuilding
             {
                 xi = x + Difference.x;
                 yi= y + Difference.y;
-                if (xi > 0 && yi > 0)
+                if (xi >= 0 && yi >= 0)
                 {
                     try
                     {
-                        if (Tiles[xi, yi] == null)
+                       // if (Tiles[xi, yi] == null)
                         {
                             Tiles[xi, yi] = room.RoomTiles[x, y];
                             hasAnything = true;
@@ -1055,7 +1063,7 @@ public class GeneratedBuilding
 
     GeneratedBuilding GenerateBuildingFromSplit(Vector2Int chunkBatchToPutIn)
     {
-        Vector2Int ChunkEndPosition = chunkBatchToPutIn + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize);
+        Vector2Int ChunkEndPosition = chunkBatchToPutIn + new Vector2Int(WorldChunkManager.ChunkBatchSize+1, WorldChunkManager.ChunkBatchSize+1);
         //think this code is wrong try adding the square intersection from the room slicing to work out what size the building should be
         //local coordinates to start the split from
         int xStart = 0, yStart = 0 ;
@@ -1063,12 +1071,12 @@ public class GeneratedBuilding
       
         Vector2Int buildingMaxPosition = Position + new Vector2Int(Width, Height);
         //local coordinates to end the split on
-       
+        Vector2Int buildingMinPosition = Position - Vector2Int.one;
 
         int x5 = Mathf.Max(chunkBatchToPutIn.x, Position.x);
         int y5 = Mathf.Max(chunkBatchToPutIn.y, Position.y);
-        int x6 = Mathf.Min(ChunkEndPosition.x, Position.x+Width);
-        int y6 = Mathf.Min(ChunkEndPosition.y, Position.y+Height);
+        int x6 = Mathf.Min(ChunkEndPosition.x, buildingMaxPosition.x+Width);
+        int y6 = Mathf.Min(ChunkEndPosition.y, buildingMaxPosition.y+Height);
         if (x5 >= x6 || y5 >= y6)
         {
             return null;
