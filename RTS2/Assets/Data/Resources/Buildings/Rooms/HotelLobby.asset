@@ -22,7 +22,7 @@ MonoBehaviour:
     NeedsEdge: 0
     MustBeOnRoomEdge: 1
   - PropName: Sofa
-    MaxQuantity: 2
+    MaxQuantity: 104
     NeedsEdge: 0
     MustBeOnRoomEdge: 1
   CanHaveWindows: 1
@@ -30,6 +30,8 @@ MonoBehaviour:
   CanBeGridBased: 0
   CanHaveInternalWalls: 1
   CanGenerateAnyWalls: 1
+  GenerateDoorsToOtherRooms: 1
+  GenerateDoorsToCorridors: 1
   MinWidth: 12
   MaxWidth: 12
   MinHeight: 12

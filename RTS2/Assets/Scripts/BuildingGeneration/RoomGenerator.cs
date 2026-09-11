@@ -268,6 +268,7 @@ public class RoomGenerator
         }
         room.RefreshTileWeights();
         RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
+        roomObjectPlacement.LogPositionsForProps();
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
 
         for (int x = 0; x < template.Props.Count; x++)
@@ -280,11 +281,12 @@ public class RoomGenerator
         int attempts = 0;
         bool runOutOfPropsToPlace = false;
         string PropToPlace = string.Empty;
-        int maxAttemtps = 200;
+        int maxAttemtps = 600;
+        List<string> PropsFailedToPlace = new List<string>();
         while (!Done&&attempts<maxAttemtps)
         {
 
-            currentProp = template.GetPropByName(roomObjectPlacement.GetPropToPlaceByLargest(propCounts,template));
+            currentProp = template.GetPropByName(roomObjectPlacement.GetPropToPlaceByLargest(propCounts,template,PropsFailedToPlace));
             if (currentProp!=null)
             {
                 Vector2Int posToPlace = roomObjectPlacement.GetCoordinateForProp(currentProp.PropName);
@@ -297,6 +299,16 @@ public class RoomGenerator
                     propCounts[currentProp.PropName]++;
 
                     roomObjectPlacement.RefreshObjectValidity(building, room);
+                    PropsFailedToPlace.Clear();
+                }
+                else
+                {
+                    if (!PropsFailedToPlace.Contains(currentProp.PropName))
+                    {
+                        PropsFailedToPlace.Add(currentProp.PropName);
+                        roomObjectPlacement.LogPositionsForProp(currentProp.PropName);
+                    }
+
                 }
             }
             else
@@ -616,6 +628,9 @@ public class GeneratedRoom
     /// <returns></returns>
     public GeneratedRoom TakeSliceOfRoom(Vector2Int min,Vector2Int max,GeneratedBuilding building)
     {
+        //need to add props & add something to refresh adjacent walls as some are jank
+
+
         Vector2Int RoomPosition = Position;
         Vector2Int roomStart = building.Position + RoomPosition;
         Vector2Int roomMax = building.Position+ Position + size;
@@ -652,13 +667,19 @@ public class GeneratedRoom
             for(int y = 0; y < height; y++)
             {
                 room.RoomTiles[x, y].CopyData(RoomTiles[newX, newY]);
+
+                if (EnvObjects!=null && EnvObjects.ContainsKey(RoomTiles[newX, newY]))
+                {
+                    //subtracting room position to get around stupid corner I've painted myself into with how they're placed in the world
+                    room.AddEnvObject(room.RoomTiles[x, y],new GeneratedRoomProp( EnvObjects[RoomTiles[newX, newY]].ID, new Vector2Int(x,y),true));
+                }
                 newY++;
             }
             newX++;
             newY = localYStart;
         }
 
-
+        
       
 
 
@@ -890,10 +911,12 @@ public class GeneratedRoomProp
 {
     public string ID;
     public Vector2Int pos;
-    public GeneratedRoomProp(string id,Vector2Int pos)
+    public bool IsFromSlice = false;
+    public GeneratedRoomProp(string id,Vector2Int pos,bool fromSlice=false)
     {
         this.pos = pos;
         this.ID = id;
+        IsFromSlice=fromSlice;
     }
 }
 
@@ -921,6 +944,16 @@ public class RoomTile
         {
             SetWall(toCopy.WallTile);
         }
+
+        if (toCopy.IsEdge)
+        {
+            IsEdge = true;
+        }
+
+        AvgDistToDoor = toCopy.AvgDistToDoor;
+        AvgDistToWall = toCopy.AvgDistToWall;
+        AvgDistToProp = toCopy.AvgDistToProp;
+        
     }
 
 

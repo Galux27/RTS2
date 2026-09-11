@@ -34,7 +34,7 @@ MonoBehaviour:
     MyAccessiblityData:
     - ObjectAccessibily:
       - Direction: 0
-        Accessiblity: 0
+        Accessiblity: 2
       - Direction: 1
         Accessiblity: 2
       - Direction: 2
@@ -46,11 +46,11 @@ MonoBehaviour:
       - Direction: 0
         WallAccessibility: 2
       - Direction: 1
-        WallAccessibility: 3
+        WallAccessibility: 2
       - Direction: 2
-        WallAccessibility: 3
+        WallAccessibility: 2
       - Direction: 3
-        WallAccessibility: 3
+        WallAccessibility: 2
       OtherObjectAccessiblityData:
       - Direction: 0
         ObjectAccessibility: 1

@@ -575,8 +575,14 @@ public class WorldChunkManager : MonoBehaviour
 
         public void AddEnvironmentObjectInstanceToChunk(EnvironmentObjectInstance obj)
     {
-        GetWorldChunkBatchFromPosition(obj.Position()).AddEnvironmentObject(obj, obj.Position());
-
+        try
+        {
+            GetWorldChunkBatchFromPosition(obj.Position()).AddEnvironmentObject(obj, obj.Position());
+        }
+        catch
+        {
+            Debug.LogError("Error creating object " + obj.Position() + " " + obj.Name() + " was chunk null " + (GetWorldChunkBatchFromPosition(obj.Position()) == null));
+        }
     }
 
     public void AddContainerObject(Inventory toAdd)

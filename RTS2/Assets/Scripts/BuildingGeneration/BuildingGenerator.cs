@@ -217,7 +217,16 @@ public class BuildingGenerator : MonoBehaviour
             {
                 foreach(KeyValuePair<RoomTile,GeneratedRoomProp> kvp in b.MyRooms[x].EnvObjects)
                 {
-                    envObjPos = b.Position + b.MyRooms[x].Position + kvp.Value.pos;
+                    if (kvp.Value.IsFromSlice)
+                    {
+                        envObjPos = b.MyRooms[x].Position + kvp.Value.pos;
+
+                    }
+                    else
+                    {
+                        envObjPos = b.Position + b.MyRooms[x].Position + kvp.Value.pos;
+
+                    }
                     ConstructableObjectManager.Instance.CreateObject_Generator(envObjPos, new Vector3(envObjPos.x, envObjPos.y), kvp.Value.ID);
 
                 }
@@ -890,6 +899,15 @@ public class GeneratedBuilding
         for(int x = 0; x < MyRooms.Count; x++)
         {
             roomGen.PopulateRoomEnvObjects(MyRooms[x],this);
+            if (MyRooms[x].EnvObjects != null)
+            {
+                Debug.Log("Room Gen: Populating props in rooms " + MyRooms[x].EnvObjects.Count);
+            }
+            else
+            {
+                Debug.Log("Room Gen: Populating props in rooms null");
+
+            }
             ApplyRoom(MyRooms[x],true);
         }
     }

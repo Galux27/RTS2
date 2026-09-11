@@ -20,11 +20,32 @@ public class RoomObjectPlacement
        
     }
 
+    public void LogPositionsForProps()
+    {
+        foreach(KeyValuePair<string,RoomObjectPositions> kvp in AllObjectsInRoom)
+        {
+            Debug.Log("Room Gen: positions for " + kvp.Key + " count " + kvp.Value.ValidPositions.Count);
+        }
+    }
+
     public void RefreshObjectValidity(GeneratedBuilding building,GeneratedRoom room)
     {
         foreach (KeyValuePair<string, RoomObjectPositions> kvp in AllObjectsInRoom)
         {
             kvp.Value.RefreshPositions(room, building);
+        }
+    }
+
+    public void LogPositionsForProp(string propKey)
+    {
+        if (AllObjectsInRoom.ContainsKey(propKey))
+        {
+            Debug.Log("Room Gen: Positions for " + propKey + "," + AllObjectsInRoom[propKey].ValidPositions.Count);
+        }
+        else
+        {
+            Debug.Log("Room Gen: Positions for " + propKey + ",null");
+
         }
     }
 
@@ -35,15 +56,15 @@ public class RoomObjectPlacement
             if (AllObjectsInRoom[propKey].ValidPositions.Count > 0)
             {
                 RoomObjectPosition retVal = AllObjectsInRoom[propKey].GetFurthestFromDoor();
-                    if (retVal != null)
-                    {
-                        return retVal.Coords;
-                    }
-                    else
-                    {
-                        return Vector2Int.one * -1;
+                if (retVal != null)
+                {
+                    return retVal.Coords;
+                }
+                else
+                {
+                    return Vector2Int.one * -1;
 
-                    }
+                }
                 
             } 
         }
@@ -56,12 +77,16 @@ public class RoomObjectPlacement
     /// <param name="propsPlaced"></param>
     /// <param name="template"></param>
     /// <returns></returns>
-    public string GetPropToPlaceByLargest(Dictionary<string,int> propsPlaced,RoomTemplate template)
+    public string GetPropToPlaceByLargest(Dictionary<string,int> propsPlaced,RoomTemplate template,List<string> toIgnore)
     {
         float size = 0;
         string retVal = string.Empty;
         foreach (KeyValuePair<string, RoomObjectPositions> kvp in AllObjectsInRoom)
         {
+            if (toIgnore.Contains(kvp.Key))
+            {
+                continue;
+            }
             if (propsPlaced[kvp.Key] < template.GetMaxQuantity(kvp.Key))
             {
                 if (AllObjectsInRoom[kvp.Key].ObjectToPlace.Size().magnitude > size)
@@ -92,7 +117,7 @@ public class RoomObjectPositions
         for(int x = 0; x < ValidPositions.Count; x++)
         {
             
-            if (ValidPositions[x].DoorWeight > dist)
+            if (ValidPositions[x].DoorWeight >= dist)
             {
                 dist = ValidPositions[x].DoorWeight;
                 RetVal = ValidPositions[x];
