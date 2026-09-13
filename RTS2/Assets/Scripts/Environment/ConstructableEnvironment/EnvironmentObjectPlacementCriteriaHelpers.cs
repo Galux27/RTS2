@@ -132,6 +132,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     #region Doors
     static bool DoWeMeetDoorCriteria(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
     {
+       
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
         {
             

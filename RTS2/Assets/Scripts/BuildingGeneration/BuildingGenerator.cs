@@ -72,7 +72,17 @@ public class BuildingGenerator : MonoBehaviour
         try
         {
             BuildingFloorplan floorplan = new SquareBuildingFloorplan(10, new Vector2Int(5, 5));
-            ApplyBuidlingToWorld(floorplan.Generate(RoomGen, building.Size.x, building.Size.y, building.Position, BuildingDataManager.Instance.BuildingTemplates[building.Template], MaxGenerationPasses));
+            GeneratedBuilding buildingGenerated = floorplan.Generate(RoomGen, building.Size.x, building.Size.y, building.Position, BuildingDataManager.Instance.BuildingTemplates[building.Template], MaxGenerationPasses);
+
+            Dictionary<Vector2Int, GeneratedBuilding> splits = buildingGenerated.SplitBuildingIntoChunks();
+
+            foreach (KeyValuePair<Vector2Int, GeneratedBuilding> kvp in splits)
+            {
+                ApplyBuidlingToWorld(kvp.Value);
+                RoomTileDebug.DebugDrawAllTiles(kvp.Value);
+
+            }
+
         }
         catch(System.Exception e)
         {

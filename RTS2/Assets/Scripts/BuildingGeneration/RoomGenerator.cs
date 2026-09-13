@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEngine.Rendering.DebugUI;
 
 public class RoomGenerator 
 {
@@ -250,7 +249,51 @@ public class RoomGenerator
         }
     }
 
+    public void PopulateRoomEnvObjectsInGrid(GeneratedRoom room,GeneratedBuilding building,RoomTemplate template)
+    {
+        
+        //could be a better way of working out how to populate the room, maybe store all the potential positions 
+        //as a grid so they're easy to alter rather than going through a list of items every time
+        //update the other props used in a warehouse too
+        room.RefreshTileWeights();
+        RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
+        roomObjectPlacement.LogPositionsForProps();
+        Dictionary<string, int> propCounts = new Dictionary<string, int>();
 
+        for (int x = 0; x < template.Props.Count; x++)
+        {
+            propCounts.Add(template.Props[x].PropName, 0);
+        }
+        EnvironmentObject toPlace = null;
+        string PropToPlace = string.Empty;
+        Vector2Int pos = Vector2Int.zero;
+        string potentialProp = string.Empty;
+        Vector2Int size = Vector2Int.zero;
+        for (int x = 0; x < room.size.x; x+=2) { 
+            for(int y = 0; y < room.size.y; y+=2)
+            {
+                pos.x = x;
+                pos.y = y;
+                
+                potentialProp=roomObjectPlacement.GetPropThatCouldBePlacedAtCoordinate(pos,template);
+                if (potentialProp != string.Empty)
+                {
+                    
+                    toPlace = ConstructableObjectManager.Instance.AllObjects[potentialProp];
+                    size = toPlace.SizeAsVec2();
+                    AddEnvObjectToRoomWithoutRefresh(room, pos, toPlace, building);
+                   
+                   // room.RefreshWeightsForProps(pos-size,size*2);
+                    propCounts[potentialProp]++;
+
+                    roomObjectPlacement.OnObjectPlaced(pos, potentialProp, template, room, building);
+                    potentialProp = string.Empty;
+                }
+            }
+        }
+
+      
+    }
 
     public void PopulateRoomEnvObjects(GeneratedRoom room,GeneratedBuilding building)
     {
@@ -258,15 +301,18 @@ public class RoomGenerator
 
 
         RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[room.RoomType];
+
         if (template.Props.Count == 0)
         {
             return;
         }
         if (template.CanBeGridBased)
         {
+            PopulateRoomEnvObjectsInGrid(room,building,template);
             return;
         }
         room.RefreshTileWeights();
+
         RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
         roomObjectPlacement.LogPositionsForProps();
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
@@ -281,24 +327,28 @@ public class RoomGenerator
         int attempts = 0;
         bool runOutOfPropsToPlace = false;
         string PropToPlace = string.Empty;
-        int maxAttemtps = 600;
+        int maxAttemtps = 100;
         List<string> PropsFailedToPlace = new List<string>();
+
         while (!Done&&attempts<maxAttemtps)
         {
 
             currentProp = template.GetPropByName(roomObjectPlacement.GetPropToPlaceByLargest(propCounts,template,PropsFailedToPlace));
+
             if (currentProp!=null)
             {
                 Vector2Int posToPlace = roomObjectPlacement.GetCoordinateForProp(currentProp.PropName);
+
                 if (posToPlace.x >= 0)
                 {
                     toPlace = ConstructableObjectManager.Instance.AllObjects[currentProp.PropName];
 
-                    List<Vector2Int> toRemove = AddEnvObjectToRoom(room, posToPlace, toPlace, building);
+                    AddEnvObjectToRoom(room, posToPlace, toPlace, building);
 
                     propCounts[currentProp.PropName]++;
 
-                    roomObjectPlacement.RefreshObjectValidity(building, room);
+                    roomObjectPlacement.OnObjectPlaced(posToPlace, currentProp.PropName, template, room, building);
+
                     PropsFailedToPlace.Clear();
                 }
                 else
@@ -319,20 +369,34 @@ public class RoomGenerator
         }
     }
 
-    List<Vector2Int> AddEnvObjectToRoom(GeneratedRoom room,Vector2Int pos,EnvironmentObject objectToAdd,GeneratedBuilding building)
+    void AddEnvObjectToRoomWithoutRefresh(GeneratedRoom room, Vector2Int pos, EnvironmentObject objectToAdd, GeneratedBuilding building)
     {
-        List<Vector2Int> retVal = new List<Vector2Int>();
+        room.AddEnvObject(room.RoomTiles[pos.x, pos.y], new GeneratedRoomProp(objectToAdd.Name, pos));
+        for (int x = pos.x; x < pos.x + objectToAdd.Width; x++)
+        {
+            for (int y = pos.y; y < pos.y + objectToAdd.Height; y++)
+            {
+                room.RoomTiles[x, y].HasProp = true;
+            }
+        }
+
+    }
+
+    void AddEnvObjectToRoom(GeneratedRoom room,Vector2Int pos,EnvironmentObject objectToAdd,GeneratedBuilding building)
+    {
         room.AddEnvObject(room.RoomTiles[pos.x, pos.y], new GeneratedRoomProp(objectToAdd.Name,pos));
         for(int x = pos.x; x < pos.x + objectToAdd.Width; x++)
         {
             for(int y = pos.y; y < pos.y + objectToAdd.Height; y++)
             {
-                room.RoomTiles[x, y].HasProp = true;
-                retVal.Add(new Vector2Int(x, y));
+                if (room.IsValid(x, y))
+                {
+                    room.RoomTiles[x, y].HasProp = true;
+                }
             }
         }
+
         room.RefreshWeightsForProps();
-        return retVal;
     }
 
 
@@ -835,6 +899,67 @@ public class GeneratedRoom
         }
     }
 
+    public void RefreshTileWeightsInRange(Vector2Int position,Vector2Int size)
+    {
+        List<Vector2Int> DoorCoordinates = new List<Vector2Int>();
+        List<Vector2Int> WallCoordinates = new List<Vector2Int>();
+
+        for (int x = position.x; x < position.x+size.x; x++)
+        {
+            for (int y = position.y; y < position.y + size.y; y++)
+            {
+                if (!IsValid(x, y))
+                {
+                    continue;
+                }
+                if (RoomTiles[x, y].HasDoor)
+                {
+                    DoorCoordinates.Add(new Vector2Int(x, y));
+                }
+
+                if (RoomTiles[x, y].HasWall)
+                {
+                    WallCoordinates.Add(new Vector2Int(x, y));
+                }
+            }
+        }
+        Vector2Int curPos = Vector2Int.zero;
+        for (int x = position.x; x < position.x + size.x; x++)
+        {
+            for (int y = position.y; y < position.y + size.y; y++)
+            {
+                if (!IsValid(x, y))
+                {
+                    continue;
+                }
+                curPos.x = x;
+                curPos.y = y;
+
+                if (RoomTiles[x, y].HasDoor)
+                {
+                    RoomTiles[x, y].AvgDistToDoor = 0;
+                }
+                else
+                {
+                    RoomTiles[x, y].AvgDistToDoor = GetAvgOfPositionList(DoorCoordinates, curPos);
+
+                }
+                if (RoomTiles[x, y].HasWall)
+                {
+                    RoomTiles[x, y].AvgDistToWall = 0;
+
+                }
+                else
+                {
+                    RoomTiles[x, y].AvgDistToWall = GetAvgOfPositionList(WallCoordinates, curPos);
+
+                }
+
+            }
+        }
+    }
+
+
     float GetAvgOfPositionList(List<Vector2Int> positions,Vector2Int coords)
     {
         if (positions.Count == 0)
@@ -868,6 +993,50 @@ public class GeneratedRoom
             }
         }
         
+    }
+
+    public void RefreshWeightsForProps(Vector2Int position,Vector2Int size)
+    {
+        List<Vector2Int> PropCoordinates = new List<Vector2Int>();
+
+        for (int x = position.x; x < position.x + size.x; x++)
+        {
+            for (int y = position.y; y < position.y + size.y; y++)
+            {
+                if (!IsValid(x, y))
+                {
+                    continue;
+                }
+                if (RoomTiles[x, y].HasProp)
+                {
+                    PropCoordinates.Add(new Vector2Int(x, y));
+                }
+
+            }
+        }
+        Vector2Int curPos = Vector2Int.zero;
+
+        for (int x = position.x; x < position.x + size.x; x++)
+        {
+            for (int y = position.y; y < position.y + size.y; y++)
+            {
+                if (!IsValid(x, y))
+                {
+                    continue;
+                }
+                curPos.x = x;
+                curPos.y = y;
+                if (RoomTiles[x, y].HasProp)
+                {
+                    RoomTiles[x, y].AvgDistToProp = 0;
+                }
+                else
+                {
+                    RoomTiles[x, y].AvgDistToProp = GetAvgOfPositionList(PropCoordinates, curPos);
+                }
+
+            }
+        }
     }
 
     public void RefreshWeightsForProps()

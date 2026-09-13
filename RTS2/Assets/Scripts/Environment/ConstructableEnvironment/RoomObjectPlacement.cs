@@ -6,67 +6,127 @@ public class RoomObjectPlacement
 {
     //Add prioritizing by criteria
     //e.g. higher priority for distance from door
-    public Dictionary<string,RoomObjectPositions> AllObjectsInRoom = new Dictionary<string, RoomObjectPositions>();
+    // public Dictionary<string,RoomObjectPositions> AllObjectsInRoom = new Dictionary<string, RoomObjectPositions>();
+
+    public RoomObjectGrid GridOfPositions;
+
     public RoomObjectPlacement(RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
     {
-        for(int x = 0; x < template.Props.Count; x++)
+        GridOfPositions = new RoomObjectGrid(room.size.x, room.size.y);
+        Vector2Int position = Vector2Int.zero;
+        EnvironmentObject currentObject = null;
+        Vector2Int objSize = Vector2Int.zero;
+
+        for (int q = 0; q < template.Props.Count; q++)
         {
-            AllObjectsInRoom.Add(template.Props[x].PropName,new RoomObjectPositions(template.Props[x].PropName));
-        }
-        foreach(KeyValuePair<string,RoomObjectPositions> kvp in AllObjectsInRoom)
-        {
-            kvp.Value.InitPositions(room, building);
+            currentObject = ConstructableObjectManager.Instance.AllObjects[template.Props[q].PropName];
+            objSize = currentObject.SizeAsVec2();
+            objSize.x = Mathf.Max(1, objSize.x);
+            objSize.y = Mathf.Max(1, objSize.y);
+
+            for (int x = 0; x < room.size.x-objSize.x; x += objSize.x)
+            {
+                for (int y = 0; y < room.size.y-objSize.y; y += objSize.y)
+                {
+                    position.x = x;
+                    position.y = y;
+
+                    if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building))
+                    {
+
+                        GridOfPositions.SetObjectCanBePlaced(position, template.Props[q].PropName, objSize);
+
+                    }
+                }
+            }
+
+
         }
        
     }
 
     public void LogPositionsForProps()
     {
-        foreach(KeyValuePair<string,RoomObjectPositions> kvp in AllObjectsInRoom)
+       
+    }
+
+    public void OnObjectPlaced(Vector2Int pos,string key,RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
+    {
+        EnvironmentObject currentObject = ConstructableObjectManager.Instance.AllObjects[key];
+        Vector2Int objSize = currentObject.SizeAsVec2() ;
+        GridOfPositions.OnPlaceObject(pos, key, objSize);
+        Vector2Int position = Vector2Int.zero;
+
+        for (int q = 0; q < template.Props.Count; q++)
         {
-            Debug.Log("Room Gen: positions for " + kvp.Key + " count " + kvp.Value.ValidPositions.Count);
+            currentObject = ConstructableObjectManager.Instance.AllObjects[template.Props[q].PropName];
+            objSize = currentObject.SizeAsVec2();
+            for (int x = pos.x-1; x < pos.x+objSize.x+1; x += 1)
+            {
+                for (int y = pos.y-1; y < pos.y+objSize.y+1; y += 1)
+                {
+                    position.x = x;
+                    position.y = y;
+
+                    if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building))
+                    {
+                        GridOfPositions.SetObjectCanBePlaced(position, template.Props[q].PropName, objSize);
+                    }
+                }
+            }
+
+
         }
+
     }
 
     public void RefreshObjectValidity(GeneratedBuilding building,GeneratedRoom room)
     {
-        foreach (KeyValuePair<string, RoomObjectPositions> kvp in AllObjectsInRoom)
-        {
-            kvp.Value.RefreshPositions(room, building);
-        }
+       
     }
 
     public void LogPositionsForProp(string propKey)
     {
-        if (AllObjectsInRoom.ContainsKey(propKey))
-        {
-            Debug.Log("Room Gen: Positions for " + propKey + "," + AllObjectsInRoom[propKey].ValidPositions.Count);
-        }
-        else
-        {
-            Debug.Log("Room Gen: Positions for " + propKey + ",null");
-
-        }
+        
     }
 
+    List<string> PotentialProps = new List<string>();
+    public string GetPropThatCouldBePlacedAtCoordinate(Vector2Int coords,RoomTemplate template)
+    {
+        PotentialProps.Clear();
+        for(int x = 0; x < template.Props.Count; x++)
+        {
+            if (GridOfPositions.GridElements[coords.x, coords.y].ObjectThatCouldBePlaced.Contains(template.Props[x].PropName))
+            {
+                PotentialProps.Add(template.Props[x].PropName);
+            }
+        }
+        if (PotentialProps.Count == 0)
+        {
+            return string.Empty;
+        }
+        return PotentialProps[Random.Range(0, PotentialProps.Count)];
+    }
+    List<Vector2Int> potentialPropPositions = new List<Vector2Int>();
     public Vector2Int GetCoordinateForProp(string propKey)
     {
-        if (AllObjectsInRoom.ContainsKey(propKey))
+        potentialPropPositions.Clear();
+        Vector2Int pos = Vector2Int.zero;
+        for(int x = 0; x < GridOfPositions.GridElements.GetLength(0); x++)
         {
-            if (AllObjectsInRoom[propKey].ValidPositions.Count > 0)
+            for (int y = 0; y < GridOfPositions.GridElements.GetLength(1); y++)
             {
-                RoomObjectPosition retVal = AllObjectsInRoom[propKey].GetFurthestFromDoor();
-                if (retVal != null)
+                pos.x = x;
+                pos.y = y;
+                if (GridOfPositions.GridElements[x, y].ObjectThatCouldBePlaced.Contains(propKey))
                 {
-                    return retVal.Coords;
+                    potentialPropPositions.Add(pos);
                 }
-                else
-                {
-                    return Vector2Int.one * -1;
-
-                }
-                
-            } 
+            }
+        }
+        if (potentialPropPositions.Count > 0)
+        {
+            return potentialPropPositions[Random.Range(0, potentialPropPositions.Count)];
         }
         return Vector2Int.one * -1;
     }
@@ -81,21 +141,23 @@ public class RoomObjectPlacement
     {
         float size = 0;
         string retVal = string.Empty;
-        foreach (KeyValuePair<string, RoomObjectPositions> kvp in AllObjectsInRoom)
+        float size2 = 0f;
+        for(int x = 0; x < template.Props.Count; x++)
         {
-            if (toIgnore.Contains(kvp.Key))
+            if (propsPlaced[template.Props[x].PropName] >= template.GetMaxQuantity(template.Props[x].PropName) 
+                || toIgnore.Contains(template.Props[x].PropName))
             {
                 continue;
             }
-            if (propsPlaced[kvp.Key] < template.GetMaxQuantity(kvp.Key))
+            size2 = ConstructableObjectManager.Instance.AllObjects[template.Props[x].PropName].SizeAsVec2().magnitude;
+            if (size2> size)
             {
-                if (AllObjectsInRoom[kvp.Key].ObjectToPlace.Size().magnitude > size)
-                {
-                    size =  AllObjectsInRoom[kvp.Key].ObjectToPlace.Size().magnitude;
-                    retVal = kvp.Key;
-                }
+                retVal= template.Props[x].PropName;
+                size = size2;
             }
         }
+
+       
 
         return retVal;
     }
@@ -108,6 +170,18 @@ public class RoomObjectPositions
     public RoomObjectPositions(string objectToPlace)
     {
         ObjectToPlace=ConstructableObjectManager.Instance.AllObjects[objectToPlace];
+    }
+
+    public bool DoesValidPositionsContainPosition(Vector2Int pos)
+    {
+        for(int x = 0; x < ValidPositions.Count; x++)
+        {
+            if (ValidPositions[x].Coords == pos)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public RoomObjectPosition GetFurthestFromDoor()
@@ -146,7 +220,6 @@ public class RoomObjectPositions
                 }
             }
         }
-        Debug.Log("Potential Positions: for " + ObjectToPlace.Name + " has " + ValidPositions.Count);
     }
 
     public void RefreshPositions(GeneratedRoom room, GeneratedBuilding building)
@@ -200,5 +273,74 @@ public class RoomObjectPosition
     static bool InRange(int val,int min,int max)
     {
         return val >= min && val <= max;
+    }
+}
+
+public class RoomObjectGrid
+{
+    public RoomObjectGridElement[,] GridElements;
+    int width=0, height=0;
+    public RoomObjectGrid(int width,int height)
+    {
+        GridElements=new RoomObjectGridElement[width,height];
+        for(int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                GridElements[x, y] = new RoomObjectGridElement();
+            }
+
+        }
+        this.width = width;
+        this.height= height;
+    }
+
+    public void SetObjectCanBePlaced(Vector2Int pos,string key,Vector2Int size)
+    {
+
+        for (int x = pos.x; x < pos.x + size.x; x++)
+        {
+            for (int y = pos.y; y < pos.y + size.y; y++)
+            {
+                if (IsPosValid(x, y))
+                {
+                    GridElements[x, y].AddObject(key);
+                }
+            }
+        }
+
+    }
+
+    public void OnPlaceObject(Vector2Int pos, string key, Vector2Int size)
+    {
+        for (int x = pos.x-1; x < pos.x + size.x+1; x++)
+        {
+            for (int y = pos.y-1; y < pos.y + size.y+1; y++)
+            {
+                if (IsPosValid(x, y))
+                {
+                    GridElements[x, y].ObjectThatCouldBePlaced.Clear() ;
+                }
+            }
+        }
+    }
+    bool IsPosValid(int x,int y)
+    {
+        return x>=0&&x<width&& y>=0 && y<height;
+    }
+    public bool CanObjectBePlacedAtCoords(Vector2Int pos,string key)
+    {
+        return GridElements[pos.x, pos.y].ObjectThatCouldBePlaced.Contains(key);
+    }
+
+
+}
+
+public class RoomObjectGridElement
+{
+    public HashSet<string> ObjectThatCouldBePlaced = new HashSet<string>();
+    public void AddObject(string key)
+    {
+        ObjectThatCouldBePlaced.Add(key);
     }
 }
