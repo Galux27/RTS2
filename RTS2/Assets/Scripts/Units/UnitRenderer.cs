@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnitRenderer : MonoBehaviour
 {
-    public SpriteRenderer Head, Torso, Legs,Hair,Face;
+    public SpriteRenderer Head, Torso, Legs,Hair,Face,LeftArm,RightArm,Feet;
     public bool DrawHead=true, DrawTorso=true,DrawLegs=true,DrawHair=true,DrawFace=true;    
     UnitVisualStore UnitImRendering;
     Vector3 Scale = Vector3.one;
