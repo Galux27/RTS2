@@ -322,9 +322,9 @@ ScriptedImporter:
       frameIndex: 2
       additiveSortOrder: 0
       cellRect:
-        x: 28
+        x: 27
         y: 50
-        width: 38
+        width: 39
         height: 50
       spriteId: 5773ff8ca23189e449d645239f05e74a
     - name: Frame_3
