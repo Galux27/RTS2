@@ -13,6 +13,7 @@ public interface Selectable :ObjectBounds
 
     public void SetIsSelected(bool val);
 
+    public GameObject GetGameObject();
  
 }
 

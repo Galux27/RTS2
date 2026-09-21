@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class SelectedOutlineManager : MonoBehaviour
 {
-    public GameObject SelectionOutlinePrefab;
-
+    const string SelectionOutlinePool = "SelectionOutline";
 
     static SelectedOutlineManager instance;
     public static SelectedOutlineManager Instance
@@ -21,36 +20,55 @@ public class SelectedOutlineManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        UIEventManager.OnObjectDeselected += OnDeselected;
+        UIEventManager.OnObjectSelected+= OnSelected;
+    }
+
+    Dictionary<Selectable, GameObject> Outlines = new Dictionary<Selectable, GameObject>();
+    void OnSelected(Selectable selected)
+    {
+        GameObject g = selected.GetGameObject();
+       
+        if (g != null) {
+            GameObject outline = GetFreeSelectionOutline();
+            outline.gameObject.SetActive(true);
+            outline.transform.parent = g.transform;
+            outline.GetComponent<SelectedOutline>().ApplyToObject(g, selected.GetSize(), selected.GetCenterOffset());
+            Outlines.Add(selected, outline);
+        }
+        else
+        {
+            Outlines.Add(selected, OnWallSelected(selected as WallSegment, selected.GetSize(), selected.GetCenterOffset()));
+        }
+    }
+
+    void OnDeselected(Selectable selected)
+    {
+
+        if (Outlines.ContainsKey(selected))
+        {
+            Outlines[selected].SetActive(false);
+            GameObjectPoolManager.Instance.ReturnObjectToPool(Outlines[selected], SelectionOutlinePool);
+            Outlines.Remove(selected);
+        }
+    }
+
     List<GameObject> freeSelectionOutlinePrefabs = new List<GameObject>(), inUseSelectionOutlines = new List<GameObject>();
 
     GameObject GetFreeSelectionOutline()
     {
-        if(freeSelectionOutlinePrefabs.Count == 0)
-        {
-            GameObject g = Instantiate(SelectionOutlinePrefab, Vector3.zero, Quaternion.identity);
-            freeSelectionOutlinePrefabs.Add(g);
-        }
-        GameObject retVal = freeSelectionOutlinePrefabs[0];
-        freeSelectionOutlinePrefabs.RemoveAt(0);
-        retVal.SetActive(true);
-        return retVal;
+        return GameObjectPoolManager.Instance.GetObjectFromPool(SelectionOutlinePool);
     }
 
-    public void OnSelectObject(GameObject selected,Vector3 size=default,Vector3 offset=default)
-    {
-        if(selected == null)
-        {
-            return;
-        }
-        GameObject g = GetFreeSelectionOutline();
-        g.GetComponent<SelectedOutline>().ApplyToObject(selected,size,offset);
-        inUseSelectionOutlines.Add(g);
-    }
+   
 
     public GameObject OnWallSelected(WallSegment wall, Vector3 size = default, Vector3 offset = default)
     {
         GameObject g = GetFreeSelectionOutline();
         g.GetComponent<SelectedOutline>().ApplyToWall(wall, size, offset);
+        g.SetActive(true);
         inUseSelectionOutlines.Add(g);
         return g;
     }

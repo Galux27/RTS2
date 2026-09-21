@@ -130,11 +130,11 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize,ObjectBounds
     GameObject SelectionOutline;
     public void OnObjectDeselected()
     {
-        SelectedOutlineManager.Instance.OnDeselectObject(SelectionOutline);
+        //SelectedOutlineManager.Instance.OnDeselectObject(SelectionOutline);
      }
         public void OnObjectSelected()
     {
-        SelectionOutline = SelectedOutlineManager.Instance.OnWallSelected(this,GetSize());
+        //SelectionOutline = SelectedOutlineManager.Instance.OnWallSelected(this,GetSize());
     }
 
 
@@ -335,6 +335,11 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize,ObjectBounds
     public Vector3 GetCenterOffset()
     {
         return Vector3.zero;
+    }
+
+    GameObject Selectable.GetGameObject()
+    {
+        return null;
     }
 }
 

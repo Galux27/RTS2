@@ -38,7 +38,7 @@ public class SelectableManager : MonoBehaviour
         {
             CurrentlySelected.Add(toAdd);
             toAdd.SetIsSelected(true);
-
+            UIEventManager.OnObjectSelected?.Invoke(toAdd);
         }
     }
 
@@ -47,6 +47,8 @@ public class SelectableManager : MonoBehaviour
         for(int x=0; x < CurrentlySelected.Count; x++)
         {
             CurrentlySelected[x].SetIsSelected(false);
+            UIEventManager.OnObjectDeselected?.Invoke(CurrentlySelected[x]);
+
         }
         CurrentlySelected.Clear();
         if (updateEvents)
@@ -61,6 +63,8 @@ public class SelectableManager : MonoBehaviour
         {
             CurrentlySelected.Remove(toRemove);
             toRemove.SetIsSelected(false);
+            UIEventManager.OnObjectDeselected?.Invoke(toRemove);
+
         }
         OnSelectionChanged?.Invoke();
     }

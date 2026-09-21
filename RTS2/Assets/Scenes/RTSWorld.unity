@@ -2191,6 +2191,15 @@ MonoBehaviour:
   - Key: ProjectileVisual
     InitCount: 100
     Object: {fileID: 8929831257717435883, guid: 6ec678249ae3a5640a959643d498a49f, type: 3}
+  - Key: SelectObjectButton
+    InitCount: 34
+    Object: {fileID: 5993938587344635213, guid: 1ca7414e7ca5c574f91a55009df9e779, type: 3}
+  - Key: SelectionOutline
+    InitCount: 34
+    Object: {fileID: 6185804448872044063, guid: 400b2b0787f6fef44a9c91355b01c1e2, type: 3}
+  - Key: OrderButton
+    InitCount: 34
+    Object: {fileID: 6185804448872044063, guid: 400b2b0787f6fef44a9c91355b01c1e2, type: 3}
 --- !u!114 &247636649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11847,7 +11856,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 785cf1c99e1c4384183523b701a73b77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SelectionOutlinePrefab: {fileID: 6185804448872044063, guid: 400b2b0787f6fef44a9c91355b01c1e2, type: 3}
 --- !u!114 &1606643381
 MonoBehaviour:
   m_ObjectHideFlags: 0

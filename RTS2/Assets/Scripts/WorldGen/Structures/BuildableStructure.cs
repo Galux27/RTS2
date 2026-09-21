@@ -15,7 +15,7 @@ public class BuildableStructure : Constructable,ObjectInfo
         pos=new Vector3(x,y,0);
         this.onComplete = onComplete;
         this.size= size;
-        this.offset = offset;
+        this.offset = offset+new Vector3(size.x/2f,0f);
         this.myType = myType;
         constructOnComplete = toConstruct;
      //   Vector2Int coords= WorldChunkManager.Instance.GetChunkCoordsFromTileCoords(new Vector2Int(x,y));
@@ -157,7 +157,7 @@ public class BuildableStructure : Constructable,ObjectInfo
     }
     public void OnObjectSelected()
     {
-        SelectedOutlineManager.Instance.OnSelectObject(Object,  GetSize(),GetSize()/2f);
+        //SelectedOutlineManager.Instance.OnSelectObject(Object,  GetSize(),GetSize()/2f);
     }
 
     SelectableType Selectable.GetSelectableType()
@@ -300,6 +300,11 @@ public class BuildableStructure : Constructable,ObjectInfo
     public Vector3 GetCenterOffset()
     {
         return offset;
+    }
+
+    public GameObject GetGameObject()
+    {
+        return Object;
     }
 }
 

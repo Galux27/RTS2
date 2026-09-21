@@ -51,7 +51,7 @@ public class EnvironmentObjectInstance:ObjectInfo,ISerialize,ObjectBounds
             MyHealth.MaxHealth = obj.MaxHealth;
             MyHealth.CurrentHealth = obj.MaxHealth;
             size = obj.Size();
-            offset = new Vector3(0, size.y / 2f, 0f);
+            offset = new Vector3(size.x/2f, size.y / 2f, 0f);
             needsUpdate = obj.RequiresUpdate;
         }
         catch

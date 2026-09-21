@@ -116,9 +116,11 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     }
     public void OnObjectSelected()
     {
-        SelectedOutlineManager.Instance.OnSelectObject(Object, GetSize(),GetSize()/2f);
+        //SelectedOutlineManager.Instance.OnSelectObject(Object, GetSize(),GetSize()/2f);
     }
 
+
+    
     SelectableType Selectable.GetSelectableType()
     {
         return SelectableType.ConstructableObject;
@@ -189,5 +191,10 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     new public Vector3 Position()
     {
         return new Vector3(PosX, PosY, 0);
+    }
+
+    public GameObject GetGameObject()
+    {
+        return Object;
     }
 }

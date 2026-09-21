@@ -253,8 +253,10 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     }
         public void OnObjectSelected()
     {
-        SelectedOutlineManager.Instance.OnSelectObject(this.gameObject);
+       // SelectedOutlineManager.Instance.OnSelectObject(this.gameObject);
     }
+
+
 
     public virtual float Speed()
     {
@@ -517,6 +519,11 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     public Vector3 GetCenterOffset()
     {
         return offset ;
+    }
+
+    public GameObject GetGameObject()
+    {
+        return this.gameObject;
     }
 }
 

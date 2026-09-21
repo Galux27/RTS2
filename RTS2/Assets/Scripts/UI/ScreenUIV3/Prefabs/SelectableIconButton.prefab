@@ -206,11 +206,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 111378358888096596, guid: 2fb060f348ec70249bcdd3eae26f072a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 38.17
+      value: 47.3
       objectReference: {fileID: 0}
     - target: {fileID: 111378358888096596, guid: 2fb060f348ec70249bcdd3eae26f072a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 37.7
+      value: 45.5
       objectReference: {fileID: 0}
     - target: {fileID: 111378358888096596, guid: 2fb060f348ec70249bcdd3eae26f072a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -411,8 +411,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8007774507379051725, guid: 2fb060f348ec70249bcdd3eae26f072a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 6.099
+      value: 7.1
       objectReference: {fileID: 0}
+    - target: {fileID: 8730731528641761718, guid: 2fb060f348ec70249bcdd3eae26f072a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 5471418799687302945, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -473,10 +477,10 @@ MonoBehaviour:
   IconImage: {fileID: 1246244094972544859}
   DefaultState:
     StateName: Selectable
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300002, guid: 2a19aaadcf7844142a73ce60950ec353, type: 3}
   QuantityText: {fileID: 3081393610520563449}
   HealthDisplay: {fileID: 5995796165348990140}
-  Goto: {fileID: 0}
+  Goto: {fileID: 9139714689038647506}
 --- !u!224 &7631899811142858169 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 111378358888096596, guid: 2fb060f348ec70249bcdd3eae26f072a, type: 3}

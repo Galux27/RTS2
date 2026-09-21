@@ -14,16 +14,11 @@ public class SelectedOutline : MonoBehaviour
 
     public void ApplyToWall(WallSegment wall, Vector3 size = default, Vector3 offset = default)
     {
-        
-
         Vector3 scale = Vector3.one;
 
         if (size == default)
         {
-          
-
-                scale = new Vector3(1, 2, 1);
-            
+            scale = new Vector3(1, 2, 1);         
         }
         else
         {
@@ -31,9 +26,6 @@ public class SelectedOutline : MonoBehaviour
         }
         this.transform.localScale = scale;
         this.transform.position = wall.Position();
-       // this.transform.parent = obj.transform;
-        //t//his.transform.localPosition = Vector3.zero + offset;
-
     }
 
     public void ApplyToObject(GameObject obj,Vector3 size=default,Vector3 offset=default)

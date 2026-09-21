@@ -8,6 +8,7 @@ public class ObjectBoundsGetter
     {
         Bounds retVal = new Bounds();
         SpriteRenderer[] spriteRenderers = obj.transform.GetChild(0).GetComponentsInChildren<SpriteRenderer>();
+        
         for(int x=0; x<spriteRenderers.Length;x++)
         {
             retVal.Encapsulate(spriteRenderers[x].bounds);

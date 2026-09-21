@@ -8,37 +8,35 @@ public class SelectableIconButto : IconButton
     public ButtonBar HealthDisplay;
     public IconButton Goto;
 
+    Selectable currentlySelected;
+    ObjectInfo selectedInfo;
+
     private void Awake()
     {
         this.MyButton.onClick.AddListener(OnClick);
     }
 
 
-    public void SetSelectable(List<Selectable> toSet)
-    {
-        QuantityText.gameObject.SetActive(true);
-        QuantityText.text = toSet.Count.ToString();
-        Goto.gameObject.SetActive(false);
-    }
+ 
 
     public void SetSelectable(Selectable toSet)
     {
-        CurrentSingleSelectable = toSet;
         QuantityText.gameObject.SetActive(false);
         Goto.gameObject.SetActive(true);
         Goto.OnClick = GoTo;
         HealthDisplay.gameObject.SetActive(true);
+        currentlySelected = toSet;
+        selectedInfo = (ObjectInfo)currentlySelected;
     }
 
-    Selectable CurrentSingleSelectable;
 
     void GoTo()
     {
-        
+        CameraController.Instance.SetToAutoMove(selectedInfo.Position());
     }
 
     void OnClick()
     {
-
+        SelectableManager.Instance.SetToOnlySelected(currentlySelected);
     }
 }
