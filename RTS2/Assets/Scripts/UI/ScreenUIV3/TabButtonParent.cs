@@ -41,4 +41,6 @@ public class TabButtonInstance
 {
     public TabButton Tab;
     public string Text;
+    public GameObject TabContent;
+
 }

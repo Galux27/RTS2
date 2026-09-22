@@ -26,6 +26,7 @@ public class BottomBarTabButtonController : TabButtonParent
         for (int x = 0; x < MyTabs.Count; x++)
         {
             MyTabs[x].Tab.SetParent(this);
+            MyTabs[x].Tab.SetContent(MyTabs[x].TabContent);
         }
 
         base.InitTabs();

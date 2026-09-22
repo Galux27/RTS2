@@ -9,12 +9,18 @@ public class TabButton : MonoBehaviour
     public bool IsActive = false;
     public Action OnSetActive, OnSetInactive;
     public int index = -1;
+    public GameObject TabContent;
 
     TabButtonParent myParent;
     private void Awake()
     {
         AddAction(false, SetActive);
         AddAction(true, SetInactive);
+    }
+
+    public void SetContent(GameObject g)
+    {
+        TabContent = g;
     }
 
     public void SetParent(TabButtonParent myParent)
@@ -42,11 +48,11 @@ public class TabButton : MonoBehaviour
 
     public void SetActive()
     {
-        Debug.Log("Setting tab button active " + this.gameObject.name);
         ActiveButton.gameObject.SetActive(true);
         InactiveButton.gameObject.SetActive(false);
         OnSetActive?.Invoke();
         IsActive = true;
+        TabContent.SetActive(true);
         myParent.OnTabSelected(index, true);
 
     }
@@ -56,6 +62,8 @@ public class TabButton : MonoBehaviour
         ActiveButton.gameObject.SetActive(false);
         InactiveButton.gameObject.SetActive(true);
         OnSetInactive?.Invoke();
+        TabContent.SetActive(false);
+
         IsActive = false;
     }
 

@@ -7,4 +7,6 @@ public static class UIEventManager
     public static Action<List< Selectable>> OnObjectsSelected;
 
     public static Action<string, bool> SetUnitsToFollowOrder;
+
+    public static Action<string> OnConstructableObjectSelected;
 }
