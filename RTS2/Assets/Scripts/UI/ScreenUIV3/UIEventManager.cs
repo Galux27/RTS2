@@ -5,5 +5,6 @@ public static class UIEventManager
 {
     public static Action<Selectable> OnObjectSelected,OnObjectDeselected;
     public static Action<List< Selectable>> OnObjectsSelected;
-    
+
+    public static Action<string, bool> SetUnitsToFollowOrder;
 }

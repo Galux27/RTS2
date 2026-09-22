@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class SelectedUnitUI : BaseUIElement
 {
-    const string IconButtonPool = "IconButton";
     private void Awake()
     {
         UIEventManager.OnObjectSelected += OnSelected;
         UIEventManager.OnObjectDeselected+= OnDeselected;
+        UIEventManager.SetUnitsToFollowOrder += OnOrderChanged;
         HideUI();
     }
 
@@ -17,6 +17,16 @@ public class SelectedUnitUI : BaseUIElement
 
     public TextMeshProUGUI InfoDisplay;
     public Transform OrdersParent;
+    public UnitOrdersUI OrdersUI;
+
+    void OnOrderChanged(string orderKey, bool value)
+    {
+        for (int x = 0; x < SelectedUnits.Count; x++)
+        {
+            SelectedUnits[x].MyOrders.SetOrder(orderKey, value);
+        }
+        RefreshUnitOrderUI();
+    }
     void OnSelected(Selectable selected)
     {
         GameObject gameObject = selected.GetGameObject();
@@ -51,6 +61,13 @@ public class SelectedUnitUI : BaseUIElement
         }
     }
 
+    public override void HideUI()
+    {
+        OrdersUI.Cleanup();
+        base.HideUI();
+
+    }
+
     void UpdateDisplay()
     {
         if (SelectedUnits.Count == 0)
@@ -64,6 +81,7 @@ public class SelectedUnitUI : BaseUIElement
         {
             UpdateDisplayForManyUnits();
         }
+        RefreshUnitOrderUI();
     }
 
     void UpdateDisplayForOneUnit()
@@ -103,6 +121,6 @@ public class SelectedUnitUI : BaseUIElement
 
     void RefreshUnitOrderUI()
     {
-
+        OrdersUI.UpdateOrderUI(SelectedUnits);
     }
 }

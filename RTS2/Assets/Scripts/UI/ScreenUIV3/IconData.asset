@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b83cc0160413f954b948cd884f720dd3, type: 3}
+  m_Name: IconData
+  m_EditorClassIdentifier: 
+  Icons:
+  - Key: Play
+    IconImage: {fileID: 5471418799687302945, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Pause
+    IconImage: {fileID: 6931046648386469182, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: ORD_DEFEND_SELF
+    IconImage: {fileID: 3809159919530379307, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: ORD_ATTACK_NEARBY_ENEMIES
+    IconImage: {fileID: -1177945709411644995, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: ORD_PURSUE_ENEMIES
+    IconImage: {fileID: -7790424039251393287, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: ORD_FLEE_DANGER
+    IconImage: {fileID: -8789491092054466084, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Settings
+    IconImage: {fileID: 8869012398321225816, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Scrap
+    IconImage: {fileID: 3160201337199480159, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Construct
+    IconImage: {fileID: 3084092761113517430, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Move
+    IconImage: {fileID: 1809160115769331760, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Cancel
+    IconImage: {fileID: 4006441040961481654, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Destroy
+    IconImage: {fileID: 4045648361199959344, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Fuel
+    IconImage: {fileID: 4016963864989491919, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Construction Supplies
+    IconImage: {fileID: -5875684699331743953, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Munitions
+    IconImage: {fileID: -743768711673384979, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: Food
+    IconImage: {fileID: 6426962496777856927, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
