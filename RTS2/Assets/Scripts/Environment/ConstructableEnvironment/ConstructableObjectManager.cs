@@ -39,9 +39,10 @@ public class ConstructableObjectManager : MonoBehaviour
     {
         if (mode != CurrentSelectionMode.Furniture)
         {
+            GetCursor().SetActive(false);
+
             selectedToConstruct = null;
             spriteRenderer.sprite = null;
-            GetCursor().SetActive(false);
         }
     }
 

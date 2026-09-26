@@ -25,7 +25,6 @@ public class Room:ISerialize
         }
     }
     public List<Vector2Int> EdgeTiles,InvalidEdge;
-    public static Action<Room> OnRoomChanged;
 
     public List<ConstructableObjectInstance> ObjectsInRoom = new List<ConstructableObjectInstance>();
 
@@ -93,7 +92,8 @@ public class Room:ISerialize
         CheckForObjectsInRoom(addedTiles);
 
         CheckForItemsThatCouldBeInRoom(addedTiles);
-        RoomManager.Instance.OnRoomChange?.Invoke(this);
+
+        UIEventManager.OnRoomEdited?.Invoke(this);
 
     }
 
@@ -195,7 +195,7 @@ public class Room:ISerialize
 
         }
         CheckForConstructablesNoLongerInRoom(tilesInRoom);
-        RoomManager.Instance.OnRoomChange?.Invoke(this);
+        UIEventManager.OnRoomEdited?.Invoke(this);
 
     }
 
@@ -271,8 +271,8 @@ public class Room:ISerialize
             }
         }
         ResourceManager.Instance.UpdateResourceUI();
-        RoomManager.Instance.OnRoomChange?.Invoke(this);
-
+        //RoomManager.Instance.OnRoomChange?.Invoke(this);
+        UIEventManager.OnRoomEdited?.Invoke(this);
     }
 
     public void OnObjectDestroyed(ConstructableObjectInstance obj)
@@ -296,7 +296,7 @@ public class Room:ISerialize
             }
         }
         ResourceManager.Instance.UpdateResourceUI();
-        RoomManager.Instance.OnRoomChange?.Invoke(this);
+        UIEventManager.OnRoomEdited?.Invoke(this);
 
     }
 
@@ -378,7 +378,7 @@ public class Room:ISerialize
                 }
             }
         ResourceManager.Instance.UpdateResourceUI();
-        RoomManager.Instance.OnRoomChange?.Invoke(this);
+        UIEventManager.OnRoomEdited?.Invoke(this);
     }
 
 

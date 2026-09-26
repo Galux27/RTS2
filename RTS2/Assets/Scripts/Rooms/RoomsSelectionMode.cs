@@ -44,6 +44,7 @@ public class RoomsSelectionMode : SelectionMode
     List<Vector2Int> PositionsCurrentlySelected=new List<Vector2Int>();
     public override void OnHover()
     {
+        Debug.Log("Selection Controller: room selection on hover "+ (RoomManager.Instance.GetRoom() == null));
         int countLastSelected = PositionsCurrentlySelected.Count;
         PositionsCurrentlySelected = GetCurrentPositions();
         if (PositionsCurrentlySelected.Count != countLastSelected)

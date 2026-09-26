@@ -27,8 +27,16 @@ public class RoomManager : MonoBehaviour
         WallManager.OnWallAdded += OnWallSegmentCreated;
         WallManager.OnWallRemoved += OnWallSegmentRemoved;
         EnvironmentObjectManager.OnEnvironmentObjectDestroyed += OnEnvironmentObjectDestroyed;
+        UIEventManager.OnRoomEdited += OnRoomEdited;
     }
 
+
+    void OnRoomEdited(Room r)
+    {
+        r.RefreshRoom();
+        RoomManager.Instance.OnRoomChange?.Invoke(r);
+
+    }
     public Dictionary<RoomUseType, RoomValidityData> ValidityData;
 
     const string ValidityDataPath = "RoomData";
@@ -159,7 +167,7 @@ public class RoomManager : MonoBehaviour
             {
                 RoomUtils.IsRoomEnclosed(roomList[x]);
                 roomList[x].IsDrawn = false;
-                OnRoomChange?.Invoke(roomList[x]);
+                UIEventManager.OnRoomEdited?.Invoke(roomList[x]);
 
             }
         }
@@ -173,7 +181,7 @@ public class RoomManager : MonoBehaviour
             {
                 RoomUtils.IsRoomEnclosed(roomList[x]);
                 roomList[x].IsDrawn = false;
-                OnRoomChange?.Invoke(roomList[x]);
+                UIEventManager.OnRoomEdited?.Invoke(roomList[x]);
             }
         }
     }

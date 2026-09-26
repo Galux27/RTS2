@@ -14,12 +14,20 @@ public class RoomButtonUIElement : BaseUIElement
     public void InitButton(Room r)
     {
         Room = r;
-        SelectRoom.GetComponent<ButtonManagerBasic>().buttonText = r.roomName;
+        RoomName.text = r.roomName;
         SelectRoom.onClick.AddListener(OnSelectRoomClick);
         ZoomTo.onClick.AddListener(OnZoomToClick);
         RoomManager.Instance.OnRoomSelected += OnRoomSelected;
         DrawRoom.onClick.AddListener(OnDrawRoomClick);
         UpdateDrawRoomVisual();
+    }
+
+    public void RefreshButton(Room r)
+    {
+        RoomName.text = r.roomName;
+        UpdateDrawRoomVisual();
+
+
     }
 
     void OnSelectRoomClick()

@@ -75,8 +75,8 @@ public class BottomBarTabButtonController : TabButtonParent
     {
         MyTabs[2].Tab.SetText(MyTabs[2].Text);
         MyTabs[2].Tab.index = 2;
-        MyTabs[2].Tab.AddAction(true, OnZonesSelected);
-        MyTabs[2].Tab.AddAction(false, ResetSelectionMode);
+        MyTabs[2].Tab.AddAction(false, OnZonesSelected);
+        MyTabs[2].Tab.AddAction(true, ResetSelectionMode);
 
     }
 }

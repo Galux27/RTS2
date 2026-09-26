@@ -14,4 +14,7 @@ public static class UIEventManager
 
     public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
 
+    public static Action<Room> OnRoomEdited;
+
+
 }

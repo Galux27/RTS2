@@ -59,6 +59,7 @@ public class SelectionController : MonoBehaviour
         }
         SelectableManager.Instance.ClearSelectables();
         UIEventManager.OnSwitchSelectionMode?.Invoke(mode);
+        Debug.Log("Set cursor selection mode " + mode.ToString());
     }
 
     void OnCloseSelectionMode()
@@ -84,7 +85,7 @@ public class SelectionController : MonoBehaviour
    
     private void Update()
     {
-        Debug.Log("Selection Controller: on hover current mode null " + (CurrentSelectionModeObj == null));
+        Debug.Log("Selection Controller: on hover current mode null " + (CurrentSelectionModeObj == null)+","+selectionMode.ToString());
         if (CursorSelect.Instance.IsMouseDown())
         {
             CursorSelect.Instance.UpdateSelectionPoints(!ScreenUIUtilities.IsCursorOverUI());

@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.Rendering.RenderGraphModule;
 public class RoomUI : BaseUIElement
 {
     const string ButtonPool = "RoomButton";
@@ -17,33 +18,69 @@ public class RoomUI : BaseUIElement
         RoomManager.Instance.OnRoomSelected += OnRoomSelected;
         RoomManager.Instance.OnRoomAdded+= OnRoomAdded;
         RoomManager.Instance.OnRoomRemoved += OnRoomDeleted;
-        RoomManager.Instance.OnRoomChange += UpdateRoomValidityDetails;
-
+        UIEventManager.OnRoomEdited += OnRoomEdited;
         PopulateRoomTypeDropdown();
         New.onClick.AddListener(OnNewButtonPress);
         Expand.onClick.AddListener(OnExpandButtonPress);
         Contract.onClick.AddListener(OnContractButtonPress);
         Delete.onClick.AddListener(OnDeleteButtonPress);
+        NameInput.onValueChanged.AddListener( OnNameTextChanged);
     }
+
+    void OnRoomEdited(Room r)
+    {
+        if (r == RoomManager.Instance.SelectedRoom)
+        {
+            OnRoomSelected(r);
+            
+        }
+        UnitMoniter.Instance.OnUnitCountsChanged();
+
+    }
+  
+    private void OnEnable()
+    {
+        if (SelectionController.Instance.selectionMode != CurrentSelectionMode.Rooms)
+        {
+            SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Rooms);
+        }
+    }
+
+    void OnNameTextChanged(string text)
+    {
+        
+        if (RoomManager.Instance.SelectedRoom != null)
+        {
+            RoomManager.Instance.SelectedRoom.roomName = text;
+            RegenerateSpecificButton(RoomManager.Instance.SelectedRoom);
+        }
+
+    }
+
+
 
     void OnRoomTypeDropdownChanged(int newVal)
     {
         if (RoomManager.Instance.SelectedRoom != null)
         {
             RoomManager.Instance.SelectedRoom.roomType = (RoomUseType)RoomType.value;
-            RoomManager.Instance.OnRoomChange?.Invoke(RoomManager.Instance.SelectedRoom);
+            UIEventManager.OnRoomEdited?.Invoke(RoomManager.Instance.SelectedRoom);
+            RegenerateSpecificButton(RoomManager.Instance.SelectedRoom);
         }
     }
 
     void PopulateRoomTypeDropdown()
     {
+        RoomType.ClearOptions();
+
         List<string> options = new List<string>();
         for(int x = 0; x < MaxRoomTypes; x++)
         {
+            Debug.Log("Adding room type option " + ((RoomUseType)x).ToString());
             options.Add(((RoomUseType)x).ToString());
         }
-        RoomType.ClearOptions();
         RoomType.AddOptions(options);
+      
         RoomType.onValueChanged.AddListener(OnRoomTypeDropdownChanged);
     }
 
@@ -96,10 +133,13 @@ public class RoomUI : BaseUIElement
         if (room != null)
         {
             CurrentRoomDisplay.text = room.GetDetailsForRoom();
+
+            NameInput.text = room.roomName;
         }
         else
         {
             CurrentRoomDisplay.text = "No room selected";
+            NameInput.text = "";
         }
         UpdateRoomValidityDetails(room);
     }
@@ -127,16 +167,23 @@ public class RoomUI : BaseUIElement
         RefreshUI();
     }
 
-    List<GameObject> Buttons = new List<GameObject>();
+    Dictionary<Room,GameObject> Buttons = new Dictionary<Room, GameObject>();
     void Cleanup()
     {
-        for(int x = 0; x < Buttons.Count; x++)
+        foreach(KeyValuePair<Room,GameObject> pair in Buttons)
         {
-            Buttons[x].transform.parent = null;
-            Buttons[x].SetActive(false);
-            GameObjectPoolManager.Instance.ReturnObjectToPool(Buttons[x], ButtonPool);
+            pair.Value.transform.parent = null;
+            pair.Value.SetActive(false);
+            GameObjectPoolManager.Instance.ReturnObjectToPool(pair.Value, ButtonPool);
+
         }
+       
         Buttons.Clear();
+    }
+
+    void RegenerateSpecificButton(Room r)
+    {
+        Buttons[r].GetComponent<RoomButtonUIElement>().RefreshButton(r);
     }
 
     void GenerateButtonForRoom(Room r)
@@ -145,6 +192,7 @@ public class RoomUI : BaseUIElement
         button.gameObject.transform.parent = ButtonDisplayParent;
         button.gameObject.SetActive(true);
         button.GetComponent<RoomButtonUIElement>().InitButton(r);
+        Buttons.Add(r,button);
     }
 
     void RefreshUI()

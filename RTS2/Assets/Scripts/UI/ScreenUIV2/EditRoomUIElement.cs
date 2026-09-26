@@ -36,7 +36,7 @@ public class EditRoomUIElement : BaseUIElement
         RoomManager.Instance.OnRoomRemoved += RefreshOnRoomChange;
         RoomManager.Instance.OnRoomAdded += RefreshOnRoomChange;
         RoomManager.Instance.OnRoomSelected += RefreshOnRoomChange;
-        RoomManager.Instance.OnRoomChange += RefreshOnRoomChange;
+        //RoomManager.Instance.OnRoomChange += RefreshOnRoomChange;
         init = true;
     }
 
@@ -44,7 +44,7 @@ public class EditRoomUIElement : BaseUIElement
     {
         r.RefreshRoom();
         UnitMoniter.Instance.OnUnitCountsChanged();
-        
+
         RefreshUI();
     }
 
