@@ -20,6 +20,7 @@ public class TileValidityUI : MonoBehaviour
     void Init()
     {
         TilePool = new GameObjectPool(TileDisplayPrefab, 100);
+        UIEventManager.OnSwitchSelectionMode += OnSwitchSelectionMode;
     }
     public Color Valid, Invalid;
     public GameObject TileDisplayPrefab;
@@ -28,6 +29,15 @@ public class TileValidityUI : MonoBehaviour
     {
         TilePool.ReturnAllObjectsToPool();
     }
+
+    void OnSwitchSelectionMode(CurrentSelectionMode mode)
+    {
+        if (mode != CurrentSelectionMode.Furniture)
+        {
+            Cleanup();
+        }
+    }
+
 
     public void DrawTileValidity(Vector2Int coords,int width,int height)
     {

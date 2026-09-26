@@ -13,7 +13,7 @@ public class SelectModeUI : MonoBehaviour
     public GameObject NoneUI, UnitsUI, BuildingUI, ConstructionUI,RoomsUI;
     private void Awake()
     {
-        SelectionController.OnSwitchSelectionMode += OnChangeCursorMode;
+        UIEventManager.OnSwitchSelectionMode += OnChangeCursorMode;
         Buildings.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Furniture); });
         Construction.onClick.AddListener(()=> { SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Structures); });
         Rooms.onClick.AddListener(() => { SelectionController.Instance.SetCursorSelectionMode (CurrentSelectionMode.Rooms); });

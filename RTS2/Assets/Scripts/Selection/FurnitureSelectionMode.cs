@@ -29,6 +29,7 @@ public class FurnitureSelectionMode : SelectionMode
     }
     public override void OnHover()
     {
+        Debug.Log("Selection Mode: furniture mode is null " + (ConstructableObjectManager.Instance.selectedToConstruct == null));
         if (ConstructableObjectManager.Instance.selectedToConstruct != null)
         {
             if (Input.GetKeyDown(KeyCode.Space))

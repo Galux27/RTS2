@@ -9,4 +9,9 @@ public static class UIEventManager
     public static Action<string, bool> SetUnitsToFollowOrder;
 
     public static Action<string> OnConstructableObjectSelected;
+
+    public static Action<WallTile> OnWallTileSelected;
+
+    public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
+
 }

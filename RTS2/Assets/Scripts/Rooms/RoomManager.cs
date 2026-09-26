@@ -77,11 +77,15 @@ public class RoomManager : MonoBehaviour
 
     public Action<Room> OnRoomAdded, OnRoomRemoved, OnRoomSelected,OnRoomChange;
 
-    public void AddRoom(Room room)
+    public void AddRoom(Room room, bool selectRoom = false)
     {
         roomList.Add(room);
         RoomDrawrer.Instance.OnCreateRoom(room);
         OnRoomAdded?.Invoke(room);
+        if (selectRoom)
+        {
+            SetSelectedRoom(room);
+        }
 
     }
 

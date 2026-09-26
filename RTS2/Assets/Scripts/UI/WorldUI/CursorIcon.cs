@@ -16,7 +16,10 @@ public class CursorIcon : MonoBehaviour
             return instance;
         }
     }
-
+    private void Awake()
+    {
+        UIEventManager.OnSwitchSelectionMode += OnSwitchSelectionMode;
+    }
     public Vector2Int CurrentChunkBatch, CurrentChunk, mouseCoords;
     private void Update()
     {
@@ -55,6 +58,14 @@ public class CursorIcon : MonoBehaviour
 
     public Sprite Move, Attack, Build,WallPlace,Deconstruct,Harvest,Collect,Multiple,Enter,Select;
 
+
+    void OnSwitchSelectionMode(CurrentSelectionMode mode)
+    {
+        if (mode != CurrentSelectionMode.Structures)
+        {
+            SetCustomIcon(null, Vector3.zero);
+        }
+    }
    
     public void SetSelectIcon()
     {

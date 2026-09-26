@@ -28,6 +28,24 @@ public class ConstructableUI : BaseUIElement
     void SetCategory(ConstructableCategory category)
     {
         CurrentCategory=category;
+        switch (category)
+        {
+            case ConstructableCategory.Furniture:
+                if (SelectionController.Instance.selectionMode != CurrentSelectionMode.Furniture)
+                {
+                    SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Furniture);
+                }
+                break;
+            case ConstructableCategory.Walls:
+            case ConstructableCategory.Doors:
+                if (SelectionController.Instance.selectionMode != CurrentSelectionMode.Structures)
+                {
+                    SelectionController.Instance.SetCursorSelectionMode(CurrentSelectionMode.Structures);
+                }
+                break;
+            default:
+                break;
+        }
         RefreshButtons();
     }
 
@@ -51,8 +69,10 @@ public class ConstructableUI : BaseUIElement
                 DrawFurniture();
                 break;
             case ConstructableCategory.Walls:
+                DrawWalls();
                 break;
             case ConstructableCategory.Doors:
+                DrawDoors();
                 break;
             default:
                 break;
@@ -70,10 +90,11 @@ public class ConstructableUI : BaseUIElement
 
     void OnConstructableObjectSelected(string key)
     {
+        Debug.Log("Selection Mode: setting object to " + key);
         if (ConstructableObjectManager.Instance.AllObjects.ContainsKey(key))
         {
             ResourceCostUI.Instance.UpdateUI(ConstructableObjectManager.Instance.AllObjects[key].RequirementsToBuild);
-            ConstructableObjectManager.Instance.SetCursorObject(key);
+            //ConstructableObjectManager.Instance.SetCursorObject(key);
         }
     }
 
@@ -83,8 +104,28 @@ public class ConstructableUI : BaseUIElement
         foreach (KeyValuePair<string, ConstructableObject> kvp in ConstructableObjectManager.Instance.AllObjects)
         {
             currentButton = GetButton();
-            currentButton.GetComponent<ConstructableButton>().SetButton(kvp.Value);
+            currentButton.GetComponent<ConstructableButton>().SetEnvObject(kvp.Value,kvp.Key);
         }
+    }
+
+    void DrawWalls()
+    {
+        GameObject currentButton = null;
+
+        foreach (KeyValuePair<string, WallTile> walls in WallTypeManager.Instance.AllObjects)
+        {
+            currentButton = GetButton();
+            currentButton.GetComponent<ConstructableButton>().SetWallObject(walls.Value);
+         
+        }
+    }
+
+    void DrawDoors()
+    {
+        GameObject currentButton = currentButton = GetButton();
+        currentButton.GetComponent<ConstructableButton>().SetDoorObject(WallTypeManager.Instance.AllObjects["Metal"]);
+
+
     }
 }
 

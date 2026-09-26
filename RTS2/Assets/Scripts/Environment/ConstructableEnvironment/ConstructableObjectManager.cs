@@ -24,6 +24,8 @@ public class ConstructableObjectManager : MonoBehaviour
     
     private void Awake()
     {
+        UIEventManager.OnConstructableObjectSelected += SetCursorObject;
+        UIEventManager.OnSwitchSelectionMode += OnSwitchSelectionMode;
         LoadItemsFromResources();
     }
 
@@ -33,19 +35,42 @@ public class ConstructableObjectManager : MonoBehaviour
         spriteRenderer.sprite = toOverrideWith;
     }
 
+    void OnSwitchSelectionMode(CurrentSelectionMode mode)
+    {
+        if (mode != CurrentSelectionMode.Furniture)
+        {
+            selectedToConstruct = null;
+            spriteRenderer.sprite = null;
+            GetCursor().SetActive(false);
+        }
+    }
 
 
     public void SetCursorObject(string key)
     {
-        if(AllObjects.ContainsKey(key)) {
-
-            if (selectedToConstruct == null || selectedToConstruct != AllObjects[key])
+        if (SelectionController.Instance.selectionMode == CurrentSelectionMode.Furniture)
+        {
+            Debug.Log("Selection Mode: setting construction object " + key + "," + AllObjects.ContainsKey(key));
+            if (AllObjects.ContainsKey(key))
             {
-                selectedToConstruct = AllObjects[key];
-                GetCursor();
-                spriteRenderer.sprite = selectedToConstruct.ForwardsSprite;
+                GetCursor().SetActive(true);
+
+                if (selectedToConstruct == null || selectedToConstruct != AllObjects[key])
+                {
+                    selectedToConstruct = AllObjects[key];
+                    spriteRenderer.sprite = selectedToConstruct.ForwardsSprite;
+                }
+
             }
         }
+        else
+        {
+            GetCursor().SetActive(false);
+
+            selectedToConstruct = null;
+            spriteRenderer.sprite = null;
+        }
+
     }
 
     public GameObject GetCursor()
@@ -91,8 +116,29 @@ public class ConstructableObjectManager : MonoBehaviour
         spriteRenderer.color = colour;
     }
 
+    public ConstructableObject toCon;
+    public ConstructableObject selectedToConstruct
+    {
 
-    public ConstructableObject selectedToConstruct;
+        get
+        {
+            return toCon;
+        }
+        set
+        {
+            if (value == null)
+            {
+                Debug.Log("Setting to construct null");
+            }
+            else
+            {
+                Debug.Log("Setting to construct "+value.Name);
+
+
+            }
+            toCon = value;
+        }
+    }
     GameObject Cursor;
     SpriteRenderer spriteRenderer;
 

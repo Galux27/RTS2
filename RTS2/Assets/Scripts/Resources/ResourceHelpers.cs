@@ -34,6 +34,14 @@ public static class ResourceHelpers
     }
     public static void CanMeetResourceRequirement(ResourceRequirement requirement,Vector3 position,float radius,out bool foundEnough,out List<FoundResourceData> getFrom)
     {
+        if (!ResourceManager.Instance.UserResources.ContainsKey(requirement.ResourceName))
+        {
+            foundEnough = false;
+            Debug.LogError("Could not get resources for " + requirement.ResourceName);
+                    getFrom = new List<FoundResourceData>();
+
+            return;
+        }
         foundEnough = false;
         int quantity = ResourceManager.Instance.UserResources[requirement.ResourceName].Quantity;
         getFrom = new List<FoundResourceData>();

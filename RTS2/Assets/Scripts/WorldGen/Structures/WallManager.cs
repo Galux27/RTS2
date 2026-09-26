@@ -185,7 +185,7 @@ public class WallManager
             for (int y1 = 0; y1 < height; y1++)
             {
                 wall = WallHelpers.GetWallAtCoords(x1, y1);
-                if (wall.HasWall)
+                if (wall!=null&& wall.HasWall)
                 {
                     WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
                     WorldController.Instance.SetTraversible(x1, y1, !wall.HasWall,WorldTileContents.Wall);

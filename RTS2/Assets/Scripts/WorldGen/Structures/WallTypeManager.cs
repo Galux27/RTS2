@@ -21,11 +21,19 @@ public class WallTypeManager : MonoBehaviour
     private void Awake()
     {
         LoadItemsFromResources();
+        UIEventManager.OnWallTileSelected += OnWallTileSelected;
     }
 
     public Dictionary<string, WallTile> AllObjects;
     public List<string> WallTileObjectKeys;
     public WallTile SelectedWallTile;
+    
+    void OnWallTileSelected(WallTile tile)
+    {
+        SelectedWallTile = tile;
+    }
+    
+    
     void LoadItemsFromResources()
     {
         AllObjects = new Dictionary<string, WallTile>();

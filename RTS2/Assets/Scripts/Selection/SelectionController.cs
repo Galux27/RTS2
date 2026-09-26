@@ -20,17 +20,13 @@ public class SelectionController : MonoBehaviour
             return instance;
         }
     }
-    public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
     public CurrentSelectionMode selectionMode;
     public SelectionMode None, Units,Buildings,Construction, CurrentSelectionModeObj,Rooms,Hybrid;
     public float LastLeftClick=-1,LastRightClick=-1;
 
     public void SetCursorSelectionMode(CurrentSelectionMode mode)
     {
-        if (selectionMode == mode)
-        {
-            mode = CurrentSelectionMode.None;
-        }
+       
         OnCloseSelectionMode();
         selectionMode = mode;
 
@@ -42,36 +38,32 @@ public class SelectionController : MonoBehaviour
         else if (mode == CurrentSelectionMode.Units)
         {
             CurrentSelectionModeObj = Units;
-            SelectedUnits_UIElement.Instance.DrawUI();
-
         }
         else if (mode == CurrentSelectionMode.Furniture)
         {
             CurrentSelectionModeObj = Buildings;
             RoomDrawrer.Instance.RenderAllRooms();
-            SelectedUnits_UIElement.Instance.DrawUI();
 
         }
         else if (mode == CurrentSelectionMode.Structures)
         {
+            ConstructableObjectManager.Instance.selectedToConstruct = null;
             CurrentSelectionModeObj = Construction;
             RoomDrawrer.Instance.RenderAllRooms();
-            SelectedUnits_UIElement.Instance.DrawUI();
-
         }
         else if (mode == CurrentSelectionMode.Rooms)
         {
-            CurrentSelectionModeObj= Rooms;
+            ConstructableObjectManager.Instance.selectedToConstruct = null;
+            CurrentSelectionModeObj = Rooms;
             RoomDrawrer.Instance.RenderAllRooms();
         }
         SelectableManager.Instance.ClearSelectables();
-        OnSwitchSelectionMode?.Invoke(mode);
+        UIEventManager.OnSwitchSelectionMode?.Invoke(mode);
     }
 
     void OnCloseSelectionMode()
     {
-        ConstructableObjectManager.Instance.selectedToConstruct = null;
-        SelectedUnits_UIElement.Instance.HideUI();
+
     }
     private void Awake()
     {
@@ -92,7 +84,7 @@ public class SelectionController : MonoBehaviour
    
     private void Update()
     {
-
+        Debug.Log("Selection Controller: on hover current mode null " + (CurrentSelectionModeObj == null));
         if (CursorSelect.Instance.IsMouseDown())
         {
             CursorSelect.Instance.UpdateSelectionPoints(!ScreenUIUtilities.IsCursorOverUI());
@@ -101,6 +93,8 @@ public class SelectionController : MonoBehaviour
         {
             if (ScreenUIUtilities.IsCursorOverUI())
             {
+                Debug.Log("Selection Controller: returning due to over UI");
+
                 return;
             }
             CursorSelect.Instance.UpdateSelectionPoints(true);

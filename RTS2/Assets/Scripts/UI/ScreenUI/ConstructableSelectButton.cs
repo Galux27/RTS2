@@ -27,7 +27,7 @@ public class ConstructableSelectButton : MonoBehaviour
    {
         if (ConstructableObjectManager.Instance.AllObjects.ContainsKey(idOfConstructable))
         {
-            ConstructableObjectManager.Instance.SetCursorObject( idOfConstructable);
+            //ConstructableObjectManager.Instance.SetCursorObject( idOfConstructable);
         }
     }
 }
