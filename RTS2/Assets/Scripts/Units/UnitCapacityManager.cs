@@ -4,8 +4,8 @@ using UnityEngine;
 
 public static class UnitCapacityManager
 {
-    
 
+    const string Engineer = "Engineer", Soldier = "Rifleman", Civilian = "Civilan";
    
     public static void RefreshCapacities()
     {
@@ -46,13 +46,13 @@ public static class UnitCapacityManager
     {
         switch (toUpdate)
         {
-            case "Civilian":
+            case Civilian:
                 return TotalCapacity - (EngineerCapacity + SoldierCapacity);
                 break;
-            case "Rifleman":
+            case Soldier:
                 return SoldierCapacity;
                 break;
-            case "Engineer":
+            case Engineer:
                 return EngineerCapacity;
                 break;
 
@@ -87,6 +87,7 @@ public static class UnitCapacityManager
                 } 
             }
         }
+        UIEventManager.OnTotalUnitCapacityUpdated?.Invoke(count);
         TotalCapacity = count;
     }
     
@@ -109,6 +110,7 @@ public static class UnitCapacityManager
             }
         }
         EngineerCapacity = count;
+        UIEventManager.OnUnitCapacityUpdated?.Invoke(Engineer,count);
     }
     public static void RefreshSoldierCapacity()
     {
@@ -129,6 +131,7 @@ public static class UnitCapacityManager
             }
         }
         SoldierCapacity = count;
+        UIEventManager.OnUnitCapacityUpdated?.Invoke(Soldier,count);
     }
 
 

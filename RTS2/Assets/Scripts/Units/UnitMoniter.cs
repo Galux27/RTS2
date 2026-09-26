@@ -34,7 +34,7 @@ public class UnitMoniter : MonoBehaviour
 
 
     public List<Unit> AllUnits=new List<Unit>();
-    Dictionary<UnitType, UserUnitTypeCount> unitCounts=new Dictionary<UnitType, UserUnitTypeCount>();
+    public Dictionary<UnitType, UserUnitTypeCount> unitCounts=new Dictionary<UnitType, UserUnitTypeCount>();
 
     public int GetUserUnitCount(string type)
     {
@@ -104,7 +104,8 @@ public class UnitMoniter : MonoBehaviour
             
         }
         unitCounts[toAdd.MyType].Count++;
-        OnUnitCountsChanged();
+        UIEventManager.OnUnitCountUpdated(toAdd.MyType.ToString(), 1);
+        //OnUnitCountsChanged();
 
     }
 
@@ -115,7 +116,9 @@ public class UnitMoniter : MonoBehaviour
             unitCounts.Add(toRemove.MyType, new UserUnitTypeCount(toRemove.MyType));
         }
         unitCounts[toRemove.MyType].Count--;
-        OnUnitCountsChanged();
+        UIEventManager.OnUnitCountUpdated(toRemove.MyType.ToString(), -1);
+
+       // OnUnitCountsChanged();
     }
 
     public void OnUnitCountsChanged()

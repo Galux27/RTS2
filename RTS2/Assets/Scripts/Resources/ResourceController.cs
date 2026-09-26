@@ -12,6 +12,7 @@ public class ResourceController : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType<ResourceController>(true);
+                instance.Init();
             }
             return instance;
         }
@@ -20,7 +21,7 @@ public class ResourceController : MonoBehaviour
 
     public Dictionary<string, Resource> AllResources;
 
-    private void Awake()
+    private void Init()
     {
         LoadResourceTypes();
     }

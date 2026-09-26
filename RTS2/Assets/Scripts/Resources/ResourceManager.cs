@@ -13,6 +13,7 @@ public class ResourceManager : MonoBehaviour
             if(instance == null)
             {
                 instance=FindObjectOfType<ResourceManager>(true);
+                instance.Init();
             }
             return instance;
         }
@@ -20,7 +21,7 @@ public class ResourceManager : MonoBehaviour
 
     public Dictionary<string, ResourceData> UserResources;
 
-    private void Awake()
+    public void Init()
     {
         InitResourceManager();
     }
@@ -53,6 +54,15 @@ public class ResourceManager : MonoBehaviour
         {
             AddResource(kvp.Value.Name, new ResourceData(kvp.Value.name));
         }
+    }
+
+    public int GetUserResources(string key)
+    {
+        if (UserResources.ContainsKey(key))
+        {
+            return UserResources[key].Quantity;
+        }
+        return 0;
     }
 
     void AddResource(string name, ResourceData data)
@@ -98,7 +108,7 @@ public class ResourceManager : MonoBehaviour
     public void UpdateResourceCapacity(string name)
     {
         UserResources[name].NeedsCapacityRefresh = true;
-
+        OnResourceCapcityChange?.Invoke(name);
     }
     public void UpdateResourceUI()
     {
@@ -109,19 +119,24 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
+    public static Action<string> OnResourceQuanityChange, OnResourceCapcityChange;
+
     public void AddQuantityOfResource(string key,int quantity)
     {
         Debug.Log("Adding quantity of " + key + " q " + quantity);
         UserResources[key].IncreaseQuantitiy(quantity);
-        ResourcesDisplayUI.Instance.UpdateUIElement(UserResources[key]);
-        OnRefreshResourceData?.Invoke();
+        //ResourcesDisplayUI.Instance.UpdateUIElement(UserResources[key]);
+        OnResourceQuanityChange?.Invoke(key);
+       // OnRefreshResourceData?.Invoke();
     }
 
     public void ReduceQuantity(string key,int quantity)
     {
         UserResources[key].DecreaseQuantity( quantity);
         ResourcesDisplayUI.Instance.UpdateUIElement(UserResources[key]);
-        OnRefreshResourceData?.Invoke();
+        OnResourceQuanityChange?.Invoke(key);
+
+      //  OnRefreshResourceData?.Invoke();
     }
 
     public bool DoWeHaveEnoughSpaceForResource(string key)

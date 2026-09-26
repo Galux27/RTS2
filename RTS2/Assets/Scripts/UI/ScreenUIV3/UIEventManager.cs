@@ -15,6 +15,8 @@ public static class UIEventManager
     public static Action<CurrentSelectionMode> OnSwitchSelectionMode;
 
     public static Action<Room> OnRoomEdited;
+    public static Action<int> OnTotalUnitCapacityUpdated;
 
+    public static Action<string,int> OnUnitCapacityUpdated, OnUnitCountUpdated;
 
 }
