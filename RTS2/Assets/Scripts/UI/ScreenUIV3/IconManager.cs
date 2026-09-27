@@ -11,13 +11,14 @@ public class IconManager : MonoBehaviour
             if (instance == null)
             {
                 instance = FindAnyObjectByType<IconManager>();
+                instance.Init();
             }
             return instance;
         }
     }
     public IconData Data;
     Dictionary<string, Icon> allIcons = new Dictionary<string, Icon>();
-    private void Awake()
+    private void Init()
     {
         for(int x = 0; x < Data.Icons.Count; x++)
         {

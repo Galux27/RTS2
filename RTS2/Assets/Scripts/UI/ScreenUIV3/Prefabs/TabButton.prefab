@@ -64,6 +64,8 @@ MonoBehaviour:
   ActiveButton: {fileID: 8310042352648977062}
   InactiveButton: {fileID: 6436038584888223187}
   IsActive: 0
+  index: -1
+  TabContent: {fileID: 0}
 --- !u!1 &3239423849636825219
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,8 +100,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -1.2045975, y: -2.9039993}
+  m_SizeDelta: {x: -28.5307, y: -5.8079}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4723539711575517018
 CanvasRenderer:
@@ -131,8 +133,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 944c2afcc172d824481a326fc04a248d, type: 2}
+  m_sharedMaterial: {fileID: 2578332976889084524, guid: 944c2afcc172d824481a326fc04a248d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -156,7 +158,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 24.15
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -234,8 +236,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.7636032, y: -2.5509005}
+  m_SizeDelta: {x: -28.1678, y: -5.1018}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7911690111695392257
 CanvasRenderer:
@@ -267,8 +269,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 944c2afcc172d824481a326fc04a248d, type: 2}
+  m_sharedMaterial: {fileID: 2578332976889084524, guid: 944c2afcc172d824481a326fc04a248d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -292,7 +294,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 21.75
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1

@@ -15,6 +15,7 @@ public class TopBarParent : BaseUIElement
         {
             icon = CreateResourceIcon(Resource);
             icon.GetComponent<ResourceUINew>().Init(kvp.Key);
+            icon.name=kvp.Key;
         }
         CreateResourceIcon(Break);
         icon = CreateResourceIcon(Capacity);
@@ -24,6 +25,8 @@ public class TopBarParent : BaseUIElement
         {
             icon = CreateResourceIcon(Capacity);
             icon.GetComponent<UnitCapacityUI>().Init(kvp.Key.ToString());
+            icon.name = kvp.Key.ToString();
+
         }
     }
 
