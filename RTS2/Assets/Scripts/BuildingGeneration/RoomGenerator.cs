@@ -269,7 +269,9 @@ public class RoomGenerator
         Vector2Int pos = Vector2Int.zero;
         string potentialProp = string.Empty;
         Vector2Int size = Vector2Int.zero;
-        for (int x = 0; x < room.size.x; x+=2) { 
+        Debug.Log("Room Gen: Room pos " + room.Position + " building pos " + building.Position+" room size "+ room.size);
+        for (int x = 0; x < room.size.x; x+=2) 
+        { 
             for(int y = 0; y < room.size.y; y+=2)
             {
                 pos.x = x;
@@ -299,15 +301,19 @@ public class RoomGenerator
     {
 
 
-
+        building.ClearAreaForRoom(room);
         RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[room.RoomType];
+        Debug.Log("Room Gen: type "+ room.RoomType);
 
         if (template.Props.Count == 0)
         {
+            Debug.Log("Room Gen: template for props " + room.RoomType + " was 0, returning");
             return;
         }
         if (template.CanBeGridBased)
         {
+            Debug.Log("Room Gen:GRIDDY");
+
             PopulateRoomEnvObjectsInGrid(room,building,template);
             return;
         }
@@ -363,10 +369,12 @@ public class RoomGenerator
             }
             else
             {
-                Done = true;
+                PropsFailedToPlace.Clear();
+                //Done = true;
             }
             attempts++;
         }
+        Debug.Log("Room Gen: attempts made to populate " + attempts + ",");
     }
 
     void AddEnvObjectToRoomWithoutRefresh(GeneratedRoom room, Vector2Int pos, EnvironmentObject objectToAdd, GeneratedBuilding building)
@@ -675,6 +683,11 @@ public class GeneratedRoom
 
         Position = pos;
         this.size = size;
+    }
+
+    public bool IsPositionInRoom(Vector2Int position)
+    {
+        return PointInRange(this.Position, this.Position + size, position);
     }
 
     public bool IsPartOfRoomInArea(Vector2Int min,Vector2Int max,GeneratedBuilding building)
@@ -1130,6 +1143,13 @@ public class RoomTile
     {
         return RoomID >0;
     }
+
+    public void ClearProp()
+    {
+        SetID(-1);
+        HasProp = false;
+    }
+
 
     public void ResetTile(bool resetFloor=false)
     {

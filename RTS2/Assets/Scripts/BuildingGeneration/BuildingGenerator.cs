@@ -269,6 +269,54 @@ public class GeneratedBuilding
         buildingType=type;
     }
 
+    public void ClearAreaForRoom(GeneratedRoom room)
+    {
+        if (!MyRooms.Contains(room))
+        {
+            return;
+        }
+        Vector2Int localCoords = room.Position;
+        if (localCoords.x > this.Width || localCoords.y > this.Height)
+        {
+            localCoords -= Position;
+        }
+        int count = 0,envCount=0;
+        List<RoomTile> tilesReset = new List<RoomTile>();
+        for(int x = localCoords.x; x < localCoords.x + room.size.x; x++)
+        {
+            for (int y = localCoords.y; y < localCoords.y + room.size.y; y++)
+            {
+                if (Tiles[x, y] != null)
+                {
+                    //if(Tiles[x, y].HasProp || Tiles[x,y].RoomID!=-1)
+                    {
+                        Tiles[x, y].HasProp = false;//ClearProp();
+                        Tiles[x, y].RoomID = -1 ;//ClearProp();
+
+                        count++;
+                        tilesReset.Add(Tiles[x, y]);
+                    }
+                }
+            }
+        }
+        for(int x = 0; x < MyRooms.Count; x++)
+        {
+            if (MyRooms[x].EnvObjects != null)
+            {
+                for (int y = 0; y < tilesReset.Count; y++)
+                {
+                    if (MyRooms[x].EnvObjects.ContainsKey(tilesReset[y]))
+                    {
+                        MyRooms[x].EnvObjects.Remove(tilesReset[y]);
+                        envCount++;
+                    }
+                }
+            }
+        }
+       
+        Debug.Log("Room Gen: clearing area for room at " + room.Position + " in " + this.Position+","+room.RoomType+" tiles reset "+ count+" objects removed "+ envCount);
+    }
+
     public void ResetAreaOfBuilding(Vector2Int coords,Vector2Int size)
     {
 
@@ -427,7 +475,10 @@ public class GeneratedBuilding
         Tiles[coords.x, coords.y].HasFloor = true;
         Tiles[coords.x, coords.y].FloorTile = floor;
     }
-
+    public bool CoordsValid(int x,int y)
+    {
+        return x>=0&&x<Width&& y>=0 && y<Height;
+    }
     public bool IsValid(Vector2Int start,Vector2Int size)
     {
         if (start.x + size.x < Width && start.y + size.y < Height)
@@ -906,7 +957,9 @@ public class GeneratedBuilding
 
     public void PopulatePropsInRooms(RoomGenerator roomGen)
     {
-        for(int x = 0; x < MyRooms.Count; x++)
+        Debug.Log("Room Gen: Populating props in total room "+MyRooms.Count);
+
+        for (int x = 0; x < MyRooms.Count; x++)
         {
             roomGen.PopulateRoomEnvObjects(MyRooms[x],this);
             if (MyRooms[x].EnvObjects != null)
@@ -915,7 +968,7 @@ public class GeneratedBuilding
             }
             else
             {
-                Debug.Log("Room Gen: Populating props in rooms null");
+                Debug.Log("Room Gen: Populating props in rooms null " + MyRooms[x].RoomType);
 
             }
             ApplyRoom(MyRooms[x],true);

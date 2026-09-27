@@ -6266,7 +6266,7 @@ MonoBehaviour:
     size: {x: 0, y: 0}
     RoomID: 0
   IsGenerating: 0
-  testTemplate: {fileID: 11400000, guid: 4d816b194f8205541913c747546256f6, type: 2}
+  testTemplate: {fileID: 11400000, guid: 32592cb951f9f0f4e89f9343de4094ec, type: 2}
 --- !u!4 &813720143
 Transform:
   m_ObjectHideFlags: 0
@@ -14454,6 +14454,10 @@ PrefabInstance:
     - target: {fileID: 3048075433944256766, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_SizeDelta.y
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3048075433944256766, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0009815557
       objectReference: {fileID: 0}
     - target: {fileID: 3065826646182325136, guid: 2affb758dbd4aa242902241693fa42f6, type: 3}
       propertyPath: m_AnchorMax.x

@@ -16,14 +16,20 @@ public class RoomObjectPlacement
         Vector2Int position = Vector2Int.zero;
         EnvironmentObject currentObject = null;
         Vector2Int objSize = Vector2Int.zero;
-
+        Dictionary<string, int> PositionsForObjects = new Dictionary<string, int>();
+        Dictionary<string, Dictionary<string, int>> failReasons = new Dictionary<string, Dictionary<string, int>>();
+        
+        
         for (int q = 0; q < template.Props.Count; q++)
         {
+            PositionsForObjects.Add(template.Props[q].PropName, 0);
             currentObject = ConstructableObjectManager.Instance.AllObjects[template.Props[q].PropName];
+            failReasons.Add(template.Props[q].PropName, new Dictionary<string, int>());
             objSize = currentObject.SizeAsVec2();
             objSize.x = Mathf.Max(1, objSize.x);
             objSize.y = Mathf.Max(1, objSize.y);
 
+            string failReason = "";
             for (int x = 0; x < room.size.x-objSize.x; x += objSize.x)
             {
                 for (int y = 0; y < room.size.y-objSize.y; y += objSize.y)
@@ -31,16 +37,30 @@ public class RoomObjectPlacement
                     position.x = x;
                     position.y = y;
 
-                    if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building))
+                    if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building,out failReason))
                     {
-
+                       
                         GridOfPositions.SetObjectCanBePlaced(position, template.Props[q].PropName, objSize);
+                        PositionsForObjects[template.Props[q].PropName]++;
 
                     }
+                    if (!failReasons[template.Props[q].PropName].ContainsKey(failReason))
+                    {
+                        failReasons[template.Props[q].PropName].Add(failReason, 0);
+                    }
+                    failReasons[template.Props[q].PropName][failReason]++;
+                    failReason = "";
                 }
             }
 
 
+        }
+        foreach (KeyValuePair<string, int> kvp in PositionsForObjects) {
+            Debug.Log("Room Gen: total positions for " + kvp.Key + " " + kvp.Value);
+            foreach (KeyValuePair<string, int> kvp2 in failReasons[kvp.Key])
+            {
+                Debug.Log("Room Gen: fail reasons " + kvp2.Key + " " + kvp2.Value);
+            }
         }
        
     }
@@ -56,7 +76,7 @@ public class RoomObjectPlacement
         Vector2Int objSize = currentObject.SizeAsVec2() ;
         GridOfPositions.OnPlaceObject(pos, key, objSize);
         Vector2Int position = Vector2Int.zero;
-
+        string st = "";
         for (int q = 0; q < template.Props.Count; q++)
         {
             currentObject = ConstructableObjectManager.Instance.AllObjects[template.Props[q].PropName];
@@ -68,7 +88,7 @@ public class RoomObjectPlacement
                     position.x = x;
                     position.y = y;
 
-                    if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building))
+                    if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building,out st))
                     {
                         GridOfPositions.SetObjectCanBePlaced(position, template.Props[q].PropName, objSize);
                     }
@@ -207,13 +227,14 @@ public class RoomObjectPositions
         Vector2Int position = Vector2Int.zero;
         float wallWeight = 0, doorWeight = 0, propWeight = 0;
         Vector2Int propSize = ObjectToPlace.SizeAsVec2();
+        string st = "";
         for(int x = 0; x < room.size.x; x++)
         {
             for(int y = 0; y < room.size.y; y++)
             {
                 position.x = x;
                 position.y = y;
-                if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(ObjectToPlace, room, position, building))
+                if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(ObjectToPlace, room, position, building,out st))
                 {
                     room.GetWeightsForPropPlacement(position, propSize, out doorWeight, out wallWeight, out propWeight);
                     ValidPositions.Add(new RoomObjectPosition(position, doorWeight,wallWeight, propWeight));
@@ -227,9 +248,10 @@ public class RoomObjectPositions
         List<RoomObjectPosition> StillValidPositions = new List<RoomObjectPosition>();
         float wallWeight = 0, doorWeight = 0, propWeight = 0;
         Vector2Int propSize = ObjectToPlace.SizeAsVec2();
+        string st = "";
         for (int x = 0; x < ValidPositions.Count; x++)
         {
-            if(EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(ObjectToPlace, room, ValidPositions[x].Coords, building))
+            if(EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(ObjectToPlace, room, ValidPositions[x].Coords, building,out st))
             {
                 room.GetWeightsForPropPlacement(ValidPositions[x].Coords, propSize, out doorWeight, out wallWeight, out propWeight);
                 StillValidPositions.Add(ValidPositions[x]);

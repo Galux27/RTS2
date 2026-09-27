@@ -3,39 +3,54 @@ using UnityEngine;
 public static class EnvironmentObjectPlacementCriteriaHelpers
 {
     public static int doorFail = 0, wallFail = 0, accessFail = 0, adjacencyFail = 0;
-    public static bool IsPositionValidForObject(EnvironmentObject objectToCreate,GeneratedRoom room, Vector2Int coordinates,GeneratedBuilding building)
+    public static bool IsPositionValidForObject(EnvironmentObject objectToCreate,GeneratedRoom room, Vector2Int coordinates,GeneratedBuilding building,out string failReason)
     {
         if (!IsPositionInRange(coordinates, room, objectToCreate))
         {
+            failReason = "Out of range";
             return false;
         }
 
         if (DoesPositionContainExistingProp(coordinates, room, objectToCreate, building))
         {
+            failReason = "Existing prop";
+
             return false;
         }
 
         if (objectToCreate.PlacementCriteria == null)
         {
+            failReason = "no placement criteria";
+
             return true;
         }
         
         if (!DoWeMeetDoorCriteria(coordinates, room, objectToCreate,building))
         {
+            failReason = "stopped by doors";
+
             return false;
         }
         if (!DoWeMeedWallCriteria(coordinates, room, objectToCreate, building))
         {
+            failReason = "stopped by walls";
+
             return false;
         }
         if(!DoWeMeedObjectAccessiblityCriteria(coordinates, room, objectToCreate, building))
         {
+            failReason = "stopped by accessibilty";
+
             return false;
         }
         if(!DoWeMeedObjectAdjacencyCriteria(coordinates, room, objectToCreate, building))
         {
+            failReason = "stoped by adjacency";
+
             return false;
         }
+        failReason = "pogchamp";
+
         return true;
     }
 
@@ -47,23 +62,27 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     static bool DoesPositionContainExistingProp(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
     {
         Vector2Int pos = new Vector2Int();
-        for(int x = position.x; x < position.x + room.size.x; x++)
+        Vector2Int size = objectToCreate.SizeAsVec2();
+        for(int x = position.x; x < position.x + size.x; x++)
         {
-            for(int y = position.y; y < position.y + room.size.y; y++)
+            for(int y = position.y; y < position.y + size.y; y++)
             {
                 pos.x = x;
                 pos.y = y;
                 pos = building.ConvertRoomCoordsToBuildingCoords(pos, room);
-                if (building.Tiles[pos.x, pos.y] != null)
+                if (building.CoordsValid(pos.x, pos.y))
                 {
-                    if(building.Tiles[pos.x, pos.y].HasProp)
+                    if (building.Tiles[pos.x, pos.y] != null)
                     {
-                        return true;
+                        if (building.Tiles[pos.x, pos.y].HasProp)
+                        {
+                            return true;
+                        }
                     }
                 }
-                
+
+                }
             }
-        }
         return false;
     }
 
@@ -71,7 +90,12 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     #region Walls
     static bool DoWeMeedWallCriteria(Vector2Int position,GeneratedRoom room,EnvironmentObject objectToCreate,GeneratedBuilding building)
     {
-        for(int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
+        if (objectToCreate.PlacementCriteria == null || objectToCreate.PlacementCriteria.MyAccessiblityData == null)
+        {
+            Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
+            return true;
+        }
+        for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
         {
             for(int y=0;y< objectToCreate.PlacementCriteria.MyAccessiblityData[x].WallAccessibilities.Count; y++)
             {
@@ -132,7 +156,11 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     #region Doors
     static bool DoWeMeetDoorCriteria(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
     {
-       
+       if(objectToCreate.PlacementCriteria==null|| objectToCreate.PlacementCriteria.MyAccessiblityData == null)
+        {
+            Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
+            return true;
+        }
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
         {
             
@@ -267,6 +295,11 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
 
     static bool DoWeMeedObjectAccessiblityCriteria(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
     {
+        if (objectToCreate.PlacementCriteria == null || objectToCreate.PlacementCriteria.MyAccessiblityData == null)
+        {
+            Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
+            return true;
+        }
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
         {
             for (int y = 0; y < objectToCreate.PlacementCriteria.MyAccessiblityData[x].ObjectAccessibily.Count; y++)
