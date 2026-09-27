@@ -306,5 +306,10 @@ public class BuildableStructure : Constructable,ObjectInfo
     {
         return Object;
     }
+
+    public string GetObjectType()
+    {
+        return constructOnComplete;
+    }
 }
 

@@ -21,12 +21,33 @@ public class SelectableIconButto : IconButton
 
     public void SetSelectable(Selectable toSet)
     {
+        Debug.Log("Set Selectable " + toSet.GetSelectableType());
         QuantityText.gameObject.SetActive(false);
         Goto.gameObject.SetActive(true);
         Goto.OnClick = GoTo;
         HealthDisplay.gameObject.SetActive(true);
         currentlySelected = toSet;
         selectedInfo = (ObjectInfo)currentlySelected;
+        GetIconForSelectable(toSet);
+    }
+
+    void GetIconForSelectable(Selectable toSet)
+    {
+        if (toSet.GetSelectableType() == SelectableType.Unit)
+        {
+
+        }else if (toSet.GetSelectableType() == SelectableType.ConstructableObject)
+        {
+            IconImage.sprite = ConstructableObjectManager.Instance.AllObjects[toSet.GetObjectType()].ForwardsSprite;
+        }
+        else if (toSet.GetSelectableType() == SelectableType.Structure)
+        {
+            IconImage.sprite = WallTypeManager.Instance.GetWallTile(toSet.GetObjectType()).LeftRight.sprite;
+        }
+        else if (toSet.GetSelectableType() == SelectableType.UnderConstructionObject)
+        {
+
+        }
     }
 
 

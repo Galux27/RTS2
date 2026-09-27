@@ -6,7 +6,7 @@ public interface Selectable :ObjectBounds
     void OnObjectDeselected();
 
     public SelectableType GetSelectableType();
-
+    public string GetObjectType();
     public bool GetIsSelected();
 
     public bool IsSelectable();

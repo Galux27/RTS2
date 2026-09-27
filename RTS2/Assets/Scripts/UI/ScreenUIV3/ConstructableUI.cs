@@ -16,7 +16,6 @@ public class ConstructableUI : BaseUIElement
         Furniture.onClick.AddListener(()=>SetCategory(ConstructableCategory.Furniture));
         Walls.onClick.AddListener(() => SetCategory(ConstructableCategory.Walls));
         Doors.onClick.AddListener(() => SetCategory(ConstructableCategory.Doors));
-        UIEventManager.OnConstructableObjectSelected += OnConstructableObjectSelected;
     }
 
     private void OnEnable()
@@ -88,15 +87,7 @@ public class ConstructableUI : BaseUIElement
         return retVal;
     }
 
-    void OnConstructableObjectSelected(string key)
-    {
-        Debug.Log("Selection Mode: setting object to " + key);
-        if (ConstructableObjectManager.Instance.AllObjects.ContainsKey(key))
-        {
-            ResourceCostUI.Instance.UpdateUI(ConstructableObjectManager.Instance.AllObjects[key].RequirementsToBuild);
-            //ConstructableObjectManager.Instance.SetCursorObject(key);
-        }
-    }
+   
 
     void DrawFurniture()
     {

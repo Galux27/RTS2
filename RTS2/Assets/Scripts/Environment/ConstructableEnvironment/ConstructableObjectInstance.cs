@@ -121,7 +121,7 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
 
 
     
-    SelectableType Selectable.GetSelectableType()
+    public SelectableType GetSelectableType()
     {
         return SelectableType.ConstructableObject;
     }
@@ -196,5 +196,10 @@ public class ConstructableObjectInstance : EnvironmentObjectInstance,Selectable
     public GameObject GetGameObject()
     {
         return Object;
+    }
+
+    public string GetObjectType()
+    {
+        return this.ObjectKey;
     }
 }

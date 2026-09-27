@@ -46,8 +46,10 @@ MonoBehaviour:
   - Key: Food
     IconImage: {fileID: 6426962496777856927, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
   - Key: Unit
-    IconImage: {fileID: 21300000, guid: 54480c8535d545149b22ee8bfcaad6c2, type: 3}
+    IconImage: {fileID: -9062920442854283505, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
   - Key: Map
     IconImage: {fileID: 21300000, guid: 4b307c9f1eae5644a865e61b227b969e, type: 3}
   - Key: Money
     IconImage: {fileID: -5463825080372710764, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}
+  - Key: UnderConstruction
+    IconImage: {fileID: 3084092761113517430, guid: bab5119b7562c384b80ea8468ee013cf, type: 3}

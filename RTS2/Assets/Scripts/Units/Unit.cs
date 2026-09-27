@@ -525,6 +525,11 @@ public class Unit : MonoBehaviour,Selectable,ObjectInfo,ISerialize
     {
         return this.gameObject;
     }
+
+    string Selectable.GetObjectType()
+    {
+        return this.MyType.ToString();
+    }
 }
 
 public enum UnitType {

@@ -341,6 +341,11 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize,ObjectBounds
     {
         return null;
     }
+
+    string Selectable.GetObjectType()
+    {
+        return baseWallType.WallName;
+    }
 }
 
 public enum WallType 
