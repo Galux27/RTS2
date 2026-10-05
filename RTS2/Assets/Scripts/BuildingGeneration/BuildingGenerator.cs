@@ -204,13 +204,15 @@ public class BuildingGenerator : MonoBehaviour
                // if (cur.HasFloor||cur.IsCorridor)
                 {
                     WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batchCoords, out chunkCoords, out localCoords);
-                    WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y]
-                        .ChunkTiles[localCoords.x, localCoords.y].SetElevation(elevation) ;
-                    if (!batches.Contains(batchCoords))
-                    {
-                        batches.Add(batchCoords);
+                   if (WorldChunkManager.Instance.ChunkBatches.ContainsKey(batchCoords)) {
+                        WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y]
+                            .ChunkTiles[localCoords.x, localCoords.y].SetElevation(elevation) ;
+                        if (!batches.Contains(batchCoords))
+                        {
+                            batches.Add(batchCoords);
+                        }
+                        WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].NeedsUpdate = true;
                     }
-                    WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].NeedsUpdate = true;
                 }
                 }
             }

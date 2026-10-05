@@ -169,9 +169,7 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void SetBuildings(List<BuildingTileArea> buildings)
     {
-
         WorldBuldingMoniter.Instance.AddBuildingZones(buildings);
-        //Buildings = buildings;
     }
 
     bool CanGenerateBuilding(GeneratedBuilding building)

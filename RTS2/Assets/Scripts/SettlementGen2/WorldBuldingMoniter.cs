@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class WorldBuldingMoniter : MonoBehaviour
@@ -20,7 +21,8 @@ public class WorldBuldingMoniter : MonoBehaviour
     {
         if (Buildings.ContainsKey(batch.coords))
         {
-            for(int x = 0; x < Buildings[batch.coords].Count; x++)
+            Buildings[batch.coords].HasChunkBeenGenerated = true;
+           /* for(int x = 0; x < Buildings[batch.coords].Count; x++)
             {
                 try
                 {
@@ -34,12 +36,14 @@ public class WorldBuldingMoniter : MonoBehaviour
                     Debug.LogError("error creating building " + e.ToString());
                 }
             }
-            Buildings[batch.coords].Clear();
+            Buildings[batch.coords].Clear();*/
         }
 
     }
 
-    public Dictionary<Vector2Int,List< BuildingTileArea>> Buildings=new Dictionary<Vector2Int, List<BuildingTileArea>>();
+
+
+    public Dictionary<Vector2Int,ChunkPreGenerationBuildingStore> Buildings=new Dictionary<Vector2Int, ChunkPreGenerationBuildingStore>();
     List<Vector2Int> coordsAdded = new List<Vector2Int>();
 
     public void AddBuildingZones(List<BuildingTileArea> buildings)
@@ -80,9 +84,9 @@ public class WorldBuldingMoniter : MonoBehaviour
     {
         if (!Buildings.ContainsKey(coords))
         {
-            Buildings.Add(coords, new List<BuildingTileArea>());
+            Buildings.Add(coords, new ChunkPreGenerationBuildingStore(coords));
         }
-        Buildings[coords].Add(toAdd);
+        Buildings[coords].AddBuilding(toAdd);
         coordsAdded.Add(coords);
 
     }
@@ -94,4 +98,95 @@ public class WorldBuldingMoniter : MonoBehaviour
         return batch ;
     }
 
+    private void Update()
+    {
+        Debug.Log("Building Gen: total to check " + Buildings.Count);
+        foreach(KeyValuePair<Vector2Int,ChunkPreGenerationBuildingStore> kvp in Buildings)
+        {
+            kvp.Value.CheckToGenerate();
+        }
+    }
+}
+public class ChunkPreGenerationBuildingStore
+{
+    public Vector2Int ChunkCoords;
+    public List<BuildingTileArea> AreasForBuildings=new List<BuildingTileArea>();
+    public bool HasChunkBeenGenerated = false,FinishedGenerating=false;
+
+    public ChunkPreGenerationBuildingStore(Vector2Int coords)
+    {
+        ChunkCoords = coords;
+    }
+
+    public void AddBuilding(BuildingTileArea building)
+    {
+        AreasForBuildings.Add(building);
+        FinishedGenerating = false;
+    }
+
+
+    public bool DoWeNeedToGenerate()
+    {
+        return HasChunkBeenGenerated == true && AreasForBuildings.Count > 0;
+    }
+
+    public void CheckToGenerate()
+    {
+        if (FinishedGenerating)
+        {
+            return;
+        }
+        Debug.Log("Building Gen: total buildings " + AreasForBuildings.Count);
+
+        if (DoWeNeedToGenerate())
+        {
+            int toGenerate = GetClosestAreaToPosition(CameraController.Instance.transform.position);
+            if (toGenerate > -1)
+            {
+                Debug.Log("Building Gen: generating building at " + AreasForBuildings[toGenerate].Low);
+                BuildingTileArea area = AreasForBuildings[toGenerate];
+                AreasForBuildings.RemoveAt(toGenerate);
+
+                BuildingGenerator.Instance.ApplyBuidlingToWorld(area.MyBuilding);
+            }
+        }
+        if (AreasForBuildings.Count == 0)
+        {
+            {
+                Debug.Log("Building Gen: finished generating " + ChunkCoords);
+
+                FinishedGenerating = true;
+            }
+        }
+    }
+    int GetClosestAreaToPosition(Vector2 pos)
+    {
+        int retVal = -1;
+        float dist = 9999999f;
+        float dist2 = 0f;
+        for(int x = 0; x < AreasForBuildings.Count; x++)
+        {
+            if (AreasForBuildings[x].MyBuilding == null)
+            {
+                continue;
+            }
+            dist2 = Vector2.Distance(AreasForBuildings[x].High,pos);
+            if (dist2 < dist)
+            {
+                dist = dist2;
+                retVal = x;
+            }
+
+            dist2 = Vector2.Distance(AreasForBuildings[x].Low, pos);
+            if (dist2 < dist)
+            {
+                dist = dist2;
+                retVal = x;
+            }
+        }
+
+
+        return retVal;
+    }
+        
 }

@@ -436,13 +436,19 @@ public static class WallHelpers
     {
         return () => { WallHelpers.CreateWallObject(coords.x, coords.y, toDrawOn, toUse); };
     }
-
+    static WallSegment LastDoor;
     public static void CreateDoorBuildableStructure(int x, int y, Tilemap toDrawOn, WallTile toUse, Vector3 worldPos, Vector3 offset = default)
     {
         Vector2Int coords = WorldChunkManager.Instance.GetChunkCoordsFromWorldPos(worldPos + offset);
-
+        LastDoor = WallHelpers.GetWallAtCoords(x, y);
+        if (LastDoor == null)
+        {
+            Debug.LogError("Error creating door at " + x + "," + y);
+            return;
+        }
+        LastDoor.SetWallUnderConstruction(true,WallType.Door);
         Action OnBuilt = () => { WallHelpers.CreateDoorObject(x, y, toDrawOn, toUse); };
-        WallHelpers.GetWallAtCoords(x, y).SetWallUnderConstruction(true,WallType.Door);
+
         new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Door, toUse.WallName);
     }
     public static void CreateWallObject(int x, int y, Tilemap toDrawOn, WallTile toUse)
