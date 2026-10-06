@@ -165,7 +165,6 @@ public class WorldChunkBatch : MonoBehaviour
         return intersection;
     }
     public List<BuildingZone> Zones = new List<BuildingZone>();
-    public List<BuildingTileArea> Buildings = new List<BuildingTileArea>();
 
     public void SetBuildings(List<BuildingTileArea> buildings)
     {

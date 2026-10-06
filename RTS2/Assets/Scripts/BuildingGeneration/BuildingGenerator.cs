@@ -149,7 +149,7 @@ public class BuildingGenerator : MonoBehaviour
 
                 }
 
-                if (cur.HasFloor)
+                if (cur.HasFloor && cur.FloorTile!=null)
                 {
                     if (x < b.Width - 1 && y < b.Height - 1)
                     {
@@ -260,7 +260,7 @@ public class GeneratedBuilding
     List<Vector2Int> Edges;
     public Dictionary<int, RoomLink> Links;
     bool hasAnything = false;
-    string buildingType;
+    public string buildingType;
     public GeneratedBuilding(int width, int height, Vector2Int pos,string type)
     {
         Width = width;
@@ -477,6 +477,115 @@ public class GeneratedBuilding
         Tiles[coords.x, coords.y].HasFloor = true;
         Tiles[coords.x, coords.y].FloorTile = floor;
     }
+
+    public void ShiftAllFloorTiles(BuildingTemplate template)
+    {
+        if (template.ShiftHorizontalFloorTiles)
+        {
+            string[,] newFloorTiles = new string[Width, Height];
+            bool[,] swapped = new bool[Width, Height];
+            for (int x = Width - 1; x >= 0; x--)
+            {
+                for (int y = Height - 1; y >= 0; y--)
+                {
+
+                    newFloorTiles[x, y] = Tiles[x, y].FloorTile;
+                }
+            }
+
+            for (int x = Width - 2; x >= 0; x--)
+            {
+                for (int y = Height - 1; y >= 0; y--)
+                {
+
+
+                    if (swapped[x, y] == false && TileValidForFloorShift(Tiles[x, y]))
+                    {
+
+                        if (TileValidForFloorShift(Tiles[x + 1, y], Tiles[x, y].FloorTile))
+                        {
+                            newFloorTiles[x, y] = Tiles[x + 1, y].FloorTile; //"GreenCarpet";// 
+                            newFloorTiles[x + 1, y] = Tiles[x + 1, y].FloorTile; //"IndustrialRusty";//Tiles[x, y].FloorTile;
+                        }
+
+                    }
+                }
+            }
+
+
+
+            for (int x = Width - 1; x >= 0; x--)
+            {
+                for (int y = Height - 1; y >= 0; y--)
+                {
+                    if (newFloorTiles[x, y] != string.Empty)
+                    {
+                        Tiles[x, y].SetFloor(newFloorTiles[x, y]);
+                    }
+                }
+            }
+        }
+        if (template.ShiftVerticalFloorTiles)
+        {
+            ShiftVerticalFloorTiles();
+        }
+    }
+
+    void ShiftVerticalFloorTiles()
+    {
+        string[,] newFloorTiles = new string[Width, Height];
+        bool[,] swapped = new bool[Width, Height];
+        for (int x = Width - 1; x >= 0; x--)
+        {
+            for (int y = Height - 1; y >= 0; y--)
+            {
+
+                newFloorTiles[x, y] = Tiles[x, y].FloorTile;
+            }
+        }
+
+        for (int x = Width - 1; x >= 0; x--)
+        {
+            for (int y = Height - 2; y >= 0; y--)
+            {
+
+                if (TileValidForFloorShift(Tiles[x, y]))
+                {
+
+                    if (TileValidForFloorShift(Tiles[x, y + 1], Tiles[x, y].FloorTile))
+                    {
+                        newFloorTiles[x, y] = Tiles[x, y + 1].FloorTile; // "GreenCarpet";//
+
+                        newFloorTiles[x, y + 1] = Tiles[x, y + 1].FloorTile;// "IndustrialRusty";// 
+                        swapped[x, y] = true;
+
+                    }
+
+                }
+            }
+        }
+        for (int x = Width - 1; x >= 0; x--)
+        {
+            for (int y = Height - 1; y >= 0; y--)
+            {
+                if (newFloorTiles[x, y] != string.Empty)
+                {
+                    Tiles[x, y].SetFloor(newFloorTiles[x, y]);
+                }
+            }
+        }
+    }
+
+    bool TileValidForFloorShift(RoomTile tile)
+    {
+        return tile != null && tile.HasFloor;
+    }
+
+    bool TileValidForFloorShift(RoomTile tile,string newTileID)
+    {
+        return tile != null && tile.HasFloor&&tile.FloorTile!=newTileID;
+    }
+
     public bool CoordsValid(int x,int y)
     {
         return x>=0&&x<Width&& y>=0 && y<Height;

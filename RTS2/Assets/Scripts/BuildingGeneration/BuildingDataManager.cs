@@ -20,11 +20,15 @@ public class BuildingDataManager
     }
 
     public Dictionary<string, BuildingTemplate> BuildingTemplates;
+    List<string> BuildingTemplateIDs = new List<string>();
     public Dictionary<string,RoomTemplate> RoomTemplates;
     const string BuildingDataPath = "Buildings/Buildings", RoomDataPath = "Buildings/Rooms";
 
     
-
+    public string GetRandomBuildingTemplateID()
+    {
+        return BuildingTemplateIDs[Random.Range(0,BuildingTemplateIDs.Count)];
+    }
 
     public void InitBuildingData()
     {
@@ -37,6 +41,7 @@ public class BuildingDataManager
             if (BuildingTemplates.ContainsKey(i.BuildingName) == false)
             {
                 BuildingTemplates.Add(i.BuildingName, i);
+                BuildingTemplateIDs.Add(i.BuildingName);
             }
         }
 

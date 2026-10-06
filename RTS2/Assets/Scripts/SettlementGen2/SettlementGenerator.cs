@@ -1056,15 +1056,6 @@ public class GeneratedSettlement
         int xInd = Mathf.FloorToInt( Mathf.Lerp(0, areas.GetLength(0), xLerp));
         int yInd = Mathf.FloorToInt(Mathf.Lerp(0, areas.GetLength(1), yLerp));
         return areas[xInd, yInd];
-        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(high.x, high.y, out Batch, out Chunk, out Coords);
-
-        Vector2 difference = Batch - toGenerateInBatch;
-
-
-        Vector2Int arrayCoords = new Vector2Int(Mathf.FloorToInt( high.x/WorldChunkManager.ChunkBatchSize) - overworld.x, Mathf.FloorToInt(high.y / WorldChunkManager.ChunkBatchSize) - overworld.y);
-        Debug.LogError("Overworld to array " + overworld + "->" + arrayCoords+","+low+","+high+","+Batch+" to gen batch " + toGenerateInBatch);
-        
-        return areas[arrayCoords.x, arrayCoords.y];
     }
 
     public void AssignBuildingsToArea(SettlementTileArea tileArea, int areaSize,Settlement_Settings settings)

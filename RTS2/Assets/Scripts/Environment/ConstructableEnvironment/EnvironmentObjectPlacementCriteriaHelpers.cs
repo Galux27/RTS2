@@ -92,7 +92,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     {
         if (objectToCreate.PlacementCriteria == null || objectToCreate.PlacementCriteria.MyAccessiblityData == null)
         {
-            Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
+            //Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
             return true;
         }
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
@@ -158,7 +158,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     {
        if(objectToCreate.PlacementCriteria==null|| objectToCreate.PlacementCriteria.MyAccessiblityData == null)
         {
-            Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
+           // Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
             return true;
         }
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
@@ -233,6 +233,10 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
   
     static bool DoWeMeedObjectAdjacencyCriteria(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
     {
+        if(objectToCreate.PlacementCriteria==null|| objectToCreate.PlacementCriteria.MyAccessiblityData == null)
+        {
+            return true;
+        }
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
         {
             for (int y = 0; y < objectToCreate.PlacementCriteria.MyAccessiblityData[x].OtherObjectAccessiblityData.Count; y++)
@@ -297,7 +301,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     {
         if (objectToCreate.PlacementCriteria == null || objectToCreate.PlacementCriteria.MyAccessiblityData == null)
         {
-            Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
+            //Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
             return true;
         }
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)

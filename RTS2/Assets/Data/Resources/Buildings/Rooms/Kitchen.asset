@@ -43,7 +43,13 @@ MonoBehaviour:
     MustBeOnRoomEdge: 0
   CanHaveWindows: 1
   CanHaveExternalDoor: 1
+  CanBeGridBased: 0
+  CanHaveInternalWalls: 1
+  CanGenerateAnyWalls: 1
+  GenerateDoorsToOtherRooms: 1
+  GenerateDoorsToCorridors: 1
   MinWidth: 6
   MaxWidth: 8
   MinHeight: 4
   MaxHeight: 8
+  AttachedRooms: []

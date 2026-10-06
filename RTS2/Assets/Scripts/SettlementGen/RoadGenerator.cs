@@ -339,7 +339,7 @@ public static class RoadGenerator
 
             }else
             {
-                Debug.LogError("Batch: batch is null " +data.StartPos+","+data.EndPos + "," + direction + "," + Batch+","+ currentBatch);
+               // Debug.LogError("Batch: batch is null " +data.StartPos+","+data.EndPos + "," + direction + "," + Batch+","+ currentBatch);
             }
             startPos += direction;
 

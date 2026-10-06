@@ -87,7 +87,7 @@ public class SettlementTileArea
         {
             Sections[q].ApplyWorldOffsetToArea(settings);
         }
-        GenerateBuildingsInSections(settlement);
+        //GenerateBuildingsInSections(settlement);
         
         }
 
@@ -468,10 +468,11 @@ public class SettlementTileAreaSection
         }
     }
     #endregion
-
+    
     public void GenerateBuildingAreas()
     {
-        BuildingTemplate houseTemplate = BuildingDataManager.Instance.BuildingTemplates["Warehouse"];
+        string template = BuildingDataManager.Instance.GetRandomBuildingTemplateID();
+        BuildingTemplate houseTemplate = BuildingDataManager.Instance.BuildingTemplates[template];
         int width=Random.Range(houseTemplate.MinWidth,houseTemplate.MaxWidth);
         int height = Random.Range(houseTemplate.MinHeight,houseTemplate.MaxHeight);
         int areaWidth = High.x - Low.x;
@@ -522,7 +523,7 @@ public class SettlementTileAreaSection
             {
                 pos.x = x;
                 pos.y=y;
-                BuildingAreas.Add(new BuildingTileArea(pos, pos + size));
+                BuildingAreas.Add(new BuildingTileArea(pos, pos + size, template));
 
             }
         }
@@ -533,10 +534,12 @@ public class BuildingTileArea
 {
     public Vector2Int Low, High;
     public Color DebugColor;
-    public BuildingTileArea(Vector2Int low,Vector2Int high)
+    public string BuildingID;
+    public BuildingTileArea(Vector2Int low,Vector2Int high,string buildingToGenerate)
     {
         Low = low;
         High = high;
+        BuildingID = buildingToGenerate;
         DebugColor = new Color(Random.value, Random.value, Random.value, 1f);
     }
 
@@ -567,9 +570,9 @@ public class BuildingTileArea
     {
         Vector2Int Size = High - Low;
 
-        BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(BuildingDataManager.Instance.BuildingTemplates["Warehouse"].FloorplanType);
+        BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(BuildingDataManager.Instance.BuildingTemplates[BuildingID].FloorplanType);
         Debug.Log("Generating building at " +Low + " size " + Size);
-        MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates["Warehouse"], 50);
+        MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates[BuildingID], 50);
     }
 }
 

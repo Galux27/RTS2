@@ -267,6 +267,73 @@ public class BuildingFloorplan
 
     }
 
+    /// <summary>
+    /// This code runs like shite, fix it
+    /// also
+    /// Add external wall exception for windows
+    /// Shift floor tiles down and left 1 if the tile is a room tile
+    /// make building generation also performed in the update loop rather than the inital road load
+    /// </summary>
+    /// <param name="building"></param>
+    public static void PopulateExteriorWallTiles(GeneratedBuilding building)
+    {
+        BuildingTemplate template = BuildingDataManager.Instance.BuildingTemplates[building.buildingType];
+        List<RoomTile> neighbours = new List<RoomTile>();
+        if (building.Tiles == null)
+        {
+            return;
+        }
+        for (int x = 0; x < building.Width; x++)
+        {
+            for (int y = 0; y < building.Height; y++)
+            {
+                if ( x == 0 || y == 0 || y == building.Height - 1 || x == building.Width - 1|| IsTileExterior(building.Tiles[x, y]) )
+                {
+                    if (building.Tiles[x, y] == null)
+                    {
+                        building.Tiles[x, y] = new RoomTile();
+                    }
+                    GetNeighbouringTiles(building, x, y, ref neighbours);
+                    for (int q = 0; q < neighbours.Count; q++)
+                    {
+                        if ( neighbours[q].RoomID != -1&& building.Tiles[x, y].WallTile!="Window")
+                        {
+                            building.Tiles[x, y].SetWall(template.ExternalWall);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static void GetNeighbouringTiles(GeneratedBuilding building, int x, int y, ref List<RoomTile> toPopulate)
+    {
+        toPopulate.Clear();
+        if (x > 0&& building.Tiles[x - 1, y]!=null)
+        {
+            toPopulate.Add(building.Tiles[x - 1, y]);
+        }
+        if (x < building.Width - 1&& building.Tiles[x + 1, y]!=null)
+        {
+            toPopulate.Add(building.Tiles[x + 1, y]);
+        }
+
+        if (y > 0&& building.Tiles[x, y - 1]!=null)
+        {
+            toPopulate.Add(building.Tiles[x, y - 1]);
+        }
+
+        if (y < building.Height - 1&& building.Tiles[x, y + 1]!=null)
+        {
+            toPopulate.Add(building.Tiles[x, y + 1]);
+        }
+    }
+
+    static bool IsTileExterior(RoomTile tile)
+    {
+        return tile==null|| tile.RoomID == -1;
+    }
+
 
     public virtual GeneratedBuilding Generate(RoomGenerator RoomGen,int width,int height,Vector2Int pos,BuildingTemplate template,int maxPasses)
     {
@@ -306,7 +373,10 @@ public class BuildingFloorplan
             count++;
         }
         building.UpdateCorridorEdgeTiles(template);
+        BuildingFloorplan.PopulateExteriorWallTiles(building);
+
         building.GenerateDoors();
+        building.ShiftAllFloorTiles(template);
         return building;
     }
 }
@@ -358,11 +428,13 @@ public class SquareBuildingFloorplan : BuildingFloorplan
                 building.AddRoom(curRoom);
             }
         }
+        BuildingFloorplan.PopulateExteriorWallTiles(building);
+
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();
         building.PopulatePropsInRooms(RoomGen);
-
+        building.ShiftAllFloorTiles(template);
         return building;
     }
 
@@ -553,11 +625,13 @@ public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
         //        building.AddRoom(curRoom);
         //    }
         //}
+        BuildingFloorplan.PopulateExteriorWallTiles(building);
+
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();
         building.PopulatePropsInRooms(RoomGen);
-
+        building.ShiftAllFloorTiles(template);
         return building;
     }
 }
@@ -675,12 +749,13 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             }
         }
         Debug.Log("Attempts made for room " + attempts + "/" + successes);
+        BuildingFloorplan.PopulateExteriorWallTiles(building);
 
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();
         building.PopulatePropsInRooms(RoomGen);
-
+        building.ShiftAllFloorTiles(template);
 
         return building;
     }

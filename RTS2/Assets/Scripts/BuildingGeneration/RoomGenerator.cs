@@ -44,8 +44,9 @@ public class RoomGenerator
         GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID,id);
         GetTilesFromBuilding(room, building);
 
-        PopulateWallTiles(room, template,building);
+        PopulateRoomWallTiles(room, template,building);
         GenerateLocationsForDoors(room);
+        //add something that shifts all floor tiles -1,-1 if there's a tile below them thats been set as a floor tile
         PopulateFloorTiles(room, template);
         //PopulateRoomEnvObjects(room, template);
         if (template.CanHaveWindows)
@@ -525,8 +526,9 @@ public class RoomGenerator
 
     void PopulateFloorTiles(GeneratedRoom room, RoomTemplate template)
     {
-        int width = room.RoomTiles.GetLength(0)-1;
-        int height = room.RoomTiles.GetLength(1)-1;
+        int width = room.RoomTiles.GetLength(0);
+        int height = room.RoomTiles.GetLength(1);
+        //Add something to work out why some rooms floor tiles go into the next room but some don't
         for (int x = 0; x < width; x++)
         {
           for(int y = 0; y < height; y++)
@@ -583,15 +585,11 @@ public class RoomGenerator
     }
 
  
+   
 
-
-    void PopulateWallTiles(GeneratedRoom room,RoomTemplate template,GeneratedBuilding building)
+    void PopulateRoomWallTiles(GeneratedRoom room,RoomTemplate template,GeneratedBuilding building)
     {
-        if (!template.CanGenerateAnyWalls)
-        {
-            PopulateWallTilesThatAreOnExteriorOfBuilding(room, template, building);
-            return;
-        }
+       
         int width = room.RoomTiles.GetLength(0);
         int height = room.RoomTiles.GetLength(1);
 
@@ -618,15 +616,16 @@ public class RoomGenerator
         for (int x = 0; x < width; x++)
         {
 
-            if (isLowYEdge || template.CanHaveInternalWalls)
+            if (isLowYEdge || room.IsCorridor)
             {
                 room.RoomTiles[x, 0].SetWall(template.Wall);
             }
+
             if (isYedge)
             {
                 room.RoomTiles[x, height - 1].SetWall(template.Wall);
             }
-            else if (template.CanHaveInternalWalls)
+            else if (template.CanHaveInternalWalls || room.IsCorridor)
             {
                 room.RoomTiles[x, height - 1].SetWall(template.Wall);
 
@@ -636,7 +635,7 @@ public class RoomGenerator
 
         for (int x = 0; x < height; x++)
         {
-            if (isLowXEdge || template.CanHaveInternalWalls)
+            if (isLowXEdge || room.IsCorridor)
             {
                 try
                 {
@@ -650,7 +649,7 @@ public class RoomGenerator
             if (isXedge)
             {
                 room.RoomTiles[width - 1, x].SetWall(template.Wall);
-            }else if (template.CanHaveInternalWalls)
+            }else if (template.CanHaveInternalWalls || room.IsCorridor)
             {
                 room.RoomTiles[width - 1, x].SetWall(template.Wall);
 
@@ -667,6 +666,7 @@ public class GeneratedRoom
     public Vector2Int size;
     public Dictionary<RoomTile,GeneratedRoomProp> EnvObjects;
     public int RoomID = -1;
+    public bool IsCorridor;
     public GeneratedRoom(Vector2Int size,Vector2Int pos,string type,int ID)
     {
         RoomID = ID;
@@ -779,6 +779,7 @@ public class GeneratedRoom
                 RoomTiles[x, y].IsCorridor = true;
             }
         }
+        IsCorridor = true;
 
     }
 

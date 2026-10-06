@@ -145,6 +145,7 @@ public class ChunkPreGenerationBuildingStore
             {
                 Debug.Log("Building Gen: generating building at " + AreasForBuildings[toGenerate].Low);
                 BuildingTileArea area = AreasForBuildings[toGenerate];
+                area.GenerateBuildingForArea(null);
                 AreasForBuildings.RemoveAt(toGenerate);
 
                 BuildingGenerator.Instance.ApplyBuidlingToWorld(area.MyBuilding);
@@ -166,10 +167,7 @@ public class ChunkPreGenerationBuildingStore
         float dist2 = 0f;
         for(int x = 0; x < AreasForBuildings.Count; x++)
         {
-            if (AreasForBuildings[x].MyBuilding == null)
-            {
-                continue;
-            }
+          
             dist2 = Vector2.Distance(AreasForBuildings[x].High,pos);
             if (dist2 < dist)
             {
