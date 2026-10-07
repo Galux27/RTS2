@@ -24,7 +24,8 @@ public class SelectedOutline : MonoBehaviour
         {
             scale = size;
         }
-        this.transform.localScale = scale;
+        sr.size = scale;
+       // this.transform.localScale = scale;
         this.transform.position = wall.Position();
     }
 
@@ -51,7 +52,8 @@ public class SelectedOutline : MonoBehaviour
         {
             scale = size;
         }
-        this.transform.localScale = scale;
+       // this.transform.localScale = scale;
+        sr.size = scale;
 
         this.transform.parent = obj.transform;
         this.transform.localPosition = Vector3.zero+offset;

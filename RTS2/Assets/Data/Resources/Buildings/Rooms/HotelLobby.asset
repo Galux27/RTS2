@@ -22,7 +22,7 @@ MonoBehaviour:
     NeedsEdge: 0
     MustBeOnRoomEdge: 1
   - PropName: Sofa
-    MaxQuantity: 104
+    MaxQuantity: 9
     NeedsEdge: 0
     MustBeOnRoomEdge: 1
   CanHaveWindows: 1
@@ -36,7 +36,10 @@ MonoBehaviour:
   MaxWidth: 12
   MinHeight: 12
   MaxHeight: 12
+  FloorXOffset: 1
+  FloorYOffset: 1
   AttachedRooms:
   - roomTemplate: {fileID: 11400000, guid: 7ac49ee569886a14b87ac830ff87ad5d, type: 2}
     Min: 1
     Max: 1
+  WallMode: 0

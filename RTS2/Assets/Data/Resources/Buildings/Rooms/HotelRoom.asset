@@ -15,7 +15,7 @@ MonoBehaviour:
   RoomID: HotelRoom
   Wall: Concrete
   Door: Wood
-  Floor: BlueCarpet
+  Floor: Wood
   Props:
   - PropName: SingleBed
     MaxQuantity: 1
@@ -40,7 +40,10 @@ MonoBehaviour:
   MaxWidth: 8
   MinHeight: 6
   MaxHeight: 8
+  FloorXOffset: 1
+  FloorYOffset: 1
   AttachedRooms:
   - roomTemplate: {fileID: 11400000, guid: 7ac49ee569886a14b87ac830ff87ad5d, type: 2}
     Min: 1
     Max: 1
+  WallMode: 0

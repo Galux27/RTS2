@@ -40,4 +40,7 @@ MonoBehaviour:
   MaxWidth: 7
   MinHeight: 4
   MaxHeight: 7
+  FloorXOffset: 0
+  FloorYOffset: 0
   AttachedRooms: []
+  WallMode: 2

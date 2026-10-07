@@ -9,10 +9,11 @@ public class RoomObjectPlacement
     // public Dictionary<string,RoomObjectPositions> AllObjectsInRoom = new Dictionary<string, RoomObjectPositions>();
 
     public RoomObjectGrid GridOfPositions;
-
+    Vector2Int size;
     public RoomObjectPlacement(RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
     {
-        GridOfPositions = new RoomObjectGrid(room.size.x, room.size.y);
+        GridOfPositions = new RoomObjectGrid(room.size.x-1, room.size.y);
+        size = new Vector2Int(room.size.x - 1, room.size.y);
         Vector2Int position = Vector2Int.zero;
         EnvironmentObject currentObject = null;
         Vector2Int objSize = Vector2Int.zero;
@@ -30,9 +31,9 @@ public class RoomObjectPlacement
             objSize.y = Mathf.Max(1, objSize.y);
 
             string failReason = "";
-            for (int x = 0; x < room.size.x-objSize.x; x += objSize.x)
+            for (int x = 0; x < size.x-objSize.x; x += objSize.x)
             {
-                for (int y = 0; y < room.size.y-objSize.y; y += objSize.y)
+                for (int y = 0; y < size.y-objSize.y; y += objSize.y)
                 {
                     position.x = x;
                     position.y = y;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public class RoomGenerator 
 {
@@ -271,9 +272,9 @@ public class RoomGenerator
         string potentialProp = string.Empty;
         Vector2Int size = Vector2Int.zero;
         Debug.Log("Room Gen: Room pos " + room.Position + " building pos " + building.Position+" room size "+ room.size);
-        for (int x = 0; x < room.size.x; x+=2) 
+        for (int x = 0; x < size.x; x+=2) 
         { 
-            for(int y = 0; y < room.size.y; y+=2)
+            for(int y = 0; y < size.y; y+=2)
             {
                 pos.x = x;
                 pos.y = y;
@@ -529,9 +530,9 @@ public class RoomGenerator
         int width = room.RoomTiles.GetLength(0);
         int height = room.RoomTiles.GetLength(1);
         //Add something to work out why some rooms floor tiles go into the next room but some don't
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < width-template.FloorXOffset; x++)
         {
-          for(int y = 0; y < height; y++)
+          for(int y = 0; y < height-template.FloorYOffset; y++)
             {
                 
 
@@ -547,8 +548,49 @@ public class RoomGenerator
     {
         int width = room.RoomTiles.GetLength(0);
         int height = room.RoomTiles.GetLength(1);
-
+        Debug.Log("Building on exterior " + room.Position + "," + building.Position);
         bool isXedge = false, isYedge = false;
+        if (room.Position.x + width >= building.Width||room.Position.x + room.size.x>=building.Width)
+        {
+            isXedge = true;
+        }
+        if (room.Position.y + height >= building.Height || room.Position.y + room.size.y >= building.Height)
+        {
+            isYedge = true;
+        }
+
+        for (int x = 0; x < width; x++)
+        {
+            if (room.Position.y == building.Position.y || room.Position.y == 0)
+            {
+                room.RoomTiles[x, 0].SetWall(template.Wall);
+            }
+            if (isYedge)
+            {
+                room.RoomTiles[x, height - 1].SetWall(template.Wall);
+            }
+
+        }
+
+        for (int x = 0; x < height; x++)
+        {
+            if (room.Position.x == building.Position.x || room.Position.x == 0)
+            {
+                room.RoomTiles[0, x].SetWall(template.Wall);
+            }
+            if (isXedge)
+            {
+                room.RoomTiles[width - 1, x].SetWall(template.Wall);
+            }
+        }
+    }
+
+    void SimpleWallPlacement(GeneratedRoom room, RoomTemplate template, GeneratedBuilding building)
+    {
+        int width = room.RoomTiles.GetLength(0);
+        int height = room.RoomTiles.GetLength(1);
+
+        bool isXedge = false, isYedge = false, isLowXEdge = false, isLowYEdge = false;
         if (room.Position.x + width >= building.Width)
         {
             isXedge = true;
@@ -558,56 +600,11 @@ public class RoomGenerator
             isYedge = true;
         }
 
-        for (int x = 0; x < width; x++)
-        {
-            if (room.Position.y == building.Position.y)
-            {
-                room.RoomTiles[x, 0].SetWall(template.Wall);
-            }
-            if (isYedge)
-            {
-                room.RoomTiles[x, height - 1].SetWall(template.Wall);
-            }
-
-        }
-
-        for (int x = 0; x < height; x++)
-        {
-            if (room.Position.x == building.Position.x)
-            {
-                room.RoomTiles[0, x].SetWall(template.Wall);
-            }
-            if (isXedge || template.CanHaveInternalWalls)
-            {
-                room.RoomTiles[width - 1, x].SetWall(template.Wall);
-            }
-        }
-    }
-
- 
-   
-
-    void PopulateRoomWallTiles(GeneratedRoom room,RoomTemplate template,GeneratedBuilding building)
-    {
-       
-        int width = room.RoomTiles.GetLength(0);
-        int height = room.RoomTiles.GetLength(1);
-
-        bool isXedge=false,isYedge=false,isLowXEdge=false,isLowYEdge=false;
-        if(room.Position.x+width>=building.Width)
-        {
-            isXedge=true;
-        }
-        if (room.Position.y + height >= building.Height)
-        {
-            isYedge=true;
-        }
-
         if (room.Position.x == 0)
         {
             isLowXEdge = true;
         }
-        Debug.Log("generating room " + room.Position + "," + building.Position);
+        int count = 0;
         if (room.Position.y == 0)
         {
             isLowYEdge = true;
@@ -616,18 +613,14 @@ public class RoomGenerator
         for (int x = 0; x < width; x++)
         {
 
-            if (isLowYEdge || room.IsCorridor)
+            try
             {
                 room.RoomTiles[x, 0].SetWall(template.Wall);
-            }
+                room.RoomTiles[x, height - 1].SetWall(template.Wall);
 
-            if (isYedge)
-            {
-                room.RoomTiles[x, height - 1].SetWall(template.Wall);
             }
-            else if (template.CanHaveInternalWalls || room.IsCorridor)
+            catch
             {
-                room.RoomTiles[x, height - 1].SetWall(template.Wall);
 
             }
 
@@ -635,25 +628,129 @@ public class RoomGenerator
 
         for (int x = 0; x < height; x++)
         {
-            if (isLowXEdge || room.IsCorridor)
+            try
             {
-                try
-                {
-                    room.RoomTiles[0, x].SetWall(template.Wall);
-                }catch(System.Exception e)
-                {
-                    Debug.LogError(e.ToSafeString());
-                    Debug.LogError("error setting room tiles x was " + x + " dimensions " + width + "," + height + "," + room.RoomTiles.GetLength(0) + "," + room.RoomTiles.GetLength(1));
-                }
-            }
-            if (isXedge)
-            {
-                room.RoomTiles[width - 1, x].SetWall(template.Wall);
-            }else if (template.CanHaveInternalWalls || room.IsCorridor)
-            {
+                room.RoomTiles[0, x].SetWall(template.Wall);
                 room.RoomTiles[width - 1, x].SetWall(template.Wall);
 
             }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e.ToSafeString());
+                Debug.LogError("error setting room tiles x was " + x + " dimensions " + width + "," + height + "," + room.RoomTiles.GetLength(0) + "," + room.RoomTiles.GetLength(1));
+            }
+        }
+        Debug.Log("generating room walls for" + room.RoomType.ToSafeString() + " at " + room.Position + "," + building.Position + " size " + width + "," + height + " count " + count);
+
+    }
+
+    void AdvancedWallPlacement(GeneratedRoom room, RoomTemplate template, GeneratedBuilding building)
+    {
+        int width = room.RoomTiles.GetLength(0);
+        int height = room.RoomTiles.GetLength(1);
+
+        bool isXedge = false, isYedge = false, isLowXEdge = false, isLowYEdge = false;
+        if (room.Position.x + width >= building.Width)
+        {
+            isXedge = true;
+        }
+        if (room.Position.y + height >= building.Height)
+        {
+            isYedge = true;
+        }
+
+        if (room.Position.x == 0)
+        {
+            isLowXEdge = true;
+        }
+        int count = 0;
+        if (room.Position.y == 0)
+        {
+            isLowYEdge = true;
+        }
+
+        for (int x = 0; x < width; x++)
+        {
+
+            try
+            {
+              
+
+                 if (isLowYEdge || room.IsCorridor)
+                 {
+                     room.RoomTiles[x, 0].SetWall(template.Wall);
+                     count++;
+                 }
+
+                 if (isYedge)
+                 {
+                     room.RoomTiles[x, height - 1].SetWall(template.Wall);
+                     count++;
+
+                 }
+                 else if (template.CanHaveInternalWalls || room.IsCorridor)
+                 {
+                     room.RoomTiles[x, height - 1].SetWall(template.Wall);
+                         count++;
+                 }
+            }
+            catch
+            {
+
+            }
+
+        }
+
+        for (int x = 0; x < height; x++)
+        {
+            try
+            {
+             
+
+                if (isLowXEdge || room.IsCorridor)
+                   {
+
+                       room.RoomTiles[0, x].SetWall(template.Wall);
+                       count++;
+
+                   }
+                   if (isXedge)
+                   {
+                       room.RoomTiles[width - 1, x].SetWall(template.Wall);
+                       count++;
+
+                   }
+                   else if (template.CanHaveInternalWalls || room.IsCorridor)
+                   {
+                       room.RoomTiles[width - 1, x].SetWall(template.Wall);
+                       count++;
+
+                   }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e.ToSafeString());
+                Debug.LogError("error setting room tiles x was " + x + " dimensions " + width + "," + height + "," + room.RoomTiles.GetLength(0) + "," + room.RoomTiles.GetLength(1));
+            }
+        }
+        Debug.Log("generating room walls for" + room.RoomType.ToSafeString() + " at " + room.Position + "," + building.Position + " size " + width + "," + height + " count " + count);
+
+    }
+    void PopulateRoomWallTiles(GeneratedRoom room,RoomTemplate template,GeneratedBuilding building)
+    {
+        if (template.WallMode==WallMode.None)
+        {
+            return;
+        }
+        if (template.WallMode == WallMode.Simple)
+        {
+            SimpleWallPlacement(room, template, building);
+        }else if (template.WallMode == WallMode.Advanced)
+        {
+            AdvancedWallPlacement(room, template, building);
+        }else if (template.WallMode == WallMode.OnlyBuildingExterior)
+        {
+            PopulateWallTilesThatAreOnExteriorOfBuilding(room, template, building);
         }
     }
 }

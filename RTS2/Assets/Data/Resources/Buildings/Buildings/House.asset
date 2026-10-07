@@ -39,4 +39,7 @@ MonoBehaviour:
   MaxExternalDoors: 1
   CorridorFloor: Wood
   CorridorWall: Wood
+  ExternalWall: 
   FloorplanType: 1
+  ShiftHorizontalFloorTiles: 1
+  ShiftVerticalFloorTiles: 1

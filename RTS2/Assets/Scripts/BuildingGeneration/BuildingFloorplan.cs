@@ -279,6 +279,7 @@ public class BuildingFloorplan
     {
         BuildingTemplate template = BuildingDataManager.Instance.BuildingTemplates[building.buildingType];
         List<RoomTile> neighbours = new List<RoomTile>();
+        List<Vector2Int> neighbourCoords = new List<Vector2Int>();
         if (building.Tiles == null)
         {
             return;
@@ -287,45 +288,90 @@ public class BuildingFloorplan
         {
             for (int y = 0; y < building.Height; y++)
             {
-                if ( x == 0 || y == 0 || y == building.Height - 1 || x == building.Width - 1|| IsTileExterior(building.Tiles[x, y]) )
+                if (HasTileGotWall(building.Tiles[x, y]) )
                 {
-                    if (building.Tiles[x, y] == null)
+                   
+                    GetNeighbouringTiles(building, x, y, ref neighbours,ref neighbourCoords);
+                    if (neighbours.Count == 4)
                     {
-                        building.Tiles[x, y] = new RoomTile();
-                    }
-                    GetNeighbouringTiles(building, x, y, ref neighbours);
-                    for (int q = 0; q < neighbours.Count; q++)
-                    {
-                        if ( neighbours[q].RoomID != -1&& building.Tiles[x, y].WallTile!="Window")
+                        for (int q = 0; q < neighbours.Count; q++)
                         {
-                            building.Tiles[x, y].SetWall(template.ExternalWall);
+                            if (neighbours[q]==null)
+                            {
+                                building.Tiles[x, y].SetWall(template.ExternalWall);
+                                break;
+                            }
                         }
+                    }
+                    else
+                    {
+                        building.Tiles[x, y].SetWall(template.ExternalWall);
+
                     }
                 }
             }
         }
     }
 
-    static void GetNeighbouringTiles(GeneratedBuilding building, int x, int y, ref List<RoomTile> toPopulate)
+    static bool HasTileGotWall(RoomTile tile)
+    {
+        if (tile != null)
+        {
+            return tile.HasWall && tile.WallTile != "Window";
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    static bool CanMakeIntoExternalWall(RoomTile tile)
+    {
+        if (tile != null)
+        {
+            
+            if (tile.HasWall)
+            {
+                return tile.WallTile != "Window";
+            }
+            else if (tile.IsCorridor)
+            {
+                return true;
+            }else if (tile.RoomID != -1)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static void GetNeighbouringTiles(GeneratedBuilding building, int x, int y, ref List<RoomTile> toPopulate,ref List<Vector2Int> positions)
     {
         toPopulate.Clear();
-        if (x > 0&& building.Tiles[x - 1, y]!=null)
+        if (x > 0)
         {
             toPopulate.Add(building.Tiles[x - 1, y]);
+            positions.Add(new Vector2Int(x - 1, y));
         }
-        if (x < building.Width - 1&& building.Tiles[x + 1, y]!=null)
+        if (x < building.Width - 1)
         {
             toPopulate.Add(building.Tiles[x + 1, y]);
+            positions.Add(new Vector2Int(x + 1, y));
+
         }
 
-        if (y > 0&& building.Tiles[x, y - 1]!=null)
+        if (y > 0)
         {
             toPopulate.Add(building.Tiles[x, y - 1]);
+            positions.Add(new Vector2Int(x , y - 1));
+
         }
 
-        if (y < building.Height - 1&& building.Tiles[x, y + 1]!=null)
+        if (y < building.Height - 1)
         {
             toPopulate.Add(building.Tiles[x, y + 1]);
+            positions.Add(new Vector2Int(x, y + 1));
+
         }
     }
 
@@ -635,7 +681,8 @@ public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
         return building;
     }
 }
-
+//Remove the rightmost tiles from consideration when placing objects in buildings
+//add something to exterior wall placement to shift the wall into the tile with the floor if the direction between the two positions is positive
 public class CorridorBasedFloorplan : BuildingFloorplan
 {
     const int MaxAttempts = 2000;

@@ -52,6 +52,7 @@ public class BuildingGenerator : MonoBehaviour
             (int)CameraController.Instance.transform.position.y);
         BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(testTemplate.FloorplanType);
         GeneratedBuilding building = floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses);
+
         Dictionary<Vector2Int,GeneratedBuilding> splits= building.SplitBuildingIntoChunks();
         
         foreach(KeyValuePair<Vector2Int,GeneratedBuilding> kvp in splits)
