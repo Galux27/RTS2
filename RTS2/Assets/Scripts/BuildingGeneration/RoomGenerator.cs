@@ -35,6 +35,65 @@ public class RoomGenerator
         }
     }
 
+    public virtual GeneratedRoom GenerateAttachedRooms(GeneratedBuilding building,GeneratedRoom originalRoom,RoomTemplate originalTemplate)
+    {
+        return AttemptToGenerateAttachedRoom(building, originalRoom, originalTemplate.AttachedRooms[0]);
+    }
+
+    GeneratedRoom AttemptToGenerateAttachedRoom(GeneratedBuilding building,GeneratedRoom roomComingOff ,BuildingRoomData toAttach)
+    {
+        List<Vector2Int> PotentialStartPositions = new List<Vector2Int>();
+        Vector2Int size = new Vector2Int(Random.Range( toAttach.roomTemplate.MinWidth, toAttach.roomTemplate.MaxWidth), Random.Range(toAttach.roomTemplate.MinHeight, toAttach.roomTemplate.MaxHeight));
+        Vector2Int startPoint = roomComingOff.Position;
+        Vector2Int endPoint = roomComingOff.Position + roomComingOff.size;
+        PotentialStartPositions.Add(startPoint + (Vector2Int.left*size.x));
+        PotentialStartPositions.Add(startPoint+(Vector2Int.right*(roomComingOff.size.x-1)));
+        PotentialStartPositions.Add(startPoint- Vector2Int.up * (size.y ));
+        PotentialStartPositions.Add(startPoint+ Vector2Int.up*(roomComingOff.size.y -1));
+        List<Vector2Int> validStartPositions = new List<Vector2Int>();
+        for(int x = 0; x < PotentialStartPositions.Count; x++)
+        {
+            if(IsPositionValid(building, roomComingOff, PotentialStartPositions[x], size)
+                && AreAllTilesValid(building, roomComingOff, PotentialStartPositions[x], size))
+            {
+                validStartPositions.Add(PotentialStartPositions[x]);
+            }
+        }
+        if (validStartPositions.Count > 0)
+        {
+            int index = Random.Range(0, validStartPositions.Count);
+            return GenerateRoom(validStartPositions[index], size, toAttach.roomTemplate, roomComingOff.RoomID + 1, building);
+        }
+        return null;
+    }
+
+    bool AreAllTilesValid(GeneratedBuilding building, GeneratedRoom roomComingOff, Vector2Int startPos, Vector2Int size)
+    {
+        if(startPos.x+size.x>=building.Tiles.GetLength(0)|| startPos.y + size.y >= building.Tiles.GetLength(1))
+        {
+            return false;
+        }
+        for (int x = startPos.x; x < startPos.x + size.x; x++)
+        {
+            for(int y= startPos.y; y < startPos.y + size.y; y++)
+            {
+                if (building.Tiles[x, y]!=null&&(building.Tiles[x, y].HasBeenUsedOrIsNotRoom(roomComingOff.RoomID) || building.Tiles[x, y].IsCorridor))
+                {
+                    return false;
+                }
+            }
+        }
+        Debug.Log("Adjacent Room Start: can place at " + startPos);
+        return true;
+    }
+
+    bool IsPositionValid(GeneratedBuilding building, GeneratedRoom roomComingOff,Vector2Int startPos,Vector2Int size)
+    {
+        bool retVal = startPos.x >= 0 && startPos.y >= 0 && startPos.x+size.x < building.Width && startPos.y+size.y < building.Width;
+        Debug.Log("Adjacent Room Start: " + startPos + " buidling " + building.Position + " room " + roomComingOff.Position+" building size "+ building.Width+","+building.Height+" was valid "+ retVal+" room size "+ size);
+        return retVal;
+    }
+
     public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template,int id,GeneratedBuilding building)
     {
         Debug.Log("Generating room of size " + size + " at " + pos + " part of " + template.name);
@@ -1240,6 +1299,11 @@ public class RoomTile
     public bool HasBeenUsed()
     {
         return RoomID >0;
+    }
+
+    public bool HasBeenUsedOrIsNotRoom(int id)
+    {
+        return RoomID >= 0 && RoomID != id || IsCorridor;
     }
 
     public void ClearProp()

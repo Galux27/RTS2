@@ -472,6 +472,17 @@ public class SquareBuildingFloorplan : BuildingFloorplan
             { 
                 curRoom = RoomGen.GenerateRoom(CurrentSplits[x].coords, CurrentSplits[x].size, roomTemplate, building.MyRooms.Count,building);
                 building.AddRoom(curRoom);
+
+                if (roomTemplate.AttachedRooms.Count > 0)
+                {
+                    
+                    GeneratedRoom subRoom = RoomGen.GenerateAttachedRooms(building, curRoom, roomTemplate);
+                    if (subRoom != null)
+                    {
+                        building.AddRoom(subRoom, true);
+                    }
+                }
+                
             }
         }
         BuildingFloorplan.PopulateExteriorWallTiles(building);
@@ -656,7 +667,16 @@ public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
                     building.ResetAreaOfBuilding(start, roomSize);
 
                     curRoom = RoomGen.GenerateRoom(start, roomSize, subRoomTemplate, building.MyRooms.Count, building);
-                    building.AddRoom(curRoom,true);
+                    building.AddRoom(curRoom, true);
+
+                    if (subRoomTemplate.AttachedRooms.Count > 0)
+                    {
+                       GeneratedRoom subRoom=  RoomGen.GenerateAttachedRooms(building, curRoom, subRoomTemplate);
+                        if (subRoom != null)
+                        {
+                            building.AddRoom(subRoom, true);
+                        }
+                    }
                 }
             }
         }
@@ -785,6 +805,15 @@ public class CorridorBasedFloorplan : BuildingFloorplan
                 {
                     curRoom = RoomGen.GenerateRoom(startCoords, SubRoomSize, subRoomTemplate, building.MyRooms.Count, building);
                     building.AddRoom(curRoom, true);
+
+                    if (subRoomTemplate.AttachedRooms.Count > 0)
+                    {
+                        GeneratedRoom subRoom= RoomGen.GenerateAttachedRooms(building, curRoom, subRoomTemplate);
+                        if (subRoom != null)
+                        {
+                            building.AddRoom(subRoom, true);
+                        }
+                    }
                     successes++;
                 }
                 else
