@@ -30,7 +30,7 @@ MonoBehaviour:
     MinimapColour: {r: 0.16078432, g: 0.16470589, b: 0.19215687, a: 1}
     TilesICantBePlacedOn: []
   - tileType: Tiled
-    tileBase: {fileID: 11400000, guid: ffcf815356204f247a88b27087ea341b, type: 2}
+    tileBase: {fileID: 11400000, guid: 3f03809674b3c844b935425953e8ac2e, type: 2}
     MinimapColour: {r: 0.40784314, g: 0.40392157, b: 0.40784314, a: 1}
     TilesICantBePlacedOn:
     - MinorRoad

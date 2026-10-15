@@ -51,6 +51,10 @@ public class WorldTilesManager
 
     public bool CanTileBePlacedOnAnother(string tileToPlace,uint placingOver)
     {
+        if (tileToPlace == null)
+        {
+            return false;
+        }
         if(!CanPlaceDictionary.ContainsKey(tileToPlace)) return true;
 
         return !CanPlaceDictionary[tileToPlace].Contains(placingOver);

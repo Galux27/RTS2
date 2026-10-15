@@ -9,6 +9,7 @@ public class RoomObjectPlacement
     // public Dictionary<string,RoomObjectPositions> AllObjectsInRoom = new Dictionary<string, RoomObjectPositions>();
 
     public RoomObjectGrid GridOfPositions;
+    Dictionary<string, int> DebugData=new Dictionary<string, int>();
     Vector2Int size;
     public RoomObjectPlacement(RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
     {
@@ -24,6 +25,7 @@ public class RoomObjectPlacement
         for (int q = 0; q < template.Props.Count; q++)
         {
             PositionsForObjects.Add(template.Props[q].PropName, 0);
+            DebugData.Add(template.Props[q].PropName, 0);
             currentObject = ConstructableObjectManager.Instance.AllObjects[template.Props[q].PropName];
             failReasons.Add(template.Props[q].PropName, new Dictionary<string, int>());
             objSize = currentObject.SizeAsVec2();
@@ -43,7 +45,7 @@ public class RoomObjectPlacement
                        
                         GridOfPositions.SetObjectCanBePlaced(position, template.Props[q].PropName, objSize);
                         PositionsForObjects[template.Props[q].PropName]++;
-
+                        DebugData[template.Props[q].PropName]++;
                     }
                     if (!failReasons[template.Props[q].PropName].ContainsKey(failReason))
                     {
@@ -56,19 +58,17 @@ public class RoomObjectPlacement
 
 
         }
-        foreach (KeyValuePair<string, int> kvp in PositionsForObjects) {
-            Debug.Log("Room Gen: total positions for " + kvp.Key + " " + kvp.Value);
-            foreach (KeyValuePair<string, int> kvp2 in failReasons[kvp.Key])
-            {
-                Debug.Log("Room Gen: fail reasons " + kvp2.Key + " " + kvp2.Value);
-            }
-        }
+      
        
     }
 
     public void LogPositionsForProps()
     {
-       
+        foreach (KeyValuePair<string, int> kvp in DebugData)
+        {
+            Debug.Log("Room Gen: total positions for " + kvp.Key + " " + kvp.Value);
+           
+        }
     }
 
     public void OnObjectPlaced(Vector2Int pos,string key,RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
@@ -111,9 +111,22 @@ public class RoomObjectPlacement
         
     }
 
+    public int GetCountOfPropsThatCouldBeAtCoords(Vector2Int coords)
+    {
+        if (coords.x >= GridOfPositions.GridElements.GetLength(0) || coords.y >= GridOfPositions.GridElements.GetLength(1))
+        {
+            return 0;
+        }
+        return GridOfPositions.GridElements[coords.x, coords.y].ObjectThatCouldBePlaced.Count;
+    }
+
     List<string> PotentialProps = new List<string>();
     public string GetPropThatCouldBePlacedAtCoordinate(Vector2Int coords,RoomTemplate template)
     {
+        if (coords.x >= GridOfPositions.GridElements.GetLength(0) || coords.y >= GridOfPositions.GridElements.GetLength(1))
+        {
+            return string.Empty;
+        }
         PotentialProps.Clear();
         for(int x = 0; x < template.Props.Count; x++)
         {

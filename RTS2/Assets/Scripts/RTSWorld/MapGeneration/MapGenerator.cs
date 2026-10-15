@@ -86,10 +86,13 @@ public class MapGenerator : MonoBehaviour
         toGenerateIn.GenerateSidewalks(RoadType.Backroad);
         toGenerateIn.GenerateSidewalks(RoadType.MinorRoad);
         toGenerateIn.GenerateSidewalks(RoadType.MajorRoad);
-
+        toGenerateIn.GenerateSidewalkProps(RoadType.Backroad);
+        toGenerateIn.GenerateSidewalkProps(RoadType.MinorRoad);
+        toGenerateIn.GenerateSidewalkProps(RoadType.MajorRoad);
         toGenerateIn.GenerateRoads(RoadType.Backroad);
-            toGenerateIn.GenerateRoads(RoadType.MinorRoad);
-            toGenerateIn.GenerateRoads(RoadType.MajorRoad);
+        toGenerateIn.GenerateRoads(RoadType.MinorRoad);
+        toGenerateIn.GenerateRoads(RoadType.MajorRoad);
+       
 
         toGenerateIn.GenerateBuildings();
        

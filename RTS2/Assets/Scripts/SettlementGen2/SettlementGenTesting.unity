@@ -232,6 +232,8 @@ GameObject:
   - component: {fileID: 682634716}
   - component: {fileID: 682634715}
   - component: {fileID: 682634717}
+  - component: {fileID: 682634718}
+  - component: {fileID: 682634719}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -257,7 +259,9 @@ MonoBehaviour:
     Position: {x: 0, y: 0}
     size: {x: 0, y: 0}
     RoomID: 0
+    IsCorridor: 0
   IsGenerating: 0
+  testTemplate: {fileID: 0}
 --- !u!4 &682634716
 Transform:
   m_ObjectHideFlags: 0
@@ -285,7 +289,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88d4cbbe687178c4585a79e21cba1406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedToConstruct: {fileID: 0}
+  toCon: {fileID: 0}
+--- !u!114 &682634718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682634714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac5fe44411fc3f8488739a490fcfdecc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &682634719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682634714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f85bd9fba28cd4894b6df0b1e61e12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705897780
 GameObject:
   m_ObjectHideFlags: 0

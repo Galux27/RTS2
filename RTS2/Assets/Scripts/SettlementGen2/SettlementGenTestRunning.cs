@@ -10,7 +10,7 @@ public class SettlementGenTestRunning : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.E))
         {
             settlement = new GeneratedSettlement();
             settlement.GenerateSettlementAreas(settings, 64);

@@ -16,5 +16,6 @@ MonoBehaviour:
   RoadWidth: 4
   TileID: MajorRoad
   HasEdge: 0
-  EdgeTileID: Ground
+  EdgeTileID: Tiled
   EdgeWidth: 1
+  Props: []

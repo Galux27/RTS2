@@ -329,16 +329,17 @@ public class RoomGenerator
         string PropToPlace = string.Empty;
         Vector2Int pos = Vector2Int.zero;
         string potentialProp = string.Empty;
-        Vector2Int size = Vector2Int.zero;
-        Debug.Log("Room Gen: Room pos " + room.Position + " building pos " + building.Position+" room size "+ room.size);
-        for (int x = 0; x < size.x; x+=2) 
+        Vector2Int size =Vector2Int.zero;
+        Debug.Log("Room Gen: Room pos " + room.Position + " building pos " + building.Position+" room size "+ room.size+","+propCounts.Count);
+        for (int x = 0; x < room.size.x; x+=2) 
         { 
-            for(int y = 0; y < size.y; y+=2)
+            for(int y = 0; y < room.size.y; y+=2)
             {
                 pos.x = x;
                 pos.y = y;
                 
                 potentialProp=roomObjectPlacement.GetPropThatCouldBePlacedAtCoordinate(pos,template);
+                Debug.Log("Griddy: prop at " + pos + " was " + potentialProp+" of " + roomObjectPlacement.GetCountOfPropsThatCouldBeAtCoords(pos));
                 if (potentialProp != string.Empty)
                 {
                     

@@ -1,8 +1,8 @@
-using UnityEngine;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using JetBrains.Annotations;
-using UnityEngine.UIElements;
+using UnityEngine;
+
+
 
 public class SettlementTileArea 
 {
@@ -52,7 +52,7 @@ public class SettlementTileArea
             Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, true), Sections.Count + 1));
 
         }
-
+        SettlementBuildingMoniter BuildingMoniter = new SettlementBuildingMoniter(SettlementBuildingTypeManager.Instance.GetRandomData());
         for(int q = 0; q < Sections.Count; q++)
         {
             Sections[q].Expand(this,settlement);
@@ -70,7 +70,7 @@ public class SettlementTileArea
                         SetTileArea(x, y, Sections[q].ID);
                     }
                 }
-                Sections[q].GenerateBuildingAreas();
+                Sections[q].GenerateBuildingAreas(ref BuildingMoniter);
                 for(int i = 0; i < Sections[q].BuildingAreas.Count; i++)
                 {
                     for(int x = Sections[q].BuildingAreas[i].Low.x;x< Sections[q].BuildingAreas[i].High.x; x++)
@@ -469,14 +469,76 @@ public class SettlementTileAreaSection
     }
     #endregion
     
-    public void GenerateBuildingAreas()
+    public void GenerateBuildingAreas(ref SettlementBuildingMoniter buildingData)
     {
-        string template = BuildingDataManager.Instance.GetRandomBuildingTemplateID();
+        int areaWidth = High.x - Low.x;
+        int areaHeight = High.y - Low.y;
+        //get start position in bottom left
+        //calculate size and work out valid building types based on that size
+
+        Vector2Int areaSize = new Vector2Int(areaWidth, areaHeight);
+        buildingData.SetValidBuildings(areaSize);
+
+
+        Vector2Int startPos = Low;
+        Vector2Int localSize = Vector2Int.zero;
+        SettlementBuilding building = null;
+        bool ableToPlace =true;
+        int horizontalEdge = startPos.x;
+        int count = 0;
+        while (ableToPlace&&count<300)
+        {
+            areaSize = High - startPos;
+       
+            while (startPos.y < High.y)
+            {
+                //check up to max building size on both axis
+                localSize.x = areaSize.x;
+                localSize.y = areaSize.y;
+                building = buildingData.GetBuilding(startPos, localSize);
+                if (building != null)
+                {
+                    localSize.x = UnityEngine.Random.Range(building.Building.MinWidth, building.Building.MaxWidth);
+                    localSize.y = UnityEngine.Random.Range(building.Building.MinHeight, building.Building.MaxHeight);
+                    horizontalEdge = Mathf.Max(horizontalEdge,startPos.x+ localSize.x);
+                    BuildingAreas.Add(new BuildingTileArea(startPos, startPos + localSize, building.Building.BuildingName));
+                    building = null;
+                    startPos.y += localSize.y + 2;
+                    areaSize = High - startPos;
+                    buildingData.SetValidBuildings(areaSize);
+
+                }
+                else
+                {
+                    startPos.y+=5;
+                }
+            }
+            count++;
+            startPos.y = Low.y;
+            startPos.x = Mathf.Max(startPos.x+5, horizontalEdge + 1);
+            if (startPos.x >= High.x)
+            {
+                ableToPlace = false;
+            }
+        }
+       
+
+        //get a building that would fit into the area found
+        //place building
+        //record width of building placed if higher than current largest
+        //increase y of start position of building placed
+        //repeat until you can't place any more buildings
+        //add highest width to start positions x coord
+        //repeat process until the start positions x coord reaches the opposite edge of the grid
+        //then ya done
+
+
+
+        /*string template = BuildingDataManager.Instance.GetRandomBuildingTemplateID();
         BuildingTemplate houseTemplate = BuildingDataManager.Instance.BuildingTemplates[template];
         int width=Random.Range(houseTemplate.MinWidth,houseTemplate.MaxWidth);
         int height = Random.Range(houseTemplate.MinHeight,houseTemplate.MaxHeight);
-        int areaWidth = High.x - Low.x;
-        int areaHeight = High.y - Low.y;
+       
         int horizontalSpacing = 2, verticalSpacing = 2;
         int horizontalBorder=2,verticalBorder=2;
         if(Low.x + width + (horizontalSpacing + horizontalBorder) > High.x - (horizontalBorder))
@@ -526,7 +588,7 @@ public class SettlementTileAreaSection
                 BuildingAreas.Add(new BuildingTileArea(pos, pos + size, template));
 
             }
-        }
+        }*/
     }
 }
 

@@ -27,6 +27,13 @@ public static class RoadGenerator
 
     public static void PopulateRoadTileData(RoadData data)
     {
+        if(RoadTypeManager.Instance.AllRoadDetails.ContainsKey(data.Type.ToString()))
+        {
+            RoadTypeManager.Instance.AllRoadDetails[data.Type.ToString()].CopyOverData(ref data);
+            return;
+        }
+
+
         switch (data.Type)
         {
             case RoadType.None:
@@ -35,17 +42,20 @@ public static class RoadGenerator
                 data.HasEdge = true;
                 data.EdgeTile = "Tiled";
                 data.RoadTile = "MajorRoad";
-
+                data.EdgeWidth = 3;
                 break;
             case RoadType.MinorRoad:
                 data.HasEdge = true;
                 data.EdgeTile = "Tiled";
                 data.RoadTile = "MinorRoad";
-
+                data.EdgeWidth = 2;
                 break;
             case RoadType.Backroad:
                 data.RoadTile = "BackRoad";
-                data.HasEdge = false;
+                data.EdgeTile = "Tiled";
+                data.EdgeWidth = 2;
+
+                data.HasEdge = true;
                 break;
             default:
                 break;
@@ -70,29 +80,6 @@ public static class RoadGenerator
         List<RoadData> intersectingRoads = new List<RoadData>();
         List<RoadIntersection> AllRoadIntersections = new List<RoadIntersection>();
         RoadIntersection toAdd = null;
-        //for (int x = 0; x < existingRoads.Count; x++)
-        //{
-        //    toAdd = existingRoads[x].DoesRoadIntersect(data);
-        //    if (toAdd != null && toAdd.RoadPoints.Count > 0)
-        //    {
-        //        AllRoadIntersections.Add(toAdd);
-        //        intersectingRoads.Add(existingRoads[x]);
-        //        Debug.DrawLine(toAdd.GetFirstPoint(), toAdd.GetLastPoint(), Color.yellow, 99f);
-        //    }
-        //    else
-        //    {
-        //        toAdd = existingRoads[x].ReverseDoesRoadIntersect(data);
-        //        if (toAdd != null && toAdd.RoadPoints.Count > 0)
-        //        {
-        //            AllRoadIntersections.Add(toAdd);
-        //            intersectingRoads.Add(existingRoads[x]);
-        //            Debug.DrawLine(toAdd.GetFirstPoint(), toAdd.GetLastPoint(), Color.cyan, 99f);
-        //        }
-        //    }
-        //    toAdd = null;
-
-        //}
-
         Edges = new HashSet<Vector2Int>();
         Vector2 Direction = data.EndPos - data.StartPos;
         Direction = Direction.normalized;
@@ -106,20 +93,19 @@ public static class RoadGenerator
         int updatedTilesCount = 0;
         int updateCount = 0;
         float dist = Vector2.Distance(data.StartPos, data.EndPos);
+        Dictionary<string, Vector2> propPlacements = new Dictionary<string, Vector2>();
 
         while (!hitEnd)
         {
             newPosition = new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x), Mathf.RoundToInt(currentCenterPosition.y));
-            //if (Vector2.Distance(newPosition, data.StartPos) > data.Width && Vector2.Distance(newPosition, data.EndPos) > data.Width)
+            //if (!IsIntersectingAnything(AllRoadIntersections, newPosition))
             {
-                if (!IsIntersectingAnything(AllRoadIntersections, newPosition) && !IsPositionNearStartOrEndOfPositions(newPosition, intersectingRoads))
-                {
-                    GenerateRoadSegmentEdges(newPosition, data, PerpDirection);
-                    roundedCurrentCenterPosition = newPosition;
+                GenerateRoadSegmentEdges(roundedCurrentCenterPosition, data, PerpDirection, out updateCount, curBatch.coords);
 
-                }
+                updatedTilesCount += updateCount;
+                roundedCurrentCenterPosition = newPosition;
             }
-            if (Vector2.Distance(currentCenterPosition, data.EndPos) < Vector2.Distance(currentCenterPosition + Direction, data.EndPos))
+            if (Vector2.Distance(currentCenterPosition, data.StartPos) > dist)
             {
                 hitEnd = true;
             }
@@ -130,11 +116,62 @@ public static class RoadGenerator
                 hitEnd = true;
             }
         }
-
-    
     }
 
+    public static void GenerateRoadEdgeProps(RoadData data, ref List<RoadData> existingRoads, WorldChunkBatch curBatch,bool negative=false)
+    {
+        List<RoadData> intersectingRoads = new List<RoadData>();
+        List<RoadIntersection> AllRoadIntersections = new List<RoadIntersection>();
+        RoadIntersection toAdd = null;
+        Edges = new HashSet<Vector2Int>();
+        Vector2 Direction = data.EndPos - data.StartPos;
+        Direction = Direction.normalized;
+        Vector2 PerpDirection = Vector2.Perpendicular(Direction);
+        PerpDirection = PerpDirection.normalized;
+        Vector2 currentCenterPosition = new Vector2();
+        if (negative)
+        {
+            currentCenterPosition = data.StartPos - (PerpDirection * ((data.Width / 2) + (2)));
+        }
+        else
+        {
+            currentCenterPosition = data.StartPos + (PerpDirection * ((data.Width / 2) + (2)));
+        }
+        float dist = Vector2.Distance(data.StartPos, data.EndPos);
 
+       // currentCenterPosition += (Direction*(dist*.25f));
+        Vector2Int roundedCurrentCenterPosition = new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x), Mathf.RoundToInt(currentCenterPosition.y));
+        Vector2Int newPosition = Vector2Int.zero;
+        bool hitEnd = false;
+        int count = 0;
+        int updatedTilesCount = 0;
+        int updateCount = 0;
+        Dictionary<string, Vector2> propPlacements = new Dictionary<string, Vector2>();
+       // dist *= .75f;
+        float increment = dist / 10f;
+        //change it to only to look at the edges of the road, add perp direction + width
+        while (!hitEnd)
+        {
+            newPosition = new Vector2Int(Mathf.RoundToInt(currentCenterPosition.x), Mathf.RoundToInt(currentCenterPosition.y));
+            //if (!IsIntersectingAnything(AllRoadIntersections, newPosition))
+            {
+                GenerateRoadEdgeProps(roundedCurrentCenterPosition, data, PerpDirection, out updateCount, curBatch.coords, ref propPlacements);
+
+                updatedTilesCount += updateCount;
+                roundedCurrentCenterPosition = newPosition;
+            }
+            if (Vector2.Distance(currentCenterPosition, data.StartPos) > dist)
+            {
+                hitEnd = true;
+            }
+            currentCenterPosition += Direction*increment;
+            count++;
+            if (count > maxIterations)
+            {
+                hitEnd = true;
+            }
+        }
+    }
     public static void GenerateRoad(RoadData data, ref List<RoadData> existingRoads,WorldChunkBatch curBatch)
    {
         List<RoadData> intersectingRoads = new List<RoadData>();
@@ -178,111 +215,142 @@ public static class RoadGenerator
     }
     static WorldTile currentTile;
     static HashSet<Vector2Int> updatedTiles = new HashSet<Vector2Int>();
-    static void GenerateRoadSegmentEdges(Vector2Int startCoords,RoadData data,Vector2 direction)
+    static void GenerateRoadSegmentEdges(Vector2Int startCoords, RoadData data, Vector2 direction, out int updatedTilesCount, Vector2Int currentBatch)
     {
-        if (data.EdgeTile == null)
+        updatedTilesCount = 0;
+        Vector2 startPos = startCoords - direction * ((data.Width / 2) - data.EdgeWidth);
+        Vector2 endPos = startCoords + direction * ((data.Width / 2)+data.EdgeWidth);
+        uint edgeID = 0;
+        if (data.HasEdge)
         {
-            return;
+            WorldRenderer.Instance.WorldTilesManager.GetTileID(data.EdgeTile);
+
         }
-        Vector2 startPos = startCoords-direction*(data.Width/2);
-        startPos -= direction.normalized;
-        Vector2 endPos = startCoords + direction* (data.Width / 2);
-        endPos += direction.normalized*2;
-        uint edgeID = WorldRenderer.Instance.WorldTilesManager.GetTileID(data.EdgeTile);
         uint roadID = WorldRenderer.Instance.WorldTilesManager.GetTileID(data.RoadTile);
         updatedTiles = new HashSet<Vector2Int>();
         Vector2Int globalCoords = new Vector2Int();
         WorldChunkBatch batch = null;
         currentTile = null;
-        Vector2 updatePos= new Vector2Int();
-        if (data.HasEdge)
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out Batch, out Chunk, out Coords);
+        Vector2 testPos = startPos;
+        bool FoundSuccessfulStart = false;
+        if (!WorldChunkManager.Instance.DoesBatchExist(Batch))
         {
-
-            while (Vector2.Distance(startPos, endPos) > Vector2.Distance(startPos + direction, endPos))
+            for (float f = 0f; f < 1f; f += .01f)
             {
-                updatePos = startPos;
-                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(updatePos.x, updatePos.y, out Batch, out Chunk, out Coords);
-                batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
-                //batch is null generating settlement roads, fuck knows why
-                if (batch != null)
+                testPos = Vector2.Lerp(startPos, endPos, f);
+                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(testPos.x, testPos.y, out Batch, out Chunk, out Coords);
+                if (WorldChunkManager.Instance.DoesBatchExist(Batch))
                 {
-                    currentTile = batch.Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
-                    globalCoords.x = currentTile.x;
-                    globalCoords.y = currentTile.y;
-
-                    UpdateTile(data.EdgeTile, edgeID, currentTile, Vector2Int.zero);
-
+                    FoundSuccessfulStart = true;
+                    startPos = testPos;
+                    break;
                 }
-
-
-                updatePos = startPos + Vector2.up;
-                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(updatePos.x, updatePos.y, out Batch, out Chunk, out Coords);
-                batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
-                //batch is null generating settlement roads, fuck knows why
-                if (batch != null)
-                {
-                    currentTile = batch.Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
-                    globalCoords.x = currentTile.x;
-                    globalCoords.y = currentTile.y;
-
-                    UpdateTile(data.EdgeTile, edgeID, currentTile, Vector2Int.zero);
-
-                }
-
-                updatePos = startPos + Vector2.down;
-                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(updatePos.x, updatePos.y, out Batch, out Chunk, out Coords);
-                batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
-                //batch is null generating settlement roads, fuck knows why
-                if (batch != null)
-                {
-                    currentTile = batch.Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
-                    globalCoords.x = currentTile.x;
-                    globalCoords.y = currentTile.y;
-
-                    UpdateTile(data.EdgeTile, edgeID, currentTile, Vector2Int.zero);
-
-                }
-
-                updatePos = startPos + Vector2.left;
-                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(updatePos.x, updatePos.y, out Batch, out Chunk, out Coords);
-                batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
-                //batch is null generating settlement roads, fuck knows why
-                if (batch != null)
-                {
-                    currentTile = batch.Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
-                    globalCoords.x = currentTile.x;
-                    globalCoords.y = currentTile.y;
-
-                    UpdateTile(data.EdgeTile, edgeID, currentTile, Vector2Int.zero);
-
-                }
-
-                updatePos = startPos + Vector2.right;
-                WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(updatePos.x, updatePos.y, out Batch, out Chunk, out Coords);
-                batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
-                //batch is null generating settlement roads, fuck knows why
-                if (batch != null)
-                {
-                    currentTile = batch.Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
-                    globalCoords.x = currentTile.x;
-                    globalCoords.y = currentTile.y;
-
-                    UpdateTile(data.EdgeTile, edgeID, currentTile, Vector2Int.zero);
-
-                }
-                startPos += direction;
-
             }
-
-
-           
         }
 
 
-   
-   
+        startPos += direction;
+        while (Vector2.Distance(startPos, endPos) > Vector2.Distance(startPos + direction, endPos))
+        {
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out Batch, out Chunk, out Coords);
+            batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
+            //batch is null generating settlement roads, fuck knows why
+            if (batch != null)
+            {
+                currentTile = batch.Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
+                globalCoords.x = currentTile.x;
+                globalCoords.y = currentTile.y;
+
+                updatedTilesCount += UpdateTile(data.EdgeTile, roadID, currentTile, Vector2Int.zero, false);
+                updatedTilesCount += UpdateTile(data.EdgeTile, roadID, currentTile, Vector2Int.up, false);
+                updatedTilesCount += UpdateTile(data.EdgeTile, roadID, currentTile, Vector2Int.down, false);
+                updatedTilesCount += UpdateTile(data.EdgeTile, roadID, currentTile, Vector2Int.left, false);
+                updatedTilesCount += UpdateTile(data.EdgeTile, roadID, currentTile, Vector2Int.right, false);
+                updatedTilesCount++;
+
+            }
+            else
+            {
+                // Debug.LogError("Batch: batch is null " +data.StartPos+","+data.EndPos + "," + direction + "," + Batch+","+ currentBatch);
+            }
+            startPos += direction;
+
+        }
+        int propCount = 0;
+        Debug.Log("Road Edge: tiles updated count " + updatedTilesCount+" fromn " +startPos+" to " + endPos+" props "+ propCount);
     }
-    static void GenerateRoadSegmentInterior(Vector2Int startCoords, RoadData data, Vector2 direction,out int updatedTilesCount,Vector2Int currentBatch)
+
+    static void GenerateRoadEdgeProps(Vector2Int startCoords, RoadData data, Vector2 direction, out int updatedTilesCount, Vector2Int currentBatch,ref Dictionary<string,Vector2> LastPositionForObjects)
+    {
+        RoadDetails details = RoadTypeManager.Instance.AllRoadDetails[data.Type.ToString()];
+        if (details.Props.Count == 0)
+        {
+            updatedTilesCount = 0;
+            return;
+        }
+
+        updatedTilesCount = 0;
+        Vector2 startPos = startCoords;
+
+
+        uint roadID = WorldRenderer.Instance.WorldTilesManager.GetTileID(data.RoadTile);
+        updatedTiles = new HashSet<Vector2Int>();
+        Vector2Int globalCoords = new Vector2Int();
+        WorldChunkBatch batch = null;
+        currentTile = null;
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out Batch, out Chunk, out Coords);
+        bool FoundSuccessfulStart = false;
+        if (!WorldChunkManager.Instance.DoesBatchExist(Batch))
+        {
+
+            return;
+            
+        }
+
+
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(startPos.x, startPos.y, out Batch, out Chunk, out Coords);
+        batch = WorldChunkManager.Instance.GetChunkBatch(Batch);
+        //batch is null generating settlement roads, fuck knows why
+        if (batch != null)
+        {
+            currentTile = batch.Chunks[Chunk.x, Chunk.y].ChunkTiles[Coords.x, Coords.y];
+            globalCoords.x = currentTile.x;
+            globalCoords.y = currentTile.y;
+
+            for (int x = 0; x < details.Props.Count; x++)
+            {
+                bool canPlace = false;
+                if (!LastPositionForObjects.ContainsKey(details.Props[x].ObjectKey))
+                {
+                    LastPositionForObjects.Add(details.Props[x].ObjectKey, Vector2.zero);
+                    canPlace = true;
+                }
+                else
+                {
+                    canPlace = (Vector2.Distance(LastPositionForObjects[details.Props[x].ObjectKey], globalCoords) > details.Props[x].DistanceBetweenInstances);
+                }
+                if (currentTile.tileType == data.RoadTile)
+                {
+                    canPlace = false;
+                }
+                if (canPlace)
+                {
+                    Debug.Log("Road Edge: creating road prop at " + globalCoords + "," + details.Props[x].ObjectKey+" floor " + currentTile.tileType);
+                    ConstructableObjectManager.Instance.CreateObject_Generator(globalCoords, new Vector3(globalCoords.x, globalCoords.y), details.Props[x].ObjectKey);
+                    LastPositionForObjects[details.Props[x].ObjectKey] = globalCoords;
+                    updatedTilesCount++;
+                    return;
+
+                }
+            }
+
+
+        }
+
+
+    }
+        static void GenerateRoadSegmentInterior(Vector2Int startCoords, RoadData data, Vector2 direction,out int updatedTilesCount,Vector2Int currentBatch)
     {
         updatedTilesCount = 0;
         Vector2 startPos = startCoords - direction * (data.Width / 2);
@@ -384,7 +452,7 @@ public class RoadData : ISerialize
 
 
     public Vector2 perp,dir;
-    public int Width,HalfWidth;
+    public int Width,HalfWidth,EdgeWidth;
     public bool HasEdge = false,IsGenerated=false;
     public string RoadTile, EdgeTile;
     public RoadType Type;

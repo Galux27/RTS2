@@ -18,3 +18,8 @@ MonoBehaviour:
   HasEdge: 1
   EdgeTileID: Tiled
   EdgeWidth: 1
+  Props:
+  - ObjectKey: Streetlamp
+    DistanceBetweenInstances: 15
+  - ObjectKey: Powerline
+    DistanceBetweenInstances: 50

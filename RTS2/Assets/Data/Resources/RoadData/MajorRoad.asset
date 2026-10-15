@@ -18,3 +18,10 @@ MonoBehaviour:
   HasEdge: 1
   EdgeTileID: Tiled
   EdgeWidth: 2
+  Props:
+  - ObjectKey: Streetlamp
+    DistanceBetweenInstances: 17
+  - ObjectKey: Payphone
+    DistanceBetweenInstances: 73
+  - ObjectKey: Powerline
+    DistanceBetweenInstances: 50

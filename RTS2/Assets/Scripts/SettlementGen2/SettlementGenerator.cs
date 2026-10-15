@@ -1298,7 +1298,7 @@ public class GeneratedSettlementArea
     public bool CanUse = true;
     public void AddHighway(Settlement_Road highway)
     {
-        Debug.Log("Added road at " + vecToInt(highway.StartPos) + "," + vecToInt(highway.endPos) + " to " + batchCoords);
+       // Debug.Log("Added road at " + vecToInt(highway.StartPos) + "," + vecToInt(highway.endPos) + " to " + batchCoords);
 
         highways.Add(highway);
     }
@@ -1310,12 +1310,12 @@ public class GeneratedSettlementArea
 
     public void AddAvenue(Settlement_Road highway)
     {
-        Debug.Log("Added road at " + vecToInt(highway.StartPos) + ","+ vecToInt(highway.endPos) + " to " + batchCoords);
+       // Debug.Log("Added road at " + vecToInt(highway.StartPos) + ","+ vecToInt(highway.endPos) + " to " + batchCoords);
         avenues.Add(highway);
     }
     public void AddRoad(Settlement_Road highway)
     {
-        Debug.Log("Added road at " + vecToInt(highway.StartPos) + "," + vecToInt(highway.endPos) + " to " + batchCoords);
+       // Debug.Log("Added road at " + vecToInt(highway.StartPos) + "," + vecToInt(highway.endPos) + " to " + batchCoords);
 
         roads.Add(highway);
     }

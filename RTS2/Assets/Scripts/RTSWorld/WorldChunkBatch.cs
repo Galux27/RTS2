@@ -183,36 +183,45 @@ public class WorldChunkBatch : MonoBehaviour
 
     public void GenerateSidewalks(RoadType toGen)
     {
+        
+        Debug.Log("Road Gen: generating sidewalks" + toGen.ToSafeString());
+        for (int x = 0; x < Roads.Count; x++)
+        {
+            if (Roads[x].Type == toGen )
+            {
+                RoadGenerator.GenerateRoadEdges(Roads[x], ref Roads, this);
+            }
+        }
+    }
+
+    public void GenerateSidewalkProps(RoadType toGen)
+    {
+
+        Debug.Log("Road Gen: generating sidewalks" + toGen.ToSafeString());
         for (int x = 0; x < Roads.Count; x++)
         {
             if (Roads[x].Type == toGen)
             {
-                RoadGenerator.GenerateRoad(Roads[x], ref Roads, this);
-                // Roads[x].RenderRoad(this);
-                // Roads[x].LogCount();
+                RoadGenerator.GenerateRoadEdgeProps(Roads[x], ref Roads, this);
+                RoadGenerator.GenerateRoadEdgeProps(Roads[x], ref Roads, this,true);
+
             }
         }
     }
 
     public void GenerateRoads(RoadType toGen)
     {
-        //for(int x = 0; x < Roads.Count; x++)
-        //{
-        //    if (Roads[x].type == toGen)
-        //    {
-        //        Roads[x].GenerateRoad();
-        //    }
-        //}
+        Debug.Log("Road Gen: generating roads" + toGen.ToSafeString());
 
         for (int x = 0; x < Roads.Count; x++)
         {
             if (Roads[x].Type == toGen)
             {
-                RoadGenerator.GenerateRoadEdges(Roads[x],ref Roads,this);
-               // Roads[x].RenderRoad(this);
-               // Roads[x].LogCount();
+                RoadGenerator.GenerateRoad(Roads[x], ref Roads, this);
             }
         }
+
+      
 
        
         //  RefreshElevationTiles();
