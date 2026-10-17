@@ -19,6 +19,7 @@ public class SettlementGenTestRunning : MonoBehaviour
             settlement.PopulateAreas(settings, 64);
             area = new SettlementTileArea(settlement, settings);
             settlement.AssignBuildingsToArea(area, 64, settings);
+            settlement.PostGenPopulateAreas();
             Debug=area.GenerateDebugTexture();
             DebugDisplay.texture= Debug;
         }

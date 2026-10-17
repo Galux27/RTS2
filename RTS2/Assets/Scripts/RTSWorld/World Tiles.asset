@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileTypes:
   - tileType: Ground
-    tileBase: {fileID: 11400000, guid: 87ed69a4fc9d44146bdf365945a94f98, type: 2}
+    tileBase: {fileID: 11400000, guid: 75f53276f12047245bbd87907880975d, type: 2}
     MinimapColour: {r: 0.18039216, g: 0.14901961, b: 0.09411765, a: 1}
     TilesICantBePlacedOn: []
   - tileType: Sand

@@ -330,6 +330,9 @@ public static class LineUtil
         }
     }
 
+
+  
+
     static void GetRightSideOfLine(Vector2 start, Vector2 end, float width, out Vector2 newStart, out Vector2 newEnd)
     {
         Vector2 dir = end - start;
@@ -426,5 +429,6 @@ public enum Settlement_RoadType
     Highway,
     Avenue,
     Road,
-    Dirt
+    Dirt,
+    Alley
 }

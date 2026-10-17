@@ -74,11 +74,13 @@ public class MapGenerator : MonoBehaviour
             toGenerateIn.ApplyOverworldHeight(0);
 
         }
+        toGenerateIn.GenerateRoadBlends(RoadType.Alley);
+
         toGenerateIn.GenerateRoadBlends(RoadType.Backroad);
         toGenerateIn.GenerateRoadBlends(RoadType.MinorRoad);
         toGenerateIn.GenerateRoadBlends(RoadType.MajorRoad);
-        
-       // if (overworldTile.Features.Contains(OverworldFeature.Settlement))
+
+        // if (overworldTile.Features.Contains(OverworldFeature.Settlement))
         {
             OverworldConverters[OverworldFeature.Settlement].GenerateFeature(toGenerateIn);
 
@@ -89,10 +91,12 @@ public class MapGenerator : MonoBehaviour
         toGenerateIn.GenerateSidewalkProps(RoadType.Backroad);
         toGenerateIn.GenerateSidewalkProps(RoadType.MinorRoad);
         toGenerateIn.GenerateSidewalkProps(RoadType.MajorRoad);
+        toGenerateIn.GenerateRoads(RoadType.Alley);
+
         toGenerateIn.GenerateRoads(RoadType.Backroad);
         toGenerateIn.GenerateRoads(RoadType.MinorRoad);
         toGenerateIn.GenerateRoads(RoadType.MajorRoad);
-       
+
 
         toGenerateIn.GenerateBuildings();
        

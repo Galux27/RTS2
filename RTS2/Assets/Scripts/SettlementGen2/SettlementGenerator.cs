@@ -128,7 +128,7 @@ public  static class SettlementGenerator
         Debug.Log("Total roads from overworld " + count);
     }
 
-        public static void DebugDrawSettlementRoads(GeneratedSettlement settlement,float duration)
+    public static void DebugDrawSettlementRoads(GeneratedSettlement settlement,float duration)
     {
         if (settlement != null && settlement.areas != null)
         {
@@ -139,10 +139,21 @@ public  static class SettlementGenerator
                 {
                     Vector2 offset = new Vector2(10, 10);
 
-                  
+
                     for (int x = 0; x < settlement.areas[q, r].roads.Count; x++)
                     {
                         Debug.DrawLine(settlement.areas[q, r].roads[x].StartPos, settlement.areas[q, r].roads[x].EndPos, settlement.areas[q, r].roads[x].debugColor, duration);
+
+                        //if(settlement.areas[q, r].roads[x].IsValidForAreaStart(settlement))
+                        //{
+                        //    Debug.DrawLine(settlement.areas[q, r].roads[x].RoadNode.position, settlement.areas[q, r].roads[x].RoadNode.position + offset, Color.white, duration);
+                        //}
+                    }
+
+
+                    for (int x = 0; x < settlement.areas[q, r].alley.Count; x++)
+                    {
+                        Debug.DrawLine(settlement.areas[q, r].alley[x].StartPos, settlement.areas[q, r].alley[x].EndPos, Color.blue, duration);
                     
                         //if(settlement.areas[q, r].roads[x].IsValidForAreaStart(settlement))
                         //{
@@ -915,9 +926,33 @@ public class GeneratedSettlement
 {
     public List<Vector2> Corners = new List<Vector2>();
     public Settlement_River River;
-    public List<Settlement_Road> highways=new List<Settlement_Road>(),
+    public List<Settlement_Road> highways = new List<Settlement_Road>(),
         avenues = new List<Settlement_Road>(),
-        roads = new List<Settlement_Road>();
+        roads = new List<Settlement_Road>(),
+        alleys = new List<Settlement_Road>();
+
+    public void AddRoad(Settlement_Road road)
+    {
+        switch (road.RoadType)
+        {
+            case Settlement_RoadType.Highway:
+                highways.Add(road);
+                break;
+            case Settlement_RoadType.Avenue:
+                avenues.Add(road);
+                break;
+            case Settlement_RoadType.Road:
+                roads.Add(road);
+                break;
+            case Settlement_RoadType.Dirt:
+                break;
+            case Settlement_RoadType.Alley:
+                alleys.Add(road);
+                break;
+            default:
+                break;
+        }
+    }
 
 
     public Dictionary<uint, Settlement_Road> RoadDictionary = new Dictionary<uint, Settlement_Road>();
@@ -1237,7 +1272,7 @@ public class GeneratedSettlement
                         {
                             if (curArea.IsPointInArea(Vector2.Lerp(avenues[q].StartPos, avenues[q].EndPos, f)))
                             {
-                                curArea.AddHighway(avenues[q]);
+                                curArea.AddAvenue(avenues[q]);
                                 break;
                             }
                         }
@@ -1259,7 +1294,32 @@ public class GeneratedSettlement
                         {
                             if (curArea.IsPointInArea(Vector2.Lerp(roads[q].StartPos, roads[q].EndPos, f)))
                             {
-                                curArea.AddHighway(roads[q]);
+                                curArea.AddRoad(roads[q]);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                for (int q = 0; q <alleys.Count; q++)
+                {
+                    bool added = false;
+
+                    if (curArea.IsPointInArea(alleys[q].StartPos) 
+                        || curArea.IsPointInArea(Vector2.Lerp(alleys[q].StartPos, alleys[q].EndPos, .5f)) 
+                        || curArea.IsPointInArea(alleys[q].endPos))
+                    {
+                        curArea.AddAlley(alleys[q]);
+                        added = true;
+
+                    }
+                    if (!added)
+                    {
+                        for (float f = 0f; f < 1f; f += .1f)
+                        {
+                            if (curArea.IsPointInArea(Vector2.Lerp(alleys[q].StartPos, alleys[q].EndPos, f)))
+                            {
+                                curArea.AddAlley(alleys[q]);
                                 break;
                             }
                         }
@@ -1267,6 +1327,44 @@ public class GeneratedSettlement
                 }
             }
         } 
+    }
+
+    public void PostGenPopulateAreas()
+    {
+        GeneratedSettlementArea curArea = null;
+        for (int x = 0; x < areas.GetLength(0); x++)
+        {
+            for (int y = 0; y < areas.GetLength(1); y++)
+            {
+                curArea = areas[x, y];
+
+               
+                for (int q = 0; q < alleys.Count; q++)
+                {
+                    bool added = false;
+
+                    if (curArea.IsPointInArea(alleys[q].StartPos)
+                        || curArea.IsPointInArea(Vector2.Lerp(alleys[q].StartPos, alleys[q].EndPos, .5f))
+                        || curArea.IsPointInArea(alleys[q].endPos))
+                    {
+                        curArea.AddAlley(alleys[q]);
+                        added = true;
+
+                    }
+                    if (!added)
+                    {
+                        for (float f = 0f; f < 1f; f += .1f)
+                        {
+                            if (curArea.IsPointInArea(Vector2.Lerp(alleys[q].StartPos, alleys[q].EndPos, f)))
+                            {
+                                curArea.AddAlley(alleys[q]);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
@@ -1293,7 +1391,7 @@ public class GeneratedSettlementArea
     public Color DebugColour;
     public Vector2Int Point;
     public Vector2Int batchCoords,topCorner,OverworldTile;
-    public List<Settlement_Road> highways = new List<Settlement_Road>(), avenues = new List<Settlement_Road>(), roads = new List<Settlement_Road>();
+    public List<Settlement_Road> highways = new List<Settlement_Road>(), avenues = new List<Settlement_Road>(), roads = new List<Settlement_Road>(),alley=new List<Settlement_Road>();
     public List<BuildingTileArea> Buildings = new List<BuildingTileArea>();
     public bool CanUse = true;
     public void AddHighway(Settlement_Road highway)
@@ -1308,18 +1406,26 @@ public class GeneratedSettlementArea
         Buildings.Add(area);
     }
 
-    public void AddAvenue(Settlement_Road highway)
+    public void AddAvenue(Settlement_Road avenue)
     {
        // Debug.Log("Added road at " + vecToInt(highway.StartPos) + ","+ vecToInt(highway.endPos) + " to " + batchCoords);
-        avenues.Add(highway);
+        avenues.Add(avenue);
     }
-    public void AddRoad(Settlement_Road highway)
+    public void AddRoad(Settlement_Road road)
     {
-       // Debug.Log("Added road at " + vecToInt(highway.StartPos) + "," + vecToInt(highway.endPos) + " to " + batchCoords);
+        // Debug.Log("Added road at " + vecToInt(highway.StartPos) + "," + vecToInt(highway.endPos) + " to " + batchCoords);
+        Debug.Log("Road ADd: Added road at " + vecToInt(road.StartPos) + "," + vecToInt(road.endPos) + " to " + batchCoords);
 
-        roads.Add(highway);
+        roads.Add(road);
     }
-   Vector2Int vecToInt(Vector2 vec)
+
+    public void AddAlley(Settlement_Road road)
+    {
+         Debug.Log("Road ADd: Added alley at " + vecToInt(road.StartPos) + "," + vecToInt(road.endPos) + " to " + batchCoords);
+
+        alley.Add(road);
+    }
+    Vector2Int vecToInt(Vector2 vec)
     {
         return new Vector2Int(Mathf.RoundToInt(vec.x),Mathf.RoundToInt(vec.y));
     }

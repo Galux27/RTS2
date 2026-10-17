@@ -29,13 +29,14 @@ public class SelectableIconButto : IconButton
         currentlySelected = toSet;
         selectedInfo = (ObjectInfo)currentlySelected;
         GetIconForSelectable(toSet);
+        SetupEventListenersForSelected(toSet);
     }
 
     void GetIconForSelectable(Selectable toSet)
     {
         if (toSet.GetSelectableType() == SelectableType.Unit)
         {
-
+            IconImage.sprite = IconManager.Instance.GetIcon("Unit");
         }else if (toSet.GetSelectableType() == SelectableType.ConstructableObject)
         {
             IconImage.sprite = ConstructableObjectManager.Instance.AllObjects[toSet.GetObjectType()].ForwardsSprite;
@@ -50,6 +51,21 @@ public class SelectableIconButto : IconButton
         }
     }
 
+    void SetupEventListenersForSelected(Selectable toSet)
+    {
+        if (toSet.GetSelectableType() == SelectableType.Unit)
+        {
+            IconImage.sprite = IconManager.Instance.GetIcon("Unit");
+        }
+        else if (toSet.GetSelectableType() == SelectableType.ConstructableObject)
+        {
+            IconImage.sprite = ConstructableObjectManager.Instance.AllObjects[toSet.GetObjectType()].ForwardsSprite;
+        }
+        else if (toSet.GetSelectableType() == SelectableType.Structure)
+        {
+            IconImage.sprite = WallTypeManager.Instance.GetWallTile(toSet.GetObjectType()).LeftRight.sprite;
+        }
+    }
 
     void GoTo()
     {

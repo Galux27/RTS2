@@ -41,18 +41,19 @@ public class SettlementTileArea
         }
         for (int x = 0; x < settlement.avenues.Count; x++)
         {
-            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.avenues[x], settings, false), Sections.Count+1));
-            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.avenues[x], settings, true), Sections.Count + 1));
+            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.avenues[x], settings, false), Sections.Count+1, settlement.avenues[x]));
+            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.avenues[x], settings, true), Sections.Count + 1, settlement.avenues[x]));
 
         }
 
         for (int x = 0; x < settlement.roads.Count; x++)
         {
-            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, false),Sections.Count + 1));
-            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, true), Sections.Count + 1));
+            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, false),Sections.Count + 1, settlement.roads[x]));
+            Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, true), Sections.Count + 1, settlement.roads[x]));
 
         }
         SettlementBuildingMoniter BuildingMoniter = new SettlementBuildingMoniter(SettlementBuildingTypeManager.Instance.GetRandomData());
+        List<TileAreaRoad> RoadsCreatedInTileAreas = new List<TileAreaRoad>();
         for(int q = 0; q < Sections.Count; q++)
         {
             Sections[q].Expand(this,settlement);
@@ -70,7 +71,7 @@ public class SettlementTileArea
                         SetTileArea(x, y, Sections[q].ID);
                     }
                 }
-                Sections[q].GenerateBuildingAreas(ref BuildingMoniter);
+                Sections[q].GenerateBuildingAreas(ref BuildingMoniter,ref RoadsCreatedInTileAreas);
                 for(int i = 0; i < Sections[q].BuildingAreas.Count; i++)
                 {
                     for(int x = Sections[q].BuildingAreas[i].Low.x;x< Sections[q].BuildingAreas[i].High.x; x++)
@@ -83,14 +84,27 @@ public class SettlementTileArea
                 }
             }
         }
+        
+        for(int x = 0; x < RoadsCreatedInTileAreas.Count; x++)
+        {
+            ConvertTileAreaRoadToSettlementRoad(RoadsCreatedInTileAreas[x], settings, ref settlement);
+        }
+
         for (int q = 0; q < Sections.Count; q++)
         {
             Sections[q].ApplyWorldOffsetToArea(settings);
         }
         //GenerateBuildingsInSections(settlement);
         
-        }
+    }
 
+    void ConvertTileAreaRoadToSettlementRoad(TileAreaRoad road,Settlement_Settings settings,ref GeneratedSettlement settlement)
+    {
+        road.StartPos = ConvertGridCoordsToPos(road.StartPos,settings);
+        road.EndPos = ConvertGridCoordsToPos(road.EndPos, settings);
+        settlement.AddRoad(road.ConvertToSettlementRoad());
+    }
+   
 
     public void GenerateBuildingsInSections(GeneratedSettlement settlement)
     {
@@ -257,6 +271,13 @@ public class SettlementTileArea
         return new Vector2Int(Mathf.RoundToInt(val.x),Mathf.RoundToInt(val.y));
     }
 
+    Vector2Int ConvertGridCoordsToPos(Vector2Int gridCoords,Settlement_Settings settings)
+    {
+        Vector2 lerp = new Vector2(Mathf.InverseLerp(0, settings.Size.x, gridCoords.x), Mathf.InverseLerp(0, settings.Size.y, gridCoords.y));
+        Vector2 val = new Vector2(Mathf.Lerp(bottomLeft.x, topRight.x, lerp.x), Mathf.Lerp(bottomLeft.y, topRight.y, lerp.y));
+        return new Vector2Int(Mathf.RoundToInt(val.x),Mathf.RoundToInt(val.y));
+    }
+
     Vector2Int GetStartingCoordsFromRoad(Settlement_Road road, Settlement_Settings settings, bool negative = false)
     {
         if (!negative)
@@ -281,7 +302,7 @@ public class SettlementTileAreaSection
     public Color DebugColour;
     public bool IsValid = true;
     public List<BuildingTileArea> BuildingAreas = new List<BuildingTileArea>();
-
+    public Settlement_Road RoadOriginatingFrom;
     public void ApplyWorldOffsetToArea(Settlement_Settings settings)
     {
         Vector2Int bottomCorner = new Vector2Int(Mathf.RoundToInt( settings.Center.x - (settings.Size.x / 2)),Mathf.RoundToInt( settings.Center.y - (settings.Size.y / 2)));
@@ -308,7 +329,7 @@ public class SettlementTileAreaSection
         Debug.DrawLine(c2, low, DebugColour);
 
     }
-    public SettlementTileAreaSection(Vector2Int start,int id)
+    public SettlementTileAreaSection(Vector2Int start,int id,Settlement_Road roadBuiltFrom)
     {
         this.StartPosition = start;
         this.ID = id;
@@ -321,7 +342,7 @@ public class SettlementTileAreaSection
             TileAreaDir.VerticalNegative,
             TileAreaDir.VerticalPositive
         };
-
+        RoadOriginatingFrom = roadBuiltFrom;
         DebugColour = new Color(Random.value, 0, 0, 1f);
     }
     #region AreaGeneration
@@ -469,7 +490,53 @@ public class SettlementTileAreaSection
     }
     #endregion
     
-    public void GenerateBuildingAreas(ref SettlementBuildingMoniter buildingData)
+
+    BuildingTileArea GetAreaIIntersect(Vector2Int start,Vector2Int end,out Vector2Int intersection)
+    {
+        BuildingTileArea retVal = null;
+        intersection = end ;
+        float dist = Vector2.Distance(start, end);
+        for(int x=0;x < BuildingAreas.Count; x++)
+        {
+            if (BuildingAreas[x].DoesLineIntersectBuilding(start,end,out intersection))
+            {
+                float dist2 = Vector2.Distance(start, intersection);
+                if (dist2 < dist)
+                {
+                    retVal=BuildingAreas[x];
+                    dist = dist2;
+                }
+            }
+        }
+
+
+        return retVal;
+    } 
+
+
+    void GenerateAlleyway(ref SettlementBuildingMoniter buildingData, ref List<TileAreaRoad> roads, Vector2Int currentPosition)
+    {
+        Vector2Int startPos = currentPosition;
+        Vector2Int endPosition = new Vector2Int(startPos.x, High.y);
+        Vector2Int intersection = endPosition;
+        while (startPos.y < endPosition.y)
+        {
+            BuildingTileArea area = GetAreaIIntersect(startPos, endPosition,out intersection);
+            if (area == null)
+            {
+                roads.Add(new TileAreaRoad(startPos, endPosition, RoadType.Alley));
+                startPos = endPosition;
+
+            }
+            else
+            {
+
+            }
+        }
+
+    }
+
+    public void GenerateBuildingAreas(ref SettlementBuildingMoniter buildingData,ref List<TileAreaRoad> roadsCreated)
     {
         int areaWidth = High.x - Low.x;
         int areaHeight = High.y - Low.y;
@@ -478,15 +545,16 @@ public class SettlementTileAreaSection
 
         Vector2Int areaSize = new Vector2Int(areaWidth, areaHeight);
         buildingData.SetValidBuildings(areaSize);
+        Debug.Log("Generating buildings for area off road at " + this.RoadOriginatingFrom.StartPos + " to " + this.RoadOriginatingFrom.endPos+" startpos was "+ StartPosition);
+        int startY = Low.y + 2;
 
-
-        Vector2Int startPos = Low;
+        Vector2Int startPos = new Vector2Int(Low.x + 2, startY);
         Vector2Int localSize = Vector2Int.zero;
         SettlementBuilding building = null;
         bool ableToPlace =true;
         int horizontalEdge = startPos.x;
-        int count = 0;
-        while (ableToPlace&&count<300)
+        int lastRoad = startPos.x;
+        while (ableToPlace)
         {
             areaSize = High - startPos;
        
@@ -513,9 +581,14 @@ public class SettlementTileAreaSection
                     startPos.y+=5;
                 }
             }
-            count++;
-            startPos.y = Low.y;
+            startPos.y =startY;
             startPos.x = Mathf.Max(startPos.x+5, horizontalEdge + 1);
+            if(startPos.x-lastRoad > 25 && (High.x - startPos.x) > 20)
+            {
+                GenerateAlleyway(ref buildingData, ref roadsCreated, startPos);
+                startPos.x += 4;
+                lastRoad = startPos.x;
+            }
             if (startPos.x >= High.x)
             {
                 ableToPlace = false;
@@ -592,6 +665,55 @@ public class SettlementTileAreaSection
     }
 }
 
+public class TileAreaRoad
+{
+
+    public TileAreaRoad(Vector2Int s,Vector2Int e,RoadType type)
+    {
+        StartPos = s;
+        EndPos = e;
+        Type = type;
+    }
+
+
+
+
+    public Vector2Int StartPos, EndPos;
+    public RoadType Type;
+
+
+    public Settlement_Road ConvertToSettlementRoad()
+    {
+        Vector2 dir = EndPos - StartPos;
+        float length = Vector2Int.Distance(StartPos, EndPos);
+        return new Settlement_Road(StartPos, dir, length, GetTypeAsSettlementRoadType());
+    }
+
+    Settlement_RoadType GetTypeAsSettlementRoadType()
+    {
+        switch (Type)
+        {
+            case RoadType.None:
+                break;
+            case RoadType.MajorRoad:
+                return Settlement_RoadType.Highway;
+                break;
+            case RoadType.MinorRoad:
+                return Settlement_RoadType.Avenue;
+                break;
+            case RoadType.Backroad:
+                return Settlement_RoadType.Road;
+                break;
+            case RoadType.Alley:
+                return Settlement_RoadType.Alley;
+                break;
+            default:
+                break;
+        }
+        return Settlement_RoadType.Dirt;
+    }
+}
+
 public class BuildingTileArea
 {
     public Vector2Int Low, High;
@@ -635,6 +757,61 @@ public class BuildingTileArea
         BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(BuildingDataManager.Instance.BuildingTemplates[BuildingID].FloorplanType);
         Debug.Log("Generating building at " +Low + " size " + Size);
         MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates[BuildingID], 50);
+    }
+
+    public bool DoesLineIntersectBuilding(Vector2Int start,Vector2Int end,out Vector2Int intersection)
+    {
+        intersection = Vector2Int.zero;
+
+        float dist = Vector2.Distance(start, end);
+        float dist2 = dist;
+        Vector2 latestIntersection= new Vector2();
+        Vector2Int p1 = Low;
+        Vector2Int p2 = new Vector2Int(High.x, Low.y);
+        if(LineUtil.IntersectLineSegments2D(start,end,p1,p2,out latestIntersection))
+        {
+            dist2 = Vector2.Distance(start, latestIntersection);
+            if (dist2 < dist)
+            {
+                intersection = new Vector2Int(Mathf.FloorToInt( latestIntersection.x), Mathf.FloorToInt(latestIntersection.y));
+                dist = dist2;
+            }
+        }
+        p2.y = High.y;
+        p1.x = High.x;
+        if (LineUtil.IntersectLineSegments2D(start,latestIntersection, p1, p2, out latestIntersection))
+        {
+            dist2 = Vector2.Distance(start, latestIntersection);
+            if (dist2 < dist)
+            {
+                intersection = new Vector2Int(Mathf.FloorToInt(latestIntersection.x), Mathf.FloorToInt(latestIntersection.y));
+                dist = dist2;
+            }
+        }
+        p1 = High;
+        p2.x = Low.x;
+        if (LineUtil.IntersectLineSegments2D(start, latestIntersection, p1, p2, out latestIntersection))
+        {
+            dist2 = Vector2.Distance(start, latestIntersection);
+            if (dist2 < dist)
+            {
+                intersection = new Vector2Int(Mathf.FloorToInt(latestIntersection.x), Mathf.FloorToInt(latestIntersection.y));
+                dist = dist2;
+            }
+        }
+
+        p1 = Low;
+        if (LineUtil.IntersectLineSegments2D(start, latestIntersection, p1, p2, out latestIntersection))
+        {
+            dist2 = Vector2.Distance(start, latestIntersection);
+            if (dist2 < dist)
+            {
+                intersection = new Vector2Int(Mathf.FloorToInt(latestIntersection.x), Mathf.FloorToInt(latestIntersection.y));
+                dist = dist2;
+            }
+        }
+
+        return false;
     }
 }
 

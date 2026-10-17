@@ -223,6 +223,7 @@ public class OverworldSettlement
 
         SettlementTileArea area = new SettlementTileArea(GeneratedInstance, settings);
         GeneratedInstance.AssignBuildingsToArea(area, 64,settings);
+        GeneratedInstance.PostGenPopulateAreas();
 
         SettlementGenerator.DebugDrawSettlementRoads(GeneratedInstance, 100f);
 

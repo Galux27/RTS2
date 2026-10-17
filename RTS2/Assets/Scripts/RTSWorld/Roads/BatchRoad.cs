@@ -724,7 +724,8 @@ public enum RoadType
     None,
     MajorRoad,
     MinorRoad,
-    Backroad
+    Backroad,
+    Alley
 }
 
 public class RoadSegment
