@@ -489,8 +489,10 @@ public class GeneratedBuilding
             {
                 for (int y = Height - 1; y >= 0; y--)
                 {
-
-                    newFloorTiles[x, y] = Tiles[x, y].FloorTile;
+                    if (Tiles[x, y] != null)
+                    {
+                        newFloorTiles[x, y] = Tiles[x, y].FloorTile;
+                    }
                 }
             }
 
@@ -521,6 +523,10 @@ public class GeneratedBuilding
                 {
                     if (newFloorTiles[x, y] != string.Empty)
                     {
+                        if (Tiles[x, y] == null)
+                        {
+                            Tiles[x, y] = new RoomTile();
+                        }
                         Tiles[x, y].SetFloor(newFloorTiles[x, y]);
                     }
                 }

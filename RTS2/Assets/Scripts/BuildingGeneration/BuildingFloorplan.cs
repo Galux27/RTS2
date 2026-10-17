@@ -21,6 +21,8 @@ public class BuildingFloorplan
                 break;
             case BuildingFloorplanType.Corridors:
                 return new CorridorBasedFloorplan();
+            case BuildingFloorplanType.House:
+                return new HouseFloorplan();
             default:
                 return new BuildingFloorplan();
                 break;
@@ -325,26 +327,6 @@ public class BuildingFloorplan
         }
     }
 
-    static bool CanMakeIntoExternalWall(RoomTile tile)
-    {
-        if (tile != null)
-        {
-            
-            if (tile.HasWall)
-            {
-                return tile.WallTile != "Window";
-            }
-            else if (tile.IsCorridor)
-            {
-                return true;
-            }else if (tile.RoomID != -1)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     static void GetNeighbouringTiles(GeneratedBuilding building, int x, int y, ref List<RoomTile> toPopulate,ref List<Vector2Int> positions)
     {
         toPopulate.Clear();
@@ -464,14 +446,18 @@ public class SquareBuildingFloorplan : BuildingFloorplan
         }
 
 
+        
         RoomTemplate roomTemplate = null;
+        SplitRoom toPopulate = CurrentSplits[0];
         for (int x = 0; x < CurrentSplits.Count; x++)
         {
             roomTemplate = building.GetRoomToGenerate(template);
-            if (roomTemplate != null)
+            toPopulate = GetRoomClosestToSizeOfRoom(ref CurrentSplits, roomTemplate);
+            if (roomTemplate != null && !toPopulate.InUse)
             { 
                 curRoom = RoomGen.GenerateRoom(CurrentSplits[x].coords, CurrentSplits[x].size, roomTemplate, building.MyRooms.Count,building);
                 building.AddRoom(curRoom);
+                toPopulate.InUse = true;
 
                 if (roomTemplate.AttachedRooms.Count > 0)
                 {
@@ -480,6 +466,7 @@ public class SquareBuildingFloorplan : BuildingFloorplan
                     if (subRoom != null)
                     {
                         building.AddRoom(subRoom, true);
+
                     }
                 }
                 
@@ -495,6 +482,26 @@ public class SquareBuildingFloorplan : BuildingFloorplan
         return building;
     }
 
+
+    SplitRoom GetRoomClosestToSizeOfRoom(ref List<SplitRoom> splits,RoomTemplate template)
+    {
+        Vector2Int avgSize = new Vector2Int(Mathf.RoundToInt(Mathf.Lerp(template.MinWidth, template.MaxWidth, .5f)),
+            Mathf.RoundToInt(Mathf.Lerp(template.MinHeight, template.MaxHeight, .5f)));
+        float closestInSize = 9999999f;
+        SplitRoom closestToSize = splits[0];
+        for(int x = 0; x < splits.Count; x++)
+        {
+            if (!splits[x].InUse)
+            {
+                if (Vector2.Distance(avgSize,splits[x].size) < closestInSize)
+                {
+                    closestInSize = Vector2.Distance(avgSize, splits[x].size);
+                    closestToSize = splits[x];
+                }
+            }
+        }
+        return closestToSize;
+    }
 
     void FixBuildingInteriorWalls(GeneratedBuilding building)
     {
@@ -617,13 +624,269 @@ public class SquareBuildingFloorplan : BuildingFloorplan
     }
 }
 
+
+
+public class HouseFloorplan : BuildingFloorplan
+{
+    
+
+    public HouseFloorplan()
+    {
+       
+    }
+    const string CorridorName = "Corridor";
+    Vector2Int size;
+    public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
+    {
+        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height);
+
+        //generate corridor from random edge to center
+        //generate main room at center
+        //get positions on edge of room for placing other rooms
+        //place room
+        //find closest free edge tile to main room for next room
+        //repeat until you run out of rooms or starting positions
+
+        size = new Vector2Int(width, height);
+        GeneratedBuilding building = new GeneratedBuilding(width, height, pos, template.BuildingName);
+
+        Vector2Int StartCoords = new Vector2Int();
+        Vector2Int dir = new Vector2Int();
+        int start = Random.Range(0, 100);
+        if (start < 50)
+        {
+            start = Random.Range(0, 100);
+            if (start < 50)
+            {
+                StartCoords = new Vector2Int(0, height/2);
+                dir.x = -1;
+            }
+            else
+            {
+                StartCoords = new Vector2Int(width, height/2);
+                dir.x = 1;
+            }
+        }
+        else
+        {
+            start = Random.Range(0, 100);
+            if (start < 50)
+            {
+                StartCoords = new Vector2Int(width / 2, 0);
+                dir.y = -1;
+            }
+            else
+            {
+                StartCoords = new Vector2Int(width/2, height);
+                dir.y = 1;
+            }
+        }
+        BuildingRoomData roomTemplate = template.MainRoom;
+
+        Vector2Int MainRoomSize = new Vector2Int(Random.Range(roomTemplate.roomTemplate.MinWidth, roomTemplate.roomTemplate.MaxWidth), Random.Range(roomTemplate.roomTemplate.MinHeight, roomTemplate.roomTemplate.MaxHeight));
+        GeneratedRoom curRoom = null;
+        Vector2Int MainRoomPosition = new Vector2Int((width / 2)-(MainRoomSize.x/2), (height / 2)-(MainRoomSize.y/2));//BuildingFloorplan.GetValidEdgeCoordinatesForRoom(MainRoomSize.x, MainRoomSize.y, building);
+        curRoom = RoomGen.GenerateRoom(MainRoomPosition, MainRoomSize, roomTemplate.roomTemplate, building.MyRooms.Count, building);
+        building.AddRoom(curRoom);
+        RoomTemplate corridor = BuildingDataManager.Instance.RoomTemplates["Hallway"];
+        Vector2Int corridorPosition = Vector2Int.zero ;
+        Vector2Int corridorSize = new Vector2Int();
+
+        if (StartCoords.x == 0)
+        {
+            corridorPosition.x = StartCoords.x;
+            corridorPosition.y = height / 2;
+            corridorSize.x = MainRoomPosition.x + 1;
+            corridorSize.y = 3;
+        }
+        else if(StartCoords.x==width)
+        {
+            corridorPosition.x = MainRoomPosition.x + (MainRoomSize.x);
+            corridorPosition.y = height / 2;
+
+            corridorSize.x = width - corridorPosition.x ;
+            corridorSize.y = 3;
+        }
+        else
+        {
+            if (StartCoords.y ==0)
+            {
+                corridorPosition.y = StartCoords.y;
+                corridorPosition.x = width / 2;
+                corridorSize.x = 3;
+                corridorSize.y = MainRoomPosition.y+1;
+            }
+            else
+            {
+                corridorPosition.y = MainRoomPosition.y + (MainRoomSize.y);
+                corridorPosition.x = width / 2;
+                corridorSize.x = 3;
+                corridorSize.y = height - (corridorPosition.y);
+            }
+        }
+       
+
+        
+
+        
+        curRoom=RoomGen.GenerateRoom(corridorPosition,corridorSize, corridor, building.MyRooms.Count, building);
+        building.AddRoom(curRoom);
+
+
+        /* int count = 0;
+        
+         Vector2Int modifier = Vector2Int.zero;
+         int[,] points = new int[width, height];
+
+
+         BuildingRoomData roomTemplate = template.MainRoom;
+         Vector2Int MainRoomSize = new Vector2Int(Random.Range(roomTemplate.roomTemplate.MinWidth, roomTemplate.roomTemplate.MaxWidth), Random.Range(roomTemplate.roomTemplate.MinHeight, roomTemplate.roomTemplate.MaxHeight));
+
+         bool OnTopOfBuilding = MainRoomPosition.y > 0;
+         curRoom = RoomGen.GenerateRoom(MainRoomPosition, MainRoomSize, roomTemplate.roomTemplate, building.MyRooms.Count, building);
+         building.AddRoom(curRoom);
+         List<GeneratedRoom> Corridors = new List<GeneratedRoom>();
+         RoomTemplate corridor = BuildingDataManager.Instance.RoomTemplates[CorridorName];
+         size = new Vector2Int((width - (MainRoomPosition.x + (MainRoomSize.x))), corridor.MaxHeight);
+         Vector2Int startPos = new Vector2Int(MainRoomPosition.x + (MainRoomSize.x) - 1, MainRoomPosition.y);
+         curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
+         if (curRoom != null)
+         {
+             building.AddRoom(curRoom, true);
+             curRoom.SetAsCorridor();
+             Corridors.Add(curRoom);
+         }
+         startPos.x = 1;
+         startPos.y = MainRoomPosition.y;
+         size.x = MainRoomPosition.x;
+         size.y = corridor.MaxHeight;
+         curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
+         if (curRoom != null)
+         {
+             curRoom.SetAsCorridor();
+
+             building.AddRoom(curRoom, true);
+             Corridors.Add(curRoom);
+         }
+         Debug.Log("Building on top " + OnTopOfBuilding);
+
+         if (OnTopOfBuilding)
+         {
+             startPos.x = MainRoomPosition.x;
+             startPos.y = 1;
+             size.x = corridor.MaxWidth;
+             size.y = (height - MainRoomSize.y);
+             curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
+             if (curRoom != null)
+             {
+                 building.AddRoom(curRoom, true);
+                 curRoom.SetAsCorridor();
+
+                 Corridors.Add(curRoom);
+             }
+         }
+         else
+         {
+             startPos.x = MainRoomPosition.x;
+             startPos.y = MainRoomPosition.y + MainRoomSize.y - 1;
+             size.x = corridor.MaxWidth;
+             size.y = (height - MainRoomSize.y);
+             curRoom = RoomGen.GenerateRoom(startPos, size, corridor, building.MyRooms.Count, building);
+             if (curRoom != null)
+             {
+                 building.AddRoom(curRoom, true);
+                 curRoom.SetAsCorridor();
+
+                 Corridors.Add(curRoom);
+             }
+         }
+         RoomTemplate subRoomTemplate = null;
+         int RoomsToAddOffCorridors = 0;
+         int attempts = 0, successes = 0;
+         int corridorIndex = 0;
+         Vector2Int SubRoomSize = Vector2Int.zero;
+         Vector2Int startCoords = Vector2Int.zero;
+         for (int i = 0; i < template.PotentialRooms.Count; i++)
+         {
+             attempts = 0;
+             successes = 0;
+             RoomsToAddOffCorridors = Random.Range(template.PotentialRooms[i].Min, template.PotentialRooms[i].Max);
+             subRoomTemplate = template.PotentialRooms[i].roomTemplate;
+             SubRoomSize.x = Random.Range(subRoomTemplate.MinWidth, subRoomTemplate.MaxWidth);
+             SubRoomSize.y = Random.Range(subRoomTemplate.MinHeight, subRoomTemplate.MaxHeight);
+             corridorIndex = 0;
+             while (corridorIndex < Corridors.Count && successes < RoomsToAddOffCorridors && attempts < MaxAttempts)
+             {
+
+                 startCoords = BuildingFloorplan.GetEdgeOfRoomLargeEnough(SubRoomSize.x, SubRoomSize.y, building, Corridors[corridorIndex]);
+                 if (startCoords.x >= 0)
+                 {
+                     curRoom = RoomGen.GenerateRoom(startCoords, SubRoomSize, subRoomTemplate, building.MyRooms.Count, building);
+                     building.AddRoom(curRoom, true);
+
+                     if (subRoomTemplate.AttachedRooms.Count > 0)
+                     {
+                         GeneratedRoom subRoom = RoomGen.GenerateAttachedRooms(building, curRoom, subRoomTemplate);
+                         if (subRoom != null)
+                         {
+                             building.AddRoom(subRoom, true);
+                         }
+                     }
+                     successes++;
+                 }
+                 else
+                 {
+                     corridorIndex++;
+                 }
+
+                 attempts++;
+             }
+         }*/
+        // Debug.Log("Attempts made for room " + attempts + "/" + successes);
+       // BuildingFloorplan.PopulateExteriorWallTiles(building);
+
+        building.UpdateEdgeTiles();
+
+        building.GenerateDoors();
+        building.PopulatePropsInRooms(RoomGen);
+        building.ShiftAllFloorTiles(template);
+
+        return building;
+    }
+    SplitRoom GetRoomClosestToSizeOfRoom(ref List<SplitRoom> splits, RoomTemplate template)
+    {
+        Vector2Int avgSize = new Vector2Int(Mathf.RoundToInt(Mathf.Lerp(template.MinWidth, template.MaxWidth, .5f)),
+            Mathf.RoundToInt(Mathf.Lerp(template.MinHeight, template.MaxHeight, .5f)));
+        float closestInSize = 9999999f;
+        SplitRoom closestToSize = splits[0];
+        for (int x = 0; x < splits.Count; x++)
+        {
+            if (!splits[x].InUse)
+            {
+                if (Vector2.Distance(avgSize, splits[x].size) < closestInSize)
+                {
+                    closestInSize = Vector2.Distance(avgSize, splits[x].size);
+                    closestToSize = splits[x];
+                }
+            }
+        }
+        return closestToSize;
+    }
+
+}
+
+
+
+
 public struct SplitRoom
 {
     public Vector2Int coords, size;
+    public bool InUse;
     public SplitRoom(Vector2Int coords, Vector2Int size)
     {
         this.coords = coords;
             this.size = size;
+        InUse = false;
     }
 
     public override string ToString()
@@ -844,5 +1107,6 @@ public enum BuildingFloorplanType
     Basic,
     Square,
     SquareNoSplit,
-    Corridors
+    Corridors,
+    House
 }

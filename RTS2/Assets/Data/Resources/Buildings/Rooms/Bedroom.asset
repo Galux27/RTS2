@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c6ea39d6222d0b4d88b96ce1df32000, type: 3}
   m_Name: Bedroom
   m_EditorClassIdentifier: 
-  RoomID: TestRoom1
+  RoomID: Bedroom
   Wall: Concrete
   Door: Wood
   Floor: BlueCarpet

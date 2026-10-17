@@ -388,6 +388,30 @@ public static class LineUtil
     }
 
 
+    public static bool SquareIntersection(Vector2 low1,Vector2 high1, Vector2 low2,Vector2 high2/*, out Rect area*/)
+    {
+       // area = new Rect();
+        Rect r1 = new Rect(Vector2.Lerp(low1, high1, .5f), high1 - low1);
+        Rect r2 = new Rect(Vector2.Lerp(low2, high2, .5f), high2 - low2);
+
+        if (r2.Overlaps(r1))
+        {
+          //  float x1 = Mathf.Min(r1.xMax, r2.xMax);
+          //  float x2 = Mathf.Max(r1.xMin, r2.xMin);
+          //  float y1 = Mathf.Min(r1.yMax, r2.yMax);
+         //   float y2 = Mathf.Max(r1.yMin, r2.yMin);
+          //  area.x = Mathf.Min(x1, x2);
+          //  area.y = Mathf.Min(y1, y2);
+          //  area.width = Mathf.Max(0.0f, x1 - x2);
+          //  area.height = Mathf.Max(0.0f, y1 - y2);
+
+            return true;
+        }
+
+        return false;
+    }
+
+
 }
 
 public class Settlement_RoadJunction

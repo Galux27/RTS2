@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c6ea39d6222d0b4d88b96ce1df32000, type: 3}
+  m_Name: LivingRoom
+  m_EditorClassIdentifier: 
+  RoomID: LivingRoom
+  Wall: Concrete
+  Door: Wood
+  Floor: BlueCarpet
+  Props:
+  - PropName: BedsideDraws
+    MaxQuantity: 2
+    NeedsEdge: 0
+    MustBeOnRoomEdge: 1
+  - PropName: Sofa
+    MaxQuantity: 1
+    NeedsEdge: 1
+    MustBeOnRoomEdge: 1
+  CanHaveWindows: 0
+  CanHaveExternalDoor: 0
+  CanBeGridBased: 0
+  CanHaveInternalWalls: 1
+  CanGenerateAnyWalls: 1
+  GenerateDoorsToOtherRooms: 1
+  GenerateDoorsToCorridors: 1
+  MinWidth: 6
+  MaxWidth: 8
+  MinHeight: 6
+  MaxHeight: 8
+  FloorXOffset: 1
+  FloorYOffset: 1
+  AttachedRooms: []
+  WallMode: 2

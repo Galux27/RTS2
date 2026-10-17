@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildingName: House
   PotentialRooms:
+  - roomTemplate: {fileID: 11400000, guid: 7fc7df044b3350a43851308b912c0b79, type: 2}
+    Min: 1
+    Max: 1
   - roomTemplate: {fileID: 11400000, guid: e4f8161e78de6fa44b23876249a32e74, type: 2}
     Min: 1
     Max: 3
@@ -23,23 +26,20 @@ MonoBehaviour:
   - roomTemplate: {fileID: 11400000, guid: f7ae538e8d04e2246bae060adae0118f, type: 2}
     Min: 1
     Max: 1
-  - roomTemplate: {fileID: 11400000, guid: 7fc7df044b3350a43851308b912c0b79, type: 2}
-    Min: 1
-    Max: 1
   MainRoom:
-    roomTemplate: {fileID: 0}
+    roomTemplate: {fileID: 11400000, guid: a265a8372b9e347479b1d9697d80c0af, type: 2}
     Min: 0
     Max: 1
-  MinWidth: 10
-  MaxWidth: 15
-  MinHeight: 10
-  MaxHeight: 17
+  MinWidth: 15
+  MaxWidth: 20
+  MinHeight: 15
+  MaxHeight: 20
   MinRooms: 6
   MaxRooms: 10
   MaxExternalDoors: 1
   CorridorFloor: Wood
   CorridorWall: Wood
-  ExternalWall: 
-  FloorplanType: 1
-  ShiftHorizontalFloorTiles: 1
-  ShiftVerticalFloorTiles: 1
+  ExternalWall: Brick
+  FloorplanType: 4
+  ShiftHorizontalFloorTiles: 0
+  ShiftVerticalFloorTiles: 0

@@ -52,6 +52,8 @@ public class SettlementTileArea
             Sections.Add(new SettlementTileAreaSection(GetStartingCoordsFromRoad(settlement.roads[x], settings, true), Sections.Count + 1, settlement.roads[x]));
 
         }
+
+        Sections = FilterIntersectingBuildingSections(Sections);
         SettlementBuildingMoniter BuildingMoniter = new SettlementBuildingMoniter(SettlementBuildingTypeManager.Instance.GetRandomData());
         List<TileAreaRoad> RoadsCreatedInTileAreas = new List<TileAreaRoad>();
         for(int q = 0; q < Sections.Count; q++)
@@ -96,6 +98,42 @@ public class SettlementTileArea
         }
         //GenerateBuildingsInSections(settlement);
         
+    }
+
+
+   
+
+    List<SettlementTileAreaSection> FilterIntersectingBuildingSections(List<SettlementTileAreaSection> areas)
+    {
+        List<SettlementTileAreaSection> retVal = new List<SettlementTileAreaSection>();
+        HashSet<int> removed = new HashSet<int>();
+        
+        for(int x = 0; x < areas.Count; x++)
+        {
+            bool valid = true;
+            for (int q = 0; q < areas.Count; q++)
+            {
+                if (removed.Contains(q)||x==q)
+                {
+                    continue;
+                }
+                if (areas[x].IsIntersectingSegment(areas[q]))
+                {
+                    valid = false;
+                    break;
+                }
+            }
+            if (!valid)
+            {
+                removed.Add(x);
+            }
+            else
+            {
+                retVal.Add(areas[x]);
+            }
+        }
+        Debug.Log("Filtering intersecting areas: " + areas.Count + "->" + retVal.Count);
+        return retVal;
     }
 
     void ConvertTileAreaRoadToSettlementRoad(TileAreaRoad road,Settlement_Settings settings,ref GeneratedSettlement settlement)
@@ -314,7 +352,10 @@ public class SettlementTileAreaSection
         }
     }
 
-
+    public bool IsIntersectingSegment(SettlementTileAreaSection area)
+    {
+        return LineUtil.SquareIntersection(Low, High, area.Low, area.High);
+    }
     public void DebugDrawArea()
     {
      

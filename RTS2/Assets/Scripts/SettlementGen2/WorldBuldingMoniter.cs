@@ -57,7 +57,13 @@ public class WorldBuldingMoniter : MonoBehaviour
     public void AddBuildingZone(BuildingTileArea area)
     {
         coordsAdded.Clear();
-        Vector2Int coords = GetCoordsOfPosition(area.Low);
+
+        Vector2Int coords = GetCoordsOfPosition( area.Low + ((area.High-area.Low)/2));
+        AddToBuildingsDictionary(coords, area);
+
+        return;
+
+        coords = GetCoordsOfPosition(area.Low);
         AddToBuildingsDictionary(coords, area);
 
         coords = GetCoordsOfPosition(area.High);
