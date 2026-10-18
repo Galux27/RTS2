@@ -264,7 +264,39 @@ public class WorldChunkManager : MonoBehaviour
         }
         UnitsInChunkBatches.Remove(batch);
     }
+    public Vector2Int ConvertPositionToChunkBatchCoordsVec2(Vector2Int pos)
+    {
+        int x = 0;
 
+        if (pos.x < 0)
+        {
+            x = RoundToMultiple(Mathf.Floor(pos.x), ChunkBatchSize, false) - ChunkBatchSize;
+        }
+        else
+        {
+            x = RoundToMultiple(Mathf.CeilToInt(pos.x), ChunkBatchSize);
+        }
+
+        if (x > pos.x)
+        {
+            x-= ChunkBatchSize;
+        }
+        int y = 0;
+
+        if (pos.y < 0)
+        {
+            y = RoundToMultiple(Mathf.Floor(pos.y), ChunkBatchSize, false) - ChunkBatchSize;
+        }
+        else
+        {
+            y = RoundToMultiple(Mathf.CeilToInt(pos.y), ChunkBatchSize);
+        }
+        if (y > pos.y)
+        {
+            y -= ChunkBatchSize;
+        }
+        return new Vector2Int(x, y);
+    }
     public Vector2Int ConvertPositionToChunkBatchCoords(Vector3 pos)
     {
         int x = 0;

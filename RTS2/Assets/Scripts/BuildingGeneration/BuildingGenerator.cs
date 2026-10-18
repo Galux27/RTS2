@@ -1,6 +1,7 @@
 using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -54,8 +55,8 @@ public class BuildingGenerator : MonoBehaviour
         GeneratedBuilding building = floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses);
 
         Dictionary<Vector2Int,GeneratedBuilding> splits= building.SplitBuildingIntoChunks();
-        
-        foreach(KeyValuePair<Vector2Int,GeneratedBuilding> kvp in splits)
+        Dictionary<Vector2Int, GeneratedBuilding> splits2 = BuildingSplitUtil.SplitBuildingIntoChunks(building);
+        foreach (KeyValuePair<Vector2Int,GeneratedBuilding> kvp in splits)
         {
             Debug.Log("applying building in " + kvp.Value);
             ApplyBuidlingToWorld(kvp.Value);
@@ -616,6 +617,28 @@ public class GeneratedBuilding
         return false;
     }
 
+    public void SetTilesToTemplate(List<Vector2Int> tiles,RoomTemplate template)
+    {
+        GeneratedRoom r = new GeneratedRoom(new Vector2Int(Width, Height), Position, template.RoomID, MyRooms.Count);
+        int count = 0;
+        for(int x = 0; x < tiles.Count; x++)
+        {
+          
+            if (this.Tiles[tiles[x].x, tiles[x].y] == null)
+            {
+                count++;
+                this.Tiles[tiles[x].x, tiles[x].y] = new RoomTile();
+            }
+            this.Tiles[tiles[x].x, tiles[x].y].SetFloor(template.Floor);
+            this.Tiles[tiles[x].x, tiles[x].y].IsCorridor = true;
+            this.Tiles[tiles[x].x, tiles[x].y].RoomID = int.MaxValue;
+
+
+        }
+        Debug.Log("Set tiles to template " + tiles.Count + "->" + count);
+    }
+    
+    
     bool HasAnything(int x,int y)
     {
 
@@ -1157,7 +1180,7 @@ public class GeneratedBuilding
         return GetRandomRoomWeCouldStillGenerate(template);
     }
 
-    RoomTemplate GetRandomRoomWeCouldStillGenerate(BuildingTemplate template)
+   public RoomTemplate GetRandomRoomWeCouldStillGenerate(BuildingTemplate template)
     {
         List<RoomTemplate> potentialRooms = new List<RoomTemplate>();
         for (int x = 0; x < template.PotentialRooms.Count; x++)
@@ -1288,8 +1311,9 @@ public class GeneratedBuilding
         int newBuildingHeight = y6 - y5;
         Vector2Int min = new Vector2Int(x5, y5);
         Vector2Int max = new Vector2Int(x6, y6);
-        Debug.Log("Generating building from split width" + newBuildingWidth + ", height" + newBuildingHeight + ", min" + min.ToString() + ", max " + max.ToString()+",chunk batch "+chunkBatchToPutIn+", position "+Position);
-        GeneratedBuilding building = new GeneratedBuilding(newBuildingWidth, newBuildingHeight, new Vector2Int(x5, y5), this.buildingType);
+        Debug.Log("Generating building from split width" + newBuildingWidth + ", height" + newBuildingHeight + ", min" + min.ToString() + ", max " + max.ToString()+",chunk batch "+chunkBatchToPutIn+", position "+Position+" original size " +this.Width+","+this.Height);
+        GeneratedBuilding building = TakeSliceOfBuilding(this, chunkBatchToPutIn, new Vector2Int(newBuildingWidth, newBuildingHeight)
+            , new Vector2Int(x5, y5));//new GeneratedBuilding(newBuildingWidth, newBuildingHeight, new Vector2Int(x5, y5), this.buildingType);
 
         GeneratedRoom room = null;
         for(int x = 0; x < MyRooms.Count; x++)
@@ -1307,6 +1331,94 @@ public class GeneratedBuilding
 
         //check through each room and create a new room based off it with any tiles that should be in this chunk batch  
         return building;
+    }
+
+    bool InRange(Vector2Int min,Vector2Int max,Vector2Int val)
+    {
+        return val.x >= min.x && val.x < max.x && val.y >= min.y && val.y < max.y;
+    }
+
+    public GeneratedBuilding TakeSliceOfBuilding( GeneratedBuilding building,Vector2Int batchCoords,Vector2Int size,Vector2Int position)
+    {
+        GeneratedBuilding retVal = new GeneratedBuilding(size.x, size.y, position, building.buildingType);
+
+        Vector2Int sampleStart = position;
+        Vector2Int sampleEnd = position + size;
+        Vector2Int tileWorldPos = building.Position;
+        for(int x = 0; x < Width; x++)
+        {
+            for(int y = 0; y < Height; y++)
+            {
+                tileWorldPos = building.Position;
+                tileWorldPos.x += x;
+                tileWorldPos.y+= y;
+                if (InRange(sampleStart, sampleEnd, tileWorldPos))
+                {
+                    tileWorldPos = tileWorldPos - sampleStart;
+                    retVal.Tiles[tileWorldPos.x, tileWorldPos.y] = new RoomTile();
+                    retVal.Tiles[tileWorldPos.x, tileWorldPos.y].CopyData(building.Tiles[x, y]);
+                }
+
+            }
+        }
+
+        return retVal;
+        //need to add props & add something to refresh adjacent walls as some are jank
+       /* Vector2Int size = new Vector2Int(Width, Height);
+
+        Vector2Int RoomPosition = Position;
+        Vector2Int roomStart = Vector2Int.zero;
+        Vector2Int roomMax = building.Position + Position + size;
+        //gets intersection of squares
+        int x5 = Mathf.Max(min.x, roomStart.x);
+        int y5 = Mathf.Max(min.y, roomStart.y);
+        int x6 = Mathf.Min(max.x, roomMax.x);
+        int y6 = Mathf.Min(max.y, roomMax.y);
+        if (x5 > x6 || y5 > y6)
+        {
+            return null;
+        }
+        int width = x6 - x5;
+        int height = y6 - y5;
+
+        int localXStart = Mathf.RoundToInt(Mathf.InverseLerp(roomStart.x, roomMax.x, x5) * size.x);
+        int localYStart = Mathf.RoundToInt(Mathf.InverseLerp(roomStart.y, roomMax.y, y5) * size.y);
+        // GeneratedRoom room = new GeneratedRoom(new Vector2Int(width, height), new Vector2Int(x5, y5), RoomType, RoomID);
+        GeneratedBuilding retVal = new GeneratedBuilding();
+        //Debug.Log("Room Slice: room area " + roomStart + " to " + roomMax + " area checking " + min + " to " + max+" intersection "+ x5+","+y5+" to "+ x6+","+y6+" local "+localXStart+","+localYStart+" size " + width+","+height+" room size "+ size);
+
+        //Debug.Log("Taking slice of room " + x5 + "," + y5 + " max " + x6 + "," + y6 + ",local" + localXStart + 
+        //    "," + localYStart+" building pos " +building.Position+",size b "+building.Width+","+building.Height+", room size"+this.size
+        //    +" area start " + min+" area end " +max+",slice size "+ width+","+height+" room pos "+ room.Position);
+
+        //code isn't working because the the conversion is done from the original building and the application is done in the sliced building
+        //need to write something to convert between the building passed into here and the building its applied to
+
+        Vector2Int position = Vector2Int.zero;
+        int newX = localXStart, newY = localYStart;
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Tiles[x, y].CopyData(retVal.Tiles[newX, newY]);
+
+                //if (EnvObjects != null && EnvObjects.ContainsKey(RoomTiles[newX, newY]))
+                //{
+                //    //subtracting room position to get around stupid corner I've painted myself into with how they're placed in the world
+                //    room.AddEnvObject(room.RoomTiles[x, y], new GeneratedRoomProp(EnvObjects[RoomTiles[newX, newY]].ID, new Vector2Int(x, y), true));
+                //}
+                newY++;
+            }
+            newX++;
+            newY = localYStart;
+        }
+
+
+
+
+
+        return room;*/
     }
 
     public int RoundToMultiple(int value, int roundTo)

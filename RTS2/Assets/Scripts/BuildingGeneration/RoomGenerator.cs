@@ -884,11 +884,11 @@ public class GeneratedRoom
         int localYStart = Mathf.RoundToInt(Mathf.InverseLerp(roomStart.y, roomMax.y, y5) * size.y);
         GeneratedRoom room = new GeneratedRoom(new Vector2Int(width, height), new Vector2Int(x5, y5), RoomType, RoomID);
 
-        Debug.Log("Room Slice: room area " + roomStart + " to " + roomMax + " area checking " + min + " to " + max+" intersection "+ x5+","+y5+" to "+ x6+","+y6+" local "+localXStart+","+localYStart+" size " + width+","+height+" room size "+ size);
+        //Debug.Log("Room Slice: room area " + roomStart + " to " + roomMax + " area checking " + min + " to " + max+" intersection "+ x5+","+y5+" to "+ x6+","+y6+" local "+localXStart+","+localYStart+" size " + width+","+height+" room size "+ size);
 
-        Debug.Log("Taking slice of room " + x5 + "," + y5 + " max " + x6 + "," + y6 + ",local" + localXStart + 
-            "," + localYStart+" building pos " +building.Position+",size b "+building.Width+","+building.Height+", room size"+this.size
-            +" area start " + min+" area end " +max+",slice size "+ width+","+height+" room pos "+ room.Position);
+        //Debug.Log("Taking slice of room " + x5 + "," + y5 + " max " + x6 + "," + y6 + ",local" + localXStart + 
+        //    "," + localYStart+" building pos " +building.Position+",size b "+building.Width+","+building.Height+", room size"+this.size
+        //    +" area start " + min+" area end " +max+",slice size "+ width+","+height+" room pos "+ room.Position);
 
      //code isn't working because the the conversion is done from the original building and the application is done in the sliced building
      //need to write something to convert between the building passed into here and the building its applied to
@@ -1289,7 +1289,11 @@ public class RoomTile
         {
             IsEdge = true;
         }
-
+        if (toCopy.IsCorridor)
+        {
+            IsCorridor = true;
+        }
+        RoomID=toCopy.RoomID; 
         AvgDistToDoor = toCopy.AvgDistToDoor;
         AvgDistToWall = toCopy.AvgDistToWall;
         AvgDistToProp = toCopy.AvgDistToProp;
