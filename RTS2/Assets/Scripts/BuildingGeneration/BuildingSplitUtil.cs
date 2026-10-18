@@ -1,6 +1,6 @@
-using UnityEngine;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Drawing;
+using UnityEngine;
 public static class BuildingSplitUtil
 {
    public static Dictionary<Vector2Int,GeneratedBuilding> SplitBuildingIntoChunks(GeneratedBuilding toSplit)
@@ -11,16 +11,15 @@ public static class BuildingSplitUtil
         Vector2Int buildingTopPoint = toSplit.Position + size;
         Vector2Int startChunk= WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(toSplit.Position);
         Debug.Log("Splits: start chunk from " + toSplit.Position + " was " + startChunk);
+        Dictionary<Vector2Int, GeneratedBuilding> retVal = new Dictionary<Vector2Int, GeneratedBuilding>();
 
-       Vector2Int endChunk = WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(buildingTopPoint);
+        Vector2Int endChunk = WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(buildingTopPoint);
         if (startChunk == endChunk)
         {
-            Dictionary<Vector2Int, GeneratedBuilding> retVal = new Dictionary<Vector2Int, GeneratedBuilding>();
             retVal.Add(startChunk, toSplit);
             return retVal;
         }else
         {
-            Dictionary<Vector2Int, GeneratedBuilding> retVal = new Dictionary<Vector2Int, GeneratedBuilding>();
             List<BuildingSplitCoords> splits = new List<BuildingSplitCoords>();
 
             Vector2Int initialSize = (startChunk + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize)) - toSplit.Position;
@@ -52,20 +51,52 @@ public static class BuildingSplitUtil
                 Vector2Int convertedPosition = WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(new Vector2Int( toSplit.Position.x, start));
                 for (int x = 0; x < splits.Count; x++)
                 {
-                    convertedPosition.x = splits[x].BatchCoords.x;
-                   
-                    verticalSplits.Add(new BuildingSplitCoords(convertedPosition, CalculateSize(new Vector2Int(splits[x].BatchCoords.x,start), toSplit, buildingTopPoint)));
+                    convertedPosition.x = splits[x].Position.x;
+                    verticalSplits.Add(new BuildingSplitCoords(convertedPosition, CalculateSize(new Vector2Int(splits[x].Position.x,start), toSplit, buildingTopPoint)));
 
                 }
             }
             splits.AddRange(verticalSplits);
-            for(int x = 0; x < splits.Count; x++)
+            List<GeneratedRoomProp> props = new List<GeneratedRoomProp>();
+            for (int x = 0; x < splits.Count; x++)
             {
                 splits[x].DebugDraw();
+                Vector2Int startIndex = splits[x].Position - toSplit.Position;
+                Vector2Int endIndex = startIndex + splits[x].Size;
+
+                Vector2Int batch = WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(splits[x].Position);
+                GeneratedBuilding building = new GeneratedBuilding(splits[x].Size.x, splits[x].Size.y, splits[x].Position, toSplit.buildingType);
+
+                List<RoomTile> TilesTaken = new List<RoomTile>();
+                List<RoomTile> TilesCreated = new List<RoomTile>();
+                for (int x1 = startIndex.x; x1 < endIndex.x; x1++)
+                {
+                    for(int y1 = startIndex.y; y1 < endIndex.y; y1++)
+                    {
+                        building.Tiles[x1 - startIndex.x, y1 - startIndex.y] = toSplit.Tiles[x1, y1];
+                        TilesTaken.Add(toSplit.Tiles[x1, y1]);
+                        
+                    }
+                }
+                props=toSplit.GetPropsFromSlicedRoom(TilesTaken);
+                if (props.Count > 0)
+                {
+                    GeneratedRoom propRoom = new GeneratedRoom(new Vector2Int(building.Width, building.Height), Vector2Int.zero, "Props", 1);
+                    for(int q = 0; q < props.Count; q++)
+                    {
+                        Vector2Int splitOffset =  building.Position-toSplit.Position;
+                        Vector2Int newPosition = props[q].pos - splitOffset;
+                        propRoom.AddEnvObject(propRoom.RoomTiles[newPosition.x, newPosition.y], props[q]);
+                        Debug.Log("Splits:Prop in sliced room " + props[q].pos + " id " + props[q].ID + " new local position "+newPosition +"new offset"+ splitOffset);
+                    }
+                    building.AddRoom(propRoom);
+                }
+                retVal.Add(batch, building);
+
             }
         }
 
-        return null;
+        return retVal;
     }
 
     static Vector2Int CalculateSize(Vector2Int position,GeneratedBuilding building,Vector2Int buildingTopPoint)
@@ -74,24 +105,36 @@ public static class BuildingSplitUtil
             Mathf.Min(position.y + WorldChunkManager.ChunkBatchSize, buildingTopPoint.y));
         return worldTopPoint - position ;
     }
+    public static void DebugDraw(Vector2Int Position,Vector2Int Size, UnityEngine.Color c)
+    {
+        Debug.Log("Splits: Drawing splits " + Position + " size " + Size);
+        Vector3 p1 = new Vector3(Position.x, Position.y);
+        Vector3 p2 = new Vector3(Position.x + Size.x, Position.y + Size.y);
+        Debug.DrawLine(p1, p1 + new Vector3(Size.x, 0, 0), c, 100f);
+        Debug.DrawLine(p1, p1 + new Vector3(0, Size.y, 0), c, 100f);
+        Debug.DrawLine(p1 + new Vector3(Size.x, 0), p2, c, 100f);
+        Debug.DrawLine(p1 + new Vector3(0, Size.y, 0), p2, c, 100f);
+
+    }
 }
 
 public class BuildingSplitCoords
 {
-    public Vector2Int BatchCoords;
+    public Vector2Int Position;
     public Vector2Int Size;
     public BuildingSplitCoords(Vector2Int batch,Vector2Int size)
     {
-        BatchCoords= batch;
+        Position= batch;
         Size= size;
     }
 
     public void DebugDraw()
     {
-        Debug.Log("Splits: Drawing splits " + BatchCoords + " size " + Size);
-        Color c = Color.Lerp(Color.red, Color.yellow, .5f);
-        Vector3 p1 = new Vector3(BatchCoords.x, BatchCoords.y);
-        Vector3 p2 = new Vector3(BatchCoords.x + Size.x, BatchCoords.y + Size.y);
+        return;
+        Debug.Log("Splits: Drawing splits " + Position + " size " + Size);
+        UnityEngine.Color c = UnityEngine.Color.Lerp(UnityEngine.Color.red, UnityEngine.Color.yellow, .5f);
+        Vector3 p1 = new Vector3(Position.x, Position.y);
+        Vector3 p2 = new Vector3(Position.x + Size.x, Position.y + Size.y);
         Debug.DrawLine(p1, p1 + new Vector3(Size.x, 0,0),c,100f);
         Debug.DrawLine(p1, p1 + new Vector3(0, Size.y, 0), c, 100f);
         Debug.DrawLine( p1 + new Vector3( Size.x, 0),p2, c, 100f);

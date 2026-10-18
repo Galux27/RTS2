@@ -26,6 +26,9 @@ MonoBehaviour:
   - roomTemplate: {fileID: 11400000, guid: f7ae538e8d04e2246bae060adae0118f, type: 2}
     Min: 1
     Max: 1
+  - roomTemplate: {fileID: 11400000, guid: a265a8372b9e347479b1d9697d80c0af, type: 2}
+    Min: 1
+    Max: 1
   MainRoom:
     roomTemplate: {fileID: 11400000, guid: a265a8372b9e347479b1d9697d80c0af, type: 2}
     Min: 0

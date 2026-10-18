@@ -387,6 +387,11 @@ public static class LineUtil
         return origin + heading * dotP;
     }
 
+    public static bool SquareContainsPoint(Vector2Int low,Vector2Int high,Vector2Int point)
+    {
+        return point.x > low.x && point.x < high.x && point.y > low.y && point.y < high.y;
+    }
+
 
     public static bool SquareIntersection(Vector2 low1,Vector2 high1, Vector2 low2,Vector2 high2/*, out Rect area*/)
     {

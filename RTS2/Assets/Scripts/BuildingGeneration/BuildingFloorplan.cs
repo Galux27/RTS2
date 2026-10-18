@@ -658,7 +658,7 @@ public class HouseFloorplan : BuildingFloorplan
         bool done = false;
         GeneratedRoom curRoom = null;
         int count = 0;
-        while (!done&&count<620)
+        while (!done&&count<1111)
         {
             RoomTemplate roomTemplate = building.GetRoomToGenerate(template);// building.GetRandomRoomWeCouldStillGenerate(template);
             if (roomTemplate == null)
@@ -698,15 +698,35 @@ public class HouseFloorplan : BuildingFloorplan
                         skip = true;
                     }
                 }
-
+                if (!skip) {
+                    for (int x = 0; x < building.MyRooms.Count; x++)
+                    {
+                        if (LineUtil.SquareIntersection(position, position + roomSize, building.MyRooms[x].Position, building.MyRooms[x].Position + building.MyRooms[x].size))
+                        {
+                            skip = true;
+                            break;
+                        }
+                    }
+                }
                 if (!skip)
                 {
 
                     curRoom = RoomGen.GenerateRoom(position, roomSize, roomTemplate, building.MyRooms.Count, building);
+                    
                     building.AddRoom(curRoom);
                     startPositions.RemoveAt(startIndex);
-                    startPositions.Add(new Vector2Int(position.x + roomSize.x+1, position.y));
-                    startPositions.Add(new Vector2Int(position.x, position.y + roomSize.y+1));
+                    startPositions.Add(new Vector2Int(position.x + roomSize.x + 1, position.y));
+                    startPositions.Add(new Vector2Int(position.x, position.y + roomSize.y + 1));
+                    List<Vector2Int> newPositions = new List<Vector2Int>();
+                    for(int x = 0; x < startPositions.Count; x++)
+                    {
+                        if (LineUtil.SquareContainsPoint(position, position + roomSize, startPositions[x])==false)
+                        {
+                            newPositions.Add(startPositions[x]);
+                        }
+                    }
+                    startPositions = newPositions;
+                   
 
 
                 }

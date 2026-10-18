@@ -6,6 +6,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 public class BuildingGenerator : MonoBehaviour
 {
@@ -53,9 +54,26 @@ public class BuildingGenerator : MonoBehaviour
             (int)CameraController.Instance.transform.position.y);
         BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(testTemplate.FloorplanType);
         GeneratedBuilding building = floorplan.Generate(RoomGen, width, height, camPos - new Vector2Int(width / 2, height / 2), testTemplate, MaxGenerationPasses);
+        for(int x = 0; x < building.MyRooms.Count; x++)
+        {
+            Color c = Color.green;
+            for (int q = 0; q < building.MyRooms.Count; q++)
+            {
+                if (q == x)
+                {
+                    continue;
+                }
+                if (LineUtil.SquareIntersection(building.MyRooms[q].Position, building.MyRooms[q].Position+ building.MyRooms[q].size, building.MyRooms[x].Position, building.MyRooms[x].Position + building.MyRooms[x].size))
+                {
+                    c = Color.blue;
+                }
+            }
 
-        Dictionary<Vector2Int,GeneratedBuilding> splits= building.SplitBuildingIntoChunks();
-        Dictionary<Vector2Int, GeneratedBuilding> splits2 = BuildingSplitUtil.SplitBuildingIntoChunks(building);
+
+                BuildingSplitUtil.DebugDraw(building.MyRooms[x].Position + building.Position, building.MyRooms[x].size,c);
+            Debug.Log("Splits: room at  " + building.MyRooms[x].Position + " size " + building.MyRooms[x].size);
+        }
+        Dictionary<Vector2Int,GeneratedBuilding> splits= BuildingSplitUtil.SplitBuildingIntoChunks(building);
         foreach (KeyValuePair<Vector2Int,GeneratedBuilding> kvp in splits)
         {
             Debug.Log("applying building in " + kvp.Value);
@@ -1095,6 +1113,32 @@ public class GeneratedBuilding
             }
         }
     }
+
+    public List<GeneratedRoomProp> GetPropsFromSlicedRoom(List<RoomTile> tilesUsed)
+    {
+        List<GeneratedRoomProp> props = new List<GeneratedRoomProp>();
+        GeneratedRoomProp prop = null;
+        for (int x = 0; x < tilesUsed.Count; x++)
+        {
+            for(int i = 0; i < MyRooms.Count; i++)
+            {
+                if (MyRooms[i].EnvObjects == null || tilesUsed[x]==null)
+                {
+                    continue;
+                }
+                if (MyRooms[i].EnvObjects.ContainsKey(tilesUsed[x]))
+                {
+                    prop = MyRooms[i].EnvObjects[tilesUsed[x]];
+
+                    props.Add(new GeneratedRoomProp(prop.ID, prop.pos + MyRooms[i].Position,true));
+                    
+                }
+            }
+           
+        }
+        return props;
+    }
+
 
     public void PopulatePropsInRooms(RoomGenerator roomGen)
     {
