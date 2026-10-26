@@ -11,6 +11,7 @@ public class CamerDebugInfo : MonoBehaviour
     public WorldTile TileImIn;
     public int NodeImOver;
     public PathNodeID IdImIn;
+    public bool DrawGrid = false;
 
     // Update is called once per frame
     void Update()
@@ -38,5 +39,30 @@ public class CamerDebugInfo : MonoBehaviour
         {
             ChunkImIn = null;
         }
+
+        if (DrawGrid)
+        {
+            Vector2Int start = BatchImIn.coords;
+            Vector2Int pos = Vector2Int.zero;
+            Vector2Int dest = Vector2Int.zero;
+            for(int x = -5; x < 5; x++)
+            {
+                for (int y = -5; y < 5; y++)
+                {
+                    pos.x = start.x + (x * WorldChunkManager.ChunkBatchSize);
+                    pos.y = start.y+(y * WorldChunkManager.ChunkBatchSize);
+
+                    dest = pos;
+                    dest.x += WorldChunkManager.ChunkBatchSize;
+                    Debug.DrawLine((Vector2) pos, (Vector2)dest, Color.yellow);
+                    dest = pos;
+                    dest.y += WorldChunkManager.ChunkBatchSize;
+                    Debug.DrawLine((Vector2)pos, (Vector2)dest, Color.yellow);
+
+                }
+            }
+        }
     }
+
+    
 }

@@ -744,7 +744,7 @@ public class HouseFloorplan : BuildingFloorplan
         building.GenerateDoors();
         building.PopulatePropsInRooms(RoomGen);
         building.ShiftAllFloorTiles(template);
-      //  GenerateFillInCorridors(ref building, size, BuildingDataManager.Instance.RoomTemplates["Hallway"]);
+        GenerateFillInCorridors(ref building, size, BuildingDataManager.Instance.RoomTemplates["Hallway"]);
         BuildingFloorplan.PopulateExteriorWallTiles(building);
 
         return building;
@@ -762,38 +762,57 @@ public class HouseFloorplan : BuildingFloorplan
         for(int y = 0; y < buildingSize.y; y++)
         {
             CurrentlyChecking.Clear();
-            for(int x = 0; x < buildingSize.x; x++) 
+            bool addedLast = false;
+            for(int x = 1; x < buildingSize.x; x++) 
             {
-                if (building.Tiles[x, y] == null|| building.Tiles[x, y].FloorTile == string.Empty || building.Tiles[x,y].RoomID<=0)
+                if (building.Tiles[x, y] == null|| building.Tiles[x, y].HasWall&&!building.Tiles[x, y].HasFloor)
                 {
                     CurrentlyChecking.Add(new Vector2Int(x, y));
-                }
-                else
-                {
-                    positionsForCorridors.AddRange(CurrentlyChecking);
-                    CurrentlyChecking.Clear();
-                }
-            }
-        }
-
-        for (int x = 0; x < buildingSize.x; x++)
-        {
-            CurrentlyChecking.Clear();
-            for (int y = 0; y < buildingSize.y; y++)
-            {
-                if (building.Tiles[x, y] == null || building.Tiles[x, y].FloorTile == string.Empty || building.Tiles[x, y].RoomID <= 0)
-                {
-                    val.x = x;
-                    val.y = y;
-                    if (!positionsForCorridors.Contains(val))
+                    if (!addedLast)
                     {
-                        CurrentlyChecking.Add(val);
+                        CurrentlyChecking.Add(new Vector2Int(x - 1, y));
+                        addedLast = true;
                     }
                 }
                 else
                 {
                     positionsForCorridors.AddRange(CurrentlyChecking);
                     CurrentlyChecking.Clear();
+                    addedLast = false;
+                }
+            }
+        }
+
+        for (int x = 0; x < buildingSize.x; x++)
+        {
+            bool addedLast = false;
+
+            CurrentlyChecking.Clear();
+            for (int y = 1; y < buildingSize.y; y++)
+            {
+                if (building.Tiles[x, y] == null || building.Tiles[x, y].HasWall && !building.Tiles[x, y].HasFloor)
+                {
+                    val.x = x;
+                    val.y = y;
+                    if (!positionsForCorridors.Contains(val))
+                    {
+                        CurrentlyChecking.Add(val);
+                        if (!addedLast)
+                        {
+                            val.y = y - 1;
+                            if (!positionsForCorridors.Contains(val))
+                            {
+                                CurrentlyChecking.Add(val);
+                                addedLast = true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    positionsForCorridors.AddRange(CurrentlyChecking);
+                    CurrentlyChecking.Clear();
+                    addedLast = false;
                 }
             }
         }

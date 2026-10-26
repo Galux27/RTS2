@@ -32,8 +32,10 @@ public class RoomTileDebug : MonoBehaviour
         RoomTileDebug rtd=g.AddComponent<RoomTileDebug>();
         rtd.TileIRepresent=tile;
         rtd.transform.position = new Vector3(position.x+.5f, position.y+.5f, 0);
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(rtd.transform.position.x, rtd.transform.position.y, out rtd.Batch, out rtd.Chunk, out rtd.Tile);
         return g;
     }
 
     public RoomTile TileIRepresent;
+    public Vector2Int Batch, Chunk, Tile;
 }

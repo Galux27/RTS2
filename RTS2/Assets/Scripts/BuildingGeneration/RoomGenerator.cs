@@ -1264,7 +1264,7 @@ public class GeneratedRoomProp
 public class RoomTile
 {
     public string FloorTile, WallTile,DoorTile;
-    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false,IsCorridor=false,IsValidForDoor=false;
+    public bool HasWall = false, HasFloor = false, HasDoor = false, IsEdge = false, HasProp = false,IsCorridor=false,IsValidForDoor=false,Shifted=false;
     public int RoomID=-1;
 
     public float AvgDistToWall=0f,AvgDistToDoor,AvgDistToProp=0f;

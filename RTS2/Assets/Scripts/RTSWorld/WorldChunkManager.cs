@@ -501,8 +501,8 @@ public class WorldChunkManager : MonoBehaviour
     /// <param name="coords">Coords within the chunk that the position was in</param>
     public void ConvertPositionToChunkAndLocalCoords(float x, float y, out Vector2Int chunkBatch,out Vector2Int chunkCoords, out Vector2Int coords)
     {
-        x = Mathf.Ceil(x);
-        y=Mathf.Ceil(y);
+        x = Mathf.Floor(x);
+        y=Mathf.Floor(y);
         float mod = WorldChunkManager.ChunkBatchSize;
         xMod = Mathf.RoundToInt(x % mod);
         localX =xMod;

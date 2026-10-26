@@ -62,21 +62,30 @@ public static class BuildingSplitUtil
             {
                 splits[x].DebugDraw();
                 Vector2Int startIndex = splits[x].Position - toSplit.Position;
-                Vector2Int endIndex = startIndex + splits[x].Size;
+                Vector2Int endIndex =  startIndex + splits[x].Size;
 
                 Vector2Int batch = WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(splits[x].Position);
                 GeneratedBuilding building = new GeneratedBuilding(splits[x].Size.x, splits[x].Size.y, splits[x].Position, toSplit.buildingType);
 
                 List<RoomTile> TilesTaken = new List<RoomTile>();
                 List<RoomTile> TilesCreated = new List<RoomTile>();
-                for (int x1 = startIndex.x; x1 < endIndex.x; x1++)
+                try
                 {
-                    for(int y1 = startIndex.y; y1 < endIndex.y; y1++)
+                    for (int x1 = startIndex.x; x1 < Mathf.Min(endIndex.x, toSplit.Tiles.GetLength(0)); x1++)
                     {
-                        building.Tiles[x1 - startIndex.x, y1 - startIndex.y] = toSplit.Tiles[x1, y1];
-                        TilesTaken.Add(toSplit.Tiles[x1, y1]);
-                        
+                        for (int y1 = startIndex.y; y1 < Mathf.Min(endIndex.y,toSplit.Tiles.GetLength(1)); y1++)
+                        {
+                            building.Tiles[x1 - startIndex.x, y1 - startIndex.y] = toSplit.Tiles[x1, y1];
+                            TilesTaken.Add(toSplit.Tiles[x1, y1]);
+
+                        }
                     }
+                }
+                catch(System.Exception e)
+                {
+                    Debug.LogError(e.ToString());
+                    Debug.LogError("Error making building " + building.Tiles.GetLength(0) + "," + building.Tiles.GetLength(1) + " to split " + toSplit.Tiles.GetLength(0) + "," + toSplit.Tiles.GetLength(1)
+                        +" start ind " +startIndex+" end index "+endIndex);
                 }
                 props=toSplit.GetPropsFromSlicedRoom(TilesTaken);
                 if (props.Count > 0)
@@ -103,7 +112,7 @@ public static class BuildingSplitUtil
     {
         Vector2Int worldTopPoint = new Vector2Int(Mathf.Min(position.x + WorldChunkManager.ChunkBatchSize, buildingTopPoint.x),
             Mathf.Min(position.y + WorldChunkManager.ChunkBatchSize, buildingTopPoint.y));
-        return worldTopPoint - position ;
+        return (worldTopPoint - position)+Vector2Int.one;
     }
     public static void DebugDraw(Vector2Int Position,Vector2Int Size, UnityEngine.Color c)
     {

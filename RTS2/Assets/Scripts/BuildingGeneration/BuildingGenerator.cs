@@ -171,10 +171,9 @@ public class BuildingGenerator : MonoBehaviour
 
                 if (cur.HasFloor && cur.FloorTile!=null)
                 {
-                    if (x < b.Width - 1 && y < b.Height - 1)
-                    {
-                        WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].UpdateTile(localCoords.x, localCoords.y, cur.FloorTile, ID);
-                    }
+                    
+                     WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].UpdateTile(localCoords.x, localCoords.y, cur.FloorTile, ID);
+                    
                 }
                 elevation += WorldChunkManager.Instance.ChunkBatches[batchCoords].Chunks[chunkCoords.x, chunkCoords.y].ChunkTiles[localCoords.x, localCoords.y].Elevation.GetElevation();
                 count++;
@@ -637,7 +636,7 @@ public class GeneratedBuilding
 
     public void SetTilesToTemplate(List<Vector2Int> tiles,RoomTemplate template)
     {
-        GeneratedRoom r = new GeneratedRoom(new Vector2Int(Width, Height), Position, template.RoomID, MyRooms.Count);
+        GeneratedRoom r = new GeneratedRoom(new Vector2Int(Width, Height), Vector2Int.zero, template.RoomID, MyRooms.Count);
         int count = 0;
         for(int x = 0; x < tiles.Count; x++)
         {
@@ -650,9 +649,9 @@ public class GeneratedBuilding
             this.Tiles[tiles[x].x, tiles[x].y].SetFloor(template.Floor);
             this.Tiles[tiles[x].x, tiles[x].y].IsCorridor = true;
             this.Tiles[tiles[x].x, tiles[x].y].RoomID = int.MaxValue;
-
-
+            r.RoomTiles[tiles[x].x, tiles[x].y] = this.Tiles[tiles[x].x, tiles[x].y];
         }
+        AddRoom(r);
         Debug.Log("Set tiles to template " + tiles.Count + "->" + count);
     }
     
