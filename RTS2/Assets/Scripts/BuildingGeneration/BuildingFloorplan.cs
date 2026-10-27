@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Unity.VisualScripting;
+using UnityEditor.Analytics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -750,8 +751,330 @@ public class HouseFloorplan : BuildingFloorplan
         return building;
     }
 
+    bool DoesTileStopCorridorChecks(RoomTile tile,GeneratedRoom room)
+    {
+        if (tile != null)
+        {
+            if (tile.RoomID != room.RoomID && tile.HasFloor)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool DoesTileStopCorridorChecks(RoomTile tile)
+    {
+        if (tile != null)
+        {
+            if (tile.RoomID != -1 && tile.HasFloor)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static List<Vector2Int> CorridorTiles = new List<Vector2Int>();
+    List<Vector2Int> GetTilesFromVerticalFromRoom(ref GeneratedBuilding building,GeneratedRoom roomToComeFrom,List<Vector2Int> AlreadyUsed,out CorridorEdge edge)
+    {
+        CorridorTiles.Clear();
+        RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[roomToComeFrom.RoomType];
+
+        Vector2Int startPoint = roomToComeFrom.Position;
+        startPoint.y += roomToComeFrom.size.y;
+        startPoint.y -= template.FloorYOffset;
+        int size = roomToComeFrom.size.x;
+
+        Vector2Int endPoint = startPoint;
+        endPoint.x += size;
+
+        
+        bool hitEnd = false;
+        List<Vector2Int> LastLine = new List<Vector2Int>();
+        Vector2Int curPos = new Vector2Int();
+        bool hitEdge = false;
+        while (!hitEnd)
+        {
+            if (endPoint.y >= building.Height)
+            {
+                hitEnd = true;
+                hitEdge = true;
+            }
+            else
+            {
+                curPos.y = endPoint.y;
+                for (int x = startPoint.x; x < endPoint.x; x++)
+                {
+                    curPos.x = x;
+                    if (!AlreadyUsed.Contains(curPos))
+                    {
+                        LastLine.Add(curPos);
+                        if (DoesTileStopCorridorChecks(building.Tiles[x, endPoint.y], roomToComeFrom))
+                        {
+                            hitEnd = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!hitEnd)
+            {
+                endPoint.y++;
+                CorridorTiles.AddRange(LastLine);
+                LastLine.Clear();
+            }
+
+            if (hitEdge)
+            {
+                CorridorTiles.Clear();
+            }
+        }
+        if (CorridorTiles.Count > 0)
+        {
+            edge = new CorridorEdge(new Vector2Int(endPoint.x, startPoint.y), new Vector2Int(endPoint.x, endPoint.y));
+        }
+        else
+        {
+            edge = new CorridorEdge(startPoint, startPoint);
+
+        }
+        return CorridorTiles;
+    }
+
+    List<Vector2Int> GetTilesFromHorizontalEdge(ref GeneratedBuilding building, CorridorEdge edge, List<Vector2Int> AlreadyUsed)
+    {
+        CorridorTiles.Clear();
+        if (edge.StartPosition == edge.EndPosition)
+        {
+            return CorridorTiles;
+        }
+        Vector2Int startPoint = edge.StartPosition;
+        int size = edge.Width();
+
+
+        Vector2Int endPoint = startPoint;
+        endPoint.x += size;
+
+
+        bool hitEnd = false;
+        List<Vector2Int> LastLine = new List<Vector2Int>();
+        Vector2Int curPos = new Vector2Int();
+        bool hitEdge = false;
+        while (!hitEnd)
+        {
+            if (endPoint.y >= building.Height)
+            {
+                hitEnd = true;
+                hitEdge = true;
+            }
+            else
+            {
+                curPos.y = endPoint.y;
+                for (int x = startPoint.x; x < endPoint.x; x++)
+                {
+                    curPos.x = x;
+                    if (!AlreadyUsed.Contains(curPos))
+                    {
+                        LastLine.Add(curPos);
+                        if (DoesTileStopCorridorChecks(building.Tiles[x, endPoint.y]))
+                        {
+                            hitEnd = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!hitEnd)
+            {
+                endPoint.y++;
+                CorridorTiles.AddRange(LastLine);
+                LastLine.Clear();
+            }
+
+            if (hitEdge)
+            {
+                int width = endPoint.x - startPoint.x;
+                int toRemove = CorridorTiles.Count;
+                if (toRemove > 0)
+                {
+                    while (toRemove > width * 2 && width > 0)
+                    {
+                        toRemove -= width;
+                    }
+                    CorridorTiles.RemoveRange(CorridorTiles.Count - toRemove, toRemove);
+                }
+            }
+        }
+
+        return CorridorTiles;
+    }
+
+
+    List<Vector2Int> GetTilesFromVerticalEdge(ref GeneratedBuilding building, CorridorEdge edge, List<Vector2Int> AlreadyUsed)
+    {
+        CorridorTiles.Clear();
+        if (edge.StartPosition == edge.EndPosition)
+        {
+            return CorridorTiles;
+        }
+        Vector2Int startPoint = edge.StartPosition;
+        int size = edge.Height();
+
+
+        Vector2Int endPoint = startPoint;
+        endPoint.y += size;
+
+
+        bool hitEnd = false;
+        List<Vector2Int> LastLine = new List<Vector2Int>();
+        Vector2Int curPos = new Vector2Int();
+        bool hitEdge = false;
+        while (!hitEnd)
+        {
+            if (endPoint.x >= building.Width - 1)
+            {
+                hitEnd = true;
+                hitEdge = true;
+            }
+            else
+            {
+                curPos.x = endPoint.x;
+                for (int y = startPoint.y; y < endPoint.y; y++)
+                {
+                    curPos.y = y;
+                    if (!AlreadyUsed.Contains(curPos))
+                    {
+                        LastLine.Add(curPos);
+                        if (DoesTileStopCorridorChecks(building.Tiles[endPoint.x, y]))
+                        {
+                            hitEnd = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!hitEnd)
+            {
+                endPoint.x++;
+                CorridorTiles.AddRange(LastLine);
+                LastLine.Clear();
+            }
+
+            if (hitEdge)
+            {
+                int height = endPoint.y - startPoint.y;
+                int toRemove = CorridorTiles.Count;
+                if (toRemove > 0)
+                {
+                    while (toRemove > height * 2 && height > 0)
+                    {
+                        toRemove -= height;
+                    }
+                    CorridorTiles.RemoveRange(CorridorTiles.Count - toRemove, toRemove);
+                }
+            }
+        }
+
+
+        return CorridorTiles;
+    }
+    List<Vector2Int> GetTilesFromHorizontalFromRoom(ref GeneratedBuilding building, GeneratedRoom roomToComeFrom, List<Vector2Int> AlreadyUsed, out CorridorEdge edge)
+    {
+        CorridorTiles.Clear();
+            RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[roomToComeFrom.RoomType];
+
+        Vector2Int startPoint = roomToComeFrom.Position;
+        startPoint.x += roomToComeFrom.size.x;
+        startPoint.x -= template.FloorXOffset;
+        int size = roomToComeFrom.size.y;
+
+
+        Vector2Int endPoint = startPoint;
+        endPoint.y += size;
+
+
+        bool hitEnd = false;
+        List<Vector2Int> LastLine = new List<Vector2Int>();
+        Vector2Int curPos = new Vector2Int();
+        bool hitEdge = false;
+        while (!hitEnd)
+        {
+            if (endPoint.x >= building.Width-1)
+            {
+                hitEnd = true;
+                hitEdge = true;
+            }
+            else
+            {
+                curPos.x = endPoint.x;
+                for (int y = startPoint.y; y < endPoint.y; y++)
+                {
+                    curPos.y = y;
+                    if (!AlreadyUsed.Contains(curPos))
+                    {
+                        LastLine.Add(curPos);
+                        if (DoesTileStopCorridorChecks(building.Tiles[endPoint.x, y], roomToComeFrom))
+                        {
+                            hitEnd = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!hitEnd)
+            {
+                endPoint.x++;
+                CorridorTiles.AddRange(LastLine);
+                LastLine.Clear();
+            }
+
+            if (hitEdge)
+            {
+                CorridorTiles.Clear();
+
+            }
+        }
+        if (CorridorTiles.Count > 0)
+        {
+            edge = new CorridorEdge(new Vector2Int(startPoint.x, endPoint.y), new Vector2Int(endPoint.x, endPoint.y));
+        }
+        else
+        {
+            edge = new CorridorEdge(startPoint,startPoint);
+
+
+        }
+
+        return CorridorTiles;
+    }
+
+    void GenerateFillInCorridors2(ref GeneratedBuilding building,Vector2Int buildingSize,RoomTemplate template)
+    {
+        List<Vector2Int> TilesToMakeCorridors = new List<Vector2Int>();
+        CorridorEdge edge = new CorridorEdge();
+
+        for (int x=0; x < building.MyRooms.Count; x++)
+        {
+            TilesToMakeCorridors.AddRange( GetTilesFromVerticalFromRoom(ref building, building.MyRooms[x],TilesToMakeCorridors,out edge));
+            TilesToMakeCorridors.AddRange(GetTilesFromVerticalEdge(ref building, edge, TilesToMakeCorridors));
+            TilesToMakeCorridors.AddRange(GetTilesFromHorizontalFromRoom(ref building, building.MyRooms[x], TilesToMakeCorridors, out edge));
+            TilesToMakeCorridors.AddRange(GetTilesFromHorizontalEdge(ref building, edge, TilesToMakeCorridors));
+
+        }
+
+        building.SetTilesToTemplate(TilesToMakeCorridors, template);
+
+    }
+
     void GenerateFillInCorridors(ref GeneratedBuilding building,Vector2Int buildingSize,RoomTemplate template)
     {
+        GenerateFillInCorridors2(ref building, buildingSize, template);
+        return;
         //this isn't working due to 
         //GenerateBuildingFromSplit(Vector2Int chunkBatchToPutIn)
         //only using rooms, not the actual building tiles, could try making this into a room instead?
@@ -1163,4 +1486,25 @@ public enum BuildingFloorplanType
     SquareNoSplit,
     Corridors,
     House
+}
+
+public struct CorridorEdge
+{
+    public Vector2Int StartPosition;
+    public Vector2Int EndPosition;
+    public CorridorEdge(Vector2Int s,Vector2Int e)
+    {
+        StartPosition = s;
+        EndPosition = e;
+    }
+
+    public int Width()
+    {
+        return EndPosition.x- StartPosition.x;
+    }
+    public int Height()
+    {
+        return EndPosition.y - StartPosition.y;
+
+    }
 }

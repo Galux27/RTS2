@@ -1101,6 +1101,7 @@ public class GeneratedBuilding
                     if (Tiles[x + Origin.x, y + Origin.y] == null||CanOverwrite)
                     {
                         Tiles[x + Origin.x, y + Origin.y] = room.RoomTiles[x, y];
+                        Tiles[x + Origin.x, y + Origin.y].RoomID= room.RoomID;
                         hasAnything = true;
                     }
                 }

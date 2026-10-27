@@ -15,7 +15,7 @@ MonoBehaviour:
   RoomID: Hallway
   Wall: Brick
   Door: Wood
-  Floor: BlueCarpet
+  Floor: IndustrialRusty
   Props: []
   CanHaveWindows: 0
   CanHaveExternalDoor: 1
