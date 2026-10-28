@@ -10,7 +10,6 @@ public static class BuildingSplitUtil
         Vector2Int size = new Vector2Int(toSplit.Width,toSplit.Height);
         Vector2Int buildingTopPoint = toSplit.Position + size;
         Vector2Int startChunk= WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(toSplit.Position);
-        Debug.Log("Splits: start chunk from " + toSplit.Position + " was " + startChunk);
         Dictionary<Vector2Int, GeneratedBuilding> retVal = new Dictionary<Vector2Int, GeneratedBuilding>();
 
         Vector2Int endChunk = WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(buildingTopPoint);
@@ -96,7 +95,6 @@ public static class BuildingSplitUtil
                         Vector2Int splitOffset =  building.Position-toSplit.Position;
                         Vector2Int newPosition = props[q].pos - splitOffset;
                         propRoom.AddEnvObject(propRoom.RoomTiles[newPosition.x, newPosition.y], props[q]);
-                        Debug.Log("Splits:Prop in sliced room " + props[q].pos + " id " + props[q].ID + " new local position "+newPosition +"new offset"+ splitOffset);
                     }
                     building.AddRoom(propRoom);
                 }
@@ -116,7 +114,6 @@ public static class BuildingSplitUtil
     }
     public static void DebugDraw(Vector2Int Position,Vector2Int Size, UnityEngine.Color c)
     {
-        Debug.Log("Splits: Drawing splits " + Position + " size " + Size);
         Vector3 p1 = new Vector3(Position.x, Position.y);
         Vector3 p2 = new Vector3(Position.x + Size.x, Position.y + Size.y);
         Debug.DrawLine(p1, p1 + new Vector3(Size.x, 0, 0), c, 100f);

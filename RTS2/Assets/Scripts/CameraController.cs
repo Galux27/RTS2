@@ -29,14 +29,19 @@ public class CameraController : MonoBehaviour
 
     public void SetInitialPosition(Vector2 position)
     {
-        Debug.Log("Setting initial position to " + position);
         this.transform.position = new Vector3(position.x, position.y, -10);
     }
 
+    public Vector2Int Batch, Chunk, Tile;
+
+    void GetCoords()
+    {
+        WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(this.transform.position.x, this.transform.position.y, out Batch, out Chunk, out Tile);
+    }
 
     void Update()
     {
-
+        GetCoords();
         if (isAutoMoving)
         {
             Vector3 dir = (autoMoveTarget - this.transform.position).normalized * AutoMoveSpeed * DeltaTimeWrapper.CameraDelta;

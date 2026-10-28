@@ -24,7 +24,6 @@ public class PlanterBehaviour :EnvironmentObjectBehaviourBase
 
     public void SeedPlanter()
     {
-        Debug.Log("Planter: seeded planter");
         HasBeenSeeded = true;
         if (myObject.Drawn)
         {

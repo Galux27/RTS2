@@ -66,7 +66,6 @@ public class TShapeCorridorGenerator : CorridorGenerator
             mod.y = 1;
         }
         Vector2Int curCoords = startCoord;
-        Debug.Log("Corridor: start coords " + startCoord + "," + size + "," + axis + "," + mod+","+ toPopulate.Tiles.GetLength(0)+","+ toPopulate.Tiles.GetLength(1));
         for(int x = 0; x < size.x; x++)
         {
             for(int y = 0; y < width; y++)
@@ -81,7 +80,6 @@ public class TShapeCorridorGenerator : CorridorGenerator
 
         curCoords.x = startCoord.x + (mod.x * (size.x/2));
         curCoords.y = startCoord.y;
-        Debug.Log("Corridor: second pass " + curCoords+ "," + size + "," + axis + "," + mod + "," + toPopulate.Tiles.GetLength(0) + "," + toPopulate.Tiles.GetLength(1));
 
         for (int y = 0; y < size.y; y++)
         {

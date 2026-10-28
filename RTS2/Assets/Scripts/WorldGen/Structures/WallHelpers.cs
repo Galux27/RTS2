@@ -432,6 +432,11 @@ public static class WallHelpers
         //WorldChunkManager.Instance.Chunks[coords.x,coords.y].AddConstructable(bs);
     }
 
+    public static void CreateWallObject(int x, int y, Tilemap toDrawOn, WallTile toUse, Vector3 worldPos, Vector3 offset = default)
+    {
+        WallHelpers.CreateWallObject(x, y, toDrawOn, toUse);
+    }
+
     public static Action GetOnBuilt(Vector2Int coords,Tilemap toDrawOn,WallTile toUse)
     {
         return () => { WallHelpers.CreateWallObject(coords.x, coords.y, toDrawOn, toUse); };

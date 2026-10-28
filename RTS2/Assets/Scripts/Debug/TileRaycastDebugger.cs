@@ -14,12 +14,7 @@ public class TileRaycastDebugger : MonoBehaviour
             EasyStopwatch.StartStopwatch();
                 path.PerformPathCast();
             EasyStopwatch.StopStopwatch();
-            Debug.Log("Path Test: path cast took " + EasyStopwatch.GetStopwatchElapsedTime());
             
-            //EasyStopwatch.StartStopwatch();
-            //Pathfinding.FindPath(StartMarker.transform.position, EndMarker.transform.position);
-            //EasyStopwatch.StopStopwatch();
-            //Debug.Log("Path Test: pathfinding took " + EasyStopwatch.GetStopwatchElapsedTime()+" checked "+  Pathfinding.debugcount);
 
             ray.PerformRaycast();
             

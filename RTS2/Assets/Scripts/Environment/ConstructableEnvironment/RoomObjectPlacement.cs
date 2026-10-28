@@ -74,31 +74,7 @@ public class RoomObjectPlacement
     public void OnObjectPlaced(Vector2Int pos,string key,RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
     {
         EnvironmentObject currentObject = ConstructableObjectManager.Instance.AllObjects[key];
-        Vector2Int objSize = currentObject.SizeAsVec2() ;
-        GridOfPositions.OnPlaceObject(pos, key, objSize);
-        Vector2Int position = Vector2Int.zero;
-        string st = "";
-        for (int q = 0; q < template.Props.Count; q++)
-        {
-            currentObject = ConstructableObjectManager.Instance.AllObjects[template.Props[q].PropName];
-            objSize = currentObject.SizeAsVec2();
-            for (int x = pos.x-1; x < pos.x+objSize.x+1; x += 1)
-            {
-                for (int y = pos.y-1; y < pos.y+objSize.y+1; y += 1)
-                {
-                    position.x = x;
-                    position.y = y;
-
-                    if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building,out st))
-                    {
-                        GridOfPositions.SetObjectCanBePlaced(position, template.Props[q].PropName, objSize);
-                    }
-                }
-            }
-
-
-        }
-
+        GridOfPositions.OnPlaceObject(pos, key, currentObject.SizeAsVec2());
     }
 
     public void RefreshObjectValidity(GeneratedBuilding building,GeneratedRoom room)
@@ -331,6 +307,10 @@ public class RoomObjectGrid
         this.height= height;
     }
 
+    public void ClearObjectsThatCanBePlaced(Vector2Int pos)
+    {
+        GridElements[pos.x, pos.y].ObjectThatCouldBePlaced.Clear();
+    }
     public void SetObjectCanBePlaced(Vector2Int pos,string key,Vector2Int size)
     {
 

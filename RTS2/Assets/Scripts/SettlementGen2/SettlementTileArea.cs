@@ -790,14 +790,49 @@ public class BuildingTileArea
 
     }
 
-    public GeneratedBuilding MyBuilding;
+    public bool HasBuildingToGenerate()
+    {
+        foreach (KeyValuePair<Vector2Int, GeneratedBuilding> pair in MyBuilding)
+        {
+            if (WorldChunkManager.Instance.DoesChunkExist(pair.Key))
+            {
+                return true;
+            }
+        }
+                return false;
+    }
+
+    public Dictionary<Vector2Int, GeneratedBuilding> MyBuilding;
     public void GenerateBuildingForArea(GeneratedSettlement settlement)
     {
         Vector2Int Size = High - Low;
-
         BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(BuildingDataManager.Instance.BuildingTemplates[BuildingID].FloorplanType);
-        Debug.Log("Generating building at " +Low + " size " + Size);
-        MyBuilding=floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates[BuildingID], 50);
+        MyBuilding=BuildingSplitUtil.SplitBuildingIntoChunks( floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates[BuildingID], 50));
+    }
+
+    public bool HasBuildingToApply()
+    {
+        return MyBuilding == null || MyBuilding.Count > 0;
+    }
+    static List<Vector2Int> BuildingPositionCache = new List<Vector2Int>();
+    public int AttemptToApplyBuildings()
+    {
+        BuildingPositionCache.Clear();
+        int count = 0;
+        foreach(KeyValuePair<Vector2Int, GeneratedBuilding> pair in MyBuilding)
+        {
+            if (WorldChunkManager.Instance.DoesBatchExist(pair.Key))
+            {
+                count++;
+                BuildingGenerator.Instance.ApplyBuidlingToWorld(pair.Value);
+                BuildingPositionCache.Add(pair.Key);
+            }
+        }
+        for(int x = 0; x < BuildingPositionCache.Count; x++)
+        {
+            MyBuilding.Remove(BuildingPositionCache[x]);
+        }
+        return count;
     }
 
     public bool DoesLineIntersectBuilding(Vector2Int start,Vector2Int end,out Vector2Int intersection)

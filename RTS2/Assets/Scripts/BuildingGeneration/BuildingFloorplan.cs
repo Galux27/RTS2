@@ -76,7 +76,6 @@ public class BuildingFloorplan
             }
             if (valid)
             {
-                Debug.Log("Room start coords " + ValidTilesToStartOn[i]);
 
                 return ValidTilesToStartOn[i];
             }
@@ -366,7 +365,6 @@ public class BuildingFloorplan
 
     public virtual GeneratedBuilding Generate(RoomGenerator RoomGen,int width,int height,Vector2Int pos,BuildingTemplate template,int maxPasses)
     {
-        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height );
         GeneratedBuilding building = new GeneratedBuilding(width, height, pos,template.BuildingName );
         int count = 0;
         GeneratedRoom curRoom = null;
@@ -387,16 +385,10 @@ public class BuildingFloorplan
                 {
 
                     curRoom = RoomGen.GenerateRoom(startPosition + new Vector2Int((width - 1) * modifier.x, (height - 1) * modifier.y), new Vector2Int(width, height), roomTemplate, building.MyRooms.Count,building);
-                    Debug.Log("Building Gen: generated building room at " + curRoom.Position+","+curRoom.size);
 
                     building.AddRoom(curRoom);
                 }
-                else
-                {
-                    Debug.Log("Building Gen: failed to generate room of size " + width + "," + height+" from area");
-
-                }
-                // startPosition = building.GetEdgeOrStart(new Vector2Int(width, height));
+                
 
             }
             count++;
@@ -423,7 +415,6 @@ public class SquareBuildingFloorplan : BuildingFloorplan
     Vector2Int size;
     public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
     {
-        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height);
 
         size = new Vector2Int(width, height);
         GeneratedBuilding building = new GeneratedBuilding(width, height,pos, template.BuildingName);
@@ -638,7 +629,6 @@ public class HouseFloorplan : BuildingFloorplan
     Vector2Int size;
     public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
     {
-        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height);
 
         //pick a random room
         //generate at 0,0
@@ -868,6 +858,9 @@ public class HouseFloorplan : BuildingFloorplan
             {
                 hitEnd = true;
                 hitEdge = true;
+            }else if (endPoint.y - startPoint.y >= 3)
+            {
+                hitEnd = true;
             }
             else
             {
@@ -938,6 +931,10 @@ public class HouseFloorplan : BuildingFloorplan
             {
                 hitEnd = true;
                 hitEdge = true;
+            }
+            else if (endPoint.x - startPoint.x > 3)
+            {
+                hitEnd = true;
             }
             else
             {
@@ -1217,7 +1214,6 @@ public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
     Vector2Int size;
     public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
     {
-        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height);
 
         size = new Vector2Int(width, height);
         GeneratedBuilding building = new GeneratedBuilding(width, height, pos, template.BuildingName);
@@ -1290,7 +1286,6 @@ public class CorridorBasedFloorplan : BuildingFloorplan
     Vector2Int size;
     public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
     {
-        Debug.Log("Building Gen: Generating building at " + pos + " width " + width + "," + height);
 
         size = new Vector2Int(width, height);
         GeneratedBuilding building = new GeneratedBuilding(width, height, pos, template.BuildingName);
@@ -1330,7 +1325,6 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             building.AddRoom(curRoom, true);
             Corridors.Add(curRoom);
         }
-        Debug.Log("Building on top " + OnTopOfBuilding);
 
         if (OnTopOfBuilding)
         {
@@ -1404,7 +1398,6 @@ public class CorridorBasedFloorplan : BuildingFloorplan
                 attempts++;
             }
         }
-        Debug.Log("Attempts made for room " + attempts + "/" + successes);
         BuildingFloorplan.PopulateExteriorWallTiles(building);
 
         building.UpdateEdgeTiles();

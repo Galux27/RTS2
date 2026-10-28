@@ -85,7 +85,6 @@ public class WorldBuldingMoniter : MonoBehaviour
             AddToBuildingsDictionary(coords, area);
         }
     }
-
     void AddToBuildingsDictionary(Vector2Int coords,BuildingTileArea toAdd)
     {
         if (!Buildings.ContainsKey(coords))
@@ -106,12 +105,38 @@ public class WorldBuldingMoniter : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("Building Gen: total to check " + Buildings.Count);
-        foreach(KeyValuePair<Vector2Int,ChunkPreGenerationBuildingStore> kvp in Buildings)
+        if(Buildings.ContainsKey(CameraController.Instance.Batch) &&!Buildings[CameraController.Instance.Batch].FinishedGenerating)
         {
-            kvp.Value.CheckToGenerate();
+            Buildings[CameraController.Instance.Batch].CheckToGenerate();
         }
+        else
+        {
+            Buildings[GetClosestBatchToGenerate()].CheckToGenerate();
+
+        }
+       
     }
+
+    Vector2Int GetClosestBatchToGenerate()
+    {
+        Vector2Int retVal = CameraController.Instance.Batch;
+        float dist = 9999999f, dist2 = 0 ;
+        foreach (KeyValuePair<Vector2Int, ChunkPreGenerationBuildingStore> kvp in Buildings)
+        {
+            if (kvp.Value.FinishedGenerating == false)
+            {
+                dist2 = Vector2Int.Distance(kvp.Key, CameraController.Instance.Batch);
+                if (dist2 < dist)
+                {
+                    retVal = kvp.Key;
+                    dist = dist2;
+                }
+            }
+        }
+        return retVal;
+    }
+
+    
 }
 public class ChunkPreGenerationBuildingStore
 {
@@ -142,28 +167,24 @@ public class ChunkPreGenerationBuildingStore
         {
             return;
         }
-        Debug.Log("Building Gen: total buildings " + AreasForBuildings.Count);
-
+        Debug.Log("Check To Generate: "+ChunkCoords +" has " + AreasForBuildings.Count+" "+ DoWeNeedToGenerate());
         if (DoWeNeedToGenerate())
         {
             int toGenerate = GetClosestAreaToPosition(CameraController.Instance.transform.position);
             if (toGenerate > -1)
             {
-                Debug.Log("Building Gen: generating building at " + AreasForBuildings[toGenerate].Low);
                 BuildingTileArea area = AreasForBuildings[toGenerate];
                 area.GenerateBuildingForArea(null);
-                AreasForBuildings.RemoveAt(toGenerate);
-
-                BuildingGenerator.Instance.ApplyBuidlingToWorld(area.MyBuilding);
+                area.AttemptToApplyBuildings();
+                if (area.HasBuildingToApply()==false)
+                {
+                    AreasForBuildings.RemoveAt(toGenerate);
+                }
             }
         }
         if (AreasForBuildings.Count == 0)
         {
-            {
-                Debug.Log("Building Gen: finished generating " + ChunkCoords);
-
-                FinishedGenerating = true;
-            }
+            FinishedGenerating = true; 
         }
     }
     int GetClosestAreaToPosition(Vector2 pos)
@@ -173,7 +194,10 @@ public class ChunkPreGenerationBuildingStore
         float dist2 = 0f;
         for(int x = 0; x < AreasForBuildings.Count; x++)
         {
-          
+            //if (!AreasForBuildings[x].HasBuildingToApply())
+            //{
+            //    continue;
+            //}
             dist2 = Vector2.Distance(AreasForBuildings[x].High,pos);
             if (dist2 < dist)
             {

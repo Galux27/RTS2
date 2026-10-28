@@ -14,14 +14,25 @@ public class BuildingTemplate : ScriptableObject
     public string CorridorFloor, CorridorWall,ExternalWall;
     public BuildingFloorplanType FloorplanType;
     public bool ShiftHorizontalFloorTiles,ShiftVerticalFloorTiles;
+    Dictionary<string, int> PotentialRoomIndexes = null;
+    void GeneratePotentialRoomIndexes()
+    {
+        PotentialRoomIndexes = new Dictionary<string, int>();
+        for (int x = 0; x < PotentialRooms.Count; x++)
+        {
+            PotentialRoomIndexes.Add(PotentialRooms[x].roomTemplate.RoomID, x);
+            
+        }
+    }
    public BuildingRoomData GetDataByID(string id)
     {
-        for(int x=0;x<PotentialRooms.Count;x++)
+        if (PotentialRoomIndexes == null)
         {
-            if (PotentialRooms[x].roomTemplate.RoomID == id)
-            {
-                return PotentialRooms[x];
-            }
+            GeneratePotentialRoomIndexes();
+        }
+        if (PotentialRoomIndexes.ContainsKey(id))
+        {
+            return PotentialRooms[PotentialRoomIndexes[id]];
         }
         return null;
     }

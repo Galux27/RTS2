@@ -83,20 +83,17 @@ public class RoomGenerator
                 }
             }
         }
-        Debug.Log("Adjacent Room Start: can place at " + startPos);
         return true;
     }
 
     bool IsPositionValid(GeneratedBuilding building, GeneratedRoom roomComingOff,Vector2Int startPos,Vector2Int size)
     {
         bool retVal = startPos.x >= 0 && startPos.y >= 0 && startPos.x+size.x < building.Width && startPos.y+size.y < building.Width;
-        Debug.Log("Adjacent Room Start: " + startPos + " buidling " + building.Position + " room " + roomComingOff.Position+" building size "+ building.Width+","+building.Height+" was valid "+ retVal+" room size "+ size);
         return retVal;
     }
 
     public virtual GeneratedRoom GenerateRoom(Vector2Int pos,Vector2Int size,RoomTemplate template,int id,GeneratedBuilding building)
     {
-        Debug.Log("Generating room of size " + size + " at " + pos + " part of " + template.name);
         if (size.x < 3 || size.y < 3)
         {
             return null;
@@ -188,7 +185,6 @@ public class RoomGenerator
 
     public void GenerateLocationsForDoors(GeneratedRoom room)
     {
-        Debug.Log("Generating location for doors " + room.RoomTiles.GetLength(0) + "," + room.RoomTiles.GetLength(1));
         Vector2Int coords = new Vector2Int();
         coords.x=Random.Range(2,room.size.x-2);
         room.RoomTiles[coords.x, 0].IsValidForDoor = true ;
@@ -318,7 +314,6 @@ public class RoomGenerator
         //update the other props used in a warehouse too
         room.RefreshTileWeights();
         RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
-        roomObjectPlacement.LogPositionsForProps();
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
 
         for (int x = 0; x < template.Props.Count; x++)
@@ -330,7 +325,6 @@ public class RoomGenerator
         Vector2Int pos = Vector2Int.zero;
         string potentialProp = string.Empty;
         Vector2Int size =Vector2Int.zero;
-        Debug.Log("Room Gen: Room pos " + room.Position + " building pos " + building.Position+" room size "+ room.size+","+propCounts.Count);
         for (int x = 0; x < room.size.x; x+=2) 
         { 
             for(int y = 0; y < room.size.y; y+=2)
@@ -339,7 +333,6 @@ public class RoomGenerator
                 pos.y = y;
                 
                 potentialProp=roomObjectPlacement.GetPropThatCouldBePlacedAtCoordinate(pos,template);
-                Debug.Log("Griddy: prop at " + pos + " was " + potentialProp+" of " + roomObjectPlacement.GetCountOfPropsThatCouldBeAtCoords(pos));
                 if (potentialProp != string.Empty)
                 {
                     
@@ -365,16 +358,13 @@ public class RoomGenerator
 
         building.ClearAreaForRoom(room);
         RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[room.RoomType];
-        Debug.Log("Room Gen: type "+ room.RoomType);
 
         if (template.Props.Count == 0)
         {
-            Debug.Log("Room Gen: template for props " + room.RoomType + " was 0, returning");
             return;
         }
         if (template.CanBeGridBased)
         {
-            Debug.Log("Room Gen:GRIDDY");
 
             PopulateRoomEnvObjectsInGrid(room,building,template);
             return;
@@ -382,7 +372,6 @@ public class RoomGenerator
         room.RefreshTileWeights();
 
         RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
-        roomObjectPlacement.LogPositionsForProps();
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
 
         for (int x = 0; x < template.Props.Count; x++)
@@ -432,11 +421,9 @@ public class RoomGenerator
             else
             {
                 PropsFailedToPlace.Clear();
-                //Done = true;
             }
             attempts++;
         }
-        Debug.Log("Room Gen: attempts made to populate " + attempts + ",");
     }
 
     void AddEnvObjectToRoomWithoutRefresh(GeneratedRoom room, Vector2Int pos, EnvironmentObject objectToAdd, GeneratedBuilding building)
@@ -793,7 +780,6 @@ public class RoomGenerator
                 Debug.LogError("error setting room tiles x was " + x + " dimensions " + width + "," + height + "," + room.RoomTiles.GetLength(0) + "," + room.RoomTiles.GetLength(1));
             }
         }
-        Debug.Log("generating room walls for" + room.RoomType.ToSafeString() + " at " + room.Position + "," + building.Position + " size " + width + "," + height + " count " + count);
 
     }
     void PopulateRoomWallTiles(GeneratedRoom room,RoomTemplate template,GeneratedBuilding building)

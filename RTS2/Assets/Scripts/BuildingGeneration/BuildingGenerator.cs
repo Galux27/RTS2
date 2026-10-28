@@ -71,12 +71,10 @@ public class BuildingGenerator : MonoBehaviour
 
 
                 BuildingSplitUtil.DebugDraw(building.MyRooms[x].Position + building.Position, building.MyRooms[x].size,c);
-            Debug.Log("Splits: room at  " + building.MyRooms[x].Position + " size " + building.MyRooms[x].size);
         }
         Dictionary<Vector2Int,GeneratedBuilding> splits= BuildingSplitUtil.SplitBuildingIntoChunks(building);
         foreach (KeyValuePair<Vector2Int,GeneratedBuilding> kvp in splits)
         {
-            Debug.Log("applying building in " + kvp.Value);
             ApplyBuidlingToWorld(kvp.Value);
             RoomTileDebug.DebugDrawAllTiles(kvp.Value);
 
@@ -163,7 +161,7 @@ public class BuildingGenerator : MonoBehaviour
                 if (cur.HasWall)
                 {
 
-                    WallHelpers.CreateWallBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
+                    WallHelpers.CreateWallObject(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
                         WallTypeManager.Instance.GetWallTile(cur.WallTile), new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
 
 
@@ -335,7 +333,6 @@ public class GeneratedBuilding
             }
         }
        
-        Debug.Log("Room Gen: clearing area for room at " + room.Position + " in " + this.Position+","+room.RoomType+" tiles reset "+ count+" objects removed "+ envCount);
     }
 
     public void ResetAreaOfBuilding(Vector2Int coords,Vector2Int size)
@@ -652,7 +649,6 @@ public class GeneratedBuilding
             r.RoomTiles[tiles[x].x, tiles[x].y] = this.Tiles[tiles[x].x, tiles[x].y];
         }
         AddRoom(r);
-        Debug.Log("Set tiles to template " + tiles.Count + "->" + count);
     }
     
     
@@ -1142,20 +1138,11 @@ public class GeneratedBuilding
 
     public void PopulatePropsInRooms(RoomGenerator roomGen)
     {
-        Debug.Log("Room Gen: Populating props in total room "+MyRooms.Count);
 
         for (int x = 0; x < MyRooms.Count; x++)
         {
             roomGen.PopulateRoomEnvObjects(MyRooms[x],this);
-            if (MyRooms[x].EnvObjects != null)
-            {
-                Debug.Log("Room Gen: Populating props in rooms " + MyRooms[x].EnvObjects.Count);
-            }
-            else
-            {
-                Debug.Log("Room Gen: Populating props in rooms null " + MyRooms[x].RoomType);
-
-            }
+          
             ApplyRoom(MyRooms[x],true);
         }
     }
@@ -1172,6 +1159,7 @@ public class GeneratedBuilding
             return;
         }
         MyRooms.Add(room);
+        UpdateRoomCount(room.RoomType);
         ApplySlicedRoom(room,originalBuilding);
         UpdateEdgeTiles();
     }
@@ -1183,21 +1171,30 @@ public class GeneratedBuilding
             return;
         }
         MyRooms.Add(room);
+        UpdateRoomCount(room.RoomType);
         ApplyRoom(room,CanOverwrite);
         UpdateEdgeTiles();
     }
 
+    void UpdateRoomCount(string type)
+    {
+        if (!RoomTypeCounts.ContainsKey(type))
+        {
+            RoomTypeCounts.Add(type, 0);
+        }
+        RoomTypeCounts[type]++;
+    }
+
+    Dictionary<string, int> RoomTypeCounts = new Dictionary<string, int>();
+
+
     public int GetQuantityOfRoomType(string roomType)
     {
-        int count = 0;
-        for(int x = 0; x < MyRooms.Count; x++)
+        if (RoomTypeCounts.ContainsKey(roomType))
         {
-            if (MyRooms[x].RoomType == roomType)
-            {
-                count++;
-            }
+            return RoomTypeCounts[roomType];
         }
-        return count;
+        return 0;
     }
 
 
@@ -1286,7 +1283,6 @@ public class GeneratedBuilding
         //work out lowest batch coord needed and highest
         Vector2Int RoundedPositionLow = new Vector2Int(RoundToMultiple(Position.x, WorldChunkManager.ChunkBatchSize), RoundToMultiple(Position.y, WorldChunkManager.ChunkBatchSize));
         Vector2Int RoundedPositionHigh = new Vector2Int(RoundToMultiple(Position.x+Width, WorldChunkManager.ChunkBatchSize), RoundToMultiple(Position.y+Height, WorldChunkManager.ChunkBatchSize));
-        Debug.Log("Generating building from split chunk positions low " + RoundedPositionLow + ", high" + RoundedPositionHigh+" original position "+Position+", width " + Width+" height " + Height);
         //check if rounding needs to be altered
         if (RoundedPositionLow.x > Position.x)
         {
@@ -1355,7 +1351,6 @@ public class GeneratedBuilding
         int newBuildingHeight = y6 - y5;
         Vector2Int min = new Vector2Int(x5, y5);
         Vector2Int max = new Vector2Int(x6, y6);
-        Debug.Log("Generating building from split width" + newBuildingWidth + ", height" + newBuildingHeight + ", min" + min.ToString() + ", max " + max.ToString()+",chunk batch "+chunkBatchToPutIn+", position "+Position+" original size " +this.Width+","+this.Height);
         GeneratedBuilding building = TakeSliceOfBuilding(this, chunkBatchToPutIn, new Vector2Int(newBuildingWidth, newBuildingHeight)
             , new Vector2Int(x5, y5));//new GeneratedBuilding(newBuildingWidth, newBuildingHeight, new Vector2Int(x5, y5), this.buildingType);
 

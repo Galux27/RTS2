@@ -52,7 +52,6 @@ public class Room:ISerialize
         }
         if(roomBounds.Contains(new Vector3(pos.x, pos.y, 0.5f)))
         {
-            Debug.Log("Room: bounds contains " + pos+" tiles "+  tilesInRoom.Contains(pos));
             return DoesRoomContainPosition(pos);
         }
         return false;
@@ -126,7 +125,6 @@ public class Room:ISerialize
     public List<Unit> GetAllUnitsInRoom()
     {
         List<WorldChunk> chunksChecked = new List<WorldChunk>();
-        Debug.Log("Hospital Update: tiles in room " + tilesInRoom.Count);
 
         for (int x = 0; x < tilesInRoom.Count; x++)
         {
@@ -369,7 +367,6 @@ public class Room:ISerialize
             string key = obj.Name();
             EnvironmentObject objData = EnvironmentObjectHelpers.GetEnvironmentObject(key);
 
-        Debug.Log("Room: getting obj data from " + key+"|"+(objData==null)+"|"+(objData.CapacityData.CapacityData==null)+" is valid "+ CanUseRoom());
             if (objData.CapacityData != null && objData.CapacityData.CapacityData!=null && objData.CapacityData.CapacityData.Count > 0)
             {
                 for (int q = 0; q < objData.CapacityData.CapacityData.Count; q++)
