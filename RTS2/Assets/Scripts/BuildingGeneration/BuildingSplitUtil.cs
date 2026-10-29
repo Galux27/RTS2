@@ -13,6 +13,9 @@ public static class BuildingSplitUtil
         Dictionary<Vector2Int, GeneratedBuilding> retVal = new Dictionary<Vector2Int, GeneratedBuilding>();
 
         Vector2Int endChunk = WorldChunkManager.Instance.ConvertPositionToChunkBatchCoordsVec2(buildingTopPoint);
+
+
+
         if (startChunk == endChunk)
         {
             retVal.Add(startChunk, toSplit);
@@ -28,6 +31,8 @@ public static class BuildingSplitUtil
             }
             splits.Add(new BuildingSplitCoords(toSplit.Position,initialSize));
             int start = startChunk.x;
+
+           
 
             if (startChunk.x != endChunk.x)
             {
@@ -93,7 +98,7 @@ public static class BuildingSplitUtil
                     for(int q = 0; q < props.Count; q++)
                     {
                         Vector2Int splitOffset =  building.Position-toSplit.Position;
-                        Vector2Int newPosition = props[q].pos - splitOffset;
+                        Vector2Int newPosition = props[q].pos - building.Position;// toSplit.Position;  
                         propRoom.AddEnvObject(propRoom.RoomTiles[newPosition.x, newPosition.y], props[q]);
                     }
                     building.AddRoom(propRoom);
