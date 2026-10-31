@@ -645,7 +645,7 @@ public class GeneratedBuilding
             }
             this.Tiles[tiles[x].x, tiles[x].y].SetFloor(template.Floor);
             this.Tiles[tiles[x].x, tiles[x].y].IsCorridor = true;
-            this.Tiles[tiles[x].x, tiles[x].y].RoomID = int.MaxValue;
+            this.Tiles[tiles[x].x, tiles[x].y].RoomID = MyRooms.Count;
             r.RoomTiles[tiles[x].x, tiles[x].y] = this.Tiles[tiles[x].x, tiles[x].y];
         }
         AddRoom(r);
@@ -718,14 +718,26 @@ public class GeneratedBuilding
         }
         return false;
     }
+    
+    bool CanRoomTemplateHaveExternalDoor(int id,int x,int y)
+    {
+        if (id < MyRooms.Count)
+        {
+            return BuildingDataManager.Instance.RoomTemplates[MyRooms[Tiles[x, y].RoomID].RoomType].CanHaveExternalDoor;
+        }
+        return false;
+    }
+    
+    
     public void GenerateExteriorDoors()
     {
+        Debug.Log("Exterior doors: " + Width + "," + Height + " " + Tiles.GetLength(0) + "," + Tiles.GetLength(1));
         for (int x = 0; x < Width ; x++)
         {
             for (int y = 0; y < Height; y++)
             {
                 if (Tiles[x, y] == null || Tiles[x, y].HasWall == false || !ValidForDoor(x, y) || Tiles[x,y].IsValidForDoor==false
-                    ||BuildingDataManager.Instance.RoomTemplates[MyRooms[ Tiles[x,y].RoomID].RoomType].CanHaveExternalDoor==false)
+                    || CanRoomTemplateHaveExternalDoor( Tiles[x,y].RoomID,x,y)==false)
                 {
                     continue;
                 }
@@ -1126,7 +1138,7 @@ public class GeneratedBuilding
                 {
                     prop = MyRooms[i].EnvObjects[tilesUsed[x]];
 
-                    props.Add(new GeneratedRoomProp(prop.ID, prop.pos + MyRooms[i].Position,true));
+                    props.Add(new GeneratedRoomProp(prop.ID, prop.pos + MyRooms[i].Position+Position,true));
                     
                 }
             }

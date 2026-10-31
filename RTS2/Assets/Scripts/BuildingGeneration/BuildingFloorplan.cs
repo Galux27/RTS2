@@ -310,9 +310,32 @@ public class BuildingFloorplan
                         building.Tiles[x, y].SetWall(template.ExternalWall);
 
                     }
+                }else if (IsBuildingCorridor(building.Tiles[x, y])){
+                    GetNeighbouringTiles(building, x, y, ref neighbours, ref neighbourCoords);
+                    if (neighbours.Count == 4)
+                    {
+                        for (int q = 0; q < neighbours.Count; q++)
+                        {
+                            if (neighbours[q] == null)
+                            {
+                                building.Tiles[x, y].SetWall(template.ExternalWall);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        building.Tiles[x, y].SetWall(template.ExternalWall);
+
+                    }
                 }
             }
         }
+    }
+
+    static bool IsBuildingCorridor(RoomTile tile)
+    {
+        return tile!=null && tile.IsCorridor;
     }
 
     static bool HasTileGotWall(RoomTile tile)
@@ -730,12 +753,14 @@ public class HouseFloorplan : BuildingFloorplan
             count++;
         }
 
-        building.UpdateEdgeTiles();
-
-        building.GenerateDoors();
+        
         building.PopulatePropsInRooms(RoomGen);
         building.ShiftAllFloorTiles(template);
         GenerateFillInCorridors(ref building, size, BuildingDataManager.Instance.RoomTemplates["Hallway"]);
+
+        building.UpdateEdgeTiles();
+
+        building.GenerateDoors();
         BuildingFloorplan.PopulateExteriorWallTiles(building);
 
         return building;

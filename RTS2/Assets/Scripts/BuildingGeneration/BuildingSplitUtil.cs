@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using Unity.VisualScripting;
 using UnityEngine;
 public static class BuildingSplitUtil
 {
@@ -98,8 +99,23 @@ public static class BuildingSplitUtil
                     for(int q = 0; q < props.Count; q++)
                     {
                         Vector2Int splitOffset =  building.Position-toSplit.Position;
-                        Vector2Int newPosition = props[q].pos - building.Position;// toSplit.Position;  
-                        propRoom.AddEnvObject(propRoom.RoomTiles[newPosition.x, newPosition.y], props[q]);
+                        Vector2Int newPosition = props[q].pos - building.Position;// toSplit.Position;
+
+                        if (props[q].pos.x<building.Width && props[q].pos.y<building.Height 
+                            && props[q].pos.y>=0&& props[q].pos.x >= 0)
+                        {
+                            newPosition = props[q].pos;
+                        }
+                        try
+                        {
+                            propRoom.AddEnvObject(propRoom.RoomTiles[newPosition.x, newPosition.y], props[q]);
+                        }
+                        catch
+                        {
+                            
+                            Debug.LogError("CAN PLACE PROP IN ROOM Prop placed " + props[q].pos + " " 
+                                + building.Position + " " + propRoom.size+","+newPosition+" to split position " + toSplit.Position + "," + splits[x].Position+","+splits.Count);
+                        }
                     }
                     building.AddRoom(propRoom);
                 }
