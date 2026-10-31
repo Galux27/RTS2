@@ -268,6 +268,111 @@ public class BuildingFloorplan
         return new Vector2Int(-1, -1);
 
     }
+    static bool IsBelow(int x,int y,Vector2Int coords)
+    {
+        return x < coords.x || y < coords.y;
+    }
+
+   static bool ShouldRoomHaveInteriorWalls(GeneratedBuilding building,int roomID)
+    {
+        if (roomID < 0)
+        {
+            return false;
+        }
+        if (BuildingDataManager.Instance.RoomTemplates.ContainsKey(building.MyRooms[roomID].RoomType)) 
+        {
+            RoomTemplate tempalte = BuildingDataManager.Instance.RoomTemplates[building.MyRooms[roomID].RoomType];
+            WallMode mode = tempalte.WallMode;
+            Debug.Log("Wall Mode for " + tempalte + " is " + mode);
+            if(mode== WallMode.None)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+       }
+        return false;
+    }
+    public static void PopulateRoomInteriorWalls(GeneratedBuilding building)
+    {
+        BuildingTemplate template = BuildingDataManager.Instance.BuildingTemplates[building.buildingType];
+        List<RoomTile> neighbours = new List<RoomTile>();
+        List<Vector2Int> neighbourCoords = new List<Vector2Int>();
+        if (building.Tiles == null)
+        {
+            return;
+        }
+        for (int x = 0; x < building.Width; x++)
+        {
+            for (int y = 0; y < building.Height; y++)
+            {
+                if (building.Tiles[x, y]!=null&& building.Tiles[x,y].RoomID>=0 && building.Tiles[x, y].IsCorridor==false && building.Tiles[x, y].HasWall==false)
+                {
+
+                    GetNeighbouringTiles(building, x, y, ref neighbours, ref neighbourCoords);
+                   
+                        for (int q = 0; q < neighbours.Count; q++)
+                        {
+                            if (neighbours[q] != null)
+                            {
+                                if (neighbours[q].HasFloor == false 
+                                || neighbours[q].HasWall
+                                || ShouldRoomHaveInteriorWalls(building, building.Tiles[x, y].RoomID)==false)
+                                {
+                                    continue;
+                                }
+                                {
+                                    if (!IsBelow(x, y, neighbourCoords[q]))
+                                    {
+                                        if (IsBuildingCorridor(neighbours[q]) || neighbours[q].RoomID != building.Tiles[x, y].RoomID)
+                                        {
+
+                                            building.Tiles[x, y].SetWall(template.CorridorWall);
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (IsBuildingCorridor(neighbours[q]) || neighbours[q].RoomID != building.Tiles[x, y].RoomID)
+                                        {
+
+                                            building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+               
+                }
+                /* else if (IsBuildingCorridor(building.Tiles[x, y])){
+                     GetNeighbouringTiles(building, x, y, ref neighbours, ref neighbourCoords);
+                     if (neighbours.Count == 4)
+                     {
+                         for (int q = 0; q < neighbours.Count; q++)
+                         {
+                             if (neighbours[q] == null)
+                             {
+                                 building.Tiles[x, y].SetWall(template.ExternalWall);
+                                 break;
+                             }else if (neighbours[q].IsCorridor == false)
+                             {
+                                 building.Tiles[x, y].SetWall(template.CorridorWall);
+
+                             }
+                         }
+                     }
+                     else
+                     {
+                         building.Tiles[x, y].SetWall(template.ExternalWall);
+
+                     }
+                 }*/
+            }
+        }
+    }
 
     /// <summary>
     /// This code runs like shite, fix it
@@ -290,27 +395,77 @@ public class BuildingFloorplan
         {
             for (int y = 0; y < building.Height; y++)
             {
-                if (HasTileGotWall(building.Tiles[x, y]) )
+                if (building.Tiles[x, y]!=null&&  building.Tiles[x, y].HasFloor)
                 {
                    
                     GetNeighbouringTiles(building, x, y, ref neighbours,ref neighbourCoords);
-                    if (neighbours.Count == 4)
+                    if (neighbours.Count >0)
                     {
-                        for (int q = 0; q < neighbours.Count; q++)
+                        if (neighbours.Count == 4)
                         {
-                            if (neighbours[q]==null)
+                            for (int q = 0; q < neighbours.Count; q++)
                             {
-                                building.Tiles[x, y].SetWall(template.ExternalWall);
-                                break;
+
+                                if (neighbours[q] == null || neighbours[q].HasFloor == false)
+                                {
+                                    if (building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y] == null)
+                                    {
+                                        building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y] = new RoomTile();
+                                    }
+                                   // building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.ExternalWall);
+                                    //building.Tiles[x+1, y+1].SetWall(template.CorridorWall);
+                                     if (IsBelow(x, y, neighbourCoords[q]))
+                                     {
+                                         if (neighbours[q]==null) {
+                                             building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y] = new RoomTile();
+                                         }
+                                         building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.ExternalWall);
+                                     }
+                                     else
+                                     {
+                                         building.Tiles[x, y].SetWall(template.ExternalWall);
+                                     }
+                                    // ;
+
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        building.Tiles[x, y].SetWall(template.ExternalWall);
+                        else
+                        {
+                            building.Tiles[x, y].SetWall(template.ExternalWall);
+                            for (int q = 0; q < neighbours.Count; q++)
+                            {
+
+                                if (neighbours[q] == null || neighbours[q].HasFloor == false)
+                                {
+                                    if (building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y] == null)
+                                    {
+                                        building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y] = new RoomTile();
+                                    }
+                                    // building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.ExternalWall);
+                                    //building.Tiles[x+1, y+1].SetWall(template.CorridorWall);
+                                    if (IsBelow(x, y, neighbourCoords[q]))
+                                    {
+                                        if (neighbours[q] == null)
+                                        {
+                                            building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y] = new RoomTile();
+                                        }
+                                        building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.ExternalWall);
+                                    }
+                                    else
+                                    {
+                                        building.Tiles[x, y].SetWall(template.ExternalWall);
+                                    }
+                                    // ;
+
+                                }
+                            }
+                        }
 
                     }
-                }else if (IsBuildingCorridor(building.Tiles[x, y])){
+                   
+                }
+               /* else if (IsBuildingCorridor(building.Tiles[x, y])){
                     GetNeighbouringTiles(building, x, y, ref neighbours, ref neighbourCoords);
                     if (neighbours.Count == 4)
                     {
@@ -320,6 +475,10 @@ public class BuildingFloorplan
                             {
                                 building.Tiles[x, y].SetWall(template.ExternalWall);
                                 break;
+                            }else if (neighbours[q].IsCorridor == false)
+                            {
+                                building.Tiles[x, y].SetWall(template.CorridorWall);
+
                             }
                         }
                     }
@@ -328,7 +487,7 @@ public class BuildingFloorplan
                         building.Tiles[x, y].SetWall(template.ExternalWall);
 
                     }
-                }
+                }*/
             }
         }
     }
@@ -340,19 +499,13 @@ public class BuildingFloorplan
 
     static bool HasTileGotWall(RoomTile tile)
     {
-        if (tile != null)
-        {
-            return tile.HasWall && tile.WallTile != "Window";
-        }
-        else
-        {
-            return false;
-        }
+            return tile.HasWall;
     }
 
     static void GetNeighbouringTiles(GeneratedBuilding building, int x, int y, ref List<RoomTile> toPopulate,ref List<Vector2Int> positions)
     {
         toPopulate.Clear();
+        positions.Clear();
         if (x > 0)
         {
             toPopulate.Add(building.Tiles[x - 1, y]);
@@ -418,6 +571,7 @@ public class BuildingFloorplan
         }
         building.UpdateCorridorEdgeTiles(template);
         BuildingFloorplan.PopulateExteriorWallTiles(building);
+        BuildingFloorplan.PopulateRoomInteriorWalls(building);
 
         building.GenerateDoors();
         building.ShiftAllFloorTiles(template);
@@ -488,6 +642,7 @@ public class SquareBuildingFloorplan : BuildingFloorplan
             }
         }
         BuildingFloorplan.PopulateExteriorWallTiles(building);
+        BuildingFloorplan.PopulateRoomInteriorWalls(building);
 
         building.UpdateEdgeTiles();
 
@@ -757,11 +912,12 @@ public class HouseFloorplan : BuildingFloorplan
         building.PopulatePropsInRooms(RoomGen);
         building.ShiftAllFloorTiles(template);
         GenerateFillInCorridors(ref building, size, BuildingDataManager.Instance.RoomTemplates["Hallway"]);
-
+        
         building.UpdateEdgeTiles();
-
-        building.GenerateDoors();
         BuildingFloorplan.PopulateExteriorWallTiles(building);
+        BuildingFloorplan.PopulateRoomInteriorWalls(building);
+        building.GenerateDoors();
+       
 
         return building;
     }
@@ -1293,7 +1449,7 @@ public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
         //    }
         //}
         BuildingFloorplan.PopulateExteriorWallTiles(building);
-
+        BuildingFloorplan.PopulateRoomInteriorWalls(building);
         building.UpdateEdgeTiles();
 
         building.GenerateDoors();
@@ -1424,6 +1580,7 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             }
         }
         BuildingFloorplan.PopulateExteriorWallTiles(building);
+        BuildingFloorplan.PopulateRoomInteriorWalls(building);
 
         building.UpdateEdgeTiles();
 

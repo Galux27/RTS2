@@ -48,11 +48,11 @@ MonoBehaviour:
   CanGenerateAnyWalls: 1
   GenerateDoorsToOtherRooms: 1
   GenerateDoorsToCorridors: 1
-  MinWidth: 6
-  MaxWidth: 8
+  MinWidth: 8
+  MaxWidth: 10
   MinHeight: 4
-  MaxHeight: 8
+  MaxHeight: 6
   FloorXOffset: 1
   FloorYOffset: 1
   AttachedRooms: []
-  WallMode: 2
+  WallMode: 1

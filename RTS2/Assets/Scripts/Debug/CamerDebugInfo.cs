@@ -51,6 +51,7 @@ public class CamerDebugInfo : MonoBehaviour
                 {
                     pos.x = start.x + (x * WorldChunkManager.ChunkBatchSize);
                     pos.y = start.y+(y * WorldChunkManager.ChunkBatchSize);
+                    DrawGridForChunkBatch(pos);
 
                     dest = pos;
                     dest.x += WorldChunkManager.ChunkBatchSize;
@@ -58,11 +59,32 @@ public class CamerDebugInfo : MonoBehaviour
                     dest = pos;
                     dest.y += WorldChunkManager.ChunkBatchSize;
                     Debug.DrawLine((Vector2)pos, (Vector2)dest, Color.yellow);
-
+                  
                 }
             }
         }
     }
 
+    void DrawGridForChunkBatch(Vector2Int batch)
+    {
+        Vector2Int start = batch;
+        Vector2Int pos = Vector2Int.zero;
+        Vector2Int dest = Vector2Int.zero;
+        for (int x = 0; x < WorldChunkManager.ChunkSize; x++)
+        {
+            for (int y = 0; y < WorldChunkManager.ChunkSize; y++)
+            {
+                pos.x = start.x + (x * WorldChunkManager.ChunkSize);
+                pos.y = start.y + (y * WorldChunkManager.ChunkSize);
+
+                dest = pos;
+                dest.x += WorldChunkManager.ChunkSize;
+                Debug.DrawLine((Vector2)pos, (Vector2)dest, Color.green);
+                dest = pos;
+                dest.y += WorldChunkManager.ChunkSize;
+                Debug.DrawLine((Vector2)pos, (Vector2)dest, Color.green);
+            }
+        }
+    }
     
 }

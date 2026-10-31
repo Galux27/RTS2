@@ -31,4 +31,4 @@ MonoBehaviour:
   FloorXOffset: 1
   FloorYOffset: 1
   AttachedRooms: []
-  WallMode: 0
+  WallMode: 1

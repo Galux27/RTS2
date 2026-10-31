@@ -101,7 +101,7 @@ public class RoomGenerator
         GeneratedRoom room = new GeneratedRoom(size, pos,template.RoomID,id);
         GetTilesFromBuilding(room, building);
 
-        PopulateRoomWallTiles(room, template,building);
+       // PopulateRoomWallTiles(room, template,building);
         GenerateLocationsForDoors(room);
         //add something that shifts all floor tiles -1,-1 if there's a tile below them thats been set as a floor tile
         PopulateFloorTiles(room, template);
@@ -1352,6 +1352,12 @@ public class RoomTile
         }
         FloorTile = type;
         HasFloor = true;
+    }
+
+    public void ClearFloor()
+    {
+        FloorTile = string.Empty;
+        HasFloor = false;
     }
 
 }
