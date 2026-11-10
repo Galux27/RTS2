@@ -58,6 +58,19 @@ public class WallTypeManager : MonoBehaviour
         }
     }
 
+    public WallTile GetWallTileForDoor(string type)
+    {
+        if (type == null||!AllObjects.ContainsKey(type))
+        {
+           foreach(KeyValuePair<string,WallTile> kvp in AllObjects)
+            {
+                type = kvp.Key;
+                break;
+            }
+        }
+        return GetWallTile(type);
+    }
+
     public WallTile GetWallTile(string type)
     {
         if (AllObjects.ContainsKey(type))

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.U2D;
 using UnityEngine.UIElements;
+using static UnityEditor.PlayerSettings;
 
 public class RoomGenerator 
 {
@@ -313,7 +315,7 @@ public class RoomGenerator
         //as a grid so they're easy to alter rather than going through a list of items every time
         //update the other props used in a warehouse too
         room.RefreshTileWeights();
-        RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
+        RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building, template.Props);
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
 
         for (int x = 0; x < template.Props.Count; x++)
@@ -352,27 +354,28 @@ public class RoomGenerator
       
     }
 
-    public void PopulateRoomEnvObjects(GeneratedRoom room,GeneratedBuilding building)
+    public Dictionary<Vector2Int,string> PopulateRoomEnvObjects(GeneratedRoom room,GeneratedBuilding building)
     {
 
-
+        Dictionary<Vector2Int, string> retVal = new Dictionary<Vector2Int, string>();
         building.ClearAreaForRoom(room);
         RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[room.RoomType];
-
+        Debug.Log("Created props in rooms start" + template.name + " size " + room.size+","+ template.Props.Count+","+ template.CanBeGridBased);
         if (template.Props.Count == 0)
         {
-            return;
+            return retVal;
         }
         if (template.CanBeGridBased)
         {
 
             PopulateRoomEnvObjectsInGrid(room,building,template);
-            return;
+            return retVal;
         }
         room.RefreshTileWeights();
 
-        RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building);
+        RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building,template.Props);
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
+        string debugData = roomObjectPlacement.GetDebugInfo();
 
         for (int x = 0; x < template.Props.Count; x++)
         {
@@ -384,7 +387,7 @@ public class RoomGenerator
         int attempts = 0;
         bool runOutOfPropsToPlace = false;
         string PropToPlace = string.Empty;
-        int maxAttemtps = 100;
+        int maxAttemtps = 300;
         List<string> PropsFailedToPlace = new List<string>();
 
         while (!Done&&attempts<maxAttemtps)
@@ -400,8 +403,8 @@ public class RoomGenerator
                 {
                     toPlace = ConstructableObjectManager.Instance.AllObjects[currentProp.PropName];
 
-                    AddEnvObjectToRoom(room, posToPlace, toPlace, building);
-
+                    //AddEnvObjectToRoom(room, posToPlace, toPlace, building);
+                    retVal.Add(posToPlace, currentProp.PropName);
                     propCounts[currentProp.PropName]++;
 
                     roomObjectPlacement.OnObjectPlaced(posToPlace, currentProp.PropName, template, room, building);
@@ -424,6 +427,21 @@ public class RoomGenerator
             }
             attempts++;
         }
+        int myCount = 0;
+        foreach(KeyValuePair<string,int> kvp in propCounts)
+        {
+            myCount += kvp.Value;
+        }
+        int roomCount = 0;
+        if (room.EnvObjects != null)
+        {
+            roomCount = room.EnvObjects.Count;
+        }
+
+        Debug.Log("Building Split: Created props in rooms " + template.name + " size " + room.size + 
+            " attempts " + attempts + " final " +roomCount+" my count " +myCount+" debug " +debugData);
+
+        return retVal;
     }
 
     void AddEnvObjectToRoomWithoutRefresh(GeneratedRoom room, Vector2Int pos, EnvironmentObject objectToAdd, GeneratedBuilding building)
@@ -906,8 +924,30 @@ public class GeneratedRoom
         return room;
     }
 
-   
-
+    public void SetTileHasDoor(Vector2Int pos)
+    {
+        pos -= this.Position;
+        if (IsValid(pos.x, pos.y))
+        {
+            RoomTiles[pos.x, pos.y].HasDoor = true;
+        }
+    }
+    public void SetTileHasWall(Vector2Int pos)
+    {
+        pos -= this.Position;
+        if (IsValid(pos.x, pos.y))
+        {
+            RoomTiles[pos.x, pos.y].HasWall = true;
+        }
+    }
+    public void SetTileHasObj(Vector2Int pos)
+    {
+        pos -= this.Position;
+        if (IsValid(pos.x, pos.y))
+        {
+            RoomTiles[pos.x, pos.y].HasProp = true;
+        }
+    }
     bool PointInRange(Vector2Int min,Vector2Int max,Vector2Int pos)
     {
         return pos.x>=min.x&&pos.x<=max.x && pos.y>=min.y&&pos.y<=max.y;
@@ -984,6 +1024,8 @@ public class GeneratedRoom
         {
             EnvObjects = new Dictionary<RoomTile, GeneratedRoomProp>();
         }
+        Debug.Log("Building Split: Creating room prop " + prop.ID + " at " + prop.pos + " from slice " + prop.IsFromSlice +" tile used " + EnvObjects.ContainsKey(tile));
+
         if (EnvObjects.ContainsKey(tile))
         {
             return;
@@ -1121,7 +1163,7 @@ public class GeneratedRoom
     {
         if (positions.Count == 0)
         {
-            return 0;
+            return 9999;
         }
         float retVal = 0f;
         for(int x = 0; x < positions.Count; x++)
@@ -1242,7 +1284,8 @@ public class GeneratedRoomProp
     {
         this.pos = pos;
         this.ID = id;
-        IsFromSlice=fromSlice;
+
+        IsFromSlice = fromSlice;
     }
 }
 
@@ -1342,6 +1385,12 @@ public class RoomTile
     {
         DoorTile = type;
         HasDoor = true;
+    }
+
+    public void SetProp()
+    {
+        HasProp = true;
+        
     }
 
     public void SetFloor(string type)

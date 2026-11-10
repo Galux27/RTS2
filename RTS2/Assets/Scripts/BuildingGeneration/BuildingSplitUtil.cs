@@ -20,10 +20,12 @@ public static class BuildingSplitUtil
         if (startChunk == endChunk)
         {
             retVal.Add(startChunk, toSplit);
+            Debug.Log("Building Split: splitting building false" + toSplit.buildingType + " at " + toSplit.Position);
             return retVal;
         }else
         {
             List<BuildingSplitCoords> splits = new List<BuildingSplitCoords>();
+            Debug.Log("Building Split: splitting building true" + toSplit.buildingType + " at " + toSplit.Position+" rooms "+ toSplit.MyRooms.Count);
 
             Vector2Int initialSize = (startChunk + new Vector2Int(WorldChunkManager.ChunkBatchSize, WorldChunkManager.ChunkBatchSize)) - toSplit.Position;
             if (startChunk.x == endChunk.x)
@@ -63,6 +65,16 @@ public static class BuildingSplitUtil
             }
             splits.AddRange(verticalSplits);
             List<GeneratedRoomProp> props = new List<GeneratedRoomProp>();
+            int propCount = 0;
+            for(int x = 0; x < toSplit.MyRooms.Count; x++)
+            {
+                if (toSplit.MyRooms[x].EnvObjects != null)
+                {
+                    propCount += toSplit.MyRooms[x].EnvObjects.Count;
+                }
+            }
+            Debug.Log("Building Split: splitting building true" + toSplit.buildingType + " at " + toSplit.Position + " total splits "+splits.Count+" non split props "+propCount);
+
             for (int x = 0; x < splits.Count; x++)
             {
                 splits[x].DebugDraw();
@@ -92,7 +104,10 @@ public static class BuildingSplitUtil
                     Debug.LogError("Error making building " + building.Tiles.GetLength(0) + "," + building.Tiles.GetLength(1) + " to split " + toSplit.Tiles.GetLength(0) + "," + toSplit.Tiles.GetLength(1)
                         +" start ind " +startIndex+" end index "+endIndex);
                 }
-                props=toSplit.GetPropsFromSlicedRoom(TilesTaken);
+
+                props = toSplit.GetPropsFromSlicedRoom(TilesTaken);
+                Debug.Log("Building Split: splitting building true" + toSplit.buildingType + " at " + toSplit.Position + " split index " +x+" props found "+props.Count);
+
                 if (props.Count > 0)
                 {
                     GeneratedRoom propRoom = new GeneratedRoom(new Vector2Int(building.Width, building.Height), Vector2Int.zero, "Props", 1);

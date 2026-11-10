@@ -786,7 +786,7 @@ public class WorldChunkBatch : MonoBehaviour
                             Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
                             Chunks[x, y].WallSegments[x1, y1].DestroyWall();
                             WallHelpers.CreateDoorObject(coords.x, coords.y,
-                                WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
+                                WorldController.Instance.DoorTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
                         }else if (Chunks[x, y].WallSegments[x1, y1].HasWall)
                         {
                             Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
@@ -853,7 +853,7 @@ public class WorldChunkBatch : MonoBehaviour
                             Vector2Int coords = new Vector2Int(Chunks[x, y].WallSegments[x1, y1].x, Chunks[x, y].WallSegments[x1, y1].y);
                             Chunks[x, y].WallSegments[x1, y1].DestroyWall();
                             WallHelpers.CreateDoorObject(coords.x, coords.y,
-                                WorldController.Instance.BuildingTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
+                                WorldController.Instance.DoorTilemap, Chunks[x, y].WallSegments[x1, y1].baseWallType);
                         }
                     }
                 }

@@ -158,7 +158,7 @@ public class BuildingGenerator : MonoBehaviour
                 //}
                 //else
 
-                if (cur.HasWall)
+                if (cur.HasWall && cur.WallTile!=null)
                 {
 
                     WallHelpers.CreateWallObject(pos.x, pos.y, WorldController.Instance.BuildingTilemap,
@@ -194,10 +194,9 @@ public class BuildingGenerator : MonoBehaviour
                 WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batchCoords, out chunkCoords, out localCoords);
                 
 
-                if (cur.HasDoor)
+                if (cur.HasDoor && cur.DoorTile != null)
                 {
-                    WallHelpers.CreateDoorBuildableStructure(pos.x, pos.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile
-                        , new Vector3(pos.x, pos.y, 0), new Vector3(.5f, .5f, 0f));
+                    WallHelpers.CreateDoorObject(pos.x, pos.y, WorldController.Instance.DoorTilemap, WallTypeManager.Instance.GetWallTileForDoor(cur.WallTile));
                 }
 
 
@@ -272,7 +271,18 @@ public class GeneratedBuilding
     public List<GeneratedRoom> MyRooms;
     public int Width, Height;
     public Vector2Int Position;
-
+    Vector2Int size;
+    public Vector2Int Size
+    {
+        get
+        {
+            if (size.x != Width||size.y!=Height)
+            {
+                size = new Vector2Int(Width, Height);
+            }
+            return size;
+        }
+    }
     public RoomTile[,] Tiles;
     List<Vector2Int> Edges;
     public Dictionary<int, RoomLink> Links;
@@ -666,6 +676,12 @@ public class GeneratedBuilding
         return Tiles[x, y].HasFloor||Tiles[x,y].IsCorridor;
     }
 
+
+    public bool HasAnythingToBlockProps(int x,int y)
+    {
+        return !HasWall(x,y) && !HasDoor(x,y)&&!HasProp(x,y);
+    }
+
     bool HasWall(int x,int y)
     {
         if (y < 0 || x < 0 || x >= Width || y >= Height)
@@ -781,8 +797,292 @@ public class GeneratedBuilding
 
     }
 
-    public void GenerateDoors()
+    bool FarEnoughFromExisting(Vector2Int pos,List<Vector2Int> windows,float minDist)
     {
+        for(int x = 0; x < windows.Count; x++)
+        {
+            if (Vector2Int.Distance(pos, windows[x]) <= minDist)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void GenerateWindows(BuildingWallMap map)
+    {
+        RoomTemplate template = null;
+        List<Vector2Int> WindowsPlaced = new List<Vector2Int>();
+        foreach(KeyValuePair<int,List<Vector2Int>> walls in map.Walls)
+        {
+            template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
+
+            if (template.CanHaveWindows)
+            {
+                for(int x = 0; x < walls.Value.Count; x++)
+                {
+                    if (FarEnoughFromExisting(walls.Value[x], WindowsPlaced, 2f))
+                    {
+                        Tiles[walls.Value[x].x, walls.Value[x].y].SetWall("Window");
+                        WindowsPlaced.Add(new Vector2Int(walls.Value[x].x, walls.Value[x].y));
+                    }
+                }
+            }
+        }
+    }
+
+    bool WallNextTo(Vector2Int tile,Vector2Int dir)
+    {
+        return this.Tiles[tile.x + dir.x, tile.y + dir.x]!=null&& this.Tiles[tile.x + dir.x, tile.y + dir.x].HasWall;
+    }
+
+    bool HorizontalWalls(Vector2Int tile)
+    {
+        return this.Tiles[tile.x + 1, tile.y]!=null&& this.Tiles[tile.x - 1, tile.y]!=null&&this.Tiles[tile.x + 1, tile.y].HasWall && this.Tiles[tile.x - 1, tile.y].HasWall;
+    }
+
+
+    bool VerticalWalls(Vector2Int tile)
+    {
+        return this.Tiles[tile.x, tile.y + 1]!=null && this.Tiles[tile.x, tile.y - 1] !=null&& this.Tiles[tile.x, tile.y + 1].HasWall && this.Tiles[tile.x, tile.y - 1].HasWall;
+    }
+
+    public bool IsValidForDoor(Vector2Int tile)
+    {
+        if(this.Tiles[tile.x, tile.y] == null)
+        {
+            return false;
+        }
+        if (this.Tiles[tile.x, tile.y].HasWall)
+        {
+            if (tile.x == 0)
+            {
+                if (tile.y == Height - 1)
+                {
+                    return false;
+                }
+                else if (tile.y == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return VerticalWalls(tile) && !WallNextTo(tile, Vector2Int.right);
+                }
+            }
+            else if (tile.x == Width - 1)
+            {
+                if (tile.y == Height - 1)
+                {
+                    return false;
+                }
+                else if (tile.y == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return VerticalWalls(tile) &&!WallNextTo(tile,Vector2Int.left);
+
+                }
+            }
+            else
+            {
+                if (tile.y == Height - 1)
+                {
+                    return HorizontalWalls(tile) && !WallNextTo(tile, Vector2Int.down);
+
+                }
+                else if (tile.y == 0)
+                {
+                    return HorizontalWalls(tile) && !WallNextTo(tile, Vector2Int.up);
+
+                }
+                else
+                {
+                    return HorizontalWalls(tile)&&!VerticalWalls(tile)||
+                        !HorizontalWalls(tile) && VerticalWalls(tile);
+
+                }
+            }
+         
+        }
+        
+        return false;
+        
+    }
+
+    bool CanTemplatesConnect(RoomTemplate temp1,RoomTemplate temp2)
+    {
+        if(temp1.GenerateDoorsToOtherRooms || temp2.GenerateDoorsToOtherRooms)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    bool DoesConnectionExist(int room1,int room2)
+    {
+        if (room1 == room2)
+        {
+            return true;
+        }
+        if(!Links.ContainsKey(room1) && !Links.ContainsKey(room2))
+        {
+            return false;
+        }
+        else if (Links.ContainsKey(room1))
+        {
+           if(Links[room1].DoesLinkExist(room2))
+            {
+                return true;
+            }
+        }else if (Links.ContainsKey(room2))
+        {
+            if (Links[room2].DoesLinkExist(room1))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void AddLink(int room1,int room2,Vector2Int position)
+    {
+        if (!Links.ContainsKey(room1))
+        {
+            Links.Add(room1, new RoomLink(room1));
+        }
+        Links[room1].AddLink(room2,position);
+
+        GeneratedRoom room1obj = MyRooms[room1];
+        GeneratedRoom room2obj = MyRooms[room2];
+        RoomTemplate template1 = BuildingDataManager.Instance.RoomTemplates[room1obj.RoomType];
+        RoomTemplate template2 = BuildingDataManager.Instance.RoomTemplates[room2obj.RoomType];
+
+        Debug.Log("Setting Door Tile " + position + " between " + room1obj.Position +"("+room1obj.size+")"+ " and " + room2obj.Position + "(" + room2obj.size + ")"+this.Size );
+        if (room1obj.size != this.Size)
+        {
+            room1obj.SetTileHasDoor(position);
+        }
+        if (room2obj.size != this.Size)
+        {
+            room2obj.SetTileHasDoor(position);
+
+        }
+
+    }
+
+    void GenerateDoorsFromLinks(int key,RoomTemplate template)
+    {
+        Vector2Int door = Vector2Int.zero;
+        if (Links.ContainsKey(key))
+        {
+            foreach(KeyValuePair<int,List<Vector2Int>> kvp in Links[key].Links)
+            {
+                door = kvp.Value[Random.Range(0, kvp.Value.Count)];
+                Debug.Log("Door: generating door at " + door);
+                 Tiles[door.x, door.y].SetDoor(template.Door);
+
+            }
+        }
+    }
+
+    void GenerateAllLinks()
+    {
+        foreach (KeyValuePair<int, RoomLink> kvp in Links)
+        {
+            GenerateDoorsFromLinks(kvp.Key, BuildingDataManager.Instance.RoomTemplates[MyRooms[kvp.Key].RoomType]);
+        }
+    }
+
+    public void GenerateInteriorDoors(BuildingWallMap map)
+    {
+        Links = new Dictionary<int, RoomLink>();
+        Vector2Int curPos = new Vector2Int(), NeighbourPos = new Vector2Int();
+        RoomTemplate template = null, otherTemplate = null;
+        RoomTile checking = null;
+        Debug.Log("Total interior walls " + map.Walls.Count);
+        foreach (KeyValuePair<int, List<Vector2Int>> walls in map.Walls)
+        {
+            template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
+            for (int x = 0; x < walls.Value.Count; x++)
+            {
+                curPos.x = walls.Value[x].x;
+                curPos.y = walls.Value[x].y;
+                
+                for (int x1 = curPos.x - 1; x1 <= curPos.x + 1; x1++)
+                {
+                    for (int y1 = curPos.y - 1; y1 <= curPos.y + 1; y1++)
+                    {
+                        NeighbourPos.x = x1;
+                        NeighbourPos.y = y1;
+                        if (InRange(x1, y1)&&NeighbourPos!=curPos)
+                        {
+                            checking = Tiles[NeighbourPos.x, NeighbourPos.y];
+                            if ( checking.RoomID != walls.Key)
+                            {
+                                otherTemplate = BuildingDataManager.Instance.RoomTemplates[MyRooms[checking.RoomID].RoomType];
+                                if (!DoesConnectionExist(walls.Key, checking.RoomID) && IsValidForDoor(curPos) && !(NeighbourPos.x == curPos.x || NeighbourPos.y == curPos.y))
+                                {
+                                    AddLink(walls.Key, checking.RoomID, curPos);
+                                  //  AddLink(checking.RoomID, walls.Key,  NeighbourPos);
+
+                                }
+                            }
+                        }
+                    }
+
+                }
+                
+            }
+        }
+
+        GenerateAllLinks();
+    }
+
+    public void GenerateExteriorDoors(BuildingWallMap map)
+    {
+        RoomTemplate template = null;
+        List<Vector2Int> DoorsPlaced = new List<Vector2Int>();
+        Vector2Int curPos = new Vector2Int() ;
+        List<Vector2Int> potentialDoors = new List<Vector2Int>();
+        List<int> doorRooms = new List<int>();
+        foreach (KeyValuePair<int, List<Vector2Int>> walls in map.Walls)
+        {
+            template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
+
+            if (template.CanHaveExternalDoor)
+            {
+                for (int x = 0; x < walls.Value.Count; x++)
+                {
+                    curPos.x = walls.Value[x].x;
+                    curPos.y = walls.Value[x].y;
+
+                    
+
+                    if (IsValidForDoor(curPos))
+                    {
+                        potentialDoors.Add(curPos);
+                        doorRooms.Add(walls.Key);
+                    }
+                }
+            }
+        }
+        if (potentialDoors.Count > 0)
+        {
+            int index = Random.Range(0, potentialDoors.Count);
+            Vector2Int exteriorDoor = potentialDoors[index];
+            Tiles[exteriorDoor.x, exteriorDoor.y].SetDoor(template.Door);
+            //Debug.Log("Setting Door Tile ext" + exteriorDoor.ToSafeString() + " in " + this.MyRooms[index].Position +" size "+ this.MyRooms[index].size+ " building pos " + this.Position+","+this.Width+","+this.Height);
+        }
+    }
+
+    
+
+    public void GenerateDoors(bool GenerateExternal = false)
+    {
+       
         Links = new Dictionary<int, RoomLink>();
         for (int x = 1; x < Width-1; x++)
         {
@@ -839,7 +1139,10 @@ public class GeneratedBuilding
 
                 }
             }
-            GenerateExteriorDoors();
+            if (GenerateExternal)
+            {
+                GenerateExteriorDoors();
+            }
         }
         foreach (KeyValuePair<int,RoomLink> kvp in Links)
         {
@@ -1093,6 +1396,35 @@ public class GeneratedBuilding
         }
     }
 
+    public void ApplyRoomProps(GeneratedRoom room)
+    {
+        Vector2Int Origin = room.Position;
+        // Origin.x -= 1;
+        //  Origin.y -= 1;
+        Origin.x = Mathf.Clamp(Origin.x, 0, Tiles.GetLength(0) - 1);
+        Origin.y = Mathf.Clamp(Origin.y, 0, Tiles.GetLength(1) - 1);
+        for (int x = 0; x < room.size.x; x++)
+        {
+            for (int y = 0; y < room.size.y; y++)
+            {
+                try
+                {
+                    if (Tiles[x + Origin.x, y + Origin.y].HasProp)
+                    {
+                        Tiles[x + Origin.x, y + Origin.y].SetProp();// = room.RoomTiles[x, y];
+                        //Tiles[x + Origin.x, y + Origin.y].RoomID = room.RoomID;
+                        hasAnything = true;
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError("error applying " + x + "," + y + " origin " + Origin +
+                        " dims " + Tiles.GetLength(0) + "x" + Tiles.GetLength(1) + " room " + room.RoomTiles.GetLength(0) + "x" + room.RoomTiles.GetLength(1) + " error " + e.ToString());
+                }
+            }
+        }
+    }
+
     public void ApplyRoom(GeneratedRoom room,bool CanOverwrite=false)
     {
         Vector2Int Origin =  room.Position;
@@ -1128,9 +1460,13 @@ public class GeneratedBuilding
         GeneratedRoomProp prop = null;
         for (int x = 0; x < tilesUsed.Count; x++)
         {
+            if (tilesUsed[x] == null)
+            {
+                continue;
+            }
             for(int i = 0; i < MyRooms.Count; i++)
             {
-                if (MyRooms[i].EnvObjects == null || tilesUsed[x]==null)
+                if (MyRooms[i].EnvObjects == null )
                 {
                     continue;
                 }
@@ -1148,15 +1484,21 @@ public class GeneratedBuilding
     }
 
 
-    public void PopulatePropsInRooms(RoomGenerator roomGen)
+    public Dictionary<int, Dictionary<Vector2Int, string>> PopulatePropsInRooms(RoomGenerator roomGen)
     {
-
+        Dictionary<int, Dictionary<Vector2Int, string>> retVal = new Dictionary<int, Dictionary<Vector2Int, string>>();
         for (int x = 0; x < MyRooms.Count; x++)
         {
-            roomGen.PopulateRoomEnvObjects(MyRooms[x],this);
+            
+            Debug.Log("Building Split: generating room in building " + this.Position + " room " + MyRooms[x].Position + " type " + MyRooms[x].RoomType);
+            retVal.Add(x, roomGen.PopulateRoomEnvObjects(MyRooms[x], this));
+
           
-            ApplyRoom(MyRooms[x],true);
+            Debug.Log("Building Split: generating room in building " + this.Position + " room " + MyRooms[x].Position + " type " + MyRooms[x].RoomType + " props made " + retVal[x].Count);
+           
+            // ApplyRoomProps(MyRooms[x]);
         }
+        return retVal;
     }
     /// <summary>
     /// For when your're adding a room to a building thats beign sliced to fit the chunk system

@@ -36,7 +36,7 @@ MonoBehaviour:
       - Direction: 0
         Accessiblity: 2
       - Direction: 1
-        Accessiblity: 0
+        Accessiblity: 1
       - Direction: 2
         Accessiblity: 2
       - Direction: 3

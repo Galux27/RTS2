@@ -39,10 +39,8 @@ public class RoomObjectPlacement
                 {
                     position.x = x;
                     position.y = y;
-
                     if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building,out failReason))
                     {
-                       
                         GridOfPositions.SetObjectCanBePlaced(position, template.Props[q].PropName, objSize);
                         PositionsForObjects[template.Props[q].PropName]++;
                         DebugData[template.Props[q].PropName]++;
@@ -52,14 +50,92 @@ public class RoomObjectPlacement
                         failReasons[template.Props[q].PropName].Add(failReason, 0);
                     }
                     failReasons[template.Props[q].PropName][failReason]++;
+
+                   
+
                     failReason = "";
                 }
             }
 
 
         }
-      
-       
+    }
+    public string GetDebugInfo()
+    {
+        string retVal = "Valid Coords:";
+        foreach(KeyValuePair<string,int> kvp in DebugData)
+        {
+            retVal += kvp.Key + " " + kvp.Value + ",";
+        }
+        retVal += "Fail Reasons: ";
+        foreach(KeyValuePair<string,Dictionary<string,int>> kvp in failReasons)
+        {
+            retVal += kvp.Key + ":";
+            foreach(KeyValuePair<string,int> kvp2 in kvp.Value)
+            {
+                retVal += kvp2.Key + " - " + kvp2.Value+",";
+            }
+        }
+
+        return retVal;
+    }
+    Dictionary<string, Dictionary<string, int>> failReasons;
+    public RoomObjectPlacement(RoomTemplate template, GeneratedRoom room, GeneratedBuilding building, List< RoomTemplateProp> Props)
+    {
+        GridOfPositions = new RoomObjectGrid(room.size.x - 1, room.size.y);
+        size = new Vector2Int(room.size.x - 1, room.size.y);
+        Vector2Int position = Vector2Int.zero;
+        EnvironmentObject currentObject = null;
+        Vector2Int objSize = Vector2Int.zero;
+        Dictionary<string, int> PositionsForObjects = new Dictionary<string, int>();
+        failReasons = new Dictionary<string, Dictionary<string, int>>();
+        
+
+        for (int q = 0; q < Props.Count; q++)
+        {
+            PositionsForObjects.Add(Props[q].PropName, 0);
+            DebugData.Add(Props[q].PropName, 0);
+            currentObject = ConstructableObjectManager.Instance.AllObjects[Props[q].PropName];
+            failReasons.Add(Props[q].PropName, new Dictionary<string, int>());
+            objSize = currentObject.SizeAsVec2();
+            objSize.x = Mathf.Max(1, objSize.x);
+            objSize.y = Mathf.Max(1, objSize.y);
+
+            string failReason = "";
+            for (int x = 0; x < size.x - objSize.x; x += objSize.x)
+            {
+                for (int y = 0; y < size.y - objSize.y; y += objSize.y)
+                {
+                    position.x = x;
+                    position.y = y;
+                    bool placed = false;
+
+                    if (EnvironmentObjectPlacementCriteriaHelpers.IsPositionValidForObject(currentObject, room, position, building, out failReason))
+                    {
+                        placed = true;
+
+                        GridOfPositions.SetObjectCanBePlaced(position, Props[q].PropName, objSize);
+                        PositionsForObjects[Props[q].PropName]++;
+                        DebugData[Props[q].PropName]++;
+                    }
+                    if (!failReasons[Props[q].PropName].ContainsKey(failReason))
+                    {
+                        failReasons[Props[q].PropName].Add(failReason, 0);
+                    }
+                    if (!placed)
+                    {
+                        GridOfPositions.SetObjectCantBePlaced(position, Props[q].PropName, objSize, failReason);
+
+                    }
+                    failReasons[Props[q].PropName][failReason]++;
+                    failReason = "";
+                }
+            }
+
+
+        }
+
+
     }
 
     public void LogPositionsForProps()
@@ -327,6 +403,22 @@ public class RoomObjectGrid
 
     }
 
+    public void SetObjectCantBePlaced(Vector2Int pos, string key, Vector2Int size,string failReason)
+    {
+
+        for (int x = pos.x; x < pos.x + size.x; x++)
+        {
+            for (int y = pos.y; y < pos.y + size.y; y++)
+            {
+                if (IsPosValid(x, y))
+                {
+                    GridElements[x, y].AddObjectCantBePlaced(key,failReason);
+                }
+            }
+        }
+
+    }
+
     public void OnPlaceObject(Vector2Int pos, string key, Vector2Int size)
     {
         for (int x = pos.x-1; x < pos.x + size.x+1; x++)
@@ -355,8 +447,19 @@ public class RoomObjectGrid
 public class RoomObjectGridElement
 {
     public HashSet<string> ObjectThatCouldBePlaced = new HashSet<string>();
+    public List<string> DebugObjectsThatCouldBePlaced=new List<string>();
+
+    public List<string> DebugObjectsThatCantBePlaced = new List<string>(), ReasonsForFail = new List<string>();
+
     public void AddObject(string key)
     {
         ObjectThatCouldBePlaced.Add(key);
+        DebugObjectsThatCouldBePlaced.Add(key);
+    }
+
+    public void AddObjectCantBePlaced(string key,string reasonForFail)
+    {
+        DebugObjectsThatCantBePlaced.Add(key);
+        ReasonsForFail.Add(reasonForFail);
     }
 }

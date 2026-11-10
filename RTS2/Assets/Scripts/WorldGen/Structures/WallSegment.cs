@@ -104,13 +104,33 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize,ObjectBounds
 
     public virtual void RenderWall()
     {
-        WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), ToDraw);
+        if(WallType== WallType.Door)
+        {
+            WorldController.Instance.DoorTilemap.SetTile(new Vector3Int(x, y, 0), ToDraw);
+
+        }
+        else
+        {
+            WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), ToDraw);
+
+        }
         Drawn = true;
     }
 
     public virtual void UnRender()
     {
-        WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), null) ;
+
+        if (WallType == WallType.Door)
+        {
+            WorldController.Instance.DoorTilemap.SetTile(new Vector3Int(x, y, 0), null);
+
+        }
+        else
+        {
+            WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), null);
+
+        }
+
 
         Drawn = false;
     }
@@ -278,8 +298,15 @@ public class WallSegment:Selectable ,ObjectInfo,ISerialize,ObjectBounds
 
     public void OnDeath()
     {
+        if (WallType == WallType.Wall)
+        {
+            WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, false);
+        }
+        else if (WallType == WallType.Door)
+        {
+            WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.DoorTilemap, WallTypeManager.Instance.SelectedWallTile, false);
 
-        WorldController.Instance.WallManager.RemoveSingleWall(x, y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile,false);
+        }
         if (healthUI != null)
         {
             healthUI.Cleanup();

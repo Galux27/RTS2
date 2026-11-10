@@ -304,18 +304,19 @@ public class WallManager
                 }
                 wall = WallHelpers.GetWallAtCoords(x1, y1);
 
-                if (wall!=null&& wall.HasWall)
+                if (wall!=null&& wall.HasDoor)
                 {
-                    WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
+                   // WallHelpers.CalculateTileType(ref wall, this, wall.baseWallType);
 
                     if (toGetFrom.IsRendered)
                     {
-
-                        toDrawOn.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
+                        
+                        WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x1, y1, 0), wall.ToDraw);
                     }
                     }
                 }
         }
+         WorldController.Instance.BuildingTilemap.SetTile(new Vector3Int(x, y, 0), null);
         WorldController.Instance.SetTraversible(x, y, true,WorldTileContents.Door);
         WorldController.Instance.AddPathfindingModifier(x, y, new PathNodeModifier_Door());
     }

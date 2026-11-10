@@ -391,9 +391,16 @@ public static class DataReaders
             return retVal;
 
         }
-        else if (myType == ConstructableType.Wall || myType == ConstructableType.Door)
+        else if (myType == ConstructableType.Wall )
         {
             System.Action OnBuilt = WallHelpers.GetOnBuilt(coords, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.AllObjects[key]);
+            BuildableStructure retVal = new BuildableStructure(coords.x, coords.y, maxProgress, false, OnBuilt, Vector3.one, default, myType, key);
+            return retVal;
+
+        }
+        else if ( myType == ConstructableType.Door)
+        {
+            System.Action OnBuilt = WallHelpers.GetOnBuilt(coords, WorldController.Instance.DoorTilemap, WallTypeManager.Instance.AllObjects[key]);
             BuildableStructure retVal = new BuildableStructure(coords.x, coords.y, maxProgress, false, OnBuilt, Vector3.one, default, myType, key);
             return retVal;
 

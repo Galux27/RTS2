@@ -805,8 +805,13 @@ public class BuildingTileArea
     public Dictionary<Vector2Int, GeneratedBuilding> MyBuilding;
     public void GenerateBuildingForArea(GeneratedSettlement settlement)
     {
+        if (MyBuilding != null)
+        {
+            return;
+        }
         Vector2Int Size = High - Low;
         BuildingFloorplan floorplan = BuildingFloorplan.GetFloorplanByType(BuildingDataManager.Instance.BuildingTemplates[BuildingID].FloorplanType);
+        
         MyBuilding=BuildingSplitUtil.SplitBuildingIntoChunks( floorplan.Generate(BuildingGenerator.Instance.RoomGen, Size.x, Size.y, Low, BuildingDataManager.Instance.BuildingTemplates[BuildingID], 50));
     }
 

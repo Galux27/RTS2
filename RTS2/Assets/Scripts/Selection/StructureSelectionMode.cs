@@ -200,7 +200,7 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         if (WallHelpers.CanIPlaceDoorAtPosition(coords.x, coords.y) && hasEnoughResources&& ValidToPlaceStructure(coords))
         {
-            WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
+            WallHelpers.CreateDoorBuildableStructure(coords.x, coords.y, WorldController.Instance.DoorTilemap, WallTypeManager.Instance.SelectedWallTile, cursorPos, new Vector3(.5f, .5f, 0f));
             ResourceHelpers.ConsumeResources(WallTypeManager.Instance.SelectedWallTile.RequirementsToBuild);
 
         }
@@ -212,7 +212,7 @@ public class StructureSelectionMode: SelectionMode
         Vector2Int coords = WorldController.Instance.ConvertWorldToTileCoords(cursorPos);
         if (WallHelpers.DoesConstructedDoorExistAtPosition(coords.x, coords.y))
         {
-            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.BuildingTilemap, WallTypeManager.Instance.SelectedWallTile);
+            WorldController.Instance.WallManager.RemoveSingleWall(coords.x, coords.y, WorldController.Instance.DoorTilemap, WallTypeManager.Instance.SelectedWallTile);
 
         }
 

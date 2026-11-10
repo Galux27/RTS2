@@ -12,7 +12,6 @@ public static class WallHelpers
     public static TilemapAnimation GetDoorVisual(WallSegment segment, WallManager wallManager)
     {
 
-        if (segment.x > 0)
         {
             if (WallHelpers.GetWallAtCoords( segment.x - 1, segment.y).HasWall)
             {
@@ -25,7 +24,6 @@ public static class WallHelpers
             }
         }
 
-        if (segment.x < wallManager.width - 1)
         {
             if (WallHelpers.GetWallAtCoords(segment.x + 1, segment.y).HasWall)
             {
@@ -38,7 +36,6 @@ public static class WallHelpers
             }
         }
 
-        if (segment.y > 0)
         {
             if (WallHelpers.GetWallAtCoords(segment.x, segment.y - 1).HasWall)
             {
@@ -51,7 +48,6 @@ public static class WallHelpers
             }
         }
 
-        if (segment.y < wallManager.height - 1)
         {
             if (WallHelpers.GetWallAtCoords(segment.x, segment.y + 1).HasWall)
             {
@@ -62,6 +58,18 @@ public static class WallHelpers
                 segment.up = false;
 
             }
+        }
+
+
+        if (segment.up && segment.down)
+        {
+            return TilemapAnimationController.Instance.Animations[DoorVertical];
+
+        }
+        else if (segment.left && segment.right)
+        {
+            return TilemapAnimationController.Instance.Animations[DoorHorizontal];
+
         }
 
 
@@ -89,9 +97,11 @@ public static class WallHelpers
         {
             return toGetTileFrom.NoNeighbours.sprite;
         }
+        WallSegment checking = null;
         if (segment.x > 0)
         {
-            if (WallHelpers.GetWallAtCoords(segment.x - 1, segment.y).HasWall)
+            checking = WallHelpers.GetWallAtCoords(segment.x - 1, segment.y);
+            if (checking.HasWall||checking.HasDoor)
             {
                 left = true;
             }
@@ -99,7 +109,8 @@ public static class WallHelpers
 
         if (segment.x < wallManager.width - 1)
         {
-            if (WallHelpers.GetWallAtCoords(segment.x + 1, segment.y).HasWall)
+            checking = WallHelpers.GetWallAtCoords(segment.x + 1, segment.y);
+            if (checking.HasWall || checking.HasDoor)
             {
                 right = true;
             }
@@ -107,7 +118,8 @@ public static class WallHelpers
 
         if (segment.y > 0)
         {
-            if (WallHelpers.GetWallAtCoords(segment.x, segment.y - 1).HasWall)
+            checking = WallHelpers.GetWallAtCoords(segment.x, segment.y - 1);
+            if (checking.HasWall || checking.HasDoor)
             {
                 down = true;
             }
@@ -115,7 +127,8 @@ public static class WallHelpers
 
         if (segment.y < wallManager.height - 1)
         {
-            if (WallHelpers.GetWallAtCoords(segment.x, segment.y + 1).HasWall)
+            checking = WallHelpers.GetWallAtCoords(segment.x, segment.y + 1);
+            if (checking.HasWall || checking.HasDoor)
             {
                 up = true;
             }
@@ -204,7 +217,7 @@ public static class WallHelpers
         WallSegment checking = WallHelpers.GetWallAtCoords(segment.x - 1, segment.y);
 
 
-        if (checking!=null&&checking.HasWall)
+        if (checking!=null&& (checking.HasWall || checking.HasDoor))
         {
             segment.left = true;
         }
@@ -216,7 +229,7 @@ public static class WallHelpers
         checking = WallHelpers.GetWallAtCoords(segment.x + 1, segment.y);
 
 
-        if (checking != null && checking.HasWall)
+        if (checking != null && (checking.HasWall||checking.HasDoor))
         {
             segment.right = true;
         }
@@ -228,7 +241,7 @@ public static class WallHelpers
 
 
 
-        if (checking != null && checking.HasWall)
+        if (checking != null && (checking.HasWall || checking.HasDoor))
         {
             segment.down = true;
         }
@@ -239,7 +252,7 @@ public static class WallHelpers
         checking = WallHelpers.GetWallAtCoords(segment.x, segment.y + 1);
 
 
-        if (checking != null && checking.HasWall)
+        if (checking != null && (checking.HasWall || checking.HasDoor))
         {
             segment.up = true;
         }
@@ -452,10 +465,12 @@ public static class WallHelpers
             return;
         }
         LastDoor.SetWallUnderConstruction(true,WallType.Door);
-        Action OnBuilt = () => { WallHelpers.CreateDoorObject(x, y, toDrawOn, toUse); };
+        Action OnBuilt = () => {  };
 
         new BuildableStructure(x, y, 1f, false, OnBuilt, Vector3.one, offset, ConstructableType.Door, toUse.WallName);
     }
+  
+
     public static void CreateWallObject(int x, int y, Tilemap toDrawOn, WallTile toUse)
     {
         WorldController.Instance.WallManager.AddSingleWall(x, y, toDrawOn, toUse);

@@ -204,6 +204,7 @@ public class ConstructableObjectManager : MonoBehaviour
 
     public void CreateObject_Generator(Vector2Int coords,Vector3 pos,string toConstruct)
     {
+        Debug.Log("Creating Object from building " + toConstruct + " at " + coords + " pos " + pos);
         ConstructableObject selectedToConstruct = AllObjects[toConstruct];
         ConstructableObjectInstance instance = new ConstructableObjectInstance(coords.x, coords.y, selectedToConstruct.Name);
         WorldChunkManager.Instance.AddEnvironmentObjectInstanceToChunk(instance);

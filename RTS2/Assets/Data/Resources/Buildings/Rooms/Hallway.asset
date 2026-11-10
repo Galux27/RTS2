@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RoomID: Hallway
   Wall: Brick
-  Door: Wood
-  Floor: IndustrialRusty
+  Door: Brick
+  Floor: GreenCarpet
   Props: []
   CanHaveWindows: 0
   CanHaveExternalDoor: 1
