@@ -421,9 +421,9 @@ public class RoomObjectGrid
 
     public void OnPlaceObject(Vector2Int pos, string key, Vector2Int size)
     {
-        for (int x = pos.x-1; x < pos.x + size.x+1; x++)
+        for (int x = pos.x; x < pos.x + size.x; x++)
         {
-            for (int y = pos.y-1; y < pos.y + size.y+1; y++)
+            for (int y = pos.y; y < pos.y + size.y; y++)
             {
                 if (IsPosValid(x, y))
                 {

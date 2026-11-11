@@ -243,7 +243,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
   
     static bool DoWeMeedObjectAdjacencyCriteria(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, GeneratedBuilding building)
     {
-        return true;
+        
         if(objectToCreate.PlacementCriteria==null|| objectToCreate.PlacementCriteria.MyAccessiblityData == null)
         {
             return true;
