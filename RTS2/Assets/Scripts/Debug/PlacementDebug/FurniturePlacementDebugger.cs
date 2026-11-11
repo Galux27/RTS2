@@ -77,18 +77,35 @@ public class FurniturePlacementDebugger : MonoBehaviour
             for (int y = 0; y < size.y; y++)
             {
                 r.RoomTiles[x, y].SetFloor(room.Floor);
-                if (x == 0 || y == 0 || x == size.x - 1 || y == size.y - 1)
-                {
-                    r.RoomTiles[x, y].SetWall(room.Wall);
-                }
-
+                
                 if(x==size.x/2 && y == size.y - 1)
                 {
                     r.RoomTiles[x, y].SetDoor("Wood");
                 }
             }
         }
+
+
+
         building.AddRoom(r);
+
+
+
+        building.ShiftAllFloorTiles(template);
+
+        building.UpdateEdgeTiles();
+        BuildingWallMap exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
+        BuildingWallMap interior = BuildingFloorplan.PopulateRoomInteriorWalls(building);
+        building.GenerateWindows(exterior);
+        building.GenerateExteriorDoors(exterior);
+        building.GenerateInteriorDoors(interior);
+
+        //have the above methods update room tiles to keep track of the walls/doors in generated rooms
+        for (int x = 0; x < building.MyRooms.Count; x++)
+        {
+            building.MyRooms[x].RefreshTileWeights();
+        }
+
         r.RefreshTileWeights();
         Dictionary<Vector2Int, GeneratedBuilding> splits = BuildingSplitUtil.SplitBuildingIntoChunks(building);
         foreach (KeyValuePair<Vector2Int, GeneratedBuilding> kvp in splits)

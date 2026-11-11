@@ -27,6 +27,7 @@ public class RoomTileDebug : MonoBehaviour
         GameObject BuildingParent = new GameObject();
         BuildingParent.name = "Prop placement tile debug";
         Sprite sp = Sprite.Create(Resources.Load("DebugSprite") as Texture2D, new Rect(0, 0, 32, 32), new Vector2(.5f, .5f));
+        Debug.Log("Debug drawing tile availability size" + placement.GridOfPositions.GridElements.GetLength(0) + " " + placement.GridOfPositions.GridElements.GetLength(1));
         for (int x = 0; x < placement.GridOfPositions.GridElements.GetLength(0); x++)
         {
             for (int y = 0; y < placement.GridOfPositions.GridElements.GetLength(1); y++)

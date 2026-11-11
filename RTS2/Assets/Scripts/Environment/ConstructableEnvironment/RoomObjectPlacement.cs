@@ -13,8 +13,8 @@ public class RoomObjectPlacement
     Vector2Int size;
     public RoomObjectPlacement(RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
     {
-        GridOfPositions = new RoomObjectGrid(room.size.x-1, room.size.y);
-        size = new Vector2Int(room.size.x - 1, room.size.y);
+        GridOfPositions = new RoomObjectGrid(room.size.x, room.size.y);
+        size = new Vector2Int(room.size.x , room.size.y);
         Vector2Int position = Vector2Int.zero;
         EnvironmentObject currentObject = null;
         Vector2Int objSize = Vector2Int.zero;
@@ -82,8 +82,8 @@ public class RoomObjectPlacement
     Dictionary<string, Dictionary<string, int>> failReasons;
     public RoomObjectPlacement(RoomTemplate template, GeneratedRoom room, GeneratedBuilding building, List< RoomTemplateProp> Props)
     {
-        GridOfPositions = new RoomObjectGrid(room.size.x - 1, room.size.y);
-        size = new Vector2Int(room.size.x - 1, room.size.y);
+        GridOfPositions = new RoomObjectGrid(room.size.x , room.size.y);
+        size = new Vector2Int(room.size.x, room.size.y);
         Vector2Int position = Vector2Int.zero;
         EnvironmentObject currentObject = null;
         Vector2Int objSize = Vector2Int.zero;

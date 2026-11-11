@@ -1023,7 +1023,9 @@ public class GeneratedBuilding
                             if ( checking.RoomID != walls.Key)
                             {
                                 otherTemplate = BuildingDataManager.Instance.RoomTemplates[MyRooms[checking.RoomID].RoomType];
-                                if (!DoesConnectionExist(walls.Key, checking.RoomID) && IsValidForDoor(curPos) && !(NeighbourPos.x == curPos.x || NeighbourPos.y == curPos.y))
+                                if (!DoesConnectionExist(walls.Key, checking.RoomID) 
+                                    && IsValidForDoor(curPos) 
+                                    &&  NeighbourPos.y == curPos.y)
                                 {
                                     AddLink(walls.Key, checking.RoomID, curPos);
                                   //  AddLink(checking.RoomID, walls.Key,  NeighbourPos);

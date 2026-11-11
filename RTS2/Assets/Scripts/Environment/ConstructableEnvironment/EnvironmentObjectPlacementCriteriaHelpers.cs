@@ -143,7 +143,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
                 return true;
                 break;
             case WallAccessibility.MustBeNextToWall:
-                return tile.HasWall||tile.AvgDistToWall<2;
+                return tile.HasWall;//||tile.AvgDistToWall<.1f;
                 break;
             case WallAccessibility.CanBeNextToWall:
                 return true;
@@ -152,9 +152,9 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
                 if (data.Direction == DirectionFromObject.Down)
                 {
                     //might not work if the room shapes become more complicated? may need more complex logic
-                    return position.y > 1;
+                    return position.y >= 1;
                 }
-                return !tile.HasWall; 
+                return !tile.HasWall;// && tile.AvgDistToWall >.1f;
                 break;
             default:
                 break;
