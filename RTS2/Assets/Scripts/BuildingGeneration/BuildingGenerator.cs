@@ -44,10 +44,11 @@ public class BuildingGenerator : MonoBehaviour
             GenerateTestBuilding();
         }
     }
-
+    public static bool BuildingDebug = false;
     public void GenerateTestBuilding()
     {
         IsGenerating = true;
+        BuildingDebug = true;
         int width = Random.Range(testTemplate.MinWidth, testTemplate.MaxWidth);
         int height = Random.Range(testTemplate.MinHeight, testTemplate.MaxHeight);
         Vector2Int camPos = new Vector2Int((int)CameraController.Instance.transform.position.x, 
@@ -76,11 +77,11 @@ public class BuildingGenerator : MonoBehaviour
         foreach (KeyValuePair<Vector2Int,GeneratedBuilding> kvp in splits)
         {
             ApplyBuidlingToWorld(kvp.Value);
-            RoomTileDebug.DebugDrawAllTiles(kvp.Value);
+           // RoomTileDebug.DebugDrawAllTiles(kvp.Value);
 
         }
         // ApplyBuidlingToWorld(building);
-        //
+        BuildingDebug = false;
         IsGenerating = false;
        // RoomTileDebug.DebugDrawAllTiles(building);
     }
@@ -679,9 +680,17 @@ public class GeneratedBuilding
 
     public bool HasAnythingToBlockProps(int x,int y)
     {
-        return !HasWall(x,y) && !HasDoor(x,y)&&!HasProp(x,y);
-    }
+        if (HasWall(x, y)|| HasDoor(x, y)|| HasProp(x, y))
+        {
+            return true;
+        }
 
+        return false;
+    }
+    public string HasAnythingToBlockPropsDebugInfo(int x, int y)
+    {
+        return HasWall(x, y).ToString()+ " "+ HasDoor(x, y).ToString()+" "+ HasProp(x, y).ToString();
+    }
     bool HasWall(int x,int y)
     {
         if (y < 0 || x < 0 || x >= Width || y >= Height)

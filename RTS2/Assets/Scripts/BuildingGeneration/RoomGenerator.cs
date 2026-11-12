@@ -360,6 +360,7 @@ public class RoomGenerator
         Dictionary<Vector2Int, string> retVal = new Dictionary<Vector2Int, string>();
         building.ClearAreaForRoom(room);
         RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[room.RoomType];
+        
         Debug.Log("Created props in rooms start" + template.name + " size " + room.size+","+ template.Props.Count+","+ template.CanBeGridBased);
         if (template.Props.Count == 0)
         {
@@ -372,8 +373,13 @@ public class RoomGenerator
             return retVal;
         }
         room.RefreshTileWeights();
-
+       
         RoomObjectPlacement roomObjectPlacement = new RoomObjectPlacement(template, room, building,template.Props);
+        if (BuildingGenerator.BuildingDebug)
+        {
+            RoomTileDebug.DebugDrawTileAvailablityForProps(roomObjectPlacement, building, room);
+
+        }
         Dictionary<string, int> propCounts = new Dictionary<string, int>();
         string debugData = roomObjectPlacement.GetDebugInfo();
 
@@ -397,7 +403,7 @@ public class RoomGenerator
 
             if (currentProp!=null)
             {
-                Vector2Int posToPlace = roomObjectPlacement.GetCoordinateForProp(currentProp.PropName);
+                Vector2Int posToPlace = roomObjectPlacement.GetCoordinateForProp(currentProp.PropName,room);
 
                 if (posToPlace.x >= 0)
                 {

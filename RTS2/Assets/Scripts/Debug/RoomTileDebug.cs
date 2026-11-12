@@ -22,6 +22,27 @@ public class RoomTileDebug : MonoBehaviour
         }
     }
 
+    public static void DebugDrawTileAvailablityForProps(RoomObjectPlacement placement, GeneratedBuilding building,GeneratedRoom room)
+    {
+        GameObject BuildingParent = new GameObject();
+        BuildingParent.name = "Prop placement tile debug";
+        Sprite sp = Sprite.Create(Resources.Load("DebugSprite") as Texture2D, new Rect(0, 0, 32, 32), new Vector2(.5f, .5f));
+        Debug.Log("Debug drawing tile availability size" + placement.GridOfPositions.GridElements.GetLength(0) + " " + placement.GridOfPositions.GridElements.GetLength(1));
+        for (int x = room.Position.x; x < room.Position.x+ placement.GridOfPositions.GridElements.GetLength(0); x++)
+        {
+            for (int y = room.Position.y; y < room.Position.y+placement.GridOfPositions.GridElements.GetLength(1); y++)
+            {
+                if (building.Tiles[x, y] == null)
+                {
+                    continue;
+                }
+                Debug.Log("Debug tile position " + (building.Tiles[x, y], building.Position + new Vector2Int(x, y)));
+                GameObject tile = CreateRoomObjectPositionTileDebug(building.Tiles[x, y], building.Position + new Vector2Int(x, y), sp, placement.GridOfPositions.GridElements[x - room.Position.x, y - room.Position.y],x-room.Position.x,y-room.Position.y);
+                tile.transform.parent = BuildingParent.transform;
+            }
+        }
+    }
+
     public static void DebugDrawTileAvailablityForProps(RoomObjectPlacement placement, GeneratedBuilding building)
     {
         GameObject BuildingParent = new GameObject();
@@ -36,7 +57,7 @@ public class RoomTileDebug : MonoBehaviour
                 {
                     continue;
                 }
-                GameObject tile = CreateRoomObjectPositionTileDebug(building.Tiles[x, y], building.Position + new Vector2Int(x, y), sp, placement.GridOfPositions.GridElements[x,y]);
+                GameObject tile = CreateRoomObjectPositionTileDebug(building.Tiles[x, y], building.Position + new Vector2Int(x, y), sp, placement.GridOfPositions.GridElements[x,y],x,y);
                 tile.transform.parent = BuildingParent.transform;
             }
         }
@@ -54,7 +75,7 @@ public class RoomTileDebug : MonoBehaviour
         WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(rtd.transform.position.x, rtd.transform.position.y, out rtd.Batch, out rtd.Chunk, out rtd.Tile);
         return g;
     }
-    public static GameObject CreateRoomObjectPositionTileDebug(RoomTile tile, Vector2Int position, Sprite debugSprite, RoomObjectGridElement gridElement)
+    public static GameObject CreateRoomObjectPositionTileDebug(RoomTile tile, Vector2Int position, Sprite debugSprite, RoomObjectGridElement gridElement, int buildingX, int buildingY)
     {
         GameObject g = new GameObject();
         SpriteRenderer sr = g.AddComponent<SpriteRenderer>();
@@ -64,7 +85,7 @@ public class RoomTileDebug : MonoBehaviour
         RoomTileDebug rtd = g.AddComponent<RoomTileDebug>();
         rtd.TileIRepresent = tile;
         rtd.transform.position = new Vector3(position.x + .5f, position.y + .5f, 0);
-
+        rtd.Building = new Vector2Int(buildingX,buildingY);
         PropPlacementDebug prop = g.AddComponent<PropPlacementDebug>();
         prop.ObjectsAvailableForTile = gridElement.DebugObjectsThatCouldBePlaced;
         prop.ObjectsUnavailable = gridElement.DebugObjectsThatCantBePlaced;
@@ -73,5 +94,5 @@ public class RoomTileDebug : MonoBehaviour
         return g;
     }
     public RoomTile TileIRepresent;
-    public Vector2Int Batch, Chunk, Tile;
+    public Vector2Int Batch, Chunk, Tile,Building;
 }

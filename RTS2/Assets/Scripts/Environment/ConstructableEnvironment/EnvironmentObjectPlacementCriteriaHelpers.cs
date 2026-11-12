@@ -6,6 +6,7 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     public static bool IsPositionValidForObject(EnvironmentObject objectToCreate,GeneratedRoom room, Vector2Int coordinates,GeneratedBuilding building,out string failReason)
     {
         string extraDebug = "";
+        
         if (!IsPositionInRange(coordinates, room, objectToCreate))
         {
             failReason = "Out of range";
@@ -114,20 +115,27 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
     static bool IsIndividualWallCriteriaValid(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate,WallAccessibiltyData data, GeneratedBuilding building,out string debugData)
     {
         debugData = "";
-        Vector2Int StartPos = GetPositionOnEdgeFromDirection(position, data.Direction, objectToCreate);
         Vector2Int Axis = AxisFromDirection(data.Direction);
+
+        Vector2Int StartPos = GetPositionOnEdgeFromDirection(position, data.Direction, objectToCreate);
         int Size = SizeFromDirection(data.Direction,objectToCreate);
         Vector2Int curPos = StartPos;
-        for(int i = 0; i < Size; i++)
-        {
-            curPos = StartPos + (Axis * i);
-            curPos = building.ConvertRoomCoordsToBuildingCoords(curPos, room);
-            if (!DoesTileMeetWallCriteria(building.Tiles[curPos.x, curPos.y], data,curPos))
+
+      
+        
+            for (int i = 0; i < Size; i++)
             {
-                debugData = position.ToString() + " failed at " + curPos+" dir "+ data.Direction.ToString()+" acc "+data.WallAccessibility.ToString();
-                return false;
+
+                curPos = StartPos + (Axis * i);
+                curPos = building.ConvertRoomCoordsToBuildingCoords(curPos, room);
+                if (!DoesTileMeetWallCriteria(building.Tiles[curPos.x, curPos.y], data, curPos))
+                {
+                    debugData = position.ToString() + " failed at " + curPos + " dir " + data.Direction.ToString() + " acc " + data.WallAccessibility.ToString();
+                    return false;
+                }
             }
-        }
+        
+        
         return true;
     }
 
@@ -316,13 +324,15 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
             //Debug.Log("Room Gen: prop placement criteria was null " + objectToCreate.Name);
             return true;
         }
+        string failDebug = "";
         for (int x = 0; x < objectToCreate.PlacementCriteria.MyAccessiblityData.Count; x++)
         {
             for (int y = 0; y < objectToCreate.PlacementCriteria.MyAccessiblityData[x].ObjectAccessibily.Count; y++)
             {
-                if (!IsIndividualObjectAccessiblityValid(position, room, objectToCreate, objectToCreate.PlacementCriteria.MyAccessiblityData[x].ObjectAccessibily[y], building))
+                if (!IsIndividualObjectAccessiblityValid(position, room, objectToCreate, objectToCreate.PlacementCriteria.MyAccessiblityData[x].ObjectAccessibily[y], building,out failDebug))
                 {
-                    debugData = "Failed on direction " + objectToCreate.PlacementCriteria.MyAccessiblityData[x].ObjectAccessibily[y].Direction + " check " + objectToCreate.PlacementCriteria.MyAccessiblityData[x].ObjectAccessibily[y].Accessiblity;
+                    debugData = "Failed on direction " + objectToCreate.PlacementCriteria.MyAccessiblityData[x].ObjectAccessibily[y].Direction + 
+                        " check " + objectToCreate.PlacementCriteria.MyAccessiblityData[x].ObjectAccessibily[y].Accessiblity+" fail reason " + failDebug;
                     return false;
                 }
             }
@@ -330,19 +340,21 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
         return true;
     }
 
-    static bool IsIndividualObjectAccessiblityValid(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, ObjectAccessibility data, GeneratedBuilding building)
+    static bool IsIndividualObjectAccessiblityValid(Vector2Int position, GeneratedRoom room, EnvironmentObject objectToCreate, ObjectAccessibility data, GeneratedBuilding building,out string debugData)
     {
+        debugData = "original pos "+position+ "converted pos "+ building.ConvertRoomCoordsToBuildingCoords(position, room)+" dir "+data.Direction.ToString();
         Vector2Int StartPos = GetPositionOnEdgeFromDirection(position, data.Direction, objectToCreate);
         Vector2Int Axis = AxisFromDirection(data.Direction);
         int Size = SizeFromDirection(data.Direction, objectToCreate);
         Vector2Int curPos = StartPos;
         int accessibleTiles = 0;
+        string failReason = "";
         for (int i = 0; i < Size; i++)
         {
-            curPos = StartPos + (Axis * i) +GetPositionOnEdgeFromDirection(position,data.Direction,objectToCreate);
+            curPos = StartPos + (Axis * i);// +GetPositionOnEdgeFromDirection(position,data.Direction,objectToCreate);
             curPos = building.ConvertRoomCoordsToBuildingCoords(curPos, room);
-            DoesTileMeetObjectAccessiblityCriteria(building, data,curPos,Axis, ref accessibleTiles);
-            
+            DoesTileMeetObjectAccessiblityCriteria(building, data,curPos,Axis, ref accessibleTiles,out failReason);
+            debugData += curPos+" axis " + Axis+" size " + Size+" tile count "+ accessibleTiles.ToString()+" "+failReason;
 
         }
         switch (data.Accessiblity)
@@ -362,26 +374,31 @@ public static class EnvironmentObjectPlacementCriteriaHelpers
         return true;
     }
 
-    static bool DoesTileMeetObjectAccessiblityCriteria(GeneratedBuilding room, ObjectAccessibility data,Vector2Int pos,Vector2Int edgeDirection,ref int accessableTiles)
+    static bool DoesTileMeetObjectAccessiblityCriteria(GeneratedBuilding building, ObjectAccessibility data,Vector2Int pos,Vector2Int edgeDirection,ref int accessableTiles,out string failReason)
     {
-        RoomTile tile = null; 
-       
+        RoomTile tile = null;
+        failReason = "success";
         switch (data.Accessiblity)
         {
             case AccessableTilesNeeded.All:
-                if (room.CoordsValid(pos.x, pos.y))
+                if (building.CoordsValid(pos.x, pos.y))
                 {
                     return false;
                 }
-                tile = room.Tiles[pos.x, pos.y]; 
+                tile = building.Tiles[pos.x, pos.y]; 
                 return tile.HasDoor == false && tile.HasWall == false && tile.HasProp == false;
             case AccessableTilesNeeded.AtLeastOne:
                 //check tiles on positive and negative versopms pf the edge direction
                 //if all of these don't have an wall or prop, we're good
-             
-                if (room.HasAnythingToBlockProps(pos.x,pos.y)==false|| room.HasAnythingToBlockProps(pos.x+edgeDirection.x, pos.y+edgeDirection.y) == false || room.HasAnythingToBlockProps(pos.x-edgeDirection.x, pos.y-edgeDirection.y) == false)
+            //  || room.HasAnythingToBlockProps(pos.x + edgeDirection.x, pos.y + edgeDirection.y) == false
+             //       || room.HasAnythingToBlockProps(pos.x - edgeDirection.x, pos.y - edgeDirection.y) == false)
+                if (building.HasAnythingToBlockProps(pos.x,pos.y)==false)                   
                 {
                     accessableTiles++;
+                }
+                else
+                {
+                    failReason = "Failed on " + pos + " " + building.HasAnythingToBlockPropsDebugInfo(pos.x,pos.y);
                 }
                 break;
             case AccessableTilesNeeded.DontCare:

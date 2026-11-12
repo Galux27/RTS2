@@ -13,8 +13,8 @@ public class RoomObjectPlacement
     Vector2Int size;
     public RoomObjectPlacement(RoomTemplate template,GeneratedRoom room,GeneratedBuilding building)
     {
-        GridOfPositions = new RoomObjectGrid(room.size.x, room.size.y);
-        size = new Vector2Int(room.size.x , room.size.y);
+        GridOfPositions = new RoomObjectGrid(room.size.x-1, room.size.y);
+        size = new Vector2Int(room.size.x-1 , room.size.y);
         Vector2Int position = Vector2Int.zero;
         EnvironmentObject currentObject = null;
         Vector2Int objSize = Vector2Int.zero;
@@ -89,7 +89,7 @@ public class RoomObjectPlacement
         Vector2Int objSize = Vector2Int.zero;
         Dictionary<string, int> PositionsForObjects = new Dictionary<string, int>();
         failReasons = new Dictionary<string, Dictionary<string, int>>();
-        
+        Vector2Int endPos = new Vector2Int();
 
         for (int q = 0; q < Props.Count; q++)
         {
@@ -100,11 +100,17 @@ public class RoomObjectPlacement
             objSize = currentObject.SizeAsVec2();
             objSize.x = Mathf.Max(1, objSize.x);
             objSize.y = Mathf.Max(1, objSize.y);
+           
+                endPos.x = size.x - objSize.x;
+            
 
+           
+                endPos.y = size.y - objSize.y;
+            
             string failReason = "";
-            for (int x = 0; x < size.x - objSize.x; x += objSize.x)
+            for (int x = 0; x < endPos.x; x += objSize.x)
             {
-                for (int y = 0; y < size.y - objSize.y; y += objSize.y)
+                for (int y = 0; y < endPos.y; y += objSize.y)
                 {
                     position.x = x;
                     position.y = y;
@@ -194,7 +200,7 @@ public class RoomObjectPlacement
         return PotentialProps[Random.Range(0, PotentialProps.Count)];
     }
     List<Vector2Int> potentialPropPositions = new List<Vector2Int>();
-    public Vector2Int GetCoordinateForProp(string propKey)
+    public Vector2Int GetCoordinateForProp(string propKey,GeneratedRoom room)
     {
         potentialPropPositions.Clear();
         Vector2Int pos = Vector2Int.zero;
@@ -212,9 +218,33 @@ public class RoomObjectPlacement
         }
         if (potentialPropPositions.Count > 0)
         {
-            return potentialPropPositions[Random.Range(0, potentialPropPositions.Count)];
+            return potentialPropPositions[GetBestPositionForProp(room)];
         }
         return Vector2Int.one * -1;
+    }
+
+
+    float GetValueForPlacingProp(Vector2Int pos, GeneratedRoom room)
+    {
+        return (room.RoomTiles[pos.x, pos.y].AvgDistToDoor - room.RoomTiles[pos.x, pos.y].AvgDistToWall) +pos.y;
+    }
+    int GetBestPositionForProp(GeneratedRoom room)
+    {
+        int retVal = 0;
+        float bestWeight = 0f;
+        float curWeight = 0f;
+        for(int x = 0; x < potentialPropPositions.Count; x++)
+        {
+            curWeight = GetValueForPlacingProp(potentialPropPositions[x],room);
+            if (curWeight>bestWeight)
+            {
+                bestWeight= curWeight;
+                retVal = x;
+            }
+        }
+
+
+        return retVal;
     }
 
     /// <summary>
@@ -423,7 +453,7 @@ public class RoomObjectGrid
     {
         for (int x = pos.x; x < pos.x + size.x; x++)
         {
-            for (int y = pos.y; y < pos.y + size.y; y++)
+            for (int y = pos.y-1; y < pos.y + size.y+1; y++)
             {
                 if (IsPosValid(x, y))
                 {

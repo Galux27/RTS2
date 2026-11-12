@@ -19,7 +19,7 @@ MonoBehaviour:
   HarvestedSprite: {fileID: 0}
   BlocksTile: 1
   Width: 2
-  Height: 2
+  Height: 1
   CanHarvest: 0
   IsDecoration: 0
   RequiresUpdate: 0
@@ -38,6 +38,8 @@ MonoBehaviour:
     - CapacityProvidedFor: Munitions
       CapacityProvided: 50
   MaxHealth: 30
+  PlacementCriteria:
+    MyAccessiblityData: []
   Cost: 0
   TimeToBuild: 1
   RequirementsToBuild: []
