@@ -2,6 +2,7 @@ using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -80,6 +81,7 @@ public class BuildingGenerator : MonoBehaviour
            // RoomTileDebug.DebugDrawAllTiles(kvp.Value);
 
         }
+        RoomTileDebug.DebugDrawAllTiles(building);
         // ApplyBuidlingToWorld(building);
         BuildingDebug = false;
         IsGenerating = false;
@@ -289,6 +291,40 @@ public class GeneratedBuilding
     public Dictionary<int, RoomLink> Links;
     bool hasAnything = false;
     public string buildingType;
+
+    public string GetRoomIds()
+    {
+        string retVal = "";
+        List<int> idsInRoom = new List<int>();
+        for (int i = 0; i < MyRooms.Count; i++)
+        {
+            idsInRoom.Clear();
+            retVal += MyRooms[i].RoomID + ":";
+
+            for(int x = 0; x < MyRooms[i].RoomTiles.GetLength(0); x++)
+            {
+                for (int y = 0; y < MyRooms[i].RoomTiles.GetLength(1); y++)
+                {
+                    if (MyRooms[i].RoomTiles[x, y] != null)
+                    {
+                        if(!idsInRoom.Contains(MyRooms[i].RoomTiles[x, y].RoomID))
+                        {
+                            idsInRoom.Add(MyRooms[i].RoomTiles[x, y].RoomID);
+                        }
+                    }
+                }
+            }
+            for(int x = 0; x < idsInRoom.Count; x++)
+            {
+                retVal += idsInRoom[x] + ",";
+            }
+            retVal += " - ";
+        }
+
+            return retVal;
+    }
+
+
     public GeneratedBuilding(int width, int height, Vector2Int pos,string type)
     {
         Width = width;
@@ -1014,7 +1050,13 @@ public class GeneratedBuilding
         Debug.Log("Total interior walls " + map.Walls.Count);
         foreach (KeyValuePair<int, List<Vector2Int>> walls in map.Walls)
         {
-            template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
+            if (walls.Key == -1)
+            {
+                continue;
+            }
+            try
+            {
+                template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
             for (int x = 0; x < walls.Value.Count; x++)
             {
                 curPos.x = walls.Value[x].x;
@@ -1029,7 +1071,7 @@ public class GeneratedBuilding
                         if (InRange(x1, y1)&&NeighbourPos!=curPos)
                         {
                             checking = Tiles[NeighbourPos.x, NeighbourPos.y];
-                            if ( checking.RoomID != walls.Key)
+                            if ( checking.RoomID != walls.Key && checking.RoomID>=0)
                             {
                                 otherTemplate = BuildingDataManager.Instance.RoomTemplates[MyRooms[checking.RoomID].RoomType];
                                 if (!DoesConnectionExist(walls.Key, checking.RoomID) 
@@ -1047,6 +1089,12 @@ public class GeneratedBuilding
                 }
                 
             }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Error placing exterior doors in " + walls.Key + " " + walls.Value.Count + " total rooms " + MyRooms.Count+" other room "+ checking.RoomID);
+                Debug.LogError(e.ToSafeString());
+            }
         }
 
         GenerateAllLinks();
@@ -1061,23 +1109,34 @@ public class GeneratedBuilding
         List<int> doorRooms = new List<int>();
         foreach (KeyValuePair<int, List<Vector2Int>> walls in map.Walls)
         {
-            template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
-
-            if (template.CanHaveExternalDoor)
+            if (walls.Key == -1)
             {
-                for (int x = 0; x < walls.Value.Count; x++)
+                continue;
+            }
+            try
+            {
+                template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
+
+                if (template.CanHaveExternalDoor)
                 {
-                    curPos.x = walls.Value[x].x;
-                    curPos.y = walls.Value[x].y;
-
-                    
-
-                    if (IsValidForDoor(curPos))
+                    for (int x = 0; x < walls.Value.Count; x++)
                     {
-                        potentialDoors.Add(curPos);
-                        doorRooms.Add(walls.Key);
+                        curPos.x = walls.Value[x].x;
+                        curPos.y = walls.Value[x].y;
+
+
+
+                        if (IsValidForDoor(curPos))
+                        {
+                            potentialDoors.Add(curPos);
+                            doorRooms.Add(walls.Key);
+                        }
                     }
                 }
+            }catch(System.Exception e)
+            {
+                Debug.LogError("Error placing exterior doors in " + walls.Key + " " + walls.Value.Count + " total rooms " + MyRooms.Count);
+                Debug.LogError(e.ToSafeString());
             }
         }
         if (potentialDoors.Count > 0)

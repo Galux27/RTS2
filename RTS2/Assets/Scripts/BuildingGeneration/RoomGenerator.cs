@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.U2D;
 using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
 
 public class RoomGenerator 
 {
@@ -356,9 +355,12 @@ public class RoomGenerator
 
     public Dictionary<Vector2Int,string> PopulateRoomEnvObjects(GeneratedRoom room,GeneratedBuilding building)
     {
-
+        if (BuildingGenerator.BuildingDebug)
+        {
+            Debug.Log("Building Rooms: " + building.GetRoomIds());
+        }
         Dictionary<Vector2Int, string> retVal = new Dictionary<Vector2Int, string>();
-        building.ClearAreaForRoom(room);
+       // building.ClearAreaForRoom(room);
         RoomTemplate template = BuildingDataManager.Instance.RoomTemplates[room.RoomType];
         
         Debug.Log("Created props in rooms start" + template.name + " size " + room.size+","+ template.Props.Count+","+ template.CanBeGridBased);
@@ -395,7 +397,10 @@ public class RoomGenerator
         string PropToPlace = string.Empty;
         int maxAttemtps = 300;
         List<string> PropsFailedToPlace = new List<string>();
-
+        if (BuildingGenerator.BuildingDebug)
+        {
+            Debug.Log("Building Rooms: " + building.GetRoomIds());
+        }
         while (!Done&&attempts<maxAttemtps)
         {
 
@@ -446,7 +451,10 @@ public class RoomGenerator
 
         Debug.Log("Building Split: Created props in rooms " + template.name + " size " + room.size + 
             " attempts " + attempts + " final " +roomCount+" my count " +myCount+" debug " +debugData);
-
+        if (BuildingGenerator.BuildingDebug)
+        {
+            Debug.Log("Building Rooms: " + building.GetRoomIds());
+        }
         return retVal;
     }
 
@@ -480,7 +488,7 @@ public class RoomGenerator
         room.RefreshWeightsForProps();
     }
 
-
+  
 
 
     public void PopulateRoomEnvObjects(GeneratedRoom room, RoomTemplate template)

@@ -54,6 +54,7 @@ public class BuildingFloorplan
     public static Vector2Int GetEdgeOfRoomLargeEnough(int width,int height,GeneratedBuilding building,GeneratedRoom roomToBuildOff)
     {
         List<Vector2Int> ValidTilesToStartOn = GetValidEdgeTilesForRoom(width,height,building,roomToBuildOff);
+        Debug.Log("Corridor Building: valid tiles for "+roomToBuildOff.Position+" wid " +width+" height "+ height+" count " +ValidTilesToStartOn.Count+" room off " +roomToBuildOff.RoomID );
 
         Vector2Int startPos = Vector2Int.zero;
         for(int i = 0; i < ValidTilesToStartOn.Count; i++)
@@ -93,7 +94,7 @@ public class BuildingFloorplan
             return false;
         }
 
-        if (generatingIn.Tiles[x, y] == null)
+        if (generatingIn.Tiles[x, y] == null|| generatingIn.Tiles[x, y].RoomID==-1)
         {
             return true;
         }
@@ -101,12 +102,15 @@ public class BuildingFloorplan
         {
             if (generatingIn.Tiles[x, y].RoomID == baseRoom.RoomID)
             {
+                Debug.Log("Corridor Building: testing tile " + x + "," + y + " has wall " + generatingIn.Tiles[x, y].HasWall + " room id " + generatingIn.Tiles[x, y].RoomID);
                 if (!generatingIn.Tiles[x, y].HasWall)
                 {
                     return false;
                 }
             }else if(generatingIn.Tiles[x, y].RoomID != baseRoom.RoomID)
             {
+                Debug.Log("Corridor Building: testing tile not in same room" + x + "," + y + " has wall " + generatingIn.Tiles[x, y].HasWall + " room id " + generatingIn.Tiles[x, y].RoomID);
+
                 if (!generatingIn.Tiles[x, y].HasWall)
                 {
                     return false;
@@ -570,7 +574,7 @@ public class BuildingFloorplan
             count++;
         }
         building.ShiftAllFloorTiles(template);
-
+        Debug.Log("Building Rooms: " + building.GetRoomIds());
         building.UpdateEdgeTiles();
         BuildingWallMap exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
         BuildingWallMap interior = BuildingFloorplan.PopulateRoomInteriorWalls(building);
@@ -594,6 +598,7 @@ public class BuildingFloorplan
                 building.MyRooms[kvp.Key].AddEnvObject(building.MyRooms[kvp.Key].RoomTiles[kvp2.Key.x, kvp2.Key.y], new GeneratedRoomProp(kvp2.Value, kvp2.Key));
             }
         }
+
         return building;
     }
 }
@@ -1617,6 +1622,12 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         int corridorIndex = 0;
         Vector2Int SubRoomSize = Vector2Int.zero;
         Vector2Int startCoords = Vector2Int.zero;
+        Debug.Log("Building Rooms: " + building.GetRoomIds());
+
+        BuildingWallMap exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
+        BuildingWallMap interior = BuildingFloorplan.PopulateRoomInteriorWalls(building);
+        Debug.Log("Building Rooms: " + building.GetRoomIds());
+
         for (int i = 0; i < template.PotentialRooms.Count; i++)
         {
             attempts = 0;
@@ -1630,6 +1641,9 @@ public class CorridorBasedFloorplan : BuildingFloorplan
             {
 
                 startCoords = BuildingFloorplan.GetEdgeOfRoomLargeEnough(SubRoomSize.x,SubRoomSize.y, building, Corridors[corridorIndex]);
+                Debug.Log("Corridor Building: start coords " + startCoords);
+
+
                 if (startCoords.x >= 0)
                 {
                     curRoom = RoomGen.GenerateRoom(startCoords, SubRoomSize, subRoomTemplate, building.MyRooms.Count, building);
@@ -1653,20 +1667,26 @@ public class CorridorBasedFloorplan : BuildingFloorplan
                 attempts++;
             }
         }
+        Debug.Log("Building Rooms: " + building.GetRoomIds());
+
+        Debug.Log("Corridor Building: " + successes + "/" + attempts);
         building.ShiftAllFloorTiles(template);
 
         building.UpdateEdgeTiles();
-        BuildingWallMap exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
-        BuildingWallMap interior = BuildingFloorplan.PopulateRoomInteriorWalls(building);
-        building.GenerateWindows(exterior);
+        exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
+        interior = BuildingFloorplan.PopulateRoomInteriorWalls(building);
+        //building.GenerateWindows(exterior);
         building.GenerateExteriorDoors(exterior);
         building.GenerateInteriorDoors(interior);
+        Debug.Log("Building Rooms: " + building.GetRoomIds());
 
         //have the above methods update room tiles to keep track of the walls/doors in generated rooms
         for (int x = 0; x < building.MyRooms.Count; x++)
         {
             building.MyRooms[x].RefreshTileWeights();
         }
+        Debug.Log("Building Rooms: " + building.GetRoomIds());
+
         //update the weights using         room.RefreshTileWeightsInRange
         //then call the populate props in rooms method
         //fuck knows why this doesn't add props to rooms directly in this case, I'm sure I'll look at it at some point and
@@ -1678,6 +1698,7 @@ public class CorridorBasedFloorplan : BuildingFloorplan
                 building.MyRooms[kvp.Key].AddEnvObject(building.MyRooms[kvp.Key].RoomTiles[kvp2.Key.x, kvp2.Key.y], new GeneratedRoomProp(kvp2.Value, kvp2.Key));
             }
         }
+        Debug.Log("Building Rooms: " + building.GetRoomIds());
 
         return building;
     }
