@@ -293,12 +293,20 @@ public class BuildingFloorplan
             }
             else
             {
+                
                 return true;
             }
        }
         return false;
     }
-    public static BuildingWallMap PopulateRoomInteriorWalls(GeneratedBuilding building)
+
+    /// <summary>
+    /// Generates walls on the interior of a building
+    /// </summary>
+    /// <param name="building"></param>
+    /// <param name="prioritizeCorridors"> forces any interior walls to be placed on a corridor tile if available</param>
+    /// <returns></returns>
+    public static BuildingWallMap PopulateRoomInteriorWalls(GeneratedBuilding building,bool prioritizeCorridors=false)
     {
         BuildingWallMap retVal = new BuildingWallMap(building.Position, new Vector2Int(building.Width, building.Height));
         BuildingTemplate template = BuildingDataManager.Instance.BuildingTemplates[building.buildingType];
@@ -333,23 +341,32 @@ public class BuildingFloorplan
                                 {
                                     if (!IsBelow(x, y, neighbourCoords[q]))
                                     {
-                                        if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID)
+                                        if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID && IsBuildingCorridor(neighbours[q])==false)
                                         {
                                             building.Tiles[x, y].SetWall(template.CorridorWall);
                                             retVal.AddWall(building.Tiles[x, y],new Vector2Int(x,y));
                                             building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
-                                        building.MyRooms[neighbours[q].RoomID].SetTileHasWall(pos);
+                                            building.MyRooms[neighbours[q].RoomID].SetTileHasWall(pos);
+                                        }
+                                        else if (IsBuildingCorridor(neighbours[q]))
+                                        {
+                                            if (prioritizeCorridors)
+                                            {
+                                                building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
+                                                retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y], new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
+                                                building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
+                                            }
+                                            else
+                                            {
+                                                building.Tiles[x, y].SetWall(template.CorridorWall);
+                                                retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
+                                                building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
+                                            }
+                                        }
                                     }
-                                    else if (IsBuildingCorridor(neighbours[q]))
-                                    {
-                                        building.Tiles[x, y].SetWall(template.CorridorWall);
-                                        retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
-                                        building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
-                                    }
-                                }
                                     else
                                     {
-                                        if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID)
+                                        if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID && IsBuildingCorridor(neighbours[q])==false)
                                         {
                                             building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
                                         retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y],new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
@@ -360,9 +377,18 @@ public class BuildingFloorplan
                                     }
                                     else if (IsBuildingCorridor(neighbours[q]))
                                     {
-                                        building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
-                                        retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y], new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
-                                        building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
+                                        if (prioritizeCorridors)
+                                        {
+                                            building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
+                                            retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y], new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
+                                            building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
+                                        }
+                                        else
+                                        {
+                                            building.Tiles[x, y].SetWall(template.CorridorWall);
+                                            retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
+                                            building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
+                                        }
                                     }
                                 }
                                 }
@@ -1546,6 +1572,10 @@ public class CorridorBasedFloorplan : BuildingFloorplan
     Vector2Int size;
     public override GeneratedBuilding Generate(RoomGenerator RoomGen, int width, int height, Vector2Int pos, BuildingTemplate template, int maxPasses)
     {
+        //Generate main room
+        //Generate buildings in rows having them be next to each other just above from the main room
+        //then generate the corridors by creating a bounds from the top of the main room to the max points of the corridors
+
 
         size = new Vector2Int(width, height);
         GeneratedBuilding building = new GeneratedBuilding(width, height, pos, template.BuildingName);
@@ -1673,11 +1703,20 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         building.ShiftAllFloorTiles(template);
 
         building.UpdateEdgeTiles();
+
+        //reapply corridors to fix internal doors not generating
+        //for(int x = 0; x < Corridors.Count; x++)
+        //{
+        //    building.ApplyRoom(building.MyRooms[x + 1]);
+        //}
+
+        //clear all wall tiles so we can reapply them with the extra rooms taken into account
+        building.ClearAllWalls();
+        interior = BuildingFloorplan.PopulateRoomInteriorWalls(building,true);
         exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
-        interior = BuildingFloorplan.PopulateRoomInteriorWalls(building);
         //building.GenerateWindows(exterior);
         building.GenerateExteriorDoors(exterior);
-        building.GenerateInteriorDoors(interior);
+        //building.GenerateInteriorDoors(interior);
         Debug.Log("Building Rooms: " + building.GetRoomIds());
 
         //have the above methods update room tiles to keep track of the walls/doors in generated rooms

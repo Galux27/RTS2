@@ -335,6 +335,21 @@ public class GeneratedBuilding
         buildingType=type;
     }
 
+    public void ClearAllWalls()
+    {
+
+        for(int x = 0; x < Tiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < Tiles.GetLength(1); y++)
+            {
+                if (Tiles[x, y] != null)
+                {
+                    Tiles[x, y].ClearWall();
+                }
+            }
+        }
+    }
+
     public void ClearAreaForRoom(GeneratedRoom room)
     {
         if (!MyRooms.Contains(room))
@@ -1071,12 +1086,12 @@ public class GeneratedBuilding
                         if (InRange(x1, y1)&&NeighbourPos!=curPos)
                         {
                             checking = Tiles[NeighbourPos.x, NeighbourPos.y];
-                            if ( checking.RoomID != walls.Key && checking.RoomID>=0)
+                            if (checking!=null && checking.RoomID != walls.Key && checking.RoomID>=0)
                             {
                                 otherTemplate = BuildingDataManager.Instance.RoomTemplates[MyRooms[checking.RoomID].RoomType];
                                 if (!DoesConnectionExist(walls.Key, checking.RoomID) 
                                     && IsValidForDoor(curPos) 
-                                    &&  NeighbourPos.y == curPos.y)
+                                    )
                                 {
                                     AddLink(walls.Key, checking.RoomID, curPos);
                                   //  AddLink(checking.RoomID, walls.Key,  NeighbourPos);
@@ -1092,7 +1107,10 @@ public class GeneratedBuilding
             }
             catch (System.Exception e)
             {
-                Debug.LogError("Error placing exterior doors in " + walls.Key + " " + walls.Value.Count + " total rooms " + MyRooms.Count+" other room "+ checking.RoomID);
+                if (checking != null)
+                {
+                    Debug.LogError("Error placing exterior doors in " + walls.Key + " " + walls.Value.Count + " total rooms " + MyRooms.Count + " other room " + checking.RoomID);
+                }
                 Debug.LogError(e.ToSafeString());
             }
         }

@@ -13,7 +13,7 @@ public static class WallHelpers
     {
 
         {
-            if (WallHelpers.GetWallAtCoords( segment.x - 1, segment.y).HasWall)
+            if (WallCheck(WallHelpers.GetWallAtCoords( segment.x - 1, segment.y)))
             {
                 segment.left = true;
             }
@@ -25,7 +25,7 @@ public static class WallHelpers
         }
 
         {
-            if (WallHelpers.GetWallAtCoords(segment.x + 1, segment.y).HasWall)
+            if (WallCheck(WallHelpers.GetWallAtCoords(segment.x + 1, segment.y)))
             {
                 segment.right = true;
             }
@@ -37,7 +37,7 @@ public static class WallHelpers
         }
 
         {
-            if (WallHelpers.GetWallAtCoords(segment.x, segment.y - 1).HasWall)
+            if (WallCheck(WallHelpers.GetWallAtCoords(segment.x, segment.y - 1)))
             {
                 segment.down = true;
             }
@@ -49,7 +49,7 @@ public static class WallHelpers
         }
 
         {
-            if (WallHelpers.GetWallAtCoords(segment.x, segment.y + 1).HasWall)
+            if (WallCheck( WallHelpers.GetWallAtCoords(segment.x, segment.y + 1)))
             {
                 segment.up = true;
             }
@@ -88,7 +88,10 @@ public static class WallHelpers
 
     }
 
-
+    static bool WallCheck(WallSegment tile)
+    {
+        return tile != null && tile.HasWall;
+    }
 
     public static Sprite GetSpriteForWallType(WallSegment segment, WallManager wallManager, WallTile toGetTileFrom)
     {
