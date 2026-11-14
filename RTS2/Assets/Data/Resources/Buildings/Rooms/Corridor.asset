@@ -20,10 +20,10 @@ MonoBehaviour:
   CanHaveWindows: 0
   CanHaveExternalDoor: 1
   CanBeGridBased: 0
-  CanHaveInternalWalls: 1
-  CanGenerateAnyWalls: 1
+  CanHaveInternalWalls: 0
+  CanGenerateAnyWalls: 0
   GenerateDoorsToOtherRooms: 1
-  GenerateDoorsToCorridors: 1
+  GenerateDoorsToCorridors: 0
   MinWidth: 4
   MaxWidth: 4
   MinHeight: 4
@@ -31,4 +31,4 @@ MonoBehaviour:
   FloorXOffset: 1
   FloorYOffset: 1
   AttachedRooms: []
-  WallMode: 0
+  WallMode: 1

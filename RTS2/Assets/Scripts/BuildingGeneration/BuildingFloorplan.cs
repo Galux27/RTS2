@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor.Analytics;
 using UnityEngine;
@@ -293,20 +294,12 @@ public class BuildingFloorplan
             }
             else
             {
-                
                 return true;
             }
        }
         return false;
     }
-
-    /// <summary>
-    /// Generates walls on the interior of a building
-    /// </summary>
-    /// <param name="building"></param>
-    /// <param name="prioritizeCorridors"> forces any interior walls to be placed on a corridor tile if available</param>
-    /// <returns></returns>
-    public static BuildingWallMap PopulateRoomInteriorWalls(GeneratedBuilding building,bool prioritizeCorridors=false)
+    public static BuildingWallMap PopulateRoomInteriorWalls(GeneratedBuilding building)
     {
         BuildingWallMap retVal = new BuildingWallMap(building.Position, new Vector2Int(building.Width, building.Height));
         BuildingTemplate template = BuildingDataManager.Instance.BuildingTemplates[building.buildingType];
@@ -316,13 +309,13 @@ public class BuildingFloorplan
         {
             return null;
         }
-        Vector2Int pos = Vector2Int.zero;
+        Vector2Int curPos = Vector2Int.zero;
         for (int x = 0; x < building.Width; x++)
         {
             for (int y = 0; y < building.Height; y++)
             {
-                pos.x = x;
-                pos.y = y;
+                curPos.x = x;
+                curPos.y = y;
                 if (building.Tiles[x, y]!=null&& building.Tiles[x,y].RoomID>=0 && building.Tiles[x, y].IsCorridor==false && building.Tiles[x, y].HasWall==false)
                 {
 
@@ -341,54 +334,36 @@ public class BuildingFloorplan
                                 {
                                     if (!IsBelow(x, y, neighbourCoords[q]))
                                     {
-                                        if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID && IsBuildingCorridor(neighbours[q])==false)
+                                        if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID)
                                         {
                                             building.Tiles[x, y].SetWall(template.CorridorWall);
                                             retVal.AddWall(building.Tiles[x, y],new Vector2Int(x,y));
-                                            building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
-                                            building.MyRooms[neighbours[q].RoomID].SetTileHasWall(pos);
-                                        }
-                                        else if (IsBuildingCorridor(neighbours[q]))
-                                        {
-                                            if (prioritizeCorridors)
-                                            {
-                                                building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
-                                                retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y], new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
-                                                building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
-                                            }
-                                            else
-                                            {
-                                                building.Tiles[x, y].SetWall(template.CorridorWall);
-                                                retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
-                                                building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
-                                            }
-                                        }
+                                            building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(curPos);
+                                        building.MyRooms[neighbours[q].RoomID].SetTileHasWall(curPos);
                                     }
+                                    else if (IsBuildingCorridor(neighbours[q]))
+                                    {
+                                        building.Tiles[x, y].SetWall(template.CorridorWall);
+                                        retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
+                                        building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(curPos);
+                                    }
+                                }
                                     else
                                     {
-                                        if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID && IsBuildingCorridor(neighbours[q])==false)
+                                        if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID)
                                         {
                                             building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
                                         retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y],new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
-                                        building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
-                                        building.MyRooms[neighbours[q].RoomID].SetTileHasWall(pos);
+                                        building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(curPos);
+                                        building.MyRooms[neighbours[q].RoomID].SetTileHasWall(curPos);
 
 
                                     }
                                     else if (IsBuildingCorridor(neighbours[q]))
                                     {
-                                        if (prioritizeCorridors)
-                                        {
-                                            building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
-                                            retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y], new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
-                                            building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
-                                        }
-                                        else
-                                        {
-                                            building.Tiles[x, y].SetWall(template.CorridorWall);
-                                            retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
-                                            building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(pos);
-                                        }
+                                        building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
+                                        retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y], new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
+                                        building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(curPos);
                                     }
                                 }
                                 }
@@ -398,6 +373,211 @@ public class BuildingFloorplan
                 }
                
             }
+        }
+
+        int wallCount = 0;
+        List<Vector2Int> NeighboursToSetWalls = new List<Vector2Int>();
+        for (int x = 0; x < building.Width; x++)
+        {
+            for (int y = 0; y < building.Height; y++)
+            {
+                curPos.x = x;
+                curPos.y = y;
+
+                if (building.Tiles[x, y] == null || building.Tiles[x, y].HasWall == false && building.Tiles[x, y].HasFloor == false || building.Tiles[x, y].IsCorridor)
+                {
+                    wallCount = 0;
+                    GetNeighbouringTilesLeftDown(building, x, y, ref neighbours, ref neighbourCoords);
+                    if (neighbours.Count >= 3)
+                    {
+                        if (neighbours[2] != null && neighbours[2].HasWall)
+                        {
+                            continue;
+                        }
+
+                        if (neighbours.Count >= 4)
+                        {
+                            if (neighbours[3] != null && neighbours[3].HasWall)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                    for (int q = 0; q < neighbours.Count; q++)
+                    {
+                        if (neighbours[q] != null && neighbours[q].HasWall)
+                        {
+                            wallCount++;
+                        }
+                    }
+                    if (wallCount == 2)
+                    {
+                        NeighboursToSetWalls.Add(curPos);
+
+                    }
+                }
+            }
+        }
+        for (int q = 0; q < NeighboursToSetWalls.Count; q++)
+        {
+
+            if (building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y] == null)
+            {
+                building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y] = new RoomTile();
+            }
+            if (building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID >= 0)
+            {
+                building.MyRooms[building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID].SetTileHasWall(curPos);
+            }
+            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall("Metal");
+            retVal.AddWall(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y], curPos);
+        }
+        return retVal;
+    }
+
+
+
+    public static BuildingWallMap PopulateRoomInteriorWallsForCorridor(GeneratedBuilding building, bool prioritizeCorridors = false)
+    {
+        BuildingWallMap retVal = new BuildingWallMap(building.Position, new Vector2Int(building.Width, building.Height));
+        BuildingTemplate template = BuildingDataManager.Instance.BuildingTemplates[building.buildingType];
+        List<RoomTile> neighbours = new List<RoomTile>();
+        List<Vector2Int> neighbourCoords = new List<Vector2Int>();
+        if (building.Tiles == null)
+        {
+            return null;
+        }
+        Vector2Int curPos = Vector2Int.zero;
+        for (int x = 0; x < building.Width; x++)
+        {
+            for (int y = 0; y < building.Height; y++)
+            {
+                curPos.x = x;
+                curPos.y = y;
+                if (building.Tiles[x, y] != null 
+                    && building.Tiles[x, y].RoomID >= 0 
+                    && building.Tiles[x, y].HasWall == false)
+                {
+                    GetNeighbouringTiles(building, x, y, ref neighbours, ref neighbourCoords);
+                    if (building.Tiles[x, y].IsCorridor)
+                    {
+                        
+
+                        for (int q = 0; q < neighbours.Count; q++)
+                        {
+                            if(neighbours[q] == null||building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].RoomID < 0)
+                            {
+                                continue;
+                            }
+                            if (neighbours[q].RoomID != building.Tiles[x, y].RoomID && neighbours[q].IsCorridor == false)
+                            {
+                                building.Tiles[x, y].SetWall(template.CorridorWall);
+                                retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
+                                building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(curPos);
+                                break;
+                            }
+                            else if ( neighbours[q].RoomID == building.Tiles[x, y].RoomID && neighbours[q].IsCorridor == false)
+                            {
+                                building.Tiles[x, y].SetWall(template.CorridorWall);
+                                retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
+                                building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(curPos);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int q = 0; q < neighbours.Count; q++)
+                        {
+                            if (neighbours[q] == null || building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].RoomID < 0)
+                            {
+                                continue;
+                            }
+                            if ( neighbours[q].RoomID != building.Tiles[x, y].RoomID )
+                            {
+                                if(building.Tiles[x, y].HasWall==false && neighbours[q].HasWall == false)
+                                {
+                                    if(!IsBelow(x, y, neighbourCoords[q]))
+                                    {
+                                        building.Tiles[x, y].SetWall(template.CorridorWall);
+                                        retVal.AddWall(building.Tiles[x, y], new Vector2Int(x, y));
+                                        building.MyRooms[building.Tiles[x, y].RoomID].SetTileHasWall(curPos);
+                                    }
+                                    else
+                                    {
+                                       // if (building.MyRooms.Count>(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].RoomID)) {
+                                            building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].SetWall(template.CorridorWall);
+                                            retVal.AddWall(building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y], new Vector2Int(neighbourCoords[q].x, neighbourCoords[q].y));
+                                            building.MyRooms[building.Tiles[neighbourCoords[q].x, neighbourCoords[q].y].RoomID].SetTileHasWall(curPos);
+                                      //  }
+                                    }
+                                    break;
+
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        int wallCount = 0;
+        List<Vector2Int> NeighboursToSetWalls = new List<Vector2Int>();
+        for (int x = 0; x < building.Width; x++)
+        {
+            for (int y = 0; y < building.Height; y++)
+            {
+                curPos.x = x;
+                curPos.y = y;
+
+                if (building.Tiles[x, y] == null || building.Tiles[x, y].HasWall == false && building.Tiles[x, y].HasFloor == false || building.Tiles[x, y].IsCorridor)
+                {
+                    wallCount = 0;
+                    GetNeighbouringTilesLeftDown(building, x, y, ref neighbours, ref neighbourCoords);
+                    if (neighbours.Count >= 3)
+                    {
+                        if (neighbours[2] != null && neighbours[2].HasWall)
+                        {
+                            continue;
+                        }
+
+                        if (neighbours.Count >= 4)
+                        {
+                            if (neighbours[3] != null && neighbours[3].HasWall)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                    for (int q = 0; q < neighbours.Count; q++)
+                    {
+                        if (neighbours[q] != null && neighbours[q].HasWall)
+                        {
+                            wallCount++;
+                        }
+                    }
+                    if (wallCount == 2)
+                    {
+                        NeighboursToSetWalls.Add(curPos);
+
+                    }
+                }
+            }
+        }
+        for (int q = 0; q < NeighboursToSetWalls.Count; q++)
+        {
+
+            if (building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y] == null)
+            {
+                building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y] = new RoomTile();
+            }
+            if (building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID >= 0)
+            {
+                building.MyRooms[building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID].SetTileHasWall(curPos);
+            }
+            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall("Metal");
+            retVal.AddWall(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y], curPos);
         }
         return retVal;
     }
@@ -519,6 +699,63 @@ public class BuildingFloorplan
                 }      
             }
         }
+        int wallCount = 0;
+        List<Vector2Int> NeighboursToSetWalls = new List<Vector2Int>();
+        for (int x = 0; x < building.Width; x++)
+        {
+            for (int y = 0; y < building.Height; y++)
+            {
+                curPos.x = x;
+                curPos.y = y;
+
+                if (building.Tiles[x, y] == null || building.Tiles[x, y].HasWall == false && building.Tiles[x, y].HasFloor == false || building.Tiles[x, y].IsCorridor)
+                {
+                    wallCount = 0;
+                    GetNeighbouringTilesLeftDown(building, x, y, ref neighbours, ref neighbourCoords);
+                    if (neighbours.Count >= 3)
+                    {
+                        if (neighbours[2] != null && neighbours[2].HasWall)
+                        {
+                            continue;
+                        }
+
+                        if (neighbours.Count >= 4)
+                        {
+                            if (neighbours[3] != null && neighbours[3].HasWall)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                    for (int q = 0; q < neighbours.Count; q++)
+                    {
+                        if (neighbours[q] != null && neighbours[q].HasWall)
+                        {
+                            wallCount++;
+                        }
+                    }
+                    if (wallCount == 2)
+                    {
+                        NeighboursToSetWalls.Add(curPos);
+
+                    }
+                }
+            }
+        }
+        for (int q = 0; q < NeighboursToSetWalls.Count; q++)
+        {
+
+            if (building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y] == null)
+            {
+                building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y] = new RoomTile();
+            }
+            if (building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID >= 0)
+            {
+                building.MyRooms[building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID].SetTileHasWall(curPos);
+            }
+            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall("Metal");
+            retVal.AddWall(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y], curPos);
+        }
         return retVal;
     }
 
@@ -561,6 +798,34 @@ public class BuildingFloorplan
             positions.Add(new Vector2Int(x, y + 1));
 
         }
+    }
+
+    static void GetNeighbouringTilesLeftDown(GeneratedBuilding building, int x, int y, ref List<RoomTile> toPopulate, ref List<Vector2Int> positions)
+    {
+        toPopulate.Clear();
+        positions.Clear();
+        if (x > 0)
+        {
+            toPopulate.Add(building.Tiles[x - 1, y]);
+            positions.Add(new Vector2Int(x - 1, y));
+        }
+       
+
+        if (y > 0)
+        {
+            toPopulate.Add(building.Tiles[x, y - 1]);
+            positions.Add(new Vector2Int(x, y - 1));
+
+        }
+
+        if (y > 0 && x<building.Tiles.GetLength(0)-1)
+        {
+            toPopulate.Add(building.Tiles[x+1, y - 1]);
+            positions.Add(new Vector2Int(x+1, y - 1));
+
+        }
+
+      
     }
 
     static bool IsTileExterior(RoomTile tile)
@@ -1655,7 +1920,7 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         Debug.Log("Building Rooms: " + building.GetRoomIds());
 
         BuildingWallMap exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
-        BuildingWallMap interior = BuildingFloorplan.PopulateRoomInteriorWalls(building);
+        BuildingWallMap interior = BuildingFloorplan.PopulateRoomInteriorWallsForCorridor(building);
         Debug.Log("Building Rooms: " + building.GetRoomIds());
 
         for (int i = 0; i < template.PotentialRooms.Count; i++)
@@ -1712,11 +1977,11 @@ public class CorridorBasedFloorplan : BuildingFloorplan
 
         //clear all wall tiles so we can reapply them with the extra rooms taken into account
         building.ClearAllWalls();
-        interior = BuildingFloorplan.PopulateRoomInteriorWalls(building,true);
+        interior = BuildingFloorplan.PopulateRoomInteriorWallsForCorridor(building,true);
         exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
         //building.GenerateWindows(exterior);
         building.GenerateExteriorDoors(exterior);
-        //building.GenerateInteriorDoors(interior);
+       // building.GenerateInteriorDoors(interior);
         Debug.Log("Building Rooms: " + building.GetRoomIds());
 
         //have the above methods update room tiles to keep track of the walls/doors in generated rooms

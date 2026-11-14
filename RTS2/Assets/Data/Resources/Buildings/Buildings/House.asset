@@ -33,10 +33,10 @@ MonoBehaviour:
     roomTemplate: {fileID: 11400000, guid: a265a8372b9e347479b1d9697d80c0af, type: 2}
     Min: 0
     Max: 1
-  MinWidth: 15
-  MaxWidth: 20
-  MinHeight: 15
-  MaxHeight: 20
+  MinWidth: 20
+  MaxWidth: 26
+  MinHeight: 20
+  MaxHeight: 26
   MinRooms: 6
   MaxRooms: 10
   MaxExternalDoors: 1
