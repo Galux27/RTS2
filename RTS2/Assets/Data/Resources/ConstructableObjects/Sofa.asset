@@ -44,7 +44,7 @@ MonoBehaviour:
       DoorAccessibilty: 1
       WallAccessibilities:
       - Direction: 0
-        WallAccessibility: 0
+        WallAccessibility: 1
       - Direction: 1
         WallAccessibility: 3
       - Direction: 2

@@ -377,6 +377,7 @@ public class BuildingFloorplan
 
         int wallCount = 0;
         List<Vector2Int> NeighboursToSetWalls = new List<Vector2Int>();
+        List<string> WallsToUse = new List<string>();
         for (int x = 0; x < building.Width; x++)
         {
             for (int y = 0; y < building.Height; y++)
@@ -413,7 +414,26 @@ public class BuildingFloorplan
                     if (wallCount == 2)
                     {
                         NeighboursToSetWalls.Add(curPos);
+                        WallsToUse.Add(template.ExternalWall);
 
+                    }
+                    else
+                    {
+
+                        wallCount = 0;
+                        GetNeighbouringTilesLeftUpDown(building, x, y, ref neighbours, ref neighbourCoords);
+                        for (int q = 0; q < neighbours.Count; q++)
+                        {
+                            if (neighbours[q] != null && neighbours[q].HasWall)
+                            {
+                                wallCount++;
+                            }
+                        }
+                        if (wallCount == 3)
+                        {
+                            NeighboursToSetWalls.Add(curPos);
+                            WallsToUse.Add(template.ExternalWall);
+                        }
                     }
                 }
             }
@@ -429,7 +449,7 @@ public class BuildingFloorplan
             {
                 building.MyRooms[building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID].SetTileHasWall(curPos);
             }
-            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall("Metal");
+            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall(WallsToUse[q]);
             retVal.AddWall(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y], curPos);
         }
         return retVal;
@@ -524,6 +544,7 @@ public class BuildingFloorplan
         }
         int wallCount = 0;
         List<Vector2Int> NeighboursToSetWalls = new List<Vector2Int>();
+        List<string> WallsToUse = new List<string>();
         for (int x = 0; x < building.Width; x++)
         {
             for (int y = 0; y < building.Height; y++)
@@ -560,7 +581,7 @@ public class BuildingFloorplan
                     if (wallCount == 2)
                     {
                         NeighboursToSetWalls.Add(curPos);
-
+                        WallsToUse.Add(template.ExternalWall);
                     }
                 }
             }
@@ -576,7 +597,7 @@ public class BuildingFloorplan
             {
                 building.MyRooms[building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID].SetTileHasWall(curPos);
             }
-            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall("Metal");
+            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall(WallsToUse[q]);
             retVal.AddWall(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y], curPos);
         }
         return retVal;
@@ -701,6 +722,7 @@ public class BuildingFloorplan
         }
         int wallCount = 0;
         List<Vector2Int> NeighboursToSetWalls = new List<Vector2Int>();
+        List<string> WallsToUse = new List<string>();
         for (int x = 0; x < building.Width; x++)
         {
             for (int y = 0; y < building.Height; y++)
@@ -737,7 +759,7 @@ public class BuildingFloorplan
                     if (wallCount == 2)
                     {
                         NeighboursToSetWalls.Add(curPos);
-
+                        WallsToUse.Add(template.ExternalWall);
                     }
                 }
             }
@@ -753,7 +775,7 @@ public class BuildingFloorplan
             {
                 building.MyRooms[building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID].SetTileHasWall(curPos);
             }
-            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall("Metal");
+            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall(WallsToUse[q]);
             retVal.AddWall(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y], curPos);
         }
         return retVal;
@@ -824,8 +846,35 @@ public class BuildingFloorplan
             positions.Add(new Vector2Int(x+1, y - 1));
 
         }
+    }
+
+    static void GetNeighbouringTilesLeftUpDown(GeneratedBuilding building, int x, int y, ref List<RoomTile> toPopulate, ref List<Vector2Int> positions)
+    {
+        toPopulate.Clear();
+        positions.Clear();
+        if (x > 0)
+        {
+            toPopulate.Add(building.Tiles[x - 1, y]);
+            positions.Add(new Vector2Int(x - 1, y));
+        }
+
+
+        if (y > 0)
+        {
+            toPopulate.Add(building.Tiles[x, y - 1]);
+            positions.Add(new Vector2Int(x, y - 1));
+
+        }
+
+        if (y < building.Tiles.GetLength(1)-1)
+        {
+            toPopulate.Add(building.Tiles[x, y + 1]);
+            positions.Add(new Vector2Int(x, y + 1));
+        }
 
       
+
+
     }
 
     static bool IsTileExterior(RoomTile tile)
@@ -847,7 +896,7 @@ public class BuildingFloorplan
         RoomTemplate roomTemplate=null;
         while (count < maxPasses && !building.HasFinishedBuildingGen(template))
         {
-            roomTemplate = building.GetRoomToGenerate(template);
+            roomTemplate = building.GetRoomToGenerate(template, building);
             if (roomTemplate != null)
             {
                 width = Random.Range(roomTemplate.MinWidth, roomTemplate.MaxWidth);
@@ -935,7 +984,7 @@ public class SquareBuildingFloorplan : BuildingFloorplan
         SplitRoom toPopulate = CurrentSplits[0];
         for (int x = 0; x < CurrentSplits.Count; x++)
         {
-            roomTemplate = building.GetRoomToGenerate(template);
+            roomTemplate = building.GetRoomToGenerate(template,building);
             toPopulate = GetRoomClosestToSizeOfRoom(ref CurrentSplits, roomTemplate);
             if (roomTemplate != null && !toPopulate.InUse)
             { 
@@ -1161,7 +1210,7 @@ public class HouseFloorplan : BuildingFloorplan
         int count = 0;
         while (!done&&count<1111)
         {
-            RoomTemplate roomTemplate = building.GetRoomToGenerate(template);// building.GetRandomRoomWeCouldStillGenerate(template);
+            RoomTemplate roomTemplate = building.GetRoomToGenerate(template, building);// building.GetRandomRoomWeCouldStillGenerate(template);
             if (roomTemplate == null)
             {
                 done = true;
@@ -1200,14 +1249,20 @@ public class HouseFloorplan : BuildingFloorplan
                     }
                 }
                 if (!skip) {
+
+                   
+
                     for (int x = 0; x < building.MyRooms.Count; x++)
                     {
-                        if (LineUtil.SquareIntersection(position, position + roomSize, building.MyRooms[x].Position, building.MyRooms[x].Position + building.MyRooms[x].size))
+                        
+                        if (LineUtil.SquareIntersection(position , position + roomSize, building.MyRooms[x].Position, building.MyRooms[x].Position + building.MyRooms[x].size))
                         {
                             skip = true;
                             break;
                         }
                     }
+
+                 
                 }
                 if (!skip)
                 {
@@ -1216,8 +1271,10 @@ public class HouseFloorplan : BuildingFloorplan
                     
                     building.AddRoom(curRoom);
                     startPositions.RemoveAt(startIndex);
-                    startPositions.Add(new Vector2Int(position.x + roomSize.x + 2, position.y));
-                    startPositions.Add(new Vector2Int(position.x, position.y + roomSize.y + 2));
+
+
+                    startPositions.Add(new Vector2Int(position.x + roomSize.x + 3, position.y));
+                    startPositions.Add(new Vector2Int(position.x, position.y + roomSize.y + 3));
                     List<Vector2Int> newPositions = new List<Vector2Int>();
                     for(int x = 0; x < startPositions.Count; x++)
                     {
@@ -1596,7 +1653,7 @@ public class HouseFloorplan : BuildingFloorplan
     {
         List<Vector2Int> TilesToMakeCorridors = new List<Vector2Int>();
         CorridorEdge edge = new CorridorEdge();
-
+        //fix these so they grab a border of 2 if they hit the building edge
         for (int x=0; x < building.MyRooms.Count; x++)
         {
             TilesToMakeCorridors.AddRange( GetTilesFromVerticalFromRoom(ref building, building.MyRooms[x],TilesToMakeCorridors,out edge));
@@ -1772,7 +1829,7 @@ public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
         RoomTemplate subRoomTemplate = null;
         for(int x = 0; x < template.PotentialRooms.Count; x++)
         {
-            subRoomTemplate = building.GetRoomToGenerate(template);
+            subRoomTemplate = building.GetRoomToGenerate(template, building);
             if (subRoomTemplate != null)
             {
                 Vector2Int roomSize = new Vector2Int(Random.Range(subRoomTemplate.MinWidth, subRoomTemplate.MaxWidth), Random.Range(subRoomTemplate.MinHeight, subRoomTemplate.MaxHeight));
@@ -1979,9 +2036,9 @@ public class CorridorBasedFloorplan : BuildingFloorplan
         building.ClearAllWalls();
         interior = BuildingFloorplan.PopulateRoomInteriorWallsForCorridor(building,true);
         exterior = BuildingFloorplan.PopulateExteriorWallTiles(building);
-        //building.GenerateWindows(exterior);
+        building.GenerateWindows(exterior);
         building.GenerateExteriorDoors(exterior);
-       // building.GenerateInteriorDoors(interior);
+        building.GenerateInteriorDoorsCorridor(interior);
         Debug.Log("Building Rooms: " + building.GetRoomIds());
 
         //have the above methods update room tiles to keep track of the walls/doors in generated rooms

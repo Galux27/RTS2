@@ -44,4 +44,6 @@ public class BuildingRoomData
 {
     public RoomTemplate roomTemplate;
     public int Min = 0, Max = 1;
+
+    public bool Mandatory = false;
 }

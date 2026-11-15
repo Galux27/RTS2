@@ -101,11 +101,11 @@ public class RoomObjectPlacement
             objSize.x = Mathf.Max(1, objSize.x);
             objSize.y = Mathf.Max(1, objSize.y);
            
-                endPos.x = size.x - objSize.x;
+                endPos.x = (size.x - objSize.x)-1;
             
 
            
-                endPos.y = size.y - objSize.y;
+                endPos.y = (size.y - objSize.y);
             
             string failReason = "";
             for (int x = 0; x < endPos.x; x += objSize.x)
@@ -226,7 +226,7 @@ public class RoomObjectPlacement
 
     float GetValueForPlacingProp(Vector2Int pos, GeneratedRoom room)
     {
-        return (room.RoomTiles[pos.x, pos.y].AvgDistToDoor - room.RoomTiles[pos.x, pos.y].AvgDistToWall) +pos.y;
+        return (room.RoomTiles[pos.x, pos.y].AvgDistToDoor +(pos.y- room.RoomTiles[pos.x, pos.y].AvgDistToWall));
     }
     int GetBestPositionForProp(GeneratedRoom room)
     {
@@ -420,13 +420,13 @@ public class RoomObjectGrid
     public void SetObjectCanBePlaced(Vector2Int pos,string key,Vector2Int size)
     {
 
-        for (int x = pos.x; x < pos.x + size.x; x++)
+       // for (int x = pos.x; x <= pos.x + size.x; x++)
         {
-            for (int y = pos.y; y < pos.y + size.y; y++)
+         //   for (int y = pos.y; y <= pos.y + size.y; y++)
             {
-                if (IsPosValid(x, y))
+                if (IsPosValid(pos.x, pos.y))
                 {
-                    GridElements[x, y].AddObject(key);
+                    GridElements[pos.x, pos.y].AddObject(key);
                 }
             }
         }
@@ -436,13 +436,13 @@ public class RoomObjectGrid
     public void SetObjectCantBePlaced(Vector2Int pos, string key, Vector2Int size,string failReason)
     {
 
-        for (int x = pos.x; x < pos.x + size.x; x++)
+       // for (int x = pos.x; x < pos.x + size.x; x++)
         {
-            for (int y = pos.y; y < pos.y + size.y; y++)
+           // for (int y = pos.y; y < pos.y + size.y; y++)
             {
-                if (IsPosValid(x, y))
+                if (IsPosValid(pos.x, pos.y))
                 {
-                    GridElements[x, y].AddObjectCantBePlaced(key,failReason);
+                    GridElements[pos.x, pos.y].AddObjectCantBePlaced(key,failReason);
                 }
             }
         }
@@ -451,7 +451,7 @@ public class RoomObjectGrid
 
     public void OnPlaceObject(Vector2Int pos, string key, Vector2Int size)
     {
-        for (int x = pos.x; x < pos.x + size.x; x++)
+        for (int x = pos.x; x <= pos.x + size.x; x++)
         {
             for (int y = pos.y-1; y < pos.y + size.y+1; y++)
             {

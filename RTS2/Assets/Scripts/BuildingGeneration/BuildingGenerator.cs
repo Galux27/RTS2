@@ -875,12 +875,17 @@ public class GeneratedBuilding
         List<Vector2Int> WindowsPlaced = new List<Vector2Int>();
         foreach(KeyValuePair<int,List<Vector2Int>> walls in map.Walls)
         {
+            if (walls.Key == -1) { continue; }
             template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
 
             if (template.CanHaveWindows)
             {
                 for(int x = 0; x < walls.Value.Count; x++)
                 {
+                    if(Tiles[walls.Value[x].x, walls.Value[x].y] == null|| Tiles[walls.Value[x].x, walls.Value[x].y].HasWall==false)
+                    {
+                        continue;
+                    }
                     if (FarEnoughFromExisting(walls.Value[x], WindowsPlaced, 2f))
                     {
                         Tiles[walls.Value[x].x, walls.Value[x].y].SetWall("Window");
@@ -1006,7 +1011,7 @@ public class GeneratedBuilding
         }
         return false;
     }
-
+   
     void AddLink(int room1,int room2,Vector2Int position)
     {
         if (!Links.ContainsKey(room1))
@@ -1056,9 +1061,105 @@ public class GeneratedBuilding
         }
     }
 
-    public void GenerateInteriorDoors(BuildingWallMap map)
+    public void GenerateInteriorDoorsCorridor(BuildingWallMap map)
     {
         Links = new Dictionary<int, RoomLink>();
+        Vector2Int curPos = new Vector2Int(), NeighbourPos = new Vector2Int();
+        RoomTemplate template = null, otherTemplate = null;
+        RoomTile checking = null;
+        Debug.Log("Total interior walls " + map.Walls.Count);
+        int wallCount = 0;
+        bool foundConnection = false;
+        int id = 0;
+        foreach (KeyValuePair<int, List<Vector2Int>> walls in map.Walls)
+        {
+            if (walls.Key == -1)
+            {
+                continue;
+            }
+            try
+            {
+                template = BuildingDataManager.Instance.RoomTemplates[MyRooms[walls.Key].RoomType];
+                
+                for (int x = 0; x < walls.Value.Count; x++)
+                {
+                    curPos.x = walls.Value[x].x;
+                    curPos.y = walls.Value[x].y;
+                    if (Tiles[curPos.x, curPos.y]==null)
+                    {
+                        continue;
+                    }
+
+                    
+                    foundConnection = false;
+                    id = -1;
+                    wallCount = 0;
+                    //if(Tiles[curPos.x, curPos.y].IsCorridor ) 
+                    {
+                        for (int x1 = curPos.x - 1; x1 <= curPos.x + 1; x1++)
+                        {
+                            for (int y1 = curPos.y - 1; y1 <= curPos.y + 1; y1++)
+                            {
+                                NeighbourPos.x = x1;
+                                NeighbourPos.y = y1;
+                                if (InRange(x1, y1) && NeighbourPos != curPos)
+                                {
+                                    checking = Tiles[NeighbourPos.x, NeighbourPos.y];
+                                    if (checking != null)
+                                    {
+                                        if (checking.RoomID != walls.Key && checking.RoomID >= 0)
+                                        {
+                                            otherTemplate = BuildingDataManager.Instance.RoomTemplates[MyRooms[checking.RoomID].RoomType];
+                                            if (!DoesConnectionExist(walls.Key, checking.RoomID)
+                                                && IsValidForDoor(curPos)
+                                                )
+                                            {
+                                                foundConnection = true;
+                                                id = checking.RoomID;
+                                            }
+                                        }
+                                        if (checking.HasWall)
+                                        {
+                                            wallCount++;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                   
+                    
+
+                    if (foundConnection && wallCount == 2)
+                    {
+                        AddLink(walls.Key, id, curPos);
+
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                if (checking != null)
+                {
+                    Debug.LogError("Error placing exterior doors in " + walls.Key + " " + walls.Value.Count + " total rooms " + MyRooms.Count + " other room " + checking.RoomID);
+                }
+                Debug.LogError(e.ToSafeString());
+            }
+        }
+
+        //GenerateInteriorDoors(map,false);
+
+        GenerateAllLinks();
+    }
+
+    public void GenerateInteriorDoors(BuildingWallMap map,bool regenerateLinks=true)
+    {
+        if (regenerateLinks)
+        {
+            Links = new Dictionary<int, RoomLink>();
+        }
         Vector2Int curPos = new Vector2Int(), NeighbourPos = new Vector2Int();
         RoomTemplate template = null, otherTemplate = null;
         RoomTile checking = null;
@@ -1639,9 +1740,52 @@ public class GeneratedBuilding
         return 0;
     }
 
+    Dictionary<string, int> MandatoryBuildings = new Dictionary<string, int>();
+    List<string> RoomsIStillNeedToAdd = new List<string>();
 
-    public RoomTemplate GetRoomToGenerate(BuildingTemplate template)
+    bool HasBuildingGotMandatoryRooms(BuildingTemplate template,GeneratedBuilding building)
     {
+        MandatoryBuildings.Clear();
+        RoomsIStillNeedToAdd.Clear();
+        for(int x = 0; x < template.PotentialRooms.Count; x++)
+        {
+            if (template.PotentialRooms[x].Mandatory&&!MandatoryBuildings.ContainsKey(template.PotentialRooms[x].roomTemplate.RoomID))
+            {
+                MandatoryBuildings.Add(template.PotentialRooms[x].roomTemplate.RoomID, 0);
+            }
+        }
+
+        for(int x = 0; x < building.MyRooms.Count; x++)
+        {
+            if (MandatoryBuildings.ContainsKey(building.MyRooms[x].RoomType))
+            {
+                MandatoryBuildings[building.MyRooms[x].RoomType]++;
+            }
+        }
+
+        bool HasAllMandatory = true;
+        foreach(KeyValuePair<string,int> kvp in MandatoryBuildings)
+        {
+            if (kvp.Value == 0)
+            {
+                HasAllMandatory = false;
+                RoomsIStillNeedToAdd.Add(kvp.Key);
+            }
+        }
+        return HasAllMandatory;
+    }
+    
+    public RoomTemplate GetRoomToGenerate(BuildingTemplate template,GeneratedBuilding building)
+    {
+        if (!HasBuildingGotMandatoryRooms(template, building))
+        {
+            string roomID = RoomsIStillNeedToAdd[Random.Range(0, RoomsIStillNeedToAdd.Count)];
+            return BuildingDataManager.Instance.RoomTemplates[roomID];
+
+        }
+
+
+
         int index = 0;
         int count = 0;
         while (count < 50)

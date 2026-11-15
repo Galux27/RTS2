@@ -107,18 +107,21 @@ public static class Pathfinding
 
             
                 WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(x - 1, y, out wallBatch, out wallChunk, out wallTile);
-                compWall = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y ].WallSegments[wallTile.x, wallTile.y];
+                if (WorldChunkManager.Instance.DoesBatchExist(wallBatch))
+                {
+                    compWall = WorldChunkManager.Instance.GetChunkBatch(wallBatch).Chunks[wallChunk.x, wallChunk.y].WallSegments[wallTile.x, wallTile.y];
                     if (compWall.HasDoor == false)
                     {
                         index = node.GetNeighbourInDireciton(-1, 0);
-                    if (index > -1)
-                    {
-                        checking = node.neighbours[index].Node;
-                        node.neighbours[index].IsAccessable = false;
-                        neighbourToMeIndex = checking.GetNeighbourInDireciton(1, 0);
-                        checking.neighbours[neighbourToMeIndex].IsAccessable = false;
+                        if (index > -1)
+                        {
+                            checking = node.neighbours[index].Node;
+                            node.neighbours[index].IsAccessable = false;
+                            neighbourToMeIndex = checking.GetNeighbourInDireciton(1, 0);
+                            checking.neighbours[neighbourToMeIndex].IsAccessable = false;
+                        }
                     }
-                    }
+                }
             }
             
 

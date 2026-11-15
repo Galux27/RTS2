@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildingName: Hotel
   PotentialRooms:
+  - roomTemplate: {fileID: 11400000, guid: c6d4470fc2901a1459b221bb3e0ea936, type: 2}
+    Min: 1
+    Max: 1
   - roomTemplate: {fileID: 11400000, guid: 0818b1922393ce3419855b0cd5c2b44f, type: 2}
     Min: 20
     Max: 20
+  - roomTemplate: {fileID: 11400000, guid: b24bfd246b1d926498e3a361248f59f5, type: 2}
+    Min: 1
+    Max: 1
   MainRoom:
     roomTemplate: {fileID: 11400000, guid: c6d4470fc2901a1459b221bb3e0ea936, type: 2}
     Min: 1
@@ -29,8 +35,8 @@ MonoBehaviour:
   MaxRooms: 1
   MaxExternalDoors: 1
   CorridorFloor: Wood
-  CorridorWall: Wood
+  CorridorWall: Brick
   ExternalWall: Brick
-  FloorplanType: 3
+  FloorplanType: 4
   ShiftHorizontalFloorTiles: 0
   ShiftVerticalFloorTiles: 0
