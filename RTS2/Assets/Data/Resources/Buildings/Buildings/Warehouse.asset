@@ -17,16 +17,20 @@ MonoBehaviour:
   - roomTemplate: {fileID: 11400000, guid: b24bfd246b1d926498e3a361248f59f5, type: 2}
     Min: 1
     Max: 1
+    Mandatory: 1
   - roomTemplate: {fileID: 11400000, guid: 2c57aa31adb5d1040a5aa540cc80b237, type: 2}
     Min: 1
     Max: 1
+    Mandatory: 0
   - roomTemplate: {fileID: 11400000, guid: 5f1db5dbbe131a1438306d5de43e4ee2, type: 2}
     Min: 1
     Max: 1
+    Mandatory: 1
   MainRoom:
     roomTemplate: {fileID: 11400000, guid: 8dcad6ddd8b0b99499c466cf2639059c, type: 2}
     Min: 1
     Max: 1
+    Mandatory: 0
   MinWidth: 35
   MaxWidth: 40
   MinHeight: 35
