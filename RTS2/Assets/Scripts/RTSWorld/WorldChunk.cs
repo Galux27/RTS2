@@ -207,6 +207,8 @@ public class WorldChunk:ISerialize
         if (CoordInRange(x) && CoordInRange(y))
         {
             ChunkTiles[x, y].UpdateWaterLevel(val);
+            NeedsUpdate = true;
+
         }
     }
 

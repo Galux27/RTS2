@@ -33,7 +33,7 @@ public class DrunkWandererTesting : MonoBehaviour
                 }
                 Targets.Add(targets);
             }
-            DrunkWandererResult result = new DrunkWandererResult(DrunkWanderer.Width(), DrunkWanderer.Height(), Targets);
+            DrunkWandererResult result = new DrunkWandererResult(DrunkWanderer.Width(), DrunkWanderer.Height(), Targets,Vector2Int.zero);
             image.texture = GenerateTexture(result, OriginalPositions);
         }
     }

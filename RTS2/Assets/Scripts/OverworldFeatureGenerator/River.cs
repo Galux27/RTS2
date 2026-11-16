@@ -29,117 +29,54 @@ public class FeatureRiver : OverworldFeatureToWorldConverter
     {
         OverworldTile myTile = OverworldGenerator.Instance.OverworldTiles[toGenerateIn.OverworldCoords.x,toGenerateIn.OverworldCoords.y];
         width = CalculateRiverWidth(myTile.RiverPoint);
-
-
-        List<OverworldTile> AdjacentTiles = OverworldGenerator.Instance.GetNeighbours(toGenerateIn.OverworldCoords);
-
-        List<OverworldTile> AdjacentWithSameFeature = new List<OverworldTile>();
-        for (int x = 0; x < AdjacentTiles.Count; x++)
+        DrunkWandererResult result = DrunkWandererController.Instance.GetRiverData(toGenerateIn);
+        Vector3 pos = new Vector3();
+        int tileUpdateCount = 0;
+        Vector2Int offset = toGenerateIn.coords - result.BottomCorner;
+        for(int x = 0; x < WorldChunkManager.ChunkBatchSize; x++)
         {
-            if (AdjacentTiles[x].Features.Contains(GetFeatureIGenerate()))
+            for (int y = 0; y < WorldChunkManager.ChunkBatchSize; y++)
             {
-                AdjacentWithSameFeature.Add(AdjacentTiles[x]);
-            }
-        }
-
-        WorldChunk centerChunk = toGenerateIn.Chunks[toGenerateIn.Chunks.GetLength(0) / 2, toGenerateIn.Chunks.GetLength(1) / 2];
-        Vector2Int center = centerChunk.ChunkTiles[centerChunk.ChunkTiles.GetLength(0) / 2, centerChunk.ChunkTiles.GetLength(1) / 2].Coords();
-        List<PathfindingNode> path = null;
-        Vector2Int target = Vector2Int.zero;
-        for (int x = 0; x < AdjacentWithSameFeature.Count; x++)
-        {
-            if (AdjacentWithSameFeature[x].X > toGenerateIn.OverworldCoords.x)
-            {
-                target = center + new Vector2Int(16 + WorldChunkManager.ChunkBatchSize / 2, 0);
-            }
-            else if (AdjacentWithSameFeature[x].X < toGenerateIn.OverworldCoords.x)
-            {
-                target = center - new Vector2Int(16 + WorldChunkManager.ChunkBatchSize / 2, 0);
-
-            }
-            else if (AdjacentWithSameFeature[x].Y > toGenerateIn.OverworldCoords.y)
-            {
-                target = center + new Vector2Int(0, 16 + WorldChunkManager.ChunkBatchSize / 2);
-
-            }
-            else if (AdjacentWithSameFeature[x].Y < toGenerateIn.OverworldCoords.y)
-            {
-                target = center - new Vector2Int(0, 16 + WorldChunkManager.ChunkBatchSize / 2);
-
-            }
-
-          
-            Vector3 pos = new Vector3();
-            RiverData data = new RiverData(center, target, width);
-            toGenerateIn.AddRiver(data);
-            if (center.x < target.x)
-            {
-                for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
+                if (result.Data[x+offset.x, y+offset.y])
                 {
-                    pos.y = y1;
-                    for (int x1 = center.x; x1 < target.x; x1++)
-                    {
-                        pos.x = x1;
-
-                        UpdateTile(toGenerateIn, pos, Key);
-                    }
-                }
-            }
-            else if (center.x > target.x)
-            {
-                for (int y1 = center.y - HalfWidth(); y1 < center.y + HalfWidth(); y1++)
-                {
-                    pos.y = y1;
-                    for (int x1 = target.x; x1 < center.x; x1++)
-                    {
-                        pos.x = x1;
-
-                        UpdateTile(toGenerateIn, pos, Key);
-                    }
-                }
-            }
-            else
-            {
-                if (center.y < target.y)
-                {
-                    for (int x1 = center.x - HalfWidth(); x1 < center.x + HalfWidth(); x1++)
-                    {
-                        pos.x = x1;
-
-                        for (int y1 = center.y; y1 < target.y; y1++)
-                        {
-                            pos.y = y1;
-                            UpdateTile(toGenerateIn, pos, Key);
-
-                        }
-                    }
-                }
-                else if (center.y > target.y)
-                {
-                    for (int x1 = center.x - HalfWidth(); x1 < center.x + HalfWidth(); x1++)
-                    {
-                        pos.x = x1;
-
-                        for (int y1 = target.y; y1 < center.y; y1++)
-                        {
-                            pos.y = y1;
-                            UpdateTile(toGenerateIn, pos, Key);
-
-                        }
-                    }
+                    pos.x = x + toGenerateIn.coords.x ;
+                    pos.y = y + toGenerateIn.coords.y ;
+                    tileUpdateCount += UpdateTile( pos);
+                   
                 }
             }
         }
+        //need to add code to convert the new river method into river objects so they can be used in the city generation process
+        Debug.Log("River Gen: tiles updated in " + toGenerateIn.coords + " " + tileUpdateCount);
+
         toGenerateIn.RefreshGroundTiles();
     }
     WorldTile toEdit;
-    void UpdateTile(WorldChunkBatch toGenerateIn, Vector3 pos, string type)
+    int UpdateTile(WorldChunkBatch toGenerateIn, Vector3 pos, string type)
     {
        toEdit = WorldTileHelpers.GetTileNearExisting(toEdit, toGenerateIn, pos);
         if (toEdit != null)
         {
             toEdit.UpdateWaterLevel(10f);
             toEdit.CanPutDecorationsOn = false;
+            return 1;
+        }
+        return 0;
+    }
+    Vector2Int batch, chunk,tile;
+    int UpdateTile(Vector3 pos)
+    {
+        try
+        {
+            WorldChunkManager.Instance.ConvertPositionToChunkAndLocalCoords(pos.x, pos.y, out batch, out chunk, out tile);
+            WorldChunkManager.Instance.ChunkBatches[batch].Chunks[chunk.x, chunk.y].ChunkTiles[tile.x, tile.y].UpdateWaterLevel(10);
+            return 1;
+
+        }
+        catch
+        {
+            Debug.LogError("River Gen: error setting tile at " + pos + " result " + batch + "," + chunk + "," + tile);
+            return 0;
         }
     }
 

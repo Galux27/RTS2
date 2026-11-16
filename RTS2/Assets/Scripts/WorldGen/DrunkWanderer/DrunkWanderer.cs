@@ -56,12 +56,14 @@ public static class DrunkWanderer
 
 public class DrunkWandererResult
 {
-    public DrunkWandererResult(int width,int height,List< List<Vector2Int>> TargetPositions)
+    public DrunkWandererResult(int width,int height,List< List<Vector2Int>> TargetPositions,Vector2Int bottomCorner)
     {
+        BottomCorner = bottomCorner;
         Width = width;
         Height = height;
         Data = new bool[width, height];
         Targets = new List<DrunkWandererTarget>();
+        Debug.Log("River Gen: Generating with points " + TargetPositions.Count);
         for(int x = 0; x < TargetPositions.Count; x++)
         {
             Targets.Add(new DrunkWandererTarget(TargetPositions[x]));
@@ -70,6 +72,7 @@ public class DrunkWandererResult
         UpdateWanderers();
     }
     int Width, Height;
+    public Vector2Int BottomCorner;
     public bool[,] Data;
     public List<DrunkWandererTarget> Targets;
     Vector2Int startPosition = new Vector2Int();
@@ -91,6 +94,7 @@ public class DrunkWandererResult
         int dataWidth = Data.GetLength(0);
         int dataHeight = Data.GetLength(1);
         bool[,] expandedData = new bool[width, height];
+        int count = 0;
         for (int x = 0; x < dataWidth; x++)
         {
             for (int y = 0; y < dataHeight; y++)
@@ -104,7 +108,7 @@ public class DrunkWandererResult
                             if (x1 >= 0 && y1 >= 0 && x1 < width - 1 && y1 < height - 1)
                             {
                                 expandedData[x1, y1] = true;
-
+                                count++;
                             }
                         }
                     }
@@ -121,6 +125,8 @@ public class DrunkWandererResult
                 }
             }
         }
+        Debug.Log("River Gen: Points expanded " +count);
+
     }
 
 

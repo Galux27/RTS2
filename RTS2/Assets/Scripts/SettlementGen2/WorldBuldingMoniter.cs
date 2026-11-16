@@ -111,8 +111,11 @@ public class WorldBuldingMoniter : MonoBehaviour
         }
         else
         {
-            Buildings[GetClosestBatchToGenerate()].CheckToGenerate();
-
+            Vector2Int batch = GetClosestBatchToGenerate();
+            if (Buildings.ContainsKey(batch))
+            {
+                Buildings[batch].CheckToGenerate();
+            }
         }
        
     }
