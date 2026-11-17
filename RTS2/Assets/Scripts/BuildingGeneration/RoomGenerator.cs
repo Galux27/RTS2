@@ -307,9 +307,9 @@ public class RoomGenerator
         }
     }
 
-    public void PopulateRoomEnvObjectsInGrid(GeneratedRoom room,GeneratedBuilding building,RoomTemplate template)
+    public Dictionary<Vector2Int, string> PopulateRoomEnvObjectsInGrid(GeneratedRoom room,GeneratedBuilding building,RoomTemplate template)
     {
-        
+        Dictionary<Vector2Int, string> retVal = new Dictionary<Vector2Int, string>();   
         //could be a better way of working out how to populate the room, maybe store all the potential positions 
         //as a grid so they're easy to alter rather than going through a list of items every time
         //update the other props used in a warehouse too
@@ -339,8 +339,8 @@ public class RoomGenerator
                     
                     toPlace = ConstructableObjectManager.Instance.AllObjects[potentialProp];
                     size = toPlace.SizeAsVec2();
-                    AddEnvObjectToRoomWithoutRefresh(room, pos, toPlace, building);
-                   
+                   // AddEnvObjectToRoomWithoutRefresh(room, pos, toPlace, building);
+                    retVal.Add(pos, potentialProp);
                    // room.RefreshWeightsForProps(pos-size,size*2);
                     propCounts[potentialProp]++;
 
@@ -349,7 +349,7 @@ public class RoomGenerator
                 }
             }
         }
-
+        return retVal;
       
     }
 
@@ -371,8 +371,8 @@ public class RoomGenerator
         if (template.CanBeGridBased)
         {
 
-            PopulateRoomEnvObjectsInGrid(room,building,template);
-            return retVal;
+
+            return PopulateRoomEnvObjectsInGrid(room, building, template);
         }
         room.RefreshTileWeights();
        

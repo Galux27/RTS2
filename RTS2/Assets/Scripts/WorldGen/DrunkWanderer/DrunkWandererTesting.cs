@@ -66,7 +66,7 @@ public class DrunkWandererTesting : MonoBehaviour
         {
             for (int y = 0; y < toDraw.Data.GetLength(1); y++)
             {
-                if (toDraw.Data[x, y])
+                if (toDraw.Data[x, y].HasWater)
                 {
                     texture.SetPixel(x, y, Color.blue);
                 }

@@ -19,7 +19,7 @@ public class FeatureRiver : OverworldFeatureToWorldConverter
         return Mathf.Max(1, width / 2);
     }
     const float MinRiverWidth=2,MaxRiverWidth=32;
-    int CalculateRiverWidth(Vector2Int riverData)
+    public static int CalculateRiverWidth(Vector2Int riverData)
     {
         return Mathf.RoundToInt( Mathf.Lerp(MinRiverWidth, MaxRiverWidth, Mathf.InverseLerp(0, riverData.y, riverData.x)));
     }
@@ -37,7 +37,7 @@ public class FeatureRiver : OverworldFeatureToWorldConverter
         {
             for (int y = 0; y < WorldChunkManager.ChunkBatchSize; y++)
             {
-                if (result.Data[x+offset.x, y+offset.y])
+                if (result.Data[x+offset.x, y+offset.y].HasWater)
                 {
                     pos.x = x + toGenerateIn.coords.x ;
                     pos.y = y + toGenerateIn.coords.y ;
@@ -47,6 +47,13 @@ public class FeatureRiver : OverworldFeatureToWorldConverter
             }
         }
         //need to add code to convert the new river method into river objects so they can be used in the city generation process
+        for(int x = 0; x < result.Targets.Count; x++)
+        {
+            if (toGenerateIn.ContainsPosition(result.Targets[x].positions[0] + toGenerateIn.coords) || toGenerateIn.ContainsPosition(result.Targets[x].positions[1] + toGenerateIn.coords))
+            {
+                toGenerateIn.AddRiver(new RiverData(result.Targets[x].positions[0] + toGenerateIn.coords, result.Targets[x].positions[1] + toGenerateIn.coords, width));
+            }
+        }
         Debug.Log("River Gen: tiles updated in " + toGenerateIn.coords + " " + tileUpdateCount);
 
         toGenerateIn.RefreshGroundTiles();

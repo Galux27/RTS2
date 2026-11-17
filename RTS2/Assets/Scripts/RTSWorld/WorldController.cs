@@ -204,9 +204,13 @@ public class WorldTile:ISerialize
     
     public bool CanGeneratePropOnTile()
     {
-        return CanPutDecorationsOn && traversable;
+        return CanPutDecorationsOn && traversable &&!HasWater();
     }
     
+    bool HasWater()
+    {
+        return  WaterData.WaterLevel > 0;
+    }
     
     public void AddContents(WorldTileContents toAdd)
     {

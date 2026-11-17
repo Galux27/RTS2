@@ -61,7 +61,19 @@ public class DrunkWandererResult
         BottomCorner = bottomCorner;
         Width = width;
         Height = height;
-        Data = new bool[width, height];
+        Data = new DrunkWandererTile[width, height];
+        Vector2Int Overworld=new Vector2Int();
+        for(int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < width; y++)
+            {
+                Overworld.x = bottomCorner.x + x;
+                Overworld.y=bottomCorner.y + y;
+                Overworld.x /= WorldChunkManager.ChunkBatchSize;
+                Overworld.y/= WorldChunkManager.ChunkBatchSize;
+                Data[x, y] = new DrunkWandererTile(Overworld);
+            }
+        }
         Targets = new List<DrunkWandererTarget>();
         Debug.Log("River Gen: Generating with points " + TargetPositions.Count);
         for(int x = 0; x < TargetPositions.Count; x++)
@@ -73,7 +85,7 @@ public class DrunkWandererResult
     }
     int Width, Height;
     public Vector2Int BottomCorner;
-    public bool[,] Data;
+    public DrunkWandererTile[,] Data;
     public List<DrunkWandererTarget> Targets;
     Vector2Int startPosition = new Vector2Int();
 
@@ -87,7 +99,7 @@ public class DrunkWandererResult
     }
 
     List<DrunkWandererInstance> wanderers = new List<DrunkWandererInstance>();
-    public void ExpandData(int size)
+    public void ExpandData()
     {
         int width = DrunkWanderer.Width();
         int height = DrunkWanderer.Height();
@@ -95,12 +107,14 @@ public class DrunkWandererResult
         int dataHeight = Data.GetLength(1);
         bool[,] expandedData = new bool[width, height];
         int count = 0;
+        int size = 0;
         for (int x = 0; x < dataWidth; x++)
         {
             for (int y = 0; y < dataHeight; y++)
             {
-                if (Data[x, y])
+                if (Data[x, y].HasWater)
                 {
+                    size = FeatureRiver.CalculateRiverWidth(OverworldGenerator.Instance.GetOverworldTile(Data[x, y].OverworldCoords).RiverPoint);
                     for (int x1 = x - size; x1 < x + size; x1++)
                     {
                         for (int y1 = y - size; y1 < y + size; y1++)
@@ -121,13 +135,14 @@ public class DrunkWandererResult
             {
                 if (expandedData[x, y])
                 {
-                    Data[x, y] = true;
+                    Data[x, y].HasWater = true;
                 }
             }
         }
         Debug.Log("River Gen: Points expanded " +count);
 
     }
+  
 
 
 
@@ -145,17 +160,27 @@ public class DrunkWandererResult
                 if (!wanderers[x].ReachedTarget())
                 {
                     pos = wanderers[x].Update();
-                    Data[pos.x, pos.y] = true;
+                    Data[pos.x, pos.y].HasWater = true;
                     hasWanderersToUpdate = true;
                 }
               
             }
             updateCount++;
         }
-        ExpandData(3);
+        ExpandData();
     }
 }
+public class DrunkWandererTile
+{
+    public Vector2Int OverworldCoords;
+    public bool HasWater;
 
+    public DrunkWandererTile(Vector2Int overworld)
+    {
+        OverworldCoords = overworld;
+    }
+
+}
 public class DrunkWandererTarget
 {
     public List<Vector2Int> positions;

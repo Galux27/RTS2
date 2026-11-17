@@ -24,6 +24,12 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         ALifeSystem = new ALife();
     }
     public ALife ALifeSystem;
+    public OverworldTile GetOverworldTile(int x,int y)
+    {
+        x = Mathf.Clamp(x, 0, OverworldWidth-1);
+        y = Mathf.Clamp(y, 0, OverworldHeight-1);
+        return OverworldTiles[x, y];
+    }
 
     public OverworldTile GetOverworldTile(Vector2Int coords)
     {
@@ -228,7 +234,7 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
                         neighbours = GetNeighbours(coords);
                         for (int i = 0; i < neighbours.Count; i++)
                         {
-                            if (neighbours[i].Features.Contains(OverworldFeature.River) )
+                            if (neighbours[i].Features.Contains(OverworldFeature.Settlement) )
                             {
                                 count++;
                                 //hasSetOverworldStartingCoords = true;
@@ -288,6 +294,8 @@ public class OverworldGenerator : MonoBehaviour, ISerialize
         Debug.Log("Full Generation took " + EasyStopwatch.GetStopwatchElapsedTime());
         OnGenerationDone();
     }
+
+
 
 
     int index = 0;
@@ -527,5 +535,6 @@ public enum OverworldFeature
     Backroad,
     MiscFeature,
     LargeWaterBody,
-    Mountain
+    Mountain,
+    Pond
 }

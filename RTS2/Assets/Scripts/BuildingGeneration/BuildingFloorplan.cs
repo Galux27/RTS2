@@ -299,10 +299,34 @@ public class BuildingFloorplan
        }
         return false;
     }
+
+   
     public static BuildingWallMap PopulateRoomInteriorWalls(GeneratedBuilding building)
     {
         BuildingWallMap retVal = new BuildingWallMap(building.Position, new Vector2Int(building.Width, building.Height));
         BuildingTemplate template = BuildingDataManager.Instance.BuildingTemplates[building.buildingType];
+        RoomTemplate checking = null;
+        bool[] CanRoomHaveInteriorWalls = new bool[building.MyRooms.Count];
+        for(int x = 0; x < building.MyRooms.Count; x++)
+        {
+            checking = BuildingDataManager.Instance.RoomTemplates[ building.MyRooms[x].RoomType];
+            CanRoomHaveInteriorWalls[x] = checking.CanHaveInternalWalls;
+            if (BuildingGenerator.BuildingDebug)
+            {
+                Debug.Log("No Interior: room id " + x + " name " + checking.RoomID + " can have rooms " + CanRoomHaveInteriorWalls[x] + "," + checking.CanHaveInternalWalls);
+            }
+            ;
+        }
+        int roomCount = building.MyRooms.Count;
+        bool CanTileHaveInteriorWalls(int roomID)
+        {
+            if (roomID > -1 && roomID < roomCount)
+            {
+                return CanRoomHaveInteriorWalls[roomID];
+            }
+            return false;
+        }
+
         List<RoomTile> neighbours = new List<RoomTile>();
         List<Vector2Int> neighbourCoords = new List<Vector2Int>();
         if (building.Tiles == null)
@@ -327,7 +351,7 @@ public class BuildingFloorplan
                             {
                                 if (neighbours[q].HasFloor == false 
                                 || neighbours[q].HasWall
-                                || ShouldRoomHaveInteriorWalls(building, building.Tiles[x, y].RoomID)==false)
+                                || ShouldRoomHaveInteriorWalls(building, building.Tiles[x, y].RoomID) == false || !CanTileHaveInteriorWalls(neighbours[q].RoomID)||!CanTileHaveInteriorWalls(building.Tiles[x, y].RoomID))
                                 {
                                     continue;
                                 }
@@ -384,8 +408,13 @@ public class BuildingFloorplan
             {
                 curPos.x = x;
                 curPos.y = y;
+                if (!CanTileHaveInteriorWalls(building.Tiles[x, y].RoomID))
+                {
+                    continue;
+                }
 
-                if (building.Tiles[x, y] == null || building.Tiles[x, y].HasWall == false && building.Tiles[x, y].HasFloor == false || building.Tiles[x, y].IsCorridor)
+                if (building.Tiles[x, y] == null 
+                    || building.Tiles[x, y].HasWall == false && building.Tiles[x, y].HasFloor == false || building.Tiles[x, y].IsCorridor)
                 {
                     wallCount = 0;
                     GetNeighbouringTilesLeftDown(building, x, y, ref neighbours, ref neighbourCoords);
@@ -404,14 +433,22 @@ public class BuildingFloorplan
                             }
                         }
                     }
+
+                    bool CouldTileHaveInterior = true;
+
                     for (int q = 0; q < neighbours.Count; q++)
                     {
+                        if (!CanTileHaveInteriorWalls(neighbours[q].RoomID))
+                        {
+                            CouldTileHaveInterior = false;
+                            break;
+                        }
                         if (neighbours[q] != null && neighbours[q].HasWall)
                         {
                             wallCount++;
                         }
                     }
-                    if (wallCount == 2)
+                    if (wallCount == 2 && CouldTileHaveInterior)
                     {
                         NeighboursToSetWalls.Add(curPos);
                         WallsToUse.Add(template.ExternalWall);
@@ -419,17 +456,22 @@ public class BuildingFloorplan
                     }
                     else
                     {
-
+                        CouldTileHaveInterior = true;
                         wallCount = 0;
                         GetNeighbouringTilesLeftUpDown(building, x, y, ref neighbours, ref neighbourCoords);
                         for (int q = 0; q < neighbours.Count; q++)
                         {
-                            if (neighbours[q] != null && neighbours[q].HasWall)
+                            if (!CanTileHaveInteriorWalls(neighbours[q].RoomID))
+                            {
+                                CouldTileHaveInterior = false;
+                                break;
+                            }
+                            if (neighbours[q] != null && neighbours[q].HasWall )
                             {
                                 wallCount++;
                             }
                         }
-                        if (wallCount == 3)
+                        if (wallCount == 3&&CouldTileHaveInterior)
                         {
                             NeighboursToSetWalls.Add(curPos);
                             WallsToUse.Add(template.ExternalWall);
@@ -445,12 +487,21 @@ public class BuildingFloorplan
             {
                 building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y] = new RoomTile();
             }
-            if (building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID >= 0)
+
+            if (BuildingGenerator.BuildingDebug)
             {
-                building.MyRooms[building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID].SetTileHasWall(curPos);
+                Debug.Log("No Interior: setting tile at " + NeighboursToSetWalls[q] + " to wall room id " + building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID + " can have room " + CanTileHaveInteriorWalls(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID));
+            };
+            if (CanTileHaveInteriorWalls(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID))
+            {
+
+                if (building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID >= 0)
+                {
+                    building.MyRooms[building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].RoomID].SetTileHasWall(curPos);
+                }
+                building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall(WallsToUse[q]);
+                retVal.AddWall(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y], curPos);
             }
-            building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y].SetWall(WallsToUse[q]);
-            retVal.AddWall(building.Tiles[NeighboursToSetWalls[q].x, NeighboursToSetWalls[q].y], curPos);
         }
         return retVal;
     }
@@ -1816,6 +1867,8 @@ public class SquareBuildingNoSplitFloorplan:BuildingFloorplan
 
         size = new Vector2Int(width, height);
         GeneratedBuilding building = new GeneratedBuilding(width, height, pos, template.BuildingName);
+        Debug.Log("Generating warehouse at " + building.Position);
+
         int count = 0;
         GeneratedRoom curRoom = null;
         Vector2Int modifier = Vector2Int.zero;

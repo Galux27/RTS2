@@ -1321,6 +1321,11 @@ public class WorldChunkBatch : MonoBehaviour
         Chunks[coords.x, coords.y].RemoveConstructable(bs,needsCleanup);
     }
 
+    public bool ContainsPosition(Vector2Int pos)
+    {
+        return pos.x >= coords.x && pos.x < coords.x + WorldChunkManager.ChunkBatchSize && pos.y >= coords.y && pos.y < coords.y + WorldChunkManager.ChunkBatchSize ;
+    }
+
 }
 
 
