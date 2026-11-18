@@ -122,8 +122,74 @@ public class DrunkWandererController : MonoBehaviour
             }
 
         }
+        int resultWidth = DrunkWanderer.Width();
+        int resultHeight = DrunkWanderer.Height();
+        DrunkWandererResult result = new DrunkWandererResult(resultWidth, resultHeight, Positions, cornerAsBatchCoords);
 
-        RiverData.Add(overworldStartCorner, new DrunkWandererResult(DrunkWanderer.Width(), DrunkWanderer.Height(), Positions,cornerAsBatchCoords));
+        DrunkWandererResult neighbour = GetNeighbourIfExists(Vector2Int.up, overworldStartCorner);
+        if (neighbour != null)
+        {
+            for(int x = 0; x < resultWidth; x+=WorldChunkManager.ChunkBatchSize)
+            {
+                if (OverworldGenerator.Instance.GetOverworldTile( result.Data[x,resultHeight-1].OverworldCoords).Features.Contains(OverworldFeature.River) 
+                    && OverworldGenerator.Instance.GetOverworldTile(neighbour.Data[x, 0].OverworldCoords).Features.Contains(OverworldFeature.River))
+                {
+                    //create an extra drunk wanderer and run it through between the two points in the drunk wanderers
+                }
+            }
+        }
+
+        neighbour = GetNeighbourIfExists(Vector2Int.down, overworldStartCorner);
+        if (neighbour != null)
+        {
+            for (int x = 0; x < resultWidth; x += WorldChunkManager.ChunkBatchSize)
+            {
+                if (OverworldGenerator.Instance.GetOverworldTile(neighbour.Data[x, resultHeight - 1].OverworldCoords).Features.Contains(OverworldFeature.River) 
+                    && OverworldGenerator.Instance.GetOverworldTile(result.Data[x, 0].OverworldCoords).Features.Contains(OverworldFeature.River))
+                {
+                    //create an extra drunk wanderer and run it through between the two points in the drunk wanderers
+                }
+            }
+        }
+
+        neighbour = GetNeighbourIfExists(Vector2Int.right, overworldStartCorner);
+        if (neighbour != null)
+        {
+            for (int y = 0; y < resultHeight; y += WorldChunkManager.ChunkBatchSize)
+            {
+                if (OverworldGenerator.Instance.GetOverworldTile(neighbour.Data[0, y].OverworldCoords).Features.Contains(OverworldFeature.River)
+                    && OverworldGenerator.Instance.GetOverworldTile(result.Data[resultWidth-1, y].OverworldCoords).Features.Contains(OverworldFeature.River))
+                {
+                    //create an extra drunk wanderer and run it through between the two points in the drunk wanderers
+                }
+            }
+        }
+
+        neighbour = GetNeighbourIfExists(Vector2Int.left, overworldStartCorner);
+        if (neighbour != null)
+        {
+            for (int y = 0; y < resultHeight; y += WorldChunkManager.ChunkBatchSize)
+            {
+                if (OverworldGenerator.Instance.GetOverworldTile(result.Data[0, y].OverworldCoords).Features.Contains(OverworldFeature.River)
+                    && OverworldGenerator.Instance.GetOverworldTile(neighbour.Data[resultWidth - 1, y].OverworldCoords).Features.Contains(OverworldFeature.River))
+                {
+                    //create an extra drunk wanderer and run it through between the two points in the drunk wanderers
+                }
+            }
+        }
+        RiverData.Add(overworldStartCorner, result);
+    }
+
+    
+
+    DrunkWandererResult GetNeighbourIfExists(Vector2Int direction,Vector2Int coords)
+    {
+        Vector2Int pos = coords + new Vector2Int(direction.x * DrunkWanderer.Width(), direction.y * DrunkWanderer.Height());
+        if (RiverData.ContainsKey(pos))
+        {
+            return RiverData[pos];
+        }
+        return null;
     }
 
     

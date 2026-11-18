@@ -21,7 +21,7 @@ MonoBehaviour:
   CanHaveExternalDoor: 1
   CanBeGridBased: 0
   CanHaveInternalWalls: 0
-  CanGenerateAnyWalls: 1
+  CanGenerateAnyWalls: 0
   GenerateDoorsToOtherRooms: 1
   GenerateDoorsToCorridors: 1
   MinWidth: 15

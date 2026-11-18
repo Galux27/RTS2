@@ -42,5 +42,5 @@ MonoBehaviour:
   CorridorWall: Wood
   ExternalWall: Concrete
   FloorplanType: 2
-  ShiftHorizontalFloorTiles: 1
+  ShiftHorizontalFloorTiles: 0
   ShiftVerticalFloorTiles: 0

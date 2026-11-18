@@ -98,6 +98,8 @@ public class DrunkWandererResult
         }
     }
 
+
+
     List<DrunkWandererInstance> wanderers = new List<DrunkWandererInstance>();
     public void ExpandData()
     {

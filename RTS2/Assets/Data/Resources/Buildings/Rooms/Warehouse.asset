@@ -28,7 +28,7 @@ MonoBehaviour:
   CanHaveWindows: 1
   CanHaveExternalDoor: 1
   CanBeGridBased: 1
-  CanHaveInternalWalls: 0
+  CanHaveInternalWalls: 1
   CanGenerateAnyWalls: 1
   GenerateDoorsToOtherRooms: 1
   GenerateDoorsToCorridors: 1
